@@ -1,0 +1,687 @@
+
+
+
+\newcommand{\gfA}{\gf{A}}
+\newcommand{\gfD}{\gf{D}}
+\newcommand{\gfL}{\gf{L}}
+\newcommand{\gfLhat}{\gf{\hat{L}}}
+\newcommand{\gfLtilde}{\gf{\tilde{L}}}
+\newcommand{\gfE}{\gf{E}}
+\newcommand{\gfEhat}{\gf{\hat{E}}}
+\newcommand{\gfEcheck}{\gf{\check{E}}}
+\newcommand{\gfF}{\gf{F}}
+\newcommand{\gfFhat}{\gf{\hat{F}}}
+\newcommand{\gfFcheck}{\gf{\check{F}}}
+\newcommand{\gfEtilde}{\gf{\tilde{E}}}
+\newcommand{\gfR}{\gf{R}}
+\newcommand{\gfRhat}{\gf{\hat{R}}}
+\newcommand{\gfRtilde}{\gf{\tilde{R}}}
+
+\newcommand{\gfC}{\gf{C}}
+\newcommand{\gfChat}{\gf{\hat{C}}}
+\newcommand{\gfCcheck}{\gf{\check{C}}}
+\newcommand{\gfCtilde}{\gf{\tilde{C}}}
+
+\newcommand{\gfM}{\gf{M}}
+\newcommand{\gfMhat}{\gf{\hat{M}}}
+\newcommand{\gfMtilde}{\gf{\tilde{M}}}
+
+
+\newcommand{\gfX}{\gf{X}}
+\newcommand{\gfXinf}{\gf{X}_\infty}
+
+\newcommand{\EventRCat}{E_\mathsf{right-cat}}
+\newcommand{\EventReset}{E_\mathsf{reset}}
+
+% \newcommand{\SeqGF}{\overset{\mathrm{gf}}{\longleftrightarrow}}
+\newcommand{\SeqGF}{\longleftrightarrow}
+
+
+
+% In this section, 
+% we present the proofs of Bounds~\ref{bound:unique-honest-catalan} 
+% and~\ref{bound:two-catalans} 
+% stated in Section~\ref{sec:bounds-main-proofs}. 
+% Let us recall stochastic dominance from Definition~\ref{def:dominance} 
+% and that,
+As a rule, we denote the
+probability distribution associated with a random variable using
+uppercase script letters. 
+Observe that if $Y \dominatedby X$ and 
+$Z$ is independent of both $X$ and $Y$, 
+then $Z + Y \dominatedby Z + X$. 
+In addition, for any non-decreasing function $u$ defined on $\Omega$, 
+$Y \dominatedby X$ implies $u(Y) \leq u(X)$.
+
+
+
+  \paragraph{Generating functions.}
+    We reserve the term
+    \emph{generating function} to refer to an ``ordinary'' generating
+    function which represents a sequence $a_0, a_1, \ldots$ of
+    non-negative real numbers by the formal power series
+    $\gf{A}(Z) = \sum_{t = 0}^\infty a_t Z^t$. 
+    We denote the above correspondence as $\{a_t\} \SeqGF \gfA(Z)$. 
+    When
+    $\gf{A}(1) = \sum_t a_t = 1$ we say that the generating function is
+    a \emph{probability generating function}; in this case, the
+    generating function $\gf{A}$ can naturally be associated with the
+    integer-valued random variable $A$ for which $\Pr[A = k] = a_k$. If
+    the probability generating functions $\gf{A}$ and $\gf{B}$ are
+    associated with the random variables $A$ and $B$, it is easy to
+    check that $\gf{A} \cdot \gf{B}$ is the generating function
+    associated with the convolution $A + B$ (where $A$ and $B$ are
+    assumed to be independent).  Translating the notion of stochastic
+    dominance to the setting with generating functions, we say that the
+    generating function $\gf{A}$ \emph{stochastically dominates}
+    $\gf{B}$ if $\sum_{t \leq T} a_t \leq \sum_{t \leq T} b_t$ for all
+    $T \geq 0$; we write $\gf{B} \dominatedby \gf{A}$ to denote this state of
+    affairs. If $\gf{B}_1 \dominatedby \gf{A}_1$ and
+    $\gf{B}_2 \dominatedby \gf{A}_2$ then
+    $\gf{B}_1 \cdot \gf{B}_2 \dominatedby \gf{A}_1 \cdot \gf{A}_2$ and
+    $\alpha \gf{B}_1 + \beta \gf{B}_2 \dominatedby \alpha \gf{A}_1 + \beta
+    \gf{A}_2$ (for any $\alpha, \beta \geq 0$).  Moreover, if
+    $\gf{B} \dominatedby \gf{A}$ then it can be checked that
+    $\gf{B}(\gf{C}) \dominatedby \gf{A}(\gf{C})$ for any probability
+    generating function $\gf{C}(Z)$, where we write $\gf{A}(\gf{C})$ to
+    denote the composition $\gf{A}(\gf{C}(Z))$.
+
+
+    Finally, we remark that
+    if $\gf{A}(Z)$ is a generating function which converges as a
+    function of a complex $Z$ for $|Z| < R$ for some non-negative $R$, 
+    $R$ is called the \emph{radius of convergence} of $\gf{A}$.  
+    It follows from Theorem 2.19 in~\cite{WilfGF} that 
+    $\lim_{k \rightarrow \infty} {|a_k|}R^k = 0$ and that $|a_k| = O(R^{-k})$. 
+    In addition, if $\gf{A}$ is a probability generating function associated with the
+    random variable $A$ then it follows that
+    $\Pr[A \geq T] = O(R^{-T})$. 
+
+
+
+\subsection{Proof of Bound~\ref{bound:unique-honest-catalan}}\label{sec:catalan-estimates}
+  % \begin{proof}
+  Let $p = (1 - \epsilon)/2$ and $q = (1 + \epsilon)/2$ 
+  so that $q - p = \epsilon$. 
+  Let $q_\H = q - q_\h$. 
+  Let $B$ denote the event that 
+  $w$ does not contain a uniquely honest Catalan slot in $y$. 
+  We would like to bound $\Pr_w[B]$ from above.
+
+
+  Define the process $W = (W_t : t \in \NN), W_t \in \{\pm 1\}$ as $W_t = 1$ if and only if $w_t = \A$. 
+  Let $S = (S_t : t \in \NN), S_t = \sum_{i \leq t} W_i$ be the position of the particle at time $t$. 
+  Thus $S$ is a random walk on $\ZZ$ with $\epsilon$ negative (i.e., downward) bias. 
+  By convention, set $W_0 = S_0 = 0$. 
+
+  \paragraph{Case 1: $x$ is an empty string.} 
+  % \paragraph{Case: $x = \varepsilon$.} 
+  % \subsubsection*{If $x = \varepsilon$} 
+  % First, let us consider the case when $x = \varepsilon$, i.e., $|x| = 0$. 
+  In this case, we write $w = yz$ so that $|y| = k$. 
+  Let $c_t$ be the probability that $t$ is the first uniquely honest Catalan slot in $w$ 
+  with $c_0 = 0$, and consider the probability generating function 
+  $\{c_t\} \SeqGF \gfC(Z) = \sum_{t = 0}^\infty c_t Z^t$. 
+  Controlling the decay of the coefficients $c_t$ suffices
+  to give a bound on $\Pr[B]$, i.e., 
+  the probability that 
+  $y$ \emph{does not} contain a Catalan slot, 
+  because this probability is at most 
+  $
+    1 - \sum_{t =0}^{k-1} c_t 
+      = \sum_{t = k}^\infty c_t
+      % \,.
+  $. 
+  % It seems challenging to give a closed-form algebraic expression for
+  % the generating function $\gfC$; 
+  To this end, we develop a
+  closed-form expression for a related probability generating function
+  $\gfChat(Z) = \sum_t \hat{c}_t Z^t$ which stochastically
+  dominates $\gfC(Z)$. 
+  Recall that this means that for any $k, \sum_{t \geq k} c_k \leq \sum_{t \geq k} \hat{c}_k$. 
+  Finally, bound the latter sum  
+  by using the analytic properties of $\gfChat(Z)$. 
+
+  % \paragraph{Generating functions for the first ascent and descent.}
+  % Before proceeding further, we set down two
+  % elementary generating functions for the ``first descent'' and the ``first ascent''
+  % stopping times. 
+  Treating the random variables $W_1, \ldots$ as
+  defining a (negatively) biased random walk, define $\gfD$ (resp. $\gfA$) to be
+  the generating function for the \emph{descent stopping time} 
+  (resp. the \emph{ascent stopping time}) 
+  of the walk; this is the first time the random walk, starting at 0, visits
+  $-1$ (resp. $+1$). 
+  The natural recursive formulation of these descent time yield 
+  simple algebraic equations for the descent generating function,
+  $\gfD(Z) = qZ + pZ \gfD(Z)^2$ and $\gfA(Z) = pZ + qZ \gfA(Z)^2$, 
+  and from this we may conclude
+  \begin{align*}
+    \gfD(Z) &= (1 - \sqrt{1 - 4pqZ^2})/2pZ\,, \\
+    \gfA(Z) &= (1 - \sqrt{1 - 4pqZ^2})/2qZ\,.
+  \end{align*}
+  % Here, we discard the other candidate solution 
+  % $(1 + \sqrt{1 - 4pqZ^2})/(2pZ)$ since in that case, for any real $\delta \in (0,1)$ we would get 
+  % $\gfD(1 - \delta) > \gfD(1)$; 
+  % but this conflicts with the fact that the coefficients of $\gfD(Z)$ are non-negative. 
+  Note that while $\gfD$ is a probability generating function, 
+  $\gfA$ is not: according to the classical
+  ``gambler's ruin'' analysis,
+  % ~\cite{Grinstead:1997ng}, 
+  the probability
+  that a negatively-biased random walk starting at 0 ever rises to 1
+  is exactly $p/q$; thus $\gfA(1) = p/q$.
+
+  % \paragraph{Generating function for the first uniquely honest Catalan slot.}
+  Recall that a slot is Catalan in $w$ if and only if 
+  it is both left-Catalan and right-Catalan. 
+  % Thus we wish to devise the generating function $\gfC(Z)$ for 
+  % the first occurrence of a left-Catalan slot 
+  % which is a right-Catalan slot as well. 
+  A slot is left-Catalan if the walk $S$ descends to a new low at that slot. 
+  In addition, the same slot (say $s$) is right-Catalan 
+  if the walk never reaches to that level in future, 
+  i.e., $S_s \geq S_{i}, i \geq s + 1$. 
+  The probability of this event is $1 - \gfA(1) = 1 - p/q = \epsilon/q$, 
+  conditioned on the fact that $W_s = -1$.
+  
+  Assume that the walk is now at its historical minimum. 
+  (It may or may not be a new minimum.)
+  We can think of the generating function $\gfC(Z)$ as a search procedure 
+  for finding the first uniquely honest Catalan slot. 
+  Let $v$ be the first symbol we observe. 
+  Let $\gfE(Z)$ be the generating function for a walk which 
+  makes an ascent with certainty 
+  and then descends again to its historical minimum.
+  We claim that 
+  % % $\gfC(Z) \DominatedBy \gfChat(Z)$
+  % \[
+  %    \gfC(Z) = pZ \gfD(Z) \gfC(Z) + q_\h Z\cdot \epsilon/q + q_\h Z \cdot p/q \cdot \gfE(Z) \gfC(Z) + q_\H Z \gfC(Z)
+  %     \,.
+  % \]
+  \begin{align}
+    \gfC(Z) 
+      &= pZ \gfD(Z) \gfC(Z) + q_\h Z\cdot \epsilon/q + q_\h Z \cdot p/q \cdot \gfE(Z) \gfC(Z) + q_\H Z \gfC(Z) \nonumber
+      \\
+      % \,.
+      % &= (q_\h \epsilon/q) Z/\bigl(1 - \left( pZ \gfD(Z) + (q_\h p/q) Z \gfE(Z) + q_\H Z\right) \bigr)      % \\
+      &= \frac{(q_\h \epsilon/q) Z}{1 - \bigl( pZ \gfD(Z) + (q_\h p/q) Z \gfE(Z) + q_\H Z\bigr)}      % \\
+    \label{eq:gfC}
+    \,.
+  \end{align}
+  Here is the explanation. 
+  Regarding the value of $v$, there can be four alternatives 
+  for the walk which is currently at its historical minimum: 
+  \begin{enumerate}[label=(\textit{\roman*})]
+    \item With probability $p$, we have $v = \A$ and the walk moves up. 
+    Then we wait till the walk makes a first descent and restart.
+
+    \item With probability $q_\h \cdot  \epsilon/q$, we have 
+    $v = \h$ and the walk diverges below. 
+    Hence our search has succeeded and we stop.
+
+    \item With probability $q_\h \cdot  (1 - \epsilon/q) = q_\h p/q$, we have 
+    $v = \h$ and the walk returns to the origin from below. 
+    Then we wait for the walk to match its minimum again 
+    before we can restart. 
+    Note that $\gfE(Z)$ is 
+    the generating function for this ``guaranteed ascent then match minimum'' walk.
+
+    \item With probability $q_\H$, we have $v = \H$ and the walk moves down. 
+    Since we will reach a new minimum, we restart.
+  \end{enumerate}
+  % After rearranging, we get 
+  % \begin{align}
+  %     \gfC(Z) 
+  %     % &= (q_\h \epsilon/q) Z/\bigl(1 - \left( pZ \gfD(Z) + (q_\h p/q) Z \gfE(Z) + q_\H Z\right) \bigr)      % \\
+  %     &= \frac{(q_\h \epsilon/q) Z}{1 - \bigl( pZ \gfD(Z) + (q_\h p/q) Z \gfE(Z) + q_\H Z\bigr)}      % \\
+  %     \label{eq:gfC}
+  %     \,.
+  % \end{align}
+  Since $\gfE(1) = 1$ by assumption, 
+  $p  + (q_\h p/q) + q_\H = 1 - q_\h(1 - p/q) = 1 - q_\h\epsilon/q$. 
+  It follows that 
+  $\gfC(1) = (q_\h \epsilon/q) / (1 -(1 - q_\h\epsilon/q) ) = 1$; 
+  hence $\gfC(Z)$ is a probability generating function.    
+
+  % A generating function of a stopping time of a random walk 
+  % is ill suited to ``remember'' its historical minimum/maximum. 
+  % However, it can remember the length of the walk for free. 
+  Instead of working directly with $\gfE(Z)$, 
+  we can work with a generating function $\gfEhat(Z)$ 
+  which is identical to $\gfE(Z)$ for the initial ascending part 
+  but differs in the descending part. 
+  Specifically, in the descending part, 
+  the walk represented by $\gfEhat(Z)$ descends as many levels 
+  as the number of steps it took to return to the origin. 
+  Clearly, $
+      \gfE(Z) \DominatedBy \gfEhat(Z) \triangleq \gfA(Z \gfD(Z) )/\gfA(1)
+      % \,.
+  $. 
+  Here, an individual term in $\gfA(Z \gfD(Z)) = \sum_i a_i Z^i \gfD(Z)^i$ 
+  has the interpretation 
+  ``if the first ascent took $i$ steps then immediately descend $i$ levels.''
+  Since $\gfA(Z)$ is not a probability generating function, 
+  we have to normalize it by $\gfA(1)$ to make sure that 
+  the ascent happens with certainty. 
+  Writing 
+  \[
+    \gfF(Z) \triangleq pZ \gfD(Z) + q_\h  Z \gfA(Z \gfD(Z) ) + q_\H Z
+    \,,
+  \]
+  note that 
+  \begin{align}
+    % &\gfF(Z) \triangleq pZ \gfD(Z) + q_\h  Z \gfA(Z \gfD(Z) ) + q_\H Z
+    % \,,\quad\text{note that}\label{eq:gfF}\\
+    &\gfC(Z) 
+        \DominatedBy \gfChat(Z) 
+        \triangleq 
+        % \frac{(q_\h \epsilon/q) Z}{1 - \gfF(Z) }
+        (q_\h \epsilon/q) Z/(1 - \gfF(Z) )
+    \,. \label{eq:gfChat}
+  \end{align}
+  Since $\gfF(1) = p + q_\h p/q + q_\H = 1 - q_\h(1 - p/q) = 1 - q_\h \epsilon/q$, 
+  we have $\gfChat(1) = 1$, i.e.,  
+  $\gfChat(Z)$ is a probability generating function. 
+  % \paragraph{Condition for the convergence of $\gfC(Z)$.}
+  It remains to establish a bound on the radius of convergence of
+  $\gfChat$. 
+  A sufficient condition for the convergence of
+  $\gfChat(z)$ for some $z \in \RR$ is 
+  that all generating functions appearing in the definition of
+  $\gfChat(z)$ converge at $z$ and 
+  that $\gfF(z) \neq 1$. 
+  % The bulk of the remaining exposition revolves around 
+  % proving this inequality.
+
+
+  % \paragraph{Convergence of $\gfA(Z), \gfD(Z)$, and $\gfA(Z \gfD(Z))$.}
+  The generating functions $\gfD(z)$ and $\gfA(z)$ converge when
+  the discriminant $1 - 4pqz^2$ is positive; equivalently
+  $|z| < 1/\sqrt{1 - \epsilon^2}
+  = 1 + \epsilon^2/2 + O(\epsilon^4)$. 
+  In addition, conditioned on the convergence of $\gfA(z)$ and $\gfD(z)$, 
+  we can check that 
+  \begin{equation}\label{eq:conv-value-A-and-D}
+    \gfA(z) < 1/2qz\, \quad \text{and}\quad \gfD(z) < 1/2pz
+    \,.
+  \end{equation}
+  On the other hand, the convergence of $\gfF(z)$ 
+  depends on the convergence of $\gfD(z)$ and $\gfA(z \gfD(z))$. 
+  The convergence of $\gfA(z \gfD(z))$ is likewise determined by the 
+  positivity of its discriminant, i.e.,
+  $$
+    1 - (1 - \epsilon^2)\, \left(z \cdot \frac{1 - \sqrt{1 - (1 - \epsilon^2) z^2}}{(1 - \epsilon) z}\right)^2  > 0
+    % 1 - (1 - \epsilon^2)\, \left(z \cdot (1 - \sqrt{1 - (1 - \epsilon^2) z^2})/(1 - \epsilon) z\right)^2  > 0
+    \,.
+  $$
+  The inequality above implies that 
+  if $\gfA(z \gfD(z))$ converges when 
+  $$
+    |z| 
+    < R_1 
+    \triangleq \left(\left(2/\sqrt{1 - \epsilon^2} - 1/(1+\epsilon)\right)/(1 + \epsilon)\right)^{1/2} 
+    \,,
+  $$ where 
+  \begin{align}\label{eq:roc-AZDZ}
+    R_1 = 1 + \epsilon^3/2 + O(\epsilon^4) 
+    \approx \exp\left(\epsilon^3 (1 + O(\epsilon))/2 \right)
+    \,.
+  \end{align}
+  \noindent
+  Note that the radius of convergence of $\gfA(Z \gfD(Z))$ 
+  is smaller than that of $\gfA(Z)$ or $\gfD(Z)$.
+
+  % \paragraph{An upper bound on $\gfF(z)$.}
+  We can check that when $\gfF(z)$ converges, 
+  it satisfies $$\gfF(z) \leq \gfF(|z|)\,.$$ 
+  The claim is trivial for $z = 0$. 
+  Otherwise,
+  note that $\gfD(z)$ is an odd function and hence, 
+  $z \gfD(z) = |z|\, \gfD(|z|)$. 
+  Thus, for the claim to hold, we need only show that 
+  $
+    z\,(q_\h \gfA(z\gfD(z)) + q_\H) 
+    \leq |z|\,(q_\h \gfA(|z|\gfD(|z|)) + q_\H) 
+  $. 
+  But the right-hand side equals $|z|\,(q_\h \gfA(z\gfD(z)) + q_\H)$ 
+  and $\gfA(x) > 0$ for real $x > 0$, 
+  we can divide both sides by $q_\h \gfA(z\gfD(z)) + q_\H$. 
+  The reduced inequality becomes 
+  $z/|z| \leq 1$. 
+  However, $z/|z| = \pm 1$ for any non-zero real $z$.
+  Therefore, it suffices for us to require that $F(z) \neq 1$ for $z > 0$. 
+  
+  % \paragraph{$\gfF(z)$ is convex and increasing for $z \in [0, R_1]$.}
+  We can also check that 
+  \begin{equation}\label{eq:Fz-convex-increasing}
+    \text{$F(z)$ is convex and increasing for $z \in [0, R_1)$}
+    \,.
+  \end{equation} 
+  To see why, note that since $z^2$ is convex in $z$, 
+  $(1 - 4pq z^2)$ is concave. 
+  Since square root is non-decreasing and convex for positive $z$, 
+  $\sqrt{1 - 4pqz^2}$ is concave and consequently, 
+  $-\sqrt{1 - 4pqz^2}$ is convex. 
+  Since $1/z^2$ is convex, 
+  it follows that $\gfD(z)$ and, by a similar reasoning, $\gfA(z)$ are convex.
+  Next, observe that $\gfA(z \gfD(z))$ converges for $z \in [0, R_1)$ 
+  and hence it is also convex in $z$. 
+  Thus $\gfF(z)$ turns out to be a convex combination of convex functions; 
+  it follows that $F(z)$ is convex for $z \in (0, R_1)$. 
+  In addition, 
+  since $\gfF(0) = 0$ and $\gfF(1) > 0$, 
+  $\gfF(z)$ must be increasing as well. 
+
+
+  % \paragraph{A linear lower bound $f(z) \leq \gfF(z), z \geq 1$.}
+  Let $$\text{ $R_2$ be the solution to the equation $\gfF(z) = 1, z > 0$}\,. $$ 
+  Then $\gfChat(z)$ would converge for $|z| < R \triangleq \min(R_1, R_2)$. 
+  It remains to characterize $R_2$ in terms of $\epsilon$ and $q_\h$. 
+  Note that $R_1 < 2$ as long as $\epsilon \leq 0.97$.
+  Since the final bounds will be only asymptotic in $\epsilon$, 
+  it suffices for us to consider small $\epsilon$. 
+  That is to say, we consider the case where $0 < z < R_1 < 2$, 
+  i.e., $z - 1 < 1$.
+
+  If we express $\gfF(z)$ as its power series around $z = 1$, we can check that 
+  % $\gfF(1) = 1 - \epsilon q_\h/q$, 
+  % $\gfF''(1) = \frac{1-\epsilon}{\epsilon^5}\left( q_\h (1+3\epsilon) + q_\H \epsilon^2 \right)$, and 
+  % $\gfF'(1) = p(1+1/\epsilon) + q_\h(p/q)\bigl( 1+(1+1/\epsilon)/\epsilon \bigr) + q_\H
+  % $.
+  \begin{align*}
+    \gfF(1) &= 1 - \epsilon q_\h/q\,,\\
+    \gfF''(1) &= 
+    % \frac{2p}{\epsilon^5}\left( 2q_\h (q+\epsilon) + q_\H \epsilon^2 \right) 
+      \frac{1-\epsilon}{\epsilon^5}\left( q_\h (1+3\epsilon) + q_\H \epsilon^2 \right)\,, \quad\text{and}\\
+    \gfF'(1) &= p(1+1/\epsilon) + q_\h(p/q)\bigl( 1+(1+1/\epsilon)/\epsilon \bigr) + q_\H
+    \,.
+  \end{align*}
+  Since $\gfF''(1) > 0$ and $\gfF(z)$ is convex and increasing, 
+  the first-order approximation 
+  \begin{equation}
+    f(z) = (1 - \epsilon q_\h/q) + \gfF'(1)(z-1) 
+  \end{equation}
+  is a lower bound for $\gfF(z)$ when $1 \leq z < R_1$. 
+  The approximation error at any $z \in (1, 2)$ is 
+  $\gfF(z) - f(z) = O(h(z))$ 
+  where we define $$h(z) \triangleq \gfF''(1) (z-1)^2\,.$$
+  Since the bounds we develop will have 
+  either $O(\cdot)$ or $\Omega(\cdot)$ in the exponent, 
+  it suffices to ensure that $R_2 = \Theta(R_2^*)$.
+  In the exposition below, 
+  we will only develop approximations $R_2^*$ satisfying 
+  $R_2 = (1 - \theta) R_2^*$ 
+  for a small positive constant $\theta \in (0, 1)$. 
+
+  % \paragraph{The special case $q_\h = q$.}
+  In the special case $q_\H = 0$, 
+  $\gfF(Z)$ simplifies as $\gfF(Z) = pZ \gfD(Z) + q  Z \gfA(Z \gfD(Z) )$. 
+  Note that $\gfF(Z)$ converges when $\gfA(Z \gfD(Z) )$ does 
+  and it is not hard to check that $\gfF(z) < 1$. 
+  Specifically, 
+  we know that $\gfF(z)$ converges when $z \in[0, R_1)$ 
+  and when it does, we claim that $\gfF(z) < 1$. 
+  Specifically, when $z \in [0, 1]$, 
+  $\gfF(z) \leq \gfF(1) = 1 - \epsilon q_\h/q = 1 - \epsilon < 1$ since $\epsilon < 1$. 
+  On the other hand, 
+  % when $z \in [1, R_1)$, 
+  % we know that $\gfF(Z)$ is dominated by $pZ \gfD(Z) + q  Z \gfA(Z \gfD(Z) ) \cdot \gfD(Z)$ 
+  % and, therefore, 
+  we can check that $\gfD(z)$ is convex for $z \geq 0$ and, 
+  in particular, the first order approximation $1 + (z-1)/\epsilon$ around $z = 1$ 
+  is a lower bound for $\gfD(z), z \geq 1$.
+  It follows that $\gfD(z) \geq 1$ for $z \in [1, R_1)$. 
+  Consequently, 
+  $\gfF(z) 
+  \leq pZ \gfD(Z) + q  z \gfA(z \gfD(z) )\cdot \gfD(z) 
+  = pz \gfD(z) + q  x \gfA(x) 
+  < 1/2 + 1/2 = 1$ 
+  where we write $x = z \gfD(z)$ and use~\eqref{eq:conv-value-A-and-D}. 
+  Thus 
+  the radius of convergence of $\gfChat$ is $R_1$ if $q_\H = 0$.
+
+  The remainder of the exposition considers 
+  the general case $0 < q_\h < q$. 
+  % \paragraph{Approximating the $z$ that satisfies $f(z) = 1$.}
+  Let the solution to the equation $f(z) = 1$ be denoted by 
+  $$
+    R_2^* \triangleq 1 + \epsilon (q_\h/q)/\gfF'(1)
+    \,.
+  $$ 
+  % {\color{red}Therefore, as $\epsilon \rightarrow 0$, $R_2^* \rightarrow R_2$.} 
+  % Let us focus on $h(R_2^*)$, i.e., 
+  % the approximation error at $z = R_2^*$. 
+  % Writing $b_\epsilon = 1 + 1/\epsilon$, 
+  % this quantity, denoted by $\delta$, is  
+  % \[
+  %     \frac{
+  %       (1-\epsilon)\left( q_\h (1+3\epsilon) + q_\H \epsilon^2 \right)\,(\epsilon q_\h/q)^2
+  %     }{
+  %       \epsilon^5\, (p b_\epsilon + q_\h(p/q)\bigl( 1+b_\epsilon/\epsilon \bigr) + q_\H)^2
+  %     }
+  %     % \frac{1-\epsilon}{\epsilon^5}\left( q_\h (1+3\epsilon) + q_\H \epsilon^2 \right)
+  %     % \cdot
+  %     % \left( \frac{\epsilon q_\h/q}{p(1+1/\epsilon) + q_\h(p/q)\bigl( 1+(1+1/\epsilon)/\epsilon \bigr) + q_\H} \right)^2
+  %     \,.
+  % % \end{align*}
+  % \]
+  If $q_\h$ is small, $q = (1+\epsilon)/2, p+\epsilon = q$ and $p/q^3 \in [1,4]$, 
+  we can check that 
+  % $\delta = O(\epsilon q_\h^2)$. 
+  \[
+    h(R_2^*)
+    = O\left(\frac{pq}{\epsilon^3} \cdot \left( \frac{\epsilon^2 q_h/q}{p(1+\epsilon) + \epsilon q} \right)^2 \right) 
+    =O\left(\frac{ \epsilon q_\h^2 \cdot pq}{q^2\,(p + \epsilon )^2}\right)
+    =O\left(\frac{ \epsilon q_\h^2 \cdot p}{q^3}\right)
+    = O(\epsilon q_\h^2)
+    \,,
+  \]
+  i.e., it vanishes.
+  % Therefore, $\lim_{q_\h \rightarrow 0} \delta = 0$ 
+  Thus $f(z)$ is a good approximation for $\gfF(z)$.
+  It follows that 
+  $\gfF'(1) \approx p(1+1/\epsilon) + q = q/\epsilon$ 
+  and, therefore, 
+  $$R_2^* 
+    \approx 1 + (\epsilon q_\h/q)/(q/\epsilon) 
+    = 1 + q_\h(\epsilon/q)^2 
+    \approx \exp(\epsilon^2 q_\h/q^2)
+    = e^{O(\epsilon^2 q_\h)}
+  $$ 
+  since $q \in (1/2, 1)$. 
+  (Although we have an asymptotic notation, 
+  it is important that we have the right exponent on $q_\h$.)
+  % As any lower bound on th right-hand side suffices, 
+  % we take $R_2^* \approx \exp(\epsilon^2 q_\h)$.
+  % However, $\epsilon^2/q^2 = 4 \epsilon^2(1 + \epsilon)^{-2} = 4 \epsilon^2(1 - 2 \epsilon + O(\epsilon^2))$. 
+  % Hence $R_2^* \approx \exp(4\epsilon^2 q_\h(1 - 2\epsilon))=\Theta(\epsilon^2 q_\h)$.    
+  
+  If, on the contrary, $q_\h = O(1)$ but $\epsilon$ vanishes then 
+  $\gfF'(1)$ will be dominated by its second term; 
+  that is to say, 
+  $\gfF'(1) 
+  \approx q_\h(p/q) \left(1+(1+1/\epsilon)/\epsilon \right) 
+  = O(q_\h/\epsilon^2)
+  $
+  and, therefore, 
+  $$R_2^* 
+  \approx 1 + O\left( (\epsilon q_\h/q)/( q_\h/\epsilon^2) \right) 
+  = 1 + O(\epsilon^3) 
+  = e^{O(\epsilon^3)}
+  $$ since $q \approx 1/2$.
+  % On the other hand, 
+  % if $q_\H \rightarrow q$, 
+  % i.e., if $q_\h$ is smaller than $\epsilon$, 
+  % then 
+  % $\gfF'(1) = \Theta(q/\epsilon^2)$ 
+  % and consequently, 
+  % $R_2^* 
+  % \approx 1 + \epsilon/\gfF'(1) 
+  % = 1 + \Theta(\epsilon^3/q) 
+  % \approx \exp(\Theta(\epsilon^3))$ since $q \in (1/2, 1]$.
+ 
+
+  % \paragraph{Putting it together for the case $|x| = 0$.}
+  Recall that $R_1 = \exp\left(O(\epsilon^3 (1 + O(\epsilon)))\right)$. 
+  It follows that $\gfChat(z)$ converges for 
+  $|z|$ less than 
+  \begin{align}\label{eq:RoC-unique-honest}
+    R &= \exp\left(O(\min(\epsilon^3, \epsilon^2 q_\h))\right)
+    \,.
+  \end{align}
+
+  % \begin{enumerate*}[label=(\textit{\roman*})]
+  %   \item $R= e^{\epsilon^3 (1 + O(\epsilon))/2}$ if $q_\h = q$; 
+  %   \item $R= e^{\Theta(\epsilon^3)}$ if $q_\h \rightarrow q$; and 
+  %   \item $R= e^{\Theta( \min(\epsilon^3, \epsilon q_\h/q_\H)}$ otherwise. 
+  % \end{enumerate*}
+  % \begin{align}\label{eq:RoC-unique-honest}
+  %   \ln R &= 
+  %     \begin{cases}
+  %       \epsilon^3 (1 + O(\epsilon))/2 & \text{if $q_\h = q$}\,,\\
+  %       \Theta(\epsilon^3) & \text{if $q_\h \rightarrow q$}\,,\\
+  %       % \Theta(\min(\epsilon^3, \epsilon^2 q_\h/q_\H^2)) & \text{if $q_\h \rightarrow 0$}\,,\\
+  %       \Theta(\min(\epsilon^3, \epsilon^2 q_\h))  & \text{if $q_\h \rightarrow 0$}
+  %       % \,\\
+  %       % \Theta( \min(\epsilon^3, \epsilon q_\h/q_\H) & \text{otherwise}
+  %       \,.
+  %     \end{cases}
+  % \end{align}
+  Recall that if the radius of convergence of
+  $\gfChat$ is $\exp(\delta)$ then 
+  $\hat{c}_k = O(e^{-\delta k})$. 
+  Hence, $\Pr[B]$ is a geometric sum and it is 
+  at most $O(e^{-\delta k})$ as well. 
+  We conclude that 
+  % for large $k$,
+  $$
+    \Pr_w[B] 
+      \leq O\left(e^{-k \ln R }\right)
+      = \exp\left(-k\cdot \Omega(\min(\epsilon^3, \epsilon^2 q_\h))\right)
+      \,.
+  $$
+  % \begin{align}
+  %   \Pr[H] &\leq O(1)\cdot e^{-k \ln R }
+  %     \,.
+  % \label{eq:prob_catalan_gf}
+  % \end{align}
+
+
+  \paragraph{Case 2: $x$ is non-empty.}
+  % \paragraph{Case: $|x| \geq 1$.}
+  % \subsubsection*{If $|x| \geq 1$}
+  Next, let us consider the case when $x \neq \varepsilon$, i.e., $|x| \geq 1$. 
+  Let $m = |x|$ and write $w = xyz$ where $|y| = k$. 
+  Recall the processes $(W_t)$ and $(S_t)$ defined on $w$
+  and, in addition, define $M = (M_t : t \in \NN), M_t = \min_{0 \leq i \leq t } S_i$ 
+  and $X = (X_t : t \in \NN), X_t = S_t - M_t$. 
+  By convention, set $M_0 = X_0 = 0$. 
+  Thus $X_t$ denotes the height of the walk $S$, at time $t$, 
+  with respect to its minimum $M_t$.
+
+  % For any slot $m + s$ of $w$, it is left-Catalan 
+  % if and only if the walk $S$, 
+  % starting at level $S_m = M_m + X_m$, 
+  % descends to level $M_m - 1 = S_m - (X_m + 1)$ 
+  % for the first time at slot $m + s$. 
+  % In other words, 
+  For a fixed value $h = X_m$, the relevant generating function 
+  would be $\gfD(Z)^{h}\gfChat$. 
+  Hence the final generating function we seek is
+  $$
+    \gfCtilde(Z) \defeq \sum_{h = 0}^\infty \Pr[X_m = h] \cdot \gfD(Z)^h  \gfChat(Z)
+    % \,.
+  $$
+  whose $t$th coefficient is the probability that 
+  $t$ is a Catalan slot in $y$.
+
+  Note that $X = (X_t)$ is an $\epsilon$-downward biased random walk 
+  on non-negative integers with a reflective barrier at $-1$. 
+  Specifically, 
+  for any $h \in \NN, \Pr[X_t = h \Given X_{t-1} = h -1] = p$ and 
+  $\Pr[X_t = h - 1 \Given X_{t-1} = h] = \Pr[X_t = 0 \Given X_{t-1} = 0] = q$. 
+  In~\cite[Lemma 6.1]{LinearConsistencySODA}, it is proved that 
+  the distribution of $X_m$ is stochastically dominated by 
+  the distribution of $X_\infty$, written $\mathcal{X}_\infty$ and 
+  defined, for $k = 0, 1, 2, \ldots$, as 
+  % $
+  %     \mathcal{X}_\infty(k) 
+  %     = \Pr[X_\infty = k] 
+  %     = (1 - \beta) \beta^k
+  % $
+  % where $\beta \defeq (1-\epsilon)/(1+\epsilon)$. 
+  \begin{equation}
+    \label{eq:stationary}
+      \mathcal{X}_\infty(k) = \Pr[X_\infty = k] 
+      \defeq 
+        \left(\frac{2\epsilon}{1+\epsilon}\right)\cdot \left(\frac{1-\epsilon}{1 + \epsilon}\right)^k
+        = 
+      (1 - \beta) \beta^k
+  \end{equation}
+  where $\beta \defeq (1-\epsilon)/(1+\epsilon)$. 
+  Let 
+  $$
+    \{\mathcal{X}_\infty(k)\} \SeqGF \gfXinf(Z) = 
+    % (1 - \beta)/(1 - \beta Z)
+    \frac{1 - \beta}{1 - \beta Z}
+    \,.
+  $$ 
+  It follows that $\gfCtilde(Z)$ is dominated by 
+  $$
+      \sum_{h = 0}^\infty \mathcal{X}_\infty(h) \gfD(Z)^h \gfChat(Z)
+    = \gfXinf(\gfD(Z)) \gfChat(Z)
+    = \frac{(1 - \beta)\gfChat(Z)}{1 - \beta \gfD(Z)}
+    % = (1 - \beta)\gfChat(Z)/(1 - \beta \gfD(Z))
+    \,.
+  $$
+  % \end{align*}
+
+  Let $\star$ denote the quantity above. 
+  For it to converge, 
+  we need to check that $\gf{D}(Z)$
+  should never converge to $1/\beta$.  
+  Since the radius of convergence of $\gf{D}(Z)$---which is
+  $(1-\epsilon^2)^{-1/2}$---is strictly less than 
+  $(1+\epsilon)/(1-\epsilon)$ for $\epsilon > 0$, 
+  we conclude that $\star$ converges if
+  both $\gf{D}(Z)$ and $\gfChat(Z)$ converge.  The radius of
+  convergence of $\star$ would be the smaller of the radii
+  of convergence of $\gfD(Z)$ and $\gfChat(Z)$.  We already
+  know from the previous analysis that $\gfChat(Z)$ has the
+  smaller radius of convergence of these two; 
+  therefore, the bound
+  % in~\eqref{eq:prob_catalan_gf} 
+  on $\Pr_w[B]$ from the previous case holds for $|x| \geq 0$. 
+  % \end{proof}
+  \hfill$\qed$
+
+
+
+
+\subsection{Proof of Bound~\ref{bound:two-catalans}}
+  % (The full proof is presented in 
+  % Section~\ref{sec:two-catalan-estimates}.
+  % % ~\cite{MultiHonestFullVersion}.
+  % )
+  % The random walk of interest is the same as in the previous proof. 
+  % However, we are interested in a slightly different stopping time. 
+  % Its generating function is  
+  % $\gfM(Z) = \frac{\epsilon \gfD(Z)}{1 - (1 - \epsilon) \gfE(Z) }$ 
+  % where $\gfE(Z)$, the ``epoch generating function,'' is dominated by 
+  % $\gfEhat(Z) = p Z \gfD(Z) + q Z \gfA(Z \gfD(Z) )/\gfA(1)$. 
+  % % That is, the epochs in this case can have two shapes: 
+  % % either the walk goes up and then comes back down, 
+  % % or it goes down, comes back up with certainty (say, after $t$ steps), 
+  % % and then descends $t$ levels.
+  % It can be easily checked that $\gfM(Z)$ converges as long as 
+  % $\gfA(Z), \gfD(Z)$, and $\gfA(Z \gfD(Z))$ converge 
+  % and $(1 - \epsilon)\gfEhat(Z) < 1$.
+  % Thus the radius of convergence of $\gfM(Z)$ is determined by~\eqref{eq:roc-AZDZ}. 
+  % \hfill$\qed$
+  \input{proof-bound-two-cat}
+
+  
+
+
+

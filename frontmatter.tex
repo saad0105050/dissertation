@@ -1,0 +1,137 @@
+%%%% Unless you have more than two associate advisors, or more than two previous degrees, there is no need to edit this file.  If you do fall into one of the latter categories, the set-up below should be transparent enough for suitable adjustments to be made.
+
+% ONLY EDIT *STYLES* IF YOU KNOW WHAT YOU ARE DOING%
+%%%%%%%%                        IMPORTANT                     %%%%%%%% 
+%     Roman numerals are adjusted to start at (ii) on the              %
+%     copyright page (per UCONN format)                                              %
+%     Style is also adjusted to contain your name, PhD and          %
+%     UCONN + grad year in upper center for abstracts longer   %
+%     than 1 page                                                                                                      %
+% ONLY EDIT *STYLES* IF YOU KNOW WHAT YOU ARE DOING%
+
+\frontmatter
+\emptystyles % Important
+
+%%%Title page 1
+\begin{center}
+{\LARGE
+{\bf\mythesistitle}
+}
+\vspace{.6in}
+
+\myname, Ph.D.\\
+University of Connecticut, \myyear
+
+\vspace{.6in}
+
+{\large\bf ABSTRACT}
+\end{center}
+\fancyhead[C]{
+	\myname, Ph.D.\vspace{5pt}\\
+	University of Connecticut, \myyear
+	\vspace{.6in}
+}
+\pagestyle{fancy}
+\thispagestyle{plain}
+\singlespacing
+\input{abstract.tex}
+
+\newpage
+
+%%%%Title page 2
+\restorestyles % Important
+\begin{center}
+{\LARGE
+{\bf\mythesistitle}
+}
+\vspace{.6in}
+
+\myname
+
+\vspace{.6in}
+
+\degreetwo \\
+\degreeone
+
+\vfill
+A Dissertation \\
+Submitted in Partial Fulfillment of the \\
+Requirements for the Degree of \\
+Doctor of Philosophy \\
+at the \\
+University of Connecticut
+
+\vspace{.25in}
+
+\myyear
+
+\end{center}
+\newpage
+
+
+%%%% Copyright Page %%%% 
+\pagestyle{plain}
+\setcounter{page}{2} % Important
+\phantom{skip}
+\vspace{.5in}
+\begin{center}
+Copyright by
+
+\vspace{1in}
+\myname
+
+\vspace{4.5in}
+\myyear
+\end{center}
+\newpage
+
+
+%%%%%         Approval Page        %%%%%
+%     Get this signed by committee              %
+%     Real signatures to be submitted to  %
+%     grad school. When electronically       %
+%     submitting your thesis, this page is  %
+%     fine as is (no signatures necessary)   %
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+{\large\bf APPROVAL PAGE}
+
+\vspace{.5in}
+Doctor of Philosophy Dissertation
+
+\vspace{.5in}
+{\LARGE\bf\mythesistitle}
+
+\vspace{.5in}
+Presented by\\
+\myname, \degreeoneshort, \degreetwoshort
+\vspace{.75in}
+\end{center}
+
+\begin{center}
+\begin{minipage}{4.5in}
+Major Advisor \hfill$\underset{\hbox{\majoradvisor}}{\rule{3in}{1pt}}$\\[15pt]
+
+Associate Advisor \hfill$\underset{\hbox{\associateone}}{\rule{3in}{1pt}}$\\[15pt]
+
+Associate Advisor \hfill$\underset{\hbox{\associatetwo}}{\rule{3in}{1pt}}$
+\end{minipage}
+
+\vspace{1in}
+University of Connecticut\\
+\myyear
+\end{center}
+
+
+\newpage
+
+%%%%%%%%%%%%% Acknowledgments Page
+\thispagestyle{plain}
+
+\begin{center}
+{\large\bf ACKNOWLEDGMENTS}
+\vspace{1in}
+\end{center}
+
+\input{acknowledgments.tex}
+\newpage

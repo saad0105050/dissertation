@@ -1,0 +1,321 @@
+    
+
+% \subsection{UVP}
+
+% Next, we characterize the \emph{Catalan slots}. 
+% Their importace lies in the following: 
+% A Catalan slot $c$ acts as a barrier for adversarial tine extensions 
+% in that in any fork, every tine viable at the onset of slot $c+1$ must be honest. 
+% In addition, if an honest slot has the bottleneck property then it must be Catalan. 
+
+
+Below, we define the so-called Catalan slots and show, 
+in Theorems~\ref{thm:unique-honest} and~\ref{thm:multiple-honest}, 
+that certain Catalan slots have the UVP.
+
+\begin{definition}[Catalan slot]
+  Let $w \in \{\h, \H, \A\}^T$ be a characteristic string and 
+  let $s \in [T]$ be an integer. 
+  $s$ is called a \emph{left-Catalan slot in $w$} 
+  if, for any integer $\ell \in [s]$, the interval $[\ell, s]$ is $\Hheavy$ in $w$.
+  $s$ is called a \emph{right-Catalan slot in $w$} 
+  if, for any integer $r \in [s, T]$, the interval $[s, r]$ is $\Hheavy$ in $w$.
+  Finally, $s$ is called a \emph{Catalan slot in $w$} if 
+  it is both left- and right-Catalan in $w$. 
+\end{definition}
+Observe that a left- or right-Catalan slot must be honest. 
+In addition, the slot before a left-Catalan 
+(resp., after a right-Catalan) slot must be honest as well.
+Thus the slots adjacent to a Catalan slot must be honest. 
+A Catalan slot $c$ acts as a barrier for adversarial tine extensions 
+in that in any fork, every tine viable at the onset of slot $c+1$ must be honest. 
+
+
+\begin{fact}\label{fact:catalan-unique-longest}
+  Let $w \in \{\h, \H, \A\}^T$ be a characteristic string 
+  and $s$ a left-Catalan slot in $w$. 
+  In any fork for $w$, 
+  every viable tine at the onset of slot $s + 1$ is 
+  an honest tine from slot $s$. 
+\end{fact}
+\begin{proof}
+  % Note that a left-Catalan slot is honest and 
+  Let $\tau$ be the longest tine with label $s$. 
+  ($\tau$ is an honest tine. 
+  If $s$ is a uniquely honest slot, 
+  $\tau$ is unique. Otherwise, 
+  $\tau$ is unique up to tie-breaking among equally-long tines.)
+  We claim that 
+  all adversarial tines $t \in F, \ell(t) \leq s - 1$ 
+  are strictly shorter than $\tau$.
+  Suppose, towards a contradiction, that 
+  $t$ is a viable adversarial tine at the onset of slot $s + 1$, i.e., 
+  $\ell(t) \leq s - 1$ and $\length(t) \geq \length(\tau)$. 
+  Let $B$ be the last honest vertex on $t$; necessarily, $\ell(B) < s$. 
+  According to 
+  Fact~\ref{fact:fork-structure},
+  the interval $[\ell(B) + 1, s]$ is $\Aheavy$. 
+  But this contradicts the assumption that $s$ is a left-Catalan slot. 
+  Hence the adversarial tine $t$ cannot be viable.
+\end{proof}
+
+
+\begin{observation}\label{obs:multi-honest}
+  If $s$ is a Catalan slot for $w$, Fact~\ref{fact:catalan-unique-longest} implies that 
+  in every fork for $w$, 
+  an honest slot leader at slot $s + 1$ always 
+  builds on top of an honest tine with label $s$; 
+  this tine, in fact, will have the maximum length among all tines with label $s$.
+\end{observation}
+
+
+
+\begin{fact}\label{fact:almost-cp-implies-catalan}
+  Let $w \in \{\h, \H, \A\}^T$ be a characteristic string. 
+  If an honest slot in $w$ has the bottleneck property then 
+  it is a Catalan slot.
+\end{fact}
+\begin{proof}
+  Let $s \in [T]$ be an honest slot in $w$.  
+  We will prove the contrapositive: namely, 
+  that if $s$ is not Catalan then $s$ does not have the bottleneck property. 
+  
+  Suppose $s$ is not a Catalan slot.
+  Then there must be some $a, b \in [T]$ so that 
+  $I = [a, b]$ is the largest $\Aheavy$ interval 
+  which includes $s$. 
+  Necessarily, either $b = T$, or $b + 1$ must be an honest slot. 
+  Likewise, either $a = 1$, or $a - 1$ must be an honest slot. 
+  
+  Let $F$ be a fork for $w_1 \ldots w_b$ 
+  and let $u \in F, \ell(u) = a - 1$ be an honest tine. 
+  (If $a = 1$, we can take $u$ as the root vertex.)  
+  Let $t$ be a maximum-length honest tine in $F$ 
+  and assume that $\length(t) = \length(u) + \#_\h(I) + \#_\H(I)$.
+  Since $I$ is $\Aheavy$, 
+  Fact~\ref{fact:fork-structure} 
+  states that 
+  it is possible to augment $u$ into 
+  an adversarial extension $t'$ 
+  viable at the onset of slot $b + 1$. 
+  As $t'$ will not contain any vertex from the honest slot $s$,  
+  $s$ does not have the bottleneck property in $w$.
+\end{proof}
+
+
+The following theorem shows that a uniquely honest Catalan slot has the UVP.
+% \subsection{UVP from a uniquely honest Catalan slot}
+
+
+  % Given a Boolean characteristic string $w$, written as $w = xy$,
+  % an \emph{$x$-balanced fork} is a fork where there are 
+  % two maximally long (viable) tines that are disjoint over the suffix $y$. 
+  % Let $w$ be a characteristic string for which 
+  % there is an $x$-balanced fork for some decomposition $w = xy$. 
+  % Then, in fact, there must be a shortest prefix $x' \Prefix w$ so that 
+  % $w = x'y'$ admits an $x'$-balanced fork; 
+  % we call this fork the \emph{deepest balanced fork for $w$}. 
+  % If there is an $x$-balanced fork with $|x| = 0$, we say that \emph{$w$ is forkable.}
+
+
+
+  \begin{theorem}\label{thm:unique-honest}
+    Let $w \in \{h,H,A\}^T$ be a characteristic string. 
+    Let $s \in [T]$ be a uniquely honest slot in $w$. 
+    Slot $s$ is Catalan in $w$ 
+    if and only if 
+    it has the UVP in $w$. 
+  \end{theorem}
+
+  \begin{proof}
+    (The reverse implication.) 
+    % This is easy. 
+    Since $s$ has the UVP  
+    it satisfies the (weaker) bottleneck property. 
+    By Fact~\ref{fact:almost-cp-implies-catalan}, 
+    the honest slot $s$ must be Catalan. 
+
+    (The forward implication.) 
+    By assumption, slot $s$ has a unique honest leader. 
+    Let $\tau$ be the unique honest tine at slot $s$.
+    By Fact~\ref{fact:catalan-unique-longest}, 
+    the honest tine $\tau$ is the only viable tine 
+    at the onset of slot $s + 1$.    
+    If $s = T$ then $\tau$ is the only viable tine 
+    at the onset of slot $T + 1$.
+    Now suppose $s \leq T - 1$.
+    As $s$ is a Catalan slot, slots $s$ and $s + 1$ must be honest. 
+    Let $t$ be a viable tine at the onset of some slot $k, k \geq s + 2$. 
+    We claim that $\tau$ must be a prefix of $t$. 
+
+    Suppose, for a contradiction, that $t$ does not contain $\tau$ as
+    its prefix.  Let $B_1$ be the last honest vertex on $t$ such that
+    $\ell(B_1) \leq s - 1$.  (If $s = 1$ or no such vertex can be
+    found, take $B_1$ as the root vertex.)  Likewise, let $B_2$ be the
+    first honest vertex, if it exists, on $t$ such that
+    $\ell(B_2) \in [s + 1, k - 1]$.
+
+
+    Suppose $B_2$ exists.  If $\ell(B_2) = s + 1$ then, by
+    Observation~\ref{obs:multi-honest}, $B_2$ builds on $\tau$,
+    contradicting our assumption that $\tau$ is not a prefix of $t$.
+    Otherwise, suppose $\ell(B_2) \in [s + 2, k-1]$.  Let $I$ be the
+    interval $[\ell(B_1) + 1, \ell(B_2) - 1]$.  Clearly, $I$ contains
+    $s$.  If $t$ contains any adversarial vertex between $B_1$ and
+    $B_2$ then, by Corollary~\ref{coro:interval-honest-vertices}, $I$
+    must be $\Aheavy$; but this contradicts the assumption that $s$ is
+    a Catalan slot.  Otherwise, $B_2$ builds on top of $B_1$ and, in
+    particular, $B_1$ must be viable at the onset of slot
+    $\ell(B_2) \geq s + 1$.  Since $\ell(\tau) = s$, this means
+    $\length(B_1) \geq \length(\tau)$.  However, since
+    $\ell(B_1) < s$, by the monotonicity of the honest-depth function
+    $\hdepth(\cdot)$, $\length(\tau) \geq 1 + \length(B_1)$.  This
+    contradicts the inequality above.
+
+
+    Now suppose $B_2$ does not exist.  We claim that $t$ is an
+    adversarial tine.  To see why, note that if $t$ were honest and
+    $\ell(t) \geq s + 1$ then there would have been a $B_2$.  Since
+    $s$ is a uniquely honest slot and $\tau$ is not a prefix of $t$ by
+    assumption, $\ell(t) \neq s$ if $t$ is honest.
+
+    
+    Finally, if $t$ is honest and $\ell(t) \leq s - 1$ then, 
+    by Fact~\ref{fact:catalan-unique-longest}, 
+    $t$ cannot be viable at the onset of slot $s + 1$ 
+    since $s$ is Catalan. 
+    Since $s + 1$ is an honest slot, 
+    honest tines with label $s + 1$ will be strictly longer than $t$ 
+    and, therefore, 
+    $t$ cannot be viable at the onset of slot $k \geq s + 2$ either. 
+    We conclude that $t$ must be an adversarial tine viable at the onset of slot $k$. 
+    By Fact~\ref{fact:fork-structure},       
+    the interval $I = [\ell(B_1) + 1, k - 1]$ must be $\Aheavy$. 
+    However, since $I$ contains $s$, it contradicts the fact that $s$ is a Catalan slot. 
+
+    It follows that every viable tine 
+    $t \in F, \ell(t) \geq s + 1$ must contain $\tau$ as its prefix. 
+  \end{proof}
+
+
+
+
+The following theorem shows that under axiom~\ref{axiom:tie-breaking}, 
+two consecutive Catalan slots 
+imply that the first slot has the UVP.
+
+% \section{Implications of a consistent longest-chain tie breaking rule}
+% \subsection{UVP from consecutive Catalan slots and \texorpdfstring{axiom~\ref{axiom:tie-breaking}}{consistent chain selection} }
+  \begin{theorem}\label{thm:multiple-honest}
+    Let $w \in \{\H, \A\}^T$ be a bivalent characteristic string 
+    and axiom~\ref{axiom:tie-breaking} is satisfied.
+    % where 
+    % all honest slot leaders use the consistent longest-chain selection rule $\LCR(\cdot)$.
+    Let $s \in[2, T]$ be an integer such that 
+    $s$ and $s - 1$ are two honest slots in $w$. 
+    The following statements are equivalent:
+    \begin{enumerate*}[label=(\textit{\roman*})]
+      \item\label{thm:part-catalan-multiple-honest} 
+      Slots $s, s - 1$ are Catalan.
+
+      \item\label{thm:part-cp-multiple-honest} 
+      If $s \leq T - 1$, both $s$ and $s - 1$ have the UVP. 
+      Otherwise, slot $T - 1$ has the UVP but 
+      slot $T$ has the bottleneck property.
+
+      % \item\label{thm:part-margin-multiple-honest} 
+      % Slots $s, s - 1$ are margin-critical.
+    \end{enumerate*}
+  \end{theorem}
+  \begin{proof}
+    Since the slots $s, s - 1$ satisfy the (weaker) bottleneck property, 
+    Fact~\ref{fact:almost-cp-implies-catalan} implies that 
+    they must be Catalan slots. 
+    This proves 
+    ~\ref{thm:part-cp-multiple-honest} implies~\ref{thm:part-catalan-multiple-honest}.
+    
+    Now let us prove that ~\ref{thm:part-catalan-multiple-honest} implies~\ref{thm:part-cp-multiple-honest}. 
+    Slots $s, s - 1$ are Catalan. 
+    Let $V_{s}$ (resp. $V_{s+1}$) be the set of all viable tines 
+    at the onset of slot $s$ (resp. slot $s + 1$). 
+    Since $s - 1$ (resp. $s$) is a Catalan slots, we use 
+    Fact~\ref{fact:catalan-unique-longest} and conclude that 
+    $V_s$ (resp. $V_{s+1}$) can contain 
+    only maximum-length honest tines $t, \ell(t) = s - 1$ (resp. $\ell(t) = s$). 
+    Let $u_s \in V_s$ be the unique vertex determined 
+    by the consistent tie-breaking rule when applied to the set $V_s$. 
+    Define $u_{s+1} \in V_{s+1}$ in an analogous way for the set $V_{s+1}$.
+
+    Let $k \in [s + 1, T+1]$ be an integer.
+    We wish tho show that for every tine $t$ viable at the onset of slot $k$, 
+    the following holds: 
+    (i) if  $s \leq T - 1$ then $u_s \Prefix u_{s+1} \PrefixEq t$, and 
+    (ii) if $s = T$ then 
+    $u_{T-1} \Prefix t$ where $\ell(t) = T$. 
+
+    % Since $V_s$ contains only honest tines, 
+    All tines at the honest slot $s$ build upon $u_s$. 
+    If $s = T$, we are done. 
+    Otherwise, i.e., if $s \leq T - 1$, 
+    let $\tau = u_{s + 1}$ and note that $u_s \Prefix u_{s + 1} = \tau$. 
+    If $k = s + 1$, we are done since by Fact~\ref{fact:catalan-unique-longest}, 
+    every tine at the honest slot $k$ will build upon $\tau$.  
+
+    It remains to reason about the case $s \leq T - 2$ and $k \geq s + 2$. 
+    Consider a tine $t$ which is viable at the onset of slot $k$. 
+    (All we know about $t$'s label is that $\ell(t) \leq k - 1$.) 
+    We claim that $\tau \Prefix t$. 
+    Suppose, towards a contradiction, that 
+    $\tau$ is not a prefix of $t$. 
+    Let $B_1$ be the last honest vertex on $t$ such that $\ell(B_1) \leq s - 1$.
+    (If no such vertex can be found, take $B_1$ as the root vertex.) 
+    Likewise, let $B_2$ be the first honest vertex on $t$ such that $\ell(B_2) \in [s + 1, k - 1]$. 
+    
+    Below, we show that every choice for $B_1, B_2$ leads to a contradiction 
+    and, therefore, $\tau$ must be a prefix of $t$. 
+    If $B_2$ exists then, 
+    by construction, $\ell(B_1) < s < \ell(B_2) \leq k - 1$.
+    If $\ell(B_2) = s + 1$ then, as we have argued earler, 
+    $B_2$ must have built on $\tau$. 
+    This contradicts our assumption that 
+    $\tau$ is not a prefix of $t$. 
+    Otherwise, suppose $\ell(B_2) \geq s + 2$.  
+    Let $I$ be the interval $[\ell(B_1) + 1, \ell(B_2) - 1]$ and note that  
+    $I$ contains $s$. 
+    There can be two scenarios.
+    If $t$ contains an adversarial vertex between $B_1$ and $B_2$ then,  
+    by Corollary~\ref{coro:interval-honest-vertices}, 
+    $I$ must be $\Aheavy$; but 
+    this contradicts the assumption that $s$ is a Catatan slot. 
+    Otherwise,
+    $B_2$ builds on top of $B_1$ and, 
+    in particular, 
+    $B_1$ must be viable at the onset of slot $\ell(B_2) \geq s + 1$. 
+    Since $\ell(\tau) = s$, this means $\length(B_1) \geq \length(\tau)$. 
+    However, since $\ell(B_1) < s$, 
+    by the monotonicity of the honest-depth function $\hdepth(\cdot)$, 
+    $\length(\tau) \geq 1 + \length(B_1)$. 
+    This contradicts the inequality above.           
+
+    If $B_2$ does not exist then 
+    we claim that $t$ is an adversarial tine. 
+    To see why, note that if $t$ were honest and $\ell(t) \geq s + 1$ 
+    then there would have been a $B_2$. 
+    If $t$ were honest with $\ell(t) = s, t \neq \tau$ 
+    then $t$ would not be viable at the onset of slot $s + 2$. 
+    This is because $s$ is a Catalan slot and as such, 
+    each vertex from slot $s + 1$ builds on $\tau, \length(\tau) \geq \length(t)$. 
+    Hence tines viable at the onset of slot $s + 2$ must have length at least $1 + \length(\tau) > \length(t)$. 
+    Finally, if $t$ is honest and $\ell(t) \leq s - 1$ then, 
+    by Fact~\ref{fact:catalan-unique-longest}, 
+    $t$ cannot be viable at the onset of slot $s + 1$ 
+    since $s$ is Catalan.  
+    Since $s + 1$ is an honest slot, 
+    honest tines with label $s + 1$ will be strictly longer than $t$ 
+    and, therefore, 
+    $t$ cannot be viable at the onset of slot $k \geq s + 2$ either. 
+    We conclude that $t$ must be an adversarial tine viable at the onset of slot $k$. 
+    By Fact~\ref{fact:fork-structure},       
+    the interval $I = [\ell(B_1) + 1, k - 1]$ must be $\Aheavy$. 
+    However, since $I$ contains $s$, it contradicts the fact that $s$ is a Catalan slot.     
+  \end{proof}

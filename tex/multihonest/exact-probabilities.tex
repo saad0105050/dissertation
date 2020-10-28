@@ -1,0 +1,446 @@
+Let $m, k \in \NN$, $\epsilon \in (0,1]$, and $p_\h \in (0, (1+\epsilon)/2]$.
+Let $T = m + k, \alpha = (1 - \epsilon)/2$, and $p_\H = 1 - \alpha - p_\h$. 
+Let $w \in \{\h, \H, \A\}^T$ such that 
+the symbols $w_i, i \in [T]$ are i.i.d.\, with 
+$\Pr[w_i = \A] = \alpha, \Pr[w_i = \h] = p_\h$, and $\Pr[w_i = \H] = p_\H$. 
+Write $w$ as $w = xy$ where $|x| = m, |y| = k$.
+% where 
+% each bit is independent with $\Pr[w_i = 1] = \alpha$.
+The recursive definition of relative margin 
+(cf. Theorem~\ref{thm:relative-margin}) 
+implies an algorithm for computing the probability
+$\Pr[\mu_x(y) \geq 0]$ 
+in $O(T^3)$ time and space. 
+% The algorithm is analogous to a similar algorithm in~\cite{LinearConsistencySODA}. 
+
+In typical circumstances, however, it is more interesting to establish an
+explicit upper bound on $\Pr[\mu_x(y) \geq 0]$ where
+$|x| \rightarrow \infty$; this corresponds to the case where the
+distribution of the initial reach $\rho(x)$ is the dominant distribution
+$\mathcal{X}_\infty$ in 
+~\eqref{eq:stationary}. 
+% ~\cite[Lemma 6.1]{LinearConsistencySODA}.
+Due to dominance, $\mathcal{X}_\infty(m)$ serves as an
+upper bound on $\rho(x)$ for any finite $m = |x|$. 
+For this purpose, one can implicitly
+maintain a sequence of matrices $M_t, t = 0, 1, 2, \ldots, k$
+such that $M_0(r, r) = \mathcal{X}_\infty(r)$ for all $0 \leq r \leq 2k$ and
+the invariant
+\[
+  M_t(r, s) = \Pr_{y: |y| = t}[\rho(xy) = r \text{ and }
+  \mu_x(y) = s ]
+\]
+is satisfied for every integer $t \in [1, k]$,
+$r \in [0, 2k]$, and $s \in [-2k, 2k]$. 
+Here, $M(i,j)$ denotes the entry at the $i$th row and $j$th column of a matrix $M$.
+%The matrix $M_0$ corresponds to the reach and margin after any prefix $x$. 
+Observe that $M_t(r,s)$ can be computed solely 
+from the relevant neighboring cells of $M_{t-1}$, that is, 
+from the values $M_{t-1}(r\pm 1, s \pm 1)$. 
+Of course, only the transitions approved by~\eqref{eq:mu-relative-recursive} should be considered.
+
+Finally, one can compute $\Pr[\mu_x(y) \geq 0]$ by summing $M_k(r,s)$ for
+$r, s \geq 0$. 
+This is precisely the probability that, 
+given a characteristic string $xy$ where $|x| \rightarrow \infty$, 
+the slot $|x| + 1$ incurs a $|y|$-settlement violation. 
+Table~\ref{table:exact-probs} (on page~\pageref{table:exact-probs}) contains these probabilities for various values of $\alpha, |y|$, and $p_\h$. 
+
+% In addition, Figure~\ref{fig:exact-probs} shows the base-$10$ logarithm of
+% these probabilities. The
+% points corresponding to a fixed $\alpha$ appear to form a straight
+% line. This means the probability decays exponentially in $k$, or equivalently, that the exponent 
+% depends linearly on $k$, 
+% as stipulated by Bound~\ref{bound:analytic}. 
+
+A \texttt{C++} implementation of the above algorithm is publicly available 
+at~\href{https://github.com/saad0105050/multihonest-code}{https://github.com/saad0105050/multihonest-code}~\cite{PrForkableMultihonestCode}.
+
+
+
+% \break
+% \newpage
+% \newcommand{\RotateText}[2]{\multicolumn{1}{|c||}{\parbox[t]{2mm}{\multirow{#1}{*}{\rotatebox[origin=c]{90}{#2}}} }}
+\newcommand{\EndRow}{\cline{2-8} \multicolumn{1}{|c||}{} &}
+
+
+\begin{table}[t]
+	\centering
+	\caption{
+    Exact probabilities of $k$-settlement violations 
+    where the symbols $\h, \H, \A$ are independent and identically distributed as $\Pr[\A] = \alpha \in (0, 0.5)$ and $\Pr[\H] = 1 - \alpha - \Pr[\h]$.    
+    % Exact probabilities $\Pr[\mu_x(y) \geq 0]$ where 
+    % the symbols of the characteristic string $xy$ are i.i.d.\,, 
+    % $|x| = \infty$, and $k = |y|$.
+    % Each row of the table corresponds to a different $k = |y|$.
+	} 
+	\label{table:exact-probs}
+
+
+	\begin{tabular}{|c||l||l|l|l|l|l|l|}
+  	% \hhline{|=======|}
+    % \hline
+    % \multicolumn{7}{|c|}{$\Pr[\h] = 1- \alpha$.} \\
+    \hline
+    \multirow{2}{*}{$\dfrac{\Pr[\h]}{1-\alpha}$} & 
+  	\multicolumn{1}{|c||}{\multirow{2}{*}{$k$}} & 
+    \multicolumn{6}{c|}{$\alpha$} \\ 
+    \cline{3-8} 
+    \multicolumn{1}{|c||}{} &
+  	\multicolumn{1}{|c||}{} &
+    0.01 & 0.10 & 0.20 & 0.30 & 0.40 & 0.49\\ 
+  	\hhline{|=#=#=|=|=|=|=|=|}
+    \multicolumn{1}{|c||}{\multirow{5}{*}{$1.0$}}&
+    100 & 5.70E-054 & 5.10E-018 & 2.28E-008 & 8.00E-004 & 1.37E-001 & 9.05E-001 \\ \EndRow
+    200 & 1.64E-106 & 9.82E-035 & 1.61E-015 & 1.60E-006 & 3.36E-002 & 8.73E-001 \\ \EndRow
+    300 & 4.70E-159 & 1.89E-051 & 1.14E-022 & 3.25E-009 & 8.52E-003 & 8.50E-001 \\ \EndRow
+    400 & 1.35E-211 & 3.64E-068 & 8.02E-030 & 6.59E-012 & 2.18E-003 & 8.29E-001 \\ \EndRow
+    500 & 1.02E-264 & 3.90E-085 & 4.00E-037 & 1.10E-014 & 5.16E-004 & 8.05E-001 \\%\hline
+
+  
+    \hhline{|=#=#=|=|=|=|=|=|}
+    \multicolumn{1}{|c||}{\multirow{5}{*}{$0.9$}}&
+    100 & 9.75E-052 & 1.24E-017 & 3.24E-008 & 9.27E-004 & 1.44E-001 & 9.08E-001   \\ \EndRow
+    200 & 3.04E-102 & 4.95E-034 & 2.96E-015 & 2.03E-006 & 3.60E-002 & 8.77E-001   \\ \EndRow
+    300 & 9.46E-153 & 1.98E-050 & 2.71E-022 & 4.50E-009 & 9.30E-003 & 8.53E-001   \\ \EndRow
+    400 & 2.95E-203 & 7.91E-067 & 2.48E-029 & 9.96E-012 & 2.43E-003 & 8.33E-001   \\ \EndRow
+    500 & 1.83E-254 & 1.63E-083 & 1.54E-036 & 1.78E-014 & 5.80E-004 & 8.08E-001   \\%\\ \hline
+
+  
+    \hhline{|=#=#=|=|=|=|=|=|}
+    \multicolumn{1}{|c||}{\multirow{5}{*}{$0.8$}}&
+    100 & 6.16E-048 & 4.13E-017 & 5.10E-008 & 1.11E-003 & 1.53E-001 & 9.11E-001 \\ \EndRow
+    200 & 7.58E-095 & 4.61E-033 & 6.58E-015 & 2.73E-006 & 3.91E-002 & 8.81E-001 \\ \EndRow
+    300 & 9.32E-142 & 5.14E-049 & 8.48E-022 & 6.78E-009 & 1.04E-002 & 8.57E-001 \\ \EndRow
+    400 & 1.15E-188 & 5.74E-065 & 1.09E-028 & 1.68E-011 & 2.77E-003 & 8.38E-001 \\ \EndRow
+    500 & 1.94E-236 & 3.02E-081 & 9.16E-036 & 3.28E-014 & 6.70E-004 & 8.12E-001 \\ 
+
+ 
+    \hhline{|=#=#=|=|=|=|=|=|}
+    \multicolumn{1}{|c||}{\multirow{5}{*}{$0.5$}}&
+    100 & 4.80E-028 & 6.53E-014 & 6.21E-007 & 2.80E-003 & 1.99E-001 & 9.26E-001 \\ \EndRow
+    200 & 2.46E-055 & 6.31E-027 & 6.40E-013 & 1.31E-005 & 5.86E-002 & 8.98E-001 \\ \EndRow
+    300 & 1.26E-082 & 6.10E-040 & 6.60E-019 & 6.19E-008 & 1.76E-002 & 8.77E-001 \\ \EndRow
+    400 & 6.46E-110 & 5.90E-053 & 6.81E-025 & 2.92E-010 & 5.33E-003 & 8.59E-001 \\ \EndRow
+    500 & 1.28E-138 & 1.75E-066 & 3.65E-031 & 9.61E-013 & 1.39E-003 & 8.31E-001 \\ 
+
+
+    \hhline{|=#=#=|=|=|=|=|=|}
+    \multicolumn{1}{|c||}{\multirow{5}{*}{$0.25$}}&
+    100 & 1.22E-012 & 3.13E-008 & 8.94E-005 & 1.65E-002 & 3.17E-001 & 9.48E-001 \\ \EndRow
+    200 & 1.51E-024 & 1.06E-015 & 9.36E-009 & 3.36E-004 & 1.25E-001 & 9.27E-001 \\ \EndRow
+    300 & 1.86E-036 & 3.62E-023 & 9.80E-013 & 6.86E-006 & 4.94E-002 & 9.10E-001 \\ \EndRow
+    400 & 2.30E-048 & 1.23E-030 & 1.03E-016 & 1.40E-007 & 1.96E-002 & 8.96E-001 \\ \EndRow
+    500 & 5.06E-062 & 7.72E-039 & 4.06E-021 & 1.66E-009 & 6.20E-003 & 8.65E-001 \\ 
+
+    
+    \hhline{|=#=#=|=|=|=|=|=|}
+    \multicolumn{1}{|c||}{\multirow{5}{*}{$0.01$}}&
+    100 & 3.77E-001 & 4.91E-001 & 6.38E-001 & 7.95E-001 & 9.31E-001 & 9.97E-001 \\ \EndRow
+    200 & 1.42E-001 & 2.41E-001 & 4.08E-001 & 6.34E-001 & 8.72E-001 & 9.95E-001 \\ \EndRow
+    300 & 5.37E-002 & 1.18E-001 & 2.61E-001 & 5.06E-001 & 8.17E-001 & 9.94E-001 \\ \EndRow
+    400 & 2.03E-002 & 5.81E-002 & 1.67E-001 & 4.04E-001 & 7.66E-001 & 9.92E-001 \\ \EndRow
+    500 & 7.89E-005 & 3.23E-003 & 2.71E-002 & 1.40E-001 & 4.83E-001 & 9.54E-001 \\
+
+    \hline
+  \end{tabular}
+
+
+
+
+
+  % \begin{center}
+  %     $\Pr[\A] = \alpha, \Pr[\h] = 0.01*(1- \alpha),\Pr[\H] = 1 - \Pr[\A] - \Pr[\h]$, and $k = |y|$. 
+  % \end{center}
+  % \begin{tabular}{|l||l|l|l|l|l|l|}
+  %   \hline
+  %   \multicolumn{1}{|c||}{\multirow{2}{*}{$k$}} & \multicolumn{6}{c|}{$\alpha$}                                             \\ \cline{2-7} 
+  %   \multicolumn{1}{|c||}{}                   & 0.01     & 0.10      & 0.20     & 0.30      & 0.40     & 0.49      \\ 
+  %   \hhline{|=#=|=|=|=|=|=|}
+  %   100 & 3.77E-001 & 4.91E-001 & 6.38E-001 & 7.95E-001 & 9.31E-001 & 9.97E-001 \\ \hline
+  %   200 & 1.42E-001 & 2.41E-001 & 4.08E-001 & 6.34E-001 & 8.72E-001 & 9.95E-001 \\ \hline
+  %   300 & 5.37E-002 & 1.18E-001 & 2.61E-001 & 5.06E-001 & 8.17E-001 & 9.94E-001 \\ \hline
+  %   400 & 2.03E-002 & 5.81E-002 & 1.67E-001 & 4.04E-001 & 7.66E-001 & 9.92E-001 \\ \hline
+  %   500 & 7.89E-005 & 3.23E-003 & 2.71E-002 & 1.40E-001 & 4.83E-001 & 9.54E-001 \\ \hline
+   
+  % \end{tabular}
+
+\end{table}
+
+
+
+  % \begin{tabular}{|l||l|l|l|l|l|l|}
+  %   \hline
+  %   \multicolumn{1}{|c||}{\multirow{2}{*}{$k$}} & \multicolumn{6}{c|}{$\alpha$}                                             \\ \cline{2-7} 
+  %   \multicolumn{1}{|c||}{}                   & 0.01     & 0.10      & 0.19     & 0.28      & 0.37     & 0.46      \\ 
+  %   \hhline{|=#=|=|=|=|=|=|}
+  %   100 & 5.70E-054 & 5.10E-018 & 5.07E-009 & 1.67E-004 & 4.40E-002 & 5.99E-001 \\ \hline
+  %   200 & 1.64E-106 & 9.82E-035 & 8.13E-017 & 7.34E-008 & 3.89E-003 & 4.64E-001 \\ \hline
+  %   300 & 4.70E-159 & 1.89E-051 & 1.30E-024 & 3.25E-011 & 3.55E-004 & 3.69E-001 \\ \hline
+  %   400 & 1.35E-211 & 3.64E-068 & 2.09E-032 & 1.44E-014 & 3.26E-005 & 2.97E-001 \\ \hline
+  %   500 & 1.02E-264 & 3.90E-085 & 2.33E-040 & 5.11E-018 & 2.67E-006 & 2.33E-001 \\ \hline 
+    
+  % \end{tabular}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \begin{figure}[h!]
+
+% \centering
+% \begin{tikzpicture}
+% 	\begin{axis}[
+% 		xlabel=Length of $y$,
+%     ylabel=${\log_{10} \Pr[ \mu_x(y) \geq 0 ]}$,
+%     legend pos = outer north east,
+%     grid = both
+%     %,height = 7cm
+%     ]
+
+
+% %============= \alpha = 0.40    
+% 	\addplot[color=blue,mark=triangle*] coordinates {
+% (50, -0.534881009996625)
+% (100, -0.861843437303938)
+% (150, -1.17110438398993)
+% (200, -1.47350880258986)
+% (250, -1.77251864117173)
+% (300, -2.06962896433787)
+% (350, -2.36559449154758)
+% (400, -2.66083495643829)
+% (450, -2.95559969289654)
+% (500, -3.25004400806221)
+% (550, -3.54426813580273)
+% (600, -3.83833855715903)
+% (650, -4.1323003235163)
+% (700, -4.42618449355664)
+% (750, -4.72001278023346)
+% (800, -5.01380053810684)
+% (850, -5.30755872931896)
+% (900, -5.60129524293208)
+% (950, -5.89501579493968)
+% (1000, -6.18872455077118)
+
+
+% 	};
+  
+% %============= \alpha = 0.35    
+% 	\addplot[color=magenta,mark=o] coordinates {
+% (50, -1.02877436841824)
+% (100, -1.76405795532126)
+% (150, -2.48156081504761)
+% (200, -3.19351655688251)
+% (250, -3.90324719739329)
+% (300, -4.6119732073238)
+% (350, -5.32021396523135)
+% (400, -6.0282101484992)
+% (450, -6.73607948155516)
+% (500, -7.44388168223398)
+% (550, -8.15164782799613)
+% (600, -8.85939439475358)
+% (650, -9.56713023906372)
+% (700, -10.2748601722391)
+% (750, -10.9825868295165)
+% (800, -11.6903116636224)
+% (850, -12.3980354795589)
+% (900, -13.1057587252749)
+% (950, -13.8134816508858)
+% (1000, -14.521204396449)  
+
+
+% 	};
+
+% %============= \alpha = 0.30    
+%   	\addplot[color=darkgray,mark=square] coordinates {
+% (50, -1.73119438208806)
+% (100, -3.09673279902966)
+% (150, -4.44780375955355)
+% (200, -5.79553003490465)
+% (250, -7.14227457376805)
+% (300, -8.48869966525932)
+% (350, -9.83501495946096)
+% (400, -11.1812912676285)
+% (450, -12.5275534426098)
+% (500, -13.873810422115)
+% (550, -15.2200654730463)
+% (600, -16.5663198030557)
+% (650, -17.9125738621863)
+% (700, -19.258827819142)
+% (750, -20.6050817374433)
+% (800, -21.9513356410858)
+% (850, -23.2975895391646)
+% (900, -24.6438434351249)
+% (950, -25.9900973302771)
+% (1000, -27.3363512251228)  
+
+
+% 	};
+
+
+
+% %============= \alpha = 0.25    
+% 	\addplot[color=purple,mark=diamond] coordinates {
+% (50, -2.7068067143968)
+% (100, -4.98669572210932)
+% (150, -7.25681899248793)
+% (200, -9.52547099796917)
+% (250, -11.793848036259)
+% (300, -14.0621691284583)
+% (350, -16.3304783495448)
+% (400, -18.5987849921223)
+% (450, -20.8670910667017)
+% (500, -23.1353970150404)
+% (550, -25.4037029351594)
+% (600, -27.6720088489442)
+% (650, -29.9403147613032)
+% (700, -32.2086206733433)
+% (750, -34.4769265853085)
+% (800, -36.7452324972576)
+% (850, -39.0135384092045)
+% (900, -41.281844321149)
+% (950, -43.5501502330935)
+% (1000, -45.8184561450381)
+
+
+% 	};
+
+
+      
+% %============= \alpha = 0.    
+% 	\addplot[color=black,mark=x] coordinates {
+% (50, -4.06125884952046)
+% (100, -7.64248504871986)
+% (150, -11.2184152058828)
+% (200, -14.7939108371324)
+% (250, -18.3693634087138)
+% (300, -21.9448114175389)
+% (350, -25.520258928049)
+% (400, -29.095706383289)
+% (450, -32.6711538323473)
+% (500, -36.2466012807114)
+% (550, -39.822048728996)
+% (600, -43.3974961772738)
+% (650, -46.9729436255496)
+% (700, -50.5483910738248)
+% (750, -54.1238385221004)
+% (800, -57.6992859703754)
+% (850, -61.2747334186509)
+% (900, -64.8501808669272)
+% (950, -68.4256283152027)
+% (1000, -72.0010757634778)
+
+
+
+
+% 	};
+  
+% %============= \alpha = 0.15    
+% 	\addplot[color=black,mark=diamond*] coordinates {
+% (50, -5.99101535930985)
+% (100, -11.4538646368115)
+% (150, -16.9145865673508)
+% (200, -22.3752357117723)
+% (250, -27.8358819361379)
+% (300, -33.2965280374903)
+% (350, -38.7571741335604)
+% (400, -44.2178202294009)
+% (450, -49.6784663252318)
+% (500, -55.1391124210625)
+% (550, -60.5997585168932)
+% (600, -66.0604046127235)
+% (650, -71.5210507085538)
+% (700, -76.9816968043839)
+% (750, -82.4423429002152)
+% (800, -87.9029889960452)
+% (850, -93.3636350918761)
+% (900, -98.8242811877078)
+% (950, -104.284927283538)
+% (1000, -109.745573379367)
+
+
+% };
+
+
+% %============= \alpha = 0.10    
+% 	\addplot[color=red,mark=*] coordinates {
+% (50, -8.93400016060089)
+% (100, -17.292337808078)
+% (150, -25.6501551609344)
+% (200, -34.007967886374)
+% (250, -42.3657805652942)
+% (300, -50.7235932437328)
+% (350, -59.0814059221663)
+% (400, -67.4392186006004)
+% (450, -75.7970312790341)
+% (500, -84.1548439574669)
+% (550, -92.5126566359009)
+% (600, -100.870469314334)
+% (650, -109.228281992768)
+% (700, -117.586094671201)
+% (750, -125.943907349634)
+% (800, -134.301720028069)
+% (850, -142.659532706502)
+% (900, -151.017345384936)
+% (950, -159.375158063369)
+% (1000, -167.732970741802)
+
+
+
+% };
+% %============= \alpha = 0.05    
+% 	\addplot[color=blue,mark=*] coordinates {
+% (50, -14.2699842004544)
+% (100, -27.9093384792564)
+% (150, -41.5486518624197)
+% (200, -55.1879652167995)
+% (250, -68.8272785711567)
+% (300, -82.4665919255127)
+% (350, -96.10590527987)
+% (400, -109.745218634226)
+% (450, -123.384531988584)
+% (500, -137.023845342941)
+% (550, -150.663158697297)
+% (600, -164.302472051655)
+% (650, -177.94178540601)
+% (700, -191.581098760368)
+% (750, -205.220412114725)
+% (800, -218.859725469083)
+% (850, -232.499038823439)
+% (900, -246.138352177796)
+% (950, -259.777665532154)
+% (1000, -273.41697888651)
+
+ 
+% 	};
+%   \legend{
+%   $\alpha = 0.40$, $\alpha = 0.35$, 
+%    $\alpha = 0.30$,$\alpha = 0.25$, $\alpha = 0.20$, 
+%    $\alpha = 0.15$,$\alpha = 0.10$,  $\alpha = 0.05$
+%   }
+% 	\end{axis}%
+% \end{tikzpicture}%
+% \caption{The probabilities from Table~\ref{table:exact-probs}  
+% drawn in the base-$10$ logarithmic scale. 
+% }
+% \label{fig:exact-probs}
+% \end{figure}
+
+% %%% Local Variables:
+% %%% mode: latex
+% %%% TeX-master: "main"
+% %%% End:

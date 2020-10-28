@@ -1,0 +1,99 @@
+%%%% Add any personal macros here.
+\newcommand{\ubar}[1]{\underaccent{\bar}{#1}}
+\newcommand*\rot{\rotatebox{90}}
+\newcommand{\pluseq}{\mathrel{+}=}
+\newcommand{\minuseq}{\mathrel{-}=}
+\renewcommand*{\bmod}{\mathbin{\%}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\asin}{arcsin}
+
+\makeatletter
+\newcommand*{\emptystyles}{%
+\let\oldplain\ps@plain
+\let\ps@plain\ps@empty
+\pagestyle{empty}
+\pagenumbering{gobble}
+\headsep = 45pt}
+
+\newcommand*{\restorestyles}{%
+\Gm@restore@org
+\clearpage\thispagestyle{empty}
+\let\ps@plain\oldplain
+\pagestyle{headings}
+ \pagenumbering{roman}}
+\makeatother
+
+\makeatletter
+\def\setChapterprefix#1{\gdef\@Prefix{#1}}
+\setChapterprefix{}
+\renewcommand*\l@chapter[2]{%
+  \ifnum \c@tocdepth >\m@ne
+    \addpenalty{-\@highpenalty}%
+    \vskip 1.0em \@plus\p@
+    \setlength\@tempdima{1.5em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \bfseries
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      \@Prefix 
+      #1\nobreak\hfil \nobreak\hb@xt@\@pnumwidth{\hss #2}\par
+      \penalty\@highpenalty
+    \endgroup
+  \fi}
+    \makeatother
+    
+\let\oldbar\bar
+\let\oldunderline\underline
+\let\oldoverline\overline
+
+
+\newdimen\slantmathcorr
+\def\oversl#1{%assuming that mathslant=0.25
+\setbox0=\hbox{$#1$}
+\slantmathcorr=\wd0
+%\hskip 0.2\slantmathcorr \overline{\hbox to 0.8\wd0{%
+\hskip 0.2\slantmathcorr \oldoverline{\hbox to 0.8\wd0{%
+\vphantom{\hbox{$#1$}}}}
+\hskip-\wd0\hbox{$#1$}
+}
+
+\def\undersl#1{%assuming that mathslant=0.25
+\setbox0=\hbox{$#1$}
+\slantmathcorr=\wd0
+%\underline{\hbox to 0.8\wd0{%
+\oldunderline{\hbox to 0.8\wd0{%
+\vphantom{\hbox{$#1$}}}}
+\hskip-0.8\wd0\hbox{$#1$}
+}
+
+\pgfplotsset{
+    discard if/.style 2 args={
+        x filter/.code={
+            \ifdim\thisrow{#1} pt=#2pt
+                \def\pgfmathresult{inf}
+            \fi
+        }
+    },
+    discard if not/.style 2 args={
+        x filter/.code={
+            \ifdim\thisrow{#1} pt=#2pt
+            \else
+                \def\pgfmathresult{inf}
+            \fi
+        }
+    }
+}
+
+\let\oldbar\bar
+\let\oldunderline\underline
+\let\oldoverline\overline
+\algnewcommand{\Inputs}[1]{%
+  \State \textbf{Inputs:}
+  \Statex \hspace*{\algorithmicindent}\parbox[t]{.8\linewidth}{\raggedright #1}
+}
+\algnewcommand{\Initialize}[1]{%
+  \State \textbf{Initialize:}
+  \Statex \hspace*{\algorithmicindent}\parbox[t]{.8\linewidth}{\raggedright #1}
+}

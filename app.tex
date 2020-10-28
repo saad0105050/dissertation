@@ -1,0 +1,50 @@
+\chapter{Complicated Math Derivations}\label{app}
+\section{Addition}
+\label{app22}
+Here, we derive how the decimal representations of $\frac{1}{3}$ can sum to 1. Specifically,
+\begin{align}
+1 &= \frac{1}{3}+\frac{1}{3}+\frac{1}{3}\\
+&\stackrel{?}{=} 0.333\dotsc  +0.333\dotsc + 0.333\dotsc
+\end{align}
+The real numbers, called $\mathbb{R}$, is defined to be a set with the following properties.
+\begin{enumerate}
+\item $\mathbb{R}$ is a field. That means that for any $x$ and $y$ in $\mathbb{R}$, we can form the sum $x+y$, take additive inverses $-x$, take products $xy$, and take multiplicative inverses $1/x$ as long as $x$ is not zero. The definition of a field holds that addition and multiplication satisfy all the usual properties: commutative, associative, distributive, etc. And there are special elements 1 and 0 so that $0+x = x$ and $1x = x$.
+
+\item There is a total ordering on $\mathbb{R}$. That means that for any $x$ and $y$ in $\mathbb{R}$, either $x \leq y$ or $y \leq x$. If both conditions hold, then $x = y$. The total ordering satisfies the following properties:
+\begin{itemize}
+\item If $x \leq y$, then $x+z \leq y+z$
+\item If $x \geq 0$ and $y \geq 0$, then $xy >= 0$
+\end{itemize}
+
+\item The Dedekind completeness properties. Here, we need a definition. Given a nonempty subset $S \subset\mathbb{R}$, $z$ is an upper bound for $S$ if for every $x \in S$, $x \leq z$. Property 3 states that for any nonempty subset of $S$ that has an upper bound, $S$, it also has a least upper bound, which we denote as $w$. That means that if $z \leq w$ and $z$ is also an upper bound for $S$, then $z = w$.
+\end{enumerate}
+
+Now, let $f(n)$ be a real-valued function on the integers. Then the statement $\lim_{n \to \infty}f(n) = a$ means that for any real number $\epsilon$ such that $\epsilon > 0$, there exists an integer $M > 0$ such that if $n > M$, then $|f(n) - a| < \epsilon$.
+
+Here is a short proof that if $\lim_{n \to \infty}f(n) = a$ and $\lim_{n \to \infty}f(n) = b$, then $a = b$. Suppose the contrary, so that $a - b\neq 0$. Then, by the definition of the limit, we can choose integers $M_1$ and $M_2$ so that if $n > M_1$, then $|f(n)-a| < \frac{a-b}{2}$, and if $n > M_2$, then $|f(n)-b| < \frac{a-b}{2}$. Choose $n$ to be larger than both $M_1$ and $M_2$. Then, we have a contradiction, for the conditions $|f(n)-a| < \frac{a-b}{2}$, and $|f(n)-b| < \frac{a-b}{2}$, cannot both be simultaneously satisfied.
+
+Now we get into decimals. Let $f$ be a function from the integers (denoted by $\mathbb{Z}$) into the set of symbols $\{0,1,2,3,4,5,6,7,8,9\}$, with the following property: for some $M \in \mathbb{Z}, M > 0, f(n) = 0$ if $M > n$. Such a function $f$ is a decimal representation.
+
+For a decimal representation $f$, we can define the partial sum $P(n)$ as follows: $P(n)$ is the finite sum 
+\begin{equation}
+f(M)10^M + f(M-1)10^{M-1} + \dots + f(-n)10^{-n}.
+\end{equation}
+We can finally define the value of $f$ to be $\lim_{n\to \infty}P(n)$, should this limit exist.
+
+Here is why the limit exists. The sequence $P(n)$ is a Cauchy sequence, which means that $\lim_{n\to \infty} P(n)-P(n+k) \to 0$ for $k > 0$. We can see that as follows. Given $\epsilon > 0$, choose $n$ such that $10{-n} < \epsilon$. Then,
+\begin{equation}
+P(n)-P(n+k) = f(-n-1)10^{-n-1} + \dots + f(-n-1)10^{-n-k} < 10^{-n}. 
+\end{equation}
+Hence the sequence $P(n)$ has an upper bound, and, thus, a least upper bound. It should be easy to see that this least upper bound is the limit of the $P(n)$ sequence.
+
+Now, we have enough of a foundation to prove $0.333\dotsc + 0.333\dotsc + 0.333\dotsc = 1$. Expressed rigorously, $0.999\dotsc$ is the decimal representation given by $f(n) = 0$ if $M \geq 0$, and $f(n) = 9$ if $M < 0$. $P(n)$ is defined similarly.
+
+\textbf{Proof}: First, we show that 1 is an upper bound for $P(n)$ inductively, by showing that $1 - P(n) = 10^{-n}$. For $n = 0$, $P(n)$ is the one term sum 0, and $1-0 = 10^0$. Now suppose the result is true for some $n = k$, and we want to show the result for $n = k+1$. $P(k+1) = P(k) + 9(10^{-k-1})$, so 
+\begin{align}
+1-P(k+1) &= 1 - P(k) - 9(10^{-k-1})\\
+&= 10^{-k} - 9(10^{-k-1}) \\
+&= 10^{-k-1}.
+\end{align}
+Since $1-P(n) \geq 0$ for all integers $n$, $1$ is an upper bound for $P(n)$.
+
+To show $P(n)$ is a least upper bound, consider the real number $1-\epsilon$ for some $\epsilon > 0$. Choose $n$ so that $10^{-n} < \epsilon$. Then, $P(n) > 1-\epsilon$ by the result of the previous paragraph; hence $1-\epsilon$ cannot be an upper bound for $P(n)$. Thus, 1 is the least upper bound for $P(n)$ and $0.999\dotsc = 1$. Q.E.D.

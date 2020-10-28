@@ -1,0 +1,171 @@
+  % \input{estimates-two}
+  % \begin{proof}
+  Let $p = (1 - \epsilon)/2$ and $q = 1 - p$; 
+  thus $q - p = \epsilon$. 
+  Let $B$ denote the event that 
+  $w$ does not contain two consecutive Catalan slots in $y$. 
+  We would like to bound $\Pr_w[B]$ from above.
+
+  Define the process $W = (W_t : t \in \NN), W_t \in \{\pm 1\}$ as $W_t = 1$ if and only if $w_t = \A$. 
+  Let $S = (S_t : t \in \NN), S_t = \sum_{i \leq t} W_i$ be the position of the particle at time $t$. 
+  Thus $S$ is a random walk on $\ZZ$ with $\epsilon$ negative (i.e., downward) bias. 
+  By convention, set $W_0 = S_0 = 0$. 
+
+  \paragraph{Case 1: $x$ is an empty string.} 
+  In this case, we write $w = yz$ so that $|y| = k$. 
+  Let $m_t$ denote the probability that 
+  $t$ is the first index so that both $t$ and $t+1$ are Catalan slots in $w$, 
+  with $m_0 = 0$, and consider the probability generating function 
+  $\{m_t\} \SeqGF \gfM(Z) = \sum_{t = 0}^\infty m_t Z^t$. 
+  Controlling the decay of the coefficients $m_t$ suffices
+  to give a bound on $\Pr[B]$, i.e., 
+  the probability that 
+  $y$ \emph{does not} contain two consecutive Catalan slots, 
+  because this probability is at most 
+  $
+    1 - \sum_{t =0}^{k-1} m_t 
+      = \sum_{t = k}^\infty m_t
+      % \,.
+  $. 
+  % It seems challenging to give a closed-form algebraic expression for
+  % the generating function $\gfM$; 
+  To this end, we develop a
+  closed-form expression for a related probability generating function
+  $\gfMhat(Z) = \sum_t \hat{m}_t Z^t$ which stochastically
+  dominates $\gfM(Z)$. 
+  Recall that this means that for any $k, \sum_{t \geq k} m_k \leq \sum_{t \geq k} \hat{m}_k$. 
+  Finally, bound the latter sum  
+  by using the analytic properties of $\gfMhat(Z)$. 
+
+
+  % \paragraph{Generating function for the first instance of consecutive Catalan slots.}
+  Recall the ``first ascent'' and ``first descent'' 
+  generating functions $\gfA(Z)$ and $\gfD(Z)$ 
+  from the proof of Bound~\ref{bound:unique-honest-catalan}. 
+  We wish to devise the generating function for 
+  the first occurrence of a left-Catalan slot 
+  immediately followed by a right-Catalan slot. 
+  To that end, 
+  note that $\gfD(Z)$ is the generating function for 
+  the first left-Catalan slot. 
+  The generating function for the first right-Catalan slot 
+  can be devised as follows. 
+  Consider the walk $S$ starting at the origin. 
+  With probability $q(1 - p/q) = \epsilon$, the walk will 
+  immediately descend a step and never return to the origin. 
+  But this means $S_1 \leq S_t, t \geq 2$ and hence 
+  the first slot is a right-Catalan slot and we are done. 
+  Otherwise, i.e., with probability $1 - \epsilon$, 
+  the walk makes a (guaranteed) return to the origin in future. 
+  In this case, we will have to restart our search 
+  for the next consecutive Catalan slots but, 
+  before that, 
+  we will have to ensure that we are in a ``safe position.'' 
+  In particular, we can safely restart our search if 
+  Specifically, if the current position (i.e., level) of the walk is at its historical minimum, 
+  we can restart our search by applying $\gfD(Z)$ to find the next left-Catalan slot.
+  Thus an ``epoch'' begins with a guaranteed return and 
+  ends when the walk descends to a new level for the first time. 
+  Let $\gfE(Z)$ be the generating function of an epoch. 
+  Thus we can write 
+  \begin{align}\label{eq:gfM}
+    \gfM(Z) 
+    &= \gfD(Z) \cdot \{\epsilon + (1-\epsilon)\gfE(Z)\gfM(Z) \} \nonumber \\
+    &= \frac{\epsilon \gfD(Z)}{1 - (1 - \epsilon) \gfE(Z) }
+    \,.
+  \end{align}
+
+  
+  An epoch can have two shapes. 
+  If an epoch starts with an up-step (i.e., an ``up'' shape), 
+  it is easy to see that the epoch ends as soon as the walk 
+  returns to the origin from above and, importantly, 
+  that the walk will (eventually) return to the origin with probability one. 
+  However, if the epoch starts with a down-step (i.e., a ``down'' shape), 
+  we have to ``remember'' the lowest level $\ell$ touched 
+  by the walk in its way to its (sure) ascent to the origin 
+  and then descend $\ell$ levels to end the epoch. 
+  In particular, we have to ensure that we return to the origin with probability one. 
+  
+  A generating function of a stopping time of a random walk 
+  is ill suited to ``remember'' its historical minimum/maximum. 
+  However, it can remember the length of the walk for free. 
+  Thus, instead of working directly with $\gfE(Z)$, 
+  we work with a generating function $\gfEhat(Z)$ 
+  which is identical to $\gfE(Z)$ for the up shape 
+  but differs in the down shape. 
+  Specifically, in the down shape, 
+  the walk represented by $\gfEhat(Z)$ descends as many levels 
+  as the number of steps it took to return to the origin. 
+  Clearly, $\gfE \DominatedBy \gfEhat$ where 
+  \[
+      \gfEhat(Z) \triangleq p Z \gfD(Z) + q Z \gfA(Z \gfD(Z) )/\gfA(1)
+      \,.
+  \] 
+  Here, the first term denotes the ``return to origin from above'' shape. 
+  An individual term in $\gfA(Z \gfD(Z)) = \sum_t a_t Z^t \gfD(Z)^t$ 
+  has the interpretation 
+  ``if the first ascent took $t$ steps then follow it by descending $t$ levels.''
+  Since $\gfA(Z)$ is not a probability generating function, 
+  we have to normalize it by $\gfA(1)$ to denote that 
+  the ascent happens with certainty. 
+  This implies, 
+  \[
+      \gfM(Z) 
+          \DominatedBy \gfMhat(Z) 
+          \triangleq \frac{\epsilon \gfD(Z)}{1 - (1 - \epsilon) \gfEhat(Z) }
+  \]
+
+  % \paragraph{Convergence of $\gfM(Z)$.}
+  It remains to establish a bound on the radius of convergence of
+  $\gfMhat$. 
+  A sufficient condition for the convergence of
+  $\gfMhat(z)$ for some $z \in \RR$ is 
+  that all generating functions appearing in the definition of
+  $\gfMhat$ converge at $z$ and 
+  that $(1-\epsilon) \gfEhat(Z) \neq 1$. 
+
+  By retracing our footsteps as in the proof of Bound~\ref{bound:unique-honest-catalan}, 
+  we can see that $\gfD(z), \gfA(z)$, and $\gfA(z \gfD(z))$ converge 
+  when $|z|$ satisfies~\eqref{eq:roc-AZDZ}. 
+  Moreover, since $\gfD(Z)$ is a probability generating function, 
+  it follows that $\gfEhat(Z)$ is stochastically dominated by 
+  $p Z \gfD(Z) + q Z \gfA(Z \gfD(Z) )/\gfA(1) \cdot \gfD(Z)$.
+  Therefore, when $\gfEhat(z)$ converges for some $z$, it satisfies 
+  \begin{align*}
+      \gfEhat(z)
+      &\leq pz\gfD(z) + (q/p) (q z\gfD(z))\gfA(z\gfD(z)) \\
+      &< 1/2 + (q/p)/2
+  \end{align*}
+  since $\gfA(1) = p/q, pz\gfD(z) < 1/2$, 
+  and $qx\gfA(x) < 1/2$ for any $z, x$ so that $\gfA(x)$ and $\gfD(z)$ converge, respectively. 
+  Therefore, $(1-\epsilon)\gfEhat(z) = 2p \gfEhat(z) < p + q = 1$. 
+  It follows that 
+  $\gfMhat(z)$ converges for
+  $|z| < 1 + \epsilon^3/2 + O(\epsilon^4) \leq \exp(\epsilon^3/2 + O(\epsilon^4))$. 
+  Recall that if the radius of convergence of
+  $\gfMhat$ is $\exp(\delta)$ then 
+  $\Pr[B]$ is 
+  $O(1) \cdot e^{-\delta k}$. 
+  We conclude that
+  \begin{align}
+    \Pr_w[B] 
+      &\leq O(1) \cdot e^{-\epsilon^3(1 + O(\epsilon))k/2} \,.
+  \label{eq:prob_two_catalan_gf}
+  \end{align}
+
+
+  \paragraph{Case 2: $x$ is non-empty.}
+  This part of the proof is the same as the $|x| \geq 1$ case 
+  in the proof of Bound~\ref{bound:unique-honest-catalan}. 
+  The only difference is that 
+  $\gfChat(Z)$ and $\gfCtilde(Z)$ would be replaced by 
+  $\gfMhat(Z)$ and $\gfMtilde(Z)$, respectively, where 
+  \[
+    \gfMtilde(Z)\DominatedBy \sum_{h = 0}^\infty \mathcal{X}_\infty(h) \gfD(Z)^h \gfMhat(Z)
+    \,.
+  \]
+  We conclude that the bound
+  in~\eqref{eq:prob_two_catalan_gf} holds when $|x| \geq 0$. 
+  \hfill$\qed$
+ % \end{proof}

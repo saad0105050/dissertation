@@ -1,0 +1,55 @@
+%%%---- Do not adjust ----%%%
+\documentclass[12pt,oneside]{book}
+\input{preamble.tex}
+%%%-----------------------%%%
+
+%Add your data to the following commands.
+%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\mythesistitle}{Security of Proof-of-Stake Blockchains}
+\newcommand{\myname}{Saad Altaful Quader}
+\newcommand{\myyear}{\the\year}
+\newcommand{\degreeone}{B.S., Bangladesh University of Engineering \& Technology, 2007}
+\newcommand{\degreeoneshort}{B.S.}
+\newcommand{\degreetwo}{M.S., University of Connecticut, 2013}
+\newcommand{\degreetwoshort}{M.S.}
+\newcommand{\majoradvisor}{Alexander Russell}
+\newcommand{\associateone}{Benjamin Fuller}
+\newcommand{\associatetwo}{Walter Krawec}
+%%%%%%%%%%%%%%%%%%%%%
+
+%%%---- Do NOT adjust ----%%%
+\begin{document}
+\input{frontmatter.tex}
+\singlespacing
+\tableofcontents
+\thispagestyle{plain}
+\mainmatter
+\doublespacing
+%%%-----------------------%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%---- Input content ----%%%
+\input{ch1.tex}
+% Multiple chapters -- e.g., each paper per chapter (you will need to edit and consolidate on your own)
+\input{ch2.tex}
+%\input{ch3.tex}
+\input{summary.tex}
+
+%... etc.
+%%%-----------------------%%%
+
+\singlespacing
+\newpage
+\addtocontents{toc}{\protect\setChapterprefix{}}
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{plainnat}  
+\bibliography{bib/forks,bib/grinding,bib/thesis,bib/abbrev0,bib/crypto_crossref}
+
+\appendix
+\addtocontents{toc}{\protect\setChapterprefix{Appendix }}
+\input{app.tex}
+
+\end{document}

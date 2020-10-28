@@ -1,0 +1,599 @@
+
+
+The proof of Theorem~\ref{thm:relative-margin} is presented in two parts. 
+Let $w \in \{\h, \H, \A\}^*$.
+First, for a given decomposition $w = xy$, 
+ % and $b \in \{\h, \H\}$, 
+we prove an upper bound on $\mu_x(y)$. 
+Next, 
+considering the fork $F \Fork w$ built by the strategy $Adversary^*$ 
+(see Figure~\ref{fig:adv-opt}), 
+we show that 
+for every decomposition $w = xy$, 
+$\mu_x(F)$ is at least as large as the upper bound proven in the first part; 
+thus $F$ is canonical. 
+
+As a warm-up, we start with the following claim.
+
+\begin{claim}\label{claim:rho-mu-A}
+  $\rho(\varepsilon) = 0$. 
+  For any $x, y \in \{\h, \H, \A\}^*$, 
+  $\mu_x(\varepsilon) = \rho(x)$, 
+  $\rho(xy\A) = \rho(xy) + 1$, 
+  and $\mu_x(y\A) = \mu_x(y) + 1$.
+\end{claim}
+\begin{proof}
+  The only possible fork for the empty string $\varepsilon$ 
+  contains a single honest vertex 
+  with reserve and gap both zero; 
+  hence $\rho(\varepsilon) = 0$.
+
+  Let $F$ be a closed fork for the characteristic string $xy$. 
+  Let $t_\rho, t_x \in F$ be the two tines that witness $\mu_x(F)$, 
+  i.e., $\reach(t_\rho) = \rho(F), \reach_F(t_x) = \mu_x(F)$, 
+  and $t_\rho, t_x$ are disjoint over $y$. 
+  % Let $\hat{t}$ be the longest tine in $F$.
+
+
+  In the base case, where $y=\varepsilon$, 
+  observe that any two tines of $F$ 
+  are disjoint over $y$. 
+  Moreover, a single tine $t \in F$ 
+  is disjoint with itself over the empty suffix $\varepsilon$. 
+  Therefore, the relative margin $\mu_x(\varepsilon)$ must be at least $\rho(x)$. 
+  As $\mu_x(F)$ can be no more than $\rho(x)$, it follows that 
+  $\mu_x(\varepsilon) = \rho(x)$.
+
+
+  Now consider a pair of closed forks $F\vdash xy$ and $F'\vdash xy\A$ 
+  such that $F \fprefix F'$ and $x,y\in\{\h, \H, \A\}^*$. 
+  We must have $F' = F$ since $F'$ is closed. 
+  In addition, for any tine $t \in F$, 
+  $\reach_{F'}(t) = \reach_F(t) + 1$ 
+  since the reserve has increased by one 
+  but the gap is unchanged 
+  (as no new tine is added). Therefore, 
+  $\rho(xy\A) = \rho(xy) + 1$ and 
+  $\mu_x(y\A) = \mu_x(y)+1$.
+\end{proof}
+
+
+\subsection{An upper bound on relative margin}
+
+\begin{proposition}\label{prop:mu-upperbound}
+  Let $w,x, y \in \{\h, \H, \A\}^*$ 
+  and $b \in \{\h, \H\}$, 
+  Then 
+  \begin{equation}
+    \rho(xyb) \leq \begin{cases}
+      0 & \text{if $\rho(xy) = 0$}\,, \\
+      \rho(xy) - 1 & \text{otherwise.}
+    \end{cases}
+    \label{eq:rho-upperbound}
+  \end{equation}
+  Furthermore,
+  \begin{equation}
+    \mu_x(yb) \leq \begin{cases}
+      0 & \text{if $\rho(xy) > \mu_x(y)=0$}\,, \\
+      0 & \text{if $\rho(xy) = \mu_x(y) = 0$ and $b = \H$}\,, \\
+      \mu_x(y)-1 & \text{otherwise.}
+    \end{cases}
+    \label{eq:mu-upperbound}
+  \end{equation}
+\end{proposition}
+\begin{proof}
+  Suppose $F'\vdash xyb$ is a closed fork such that 
+  $\rho(xyb)=\rho(F')$ and $\mu_x(yb)=\mu_x(F')$. 
+  Let $t_\rho, t_x \in F'$ be a pair of $y$-disjoint tines such that $\reach_{F'}(t_\rho)=\rho(F')$ and $\reach_{F'}(t_x)=\mu_x(F')$. 
+  (If there are multiple candidates for $t_\rho$ or $t_x$, 
+  select the one with the smallest $\leq_\pi$ rank.)
+  Let $F\vdash xy$ be the unique closed fork such that $F\fprefix F'$.  
+  Note that while $F'$ is obtained from one or more extensions 
+  of $F$-tines, 
+  these extensions are not necessarily conservative. 
+  Recall that $\reach_{F'}(t) \leq 0$ for any tine $t \in F', \ell(t) = |xy| + 1$.
+
+  \paragraph{Proving ~\eqref{eq:rho-upperbound}.} 
+  Let $A$ be the set of all $F'$-tines with label $|xy| + 1$.
+  Let $\sigma \in A$ be the first tine in the $\leq_\pi$ ordering so that $\reach(\sigma) = \max_{t \in A}\{\reach_{F'}(t)\}$.
+  By Fact~\ref{fact:reach-fork-ext}, 
+  $\reach_{F'}(\sigma) \leq 0$ and, 
+  in addition, for any $t \in F$, 
+  $\reach_{F'}(t) \leq \reach_F(t) - 1$.   
+  Let $\hat{t}$ be the maximum-reach tine in $F$ 
+  with the smallest $\leq_\pi$ rank.
+
+  If $\rho(F) = 0$ then 
+  $\reach_{F'}(t) < 0$ for all $t \in F$. 
+  Hence $t_\rho = \sigma$ and, consequently, 
+  $\rho(xyb) \leq 0$. 
+  If $\rho(F) \geq 2$ then $t_\rho \in F$
+  % $\reach_{F'}(\hat{t}) \geq 1$ but $\reach_{F'}(\sigma) \leq 0$; 
+  % thus $t_\rho = \hat{t}$ 
+  and, therefore, 
+  $\rho(xyb) = \reach_{F'}(t_\rho) \leq \rho(F) - 1 \leq \rho(xy) - 1$. 
+  If $\rho(F) = 1$ and $t_\rho \in F$ then, 
+  as before, 
+  $\rho(xyb) = \reach_{F'}(\hat{t}) = \reach_{F}(\hat{t}) - 1 = \rho(F) - 1 \leq \rho(xy) - 1$.
+  If $\rho(F) = 1$ and $t_\rho \not \in F$ then, as we have seen before, 
+  $\rho(xyb) = \reach_{F'}(\sigma) \leq 0 = \rho(F) - 1\leq \rho(xy) - 1$.
+  Thus we have proved~\eqref{eq:rho-upperbound}.
+
+
+  \paragraph{Proving ~\eqref{eq:mu-upperbound}.} 
+  If $\ell(t_\rho) = |xy| + 1$ then we are done: 
+  by our preceding argument, $\reach_{F'}(t_\rho) \leq 0$. 
+  On the other hand, 
+  Note that $t_\rho \not \in F$ since, by Fact~\ref{fact:reach-fork-ext}, reach of any $F$ tine can only decrease
+  $t_\rho$ must have been an extension of a maximum-reach $F$-tine.
+
+  \paragraph{Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.} 
+    We wish to show that $\mu_x(yb) \leq 0$.
+    Suppose (toward a contradiction) that $\mu_x(yb) > 0$. 
+    Then neither $t_\rho$ nor $t_x$ is a conservative extension because, as we proved in Claim ~\ref{claim:ex}, conservative extensions have reach zero. This means that $t_\rho$ and $t_x$ existed in $F$, and their $F$-reach was strictly greater than their $F'$-reach (by Claim ~\ref{claim:nex}). 
+    Because $t_\rho$ and $t_x$ 
+    % have been implicitly 
+    are 
+    disjoint over $y0$, they must also be disjoint over $y$; therefore, $\mu_x(F)$ must be at least $\min(\reach_F(t_\rho),\reach_F(t_x))$. 
+    It follows that 
+    $0 
+    = \mu_x(y) 
+    \geq \min(\reach_F(t_\rho),\reach_F(t_x))
+    > \min(\reach_{F'}(t_\rho),\reach_{F'}(t_x))
+    = \mu_x(F') = \mu_x(yb)
+    $. 
+    The last term is strictly positive by assumption and hence, a contradiction ensues.
+
+  % \paragraph{Case 2: $\rho(xy)=0$.}
+  \paragraph{Case 2: $\rho(xy)=0$.}
+    We wish to show that 
+    \begin{enumerate*}[label=(\textit{\roman*})]
+      \item $\mu_x(yb) \leq 0$ if $b = \H$ and $\mu_x(y) = 0$, and 
+      \item $\mu_x(yb) \leq \mu_x(y) - 1$ otherwise.
+    \end{enumerate*}
+    First, we claim that $t_\rho$ must arise from an extension. 
+    Suppose, toward a contradiction, that $t_\rho$ is not an extension, 
+    i.e., $t_\rho \in F$. 
+    The fact that $t_\rho$ achieves the maximum reach in $F'$ 
+    implies that 
+    $t_\rho$ has a non-negative reach 
+    since the longest honest tine always achieves reach zero. 
+    Furthermore, 
+    Claim ~\ref{claim:nex} states that 
+    all $F$-tines see their reach decrease. 
+    Therefore, $t_\rho \in F$ must have had a strictly positive reach. 
+    But this contradicts the central assumption of the case, i.e., 
+    that $\rho(xy)=0$. 
+    Therefore, we conclude that $t_\rho \in F' \setminus F$.
+
+    Let $s \in F$ be the tine-prefix of $t_\rho \in F'$ so that 
+    $t_\rho$ is an extension of $s$. 
+    % Since $\reach_{F'}(t_\rho) = \rho(xy0) = 0$ by~\eqref{eq:rho-recursive}, 
+    Observe that $\reach_F(s)$ must be non-negative since 
+    otherwise, $s$ could not have been extended. 
+    In fact, our assumption $\rho(xy)=0$ implies that 
+    $\reach_F(s) = 0$. 
+    In addition, since $t_x$ and $t_\rho$ are disjoint over $yb$, 
+    so are $t_x$ and $s$. 
+    \begin{description}[font=\normalfont\itshape\space]
+      % \item[If $t_x \in F$,] 
+      \item[If $b = \h$,] 
+      $t_\rho$ is the only extension in $F'$ and hence 
+      $t_x$ must be in $F$. 
+      Consequently, 
+      $\min( \reach_F(s),\reach_F(t_x) ) \leq \mu_x(y)$. 
+      Because $\reach_F(s)=0$ and $\reach_F(t_x) \leq \rho(xy)=0$, it follows that $\reach_F(t_x) \leq \mu_x(y)$. 
+      Finally, since $t_x \in F$, 
+      Claim ~\ref{claim:nex} tells us that 
+      $\reach_{F'}(t_x) < \reach_F(t_x)$. 
+      Taken together, these two inequalities show that 
+      $\mu_x(yb) = \reach_{F'}(t_x) < \reach_F(t_x) \leq \mu_x(y)$. 
+      The last inequality follows since $s$ and $t_x$ are disjoint over $y$ and $\reach_F(s) = 0 = \rho(xy)$. 
+      We conclude that $\mu_x(yb) \leq \mu_x(y) - 1$.
+
+      \item[If $b = \H$ and $\mu_x(y) < 0$,] 
+      % $F$ cannot contain a single maximum-reach tine and its
+      we claim that $t_x \in F$. 
+      To see why, note that as $t_x$ is $yb$-disjoint with $t_\rho$, 
+      it must extend some $F$-tine $t$ that is $y$-disjoint with $t_\rho$. 
+      However, as $\mu_x(y) < 0$, $t$ must have negative reach and hence cannot be extended into $t_x$; this is a contradiction. 
+      Therefore, $t_x \in F$ and we can apply the argument in the ``$b = \h$'' case above 
+      to conclude that $\mu_x(yb) \leq \mu_x(y) - 1$.
+
+      \item[If $b = \H$ and $\mu_x(y) = 0$,] 
+      then there are two alternatives depending on 
+      whether $t_x$ is an extension. 
+      If $t_x$ is not an extension, we can apply the argument in the ``$b = \h$'' case above and conclude that 
+      $\mu_x(yb) \leq \mu_x(y) - 1 = -1$.
+      On the other hand, if $t_x \not\in F$, 
+      both $t_x$ and $t_\rho$ are extensions and, 
+      by Fact~\ref{fact:reach-fork-ext}, 
+      $\max(\reach_{F'}(t_x), \reach_{F'}(t_\rho) ) \leq 0$. 
+      In addition, Fact~\ref{fact:reach-fork-ext} states that for all $t \in F$, 
+      $\reach_{F'}(t) < \reach_{F}(t) \leq \rho(xy) = 0$. 
+      We conclude that $\mu_x(yb) \leq 0$.
+
+    \end{description}
+
+
+
+  \paragraph{Case 3: $\rho(xy)>0$ and $\mu_x(y)\neq0$.}
+    We wish to show that $\mu_x(yb) \leq \mu_x(y) - 1$ 
+    or, equivalently, that $\mu_x(yb) < \mu_x(y)$. 
+    % Note that by~\ref{eq:rho-recursive}, 
+    % $\rho(xy0) = \rho(xy) - 1 \geq 0$.
+    We will break this case into two sub-cases. 
+    \begin{description}[font=\normalfont\itshape\space]
+      \item[If both $t_\rho, t_x \in F$,] 
+      then $\mu_x(yb) = \reach_{F'}(t_x) < \reach_{F}(t_x) \leq \mu_x(y)$. 
+      Here, the first inequality follows from Fact~\ref{fact:reach-fork-ext} 
+      and the second inequality follows from the fact that 
+      $t_x, t_\rho$ is $y$-disjoint and 
+      $\reach(t_x)$ is at most $\reach(t_\rho)$ by design.
+
+      \item[Otherwise,] 
+      at least one of $t_x, t_\rho$ arose from an extension. 
+      Since $\reach_{F'}(t_x) \leq \reach_{F'}(t_\rho)$ by design, 
+      it follows that $\reach_{F'}(t_x) \leq 0$ 
+      as the reach of an extension is at most zero.
+      If $\mu_x(y) > 0$ then we are done: $\mu_x(yb) \leq 0 < \mu_x(y)$.  
+      On the other hand, suppose $\mu_x(y) < 0$. 
+      Recall the tine $s$ mentioned before.
+      As $t_x$ is $y$-disjoint with $s$ and 
+      $\mu_x(y)$ is negative by assumption, 
+      $\reach_F(t_x)$ is at most $\mu_x(y)$. 
+      We conclude that 
+      $
+      \mu_x(yb) = \reach_{F'}(t_x) 
+      < \reach_F(t_x) 
+      \leq \mu_x(y)
+      $ 
+      where the inequality follows from Fact~\ref{fact:reach-fork-ext}.
+
+
+      % \item[If either $t_\rho \not \in F$ or $t_x \not \in F$.]
+      % It must be true that $\reach_{F'}(t_x)\leq 0$, because either $t_x$ is the extension (and therefore has reach exactly 0) or $t_\rho$ is the extension and we have $\reach_{F'}(t_x)=\mu_x(y0)\leq\rho(xy0)=\reach_{F'}(t_\rho)=0$. Recall that we have assumed $\mu_x(y)\neq0$. If $\mu_x(y)>0,$ we are done: certainly $\mu_x(y0)\leq0<\mu_x(y)$. If, however, $\mu_x(y)<0$, there is more work to do. 
+      % In this case, we claim that $t_x \in F$, i.e., $t_x$ did not arise from an extension. 
+      % To see why, consider the following: if $t_x$ arose from extension, then there must be some $s \in F$ 
+      % so that $s \Prefix t_x$ and $\reach_F(s) \geq 0$. Additionally, by our claim about non-extended tines, we see that 
+      % $\reach_F(t_\rho)>\reach_{F'}(t_\rho) = \rho(xy0) \geq 0$. 
+      % Therefore, 
+      % $\mu_x(y) \geq \min\{\reach_F(t_\rho), \reach_F(s)\} \geq 0$, 
+      % contradicting our assumption that $\mu_x(y) < 0$. 
+      % Thus $t_x \in F$. 
+
+      % The only remaining scenario is the one in which 
+      % $\mu_x(y)<0$ and $t_\rho$ arises from an extension 
+      % of some tine $s \in F, \reach_F(s) \geq 0$. 
+      % In this scenario, $t_x$ cannot have been the extension 
+      % (since there is only one). 
+      % By Claim~\ref{claim:nex}, 
+      % $\reach_F(t_x) > \reach_{F'}(t_x)$. 
+      % Using a now-familiar line of reasoning, note that 
+      % the two tines
+      % $t_x$ and $s$ are disjoint over $y$ 
+      % and, therefore, 
+      % $\mu_x(y) \geq \min\{\reach_F(s), \reach_F(t_x)\}$. 
+      % Since, 
+      % $\mu_x(y) < 0$ by assumption and $\reach_F(s) \geq 0$, 
+      % it follows that 
+      % $\mu_x(y) \geq \reach_F(t_x) > \reach_{F'}(t_x)=\mu_x(y0)$, as desired. \qedhere
+    \end{description}
+\end{proof}
+
+
+
+
+
+\subsection{\texorpdfstring{$\Adversary^*$}{The optimal adversary} simultaneously maximizes all relative margins}
+
+\begin{proposition}\label{prop:mu-lowerbound}
+  Let $w \in \{\h, \H, \A\}^*$ 
+  and $b \in \{\h, \H, \A\}$. 
+  Assume that Theorem~\ref{thm:opt-adversary-canonical} 
+  holds for characteristic strings of length $|w|$.
+  Let $F'$ be the fork built by $\Adversary^*$ 
+  for the characteristic string $wb$. 
+  Then 
+  \begin{equation}
+    \rho(F') \geq \begin{cases}
+     \rho(xy) + 1 & \text{if $b = \A$} \,, \\
+     0 & \text{if $b \in \{\h, \H\}$ and $\rho(xy) = 0$}\,, \\
+     \rho(xy) - 1 & \text{otherwise}\,.
+    \end{cases}
+    \label{eq:rho-lowerbound}    
+  \end{equation}
+  Furthermore, for any decomposition $w = xy, |y| \geq 0$, 
+  \begin{equation}
+    \mu_x(F') \geq \begin{cases}
+      \mu_x(y) + 1 & \text{if $b = \A$}\,, \\
+      0 & \text{if $b \in \{\h, \H\}$ and $\rho(xy) > \mu_x(y)=0$}\,, \\
+      0 & \text{if $b = \H$ and $\rho(xy) = \mu_x(y) = 0$}\,, \\
+      \mu_x(y)-1 & \text{otherwise.}
+    \end{cases}
+    \label{eq:mu-lowerbound}
+  \end{equation}
+  
+\end{proposition}
+\begin{proof}  
+  Let $w' = wb$.
+  Let $F$ and $F'$ be the forks built by $\Adversary^*$ 
+  for the characteristic string $w$ and $wb$, respectively, 
+  so that $F \fprefix F'$.
+  By assumption, $F$ is a canonical fork for $w$; 
+  this means $\rho(F) = \rho(w)$ and
+  for all $x \Prefix w$, $\mu_x(F) = \mu_x(y)$. 
+  It will be helpful for the reader to recall Fact~\ref{fact:reach-fork-ext} before proceeding.
+
+
+  \paragraph{Proving~\eqref{eq:rho-lowerbound}.} 
+  We wish to show that 
+  $\rho(F')$ satisfies~\eqref{eq:rho-lowerbound}. 
+  If $b = \A$ then, by construction,
+  $F' = F$. 
+  The symbol $b = \A$ increases the reserve 
+  of every tine by one. 
+  Thus  
+  $
+  \rho(F') 
+  = \rho(F) + 1
+  = \rho(xy)  + 1
+  $. 
+  % Here, the first equality follows from our choice of $\tau_\rho$. 
+  % and the last equality follows from our assumption about $t_\rho$. 
+  Now suppose $b \in \{\h, \H\}$. 
+  Since all tines $\sigma \in F'$ with label $|xy| + 1$ 
+  are conservative extensions, $\reach_{F'}(\sigma) = 0$ 
+  and the $F'$-reach of all $F$-tines decreases by one. 
+  Let $t$ be a maximum-reach tine in $F$; 
+  since $F$ is canonical, $\reach_F(t) = \rho(F) = \rho(xy)$.
+  Therefore, 
+  $\rho(F') \geq \reach_{F'}(t) = \reach_{F}(t) - 1 = \rho(xy) - 1$. 
+  If $\rho(F) = 0$ then this inequality can be tightened, as follows. 
+  As all $F$-tines have negative $F'$-reach, 
+  any maximum-reach $F'$-tine 
+  must be one of the extensions; 
+  it follows that $\rho(F') = 0$. 
+  Thus we have proved~\eqref{eq:rho-lowerbound}. 
+
+
+
+  \paragraph{Proving~\eqref{eq:mu-lowerbound}.} 
+  Let $w = xy$ be an arbitrary decomposition; 
+  this $x$ remains fixed for the remainder of the proof. 
+  (Note that $\Adversary^*$ is unaware of this decomposition.) 
+  % Let 
+  % \begin{align*}
+  %   R' &=  \{t \in F' : \reach_{F'}(t) = \rho(F') \}\,\quad\text{and} \\
+  %   B_x &= \{t \in F' : \exists t' \in R'\,, \ell(t \Intersect t') \leq |x| \}\,.
+  %   \,.
+  % \end{align*}
+  % % and set $C_x = \{t : t \in B_x, \reach_{F'}(t) = r_x\}$.
+  % % Finally, identify the tine-pair 
+  % % $(\tau_{\rho x}, \tau_x) = \EarlyDivWitness(R', C_x)$. 
+  % Finally, let $\tau_{\rho x} \in R', \tau_x \in B_x$ be two tines 
+  % so that 
+  % \begin{align*}
+  % \reach_{F'}(\tau_x) &= \max\{\reach_{F'}(t) : t \in B_x\}\quad\text{and} \\
+  % \ell(\tau_{\rho x} \Intersect \tau_x) &= \min \{ \ell(t_1 \Intersect t_2) : t_1 \in R', t_2 \in B_x\}
+  % \,.  
+  % \end{align*}
+  % % Note that 
+  % % $\reach_{F'}(\tau_\rho) = \reach_{F'}(\tau_{\rho x}) = \rho(F')$ 
+  % % and that 
+  % % $\tau_\rho$ and $\tau_{\rho x}$ may be the same tine.
+  % We say that the tines $\tau_x, \tau_{\rho x} \in F'$ \emph{witness} $\mu_x(F')$.
+  
+
+  Let $\tau_x, \tau_{\rho x} \in F'$ be two $yb$-disjoint tines 
+  so that 
+  $\reach_{F'}(\tau_{\rho x}) = \rho(F')$, 
+  $\reach_{F'}(\tau_x) = \mu_x(F')$, 
+  and, of all $yb$-disjoint tine pairs in $F'$
+  that attain this requirement, 
+  these two tines diverge the earliest. 
+  We say that the tines $\tau_x, \tau_{\rho x}$ \emph{witness} $\mu_x(F')$. 
+
+
+  Designate the witness tines $t_x, t_{\rho x} \in F$ 
+  in the same way as we have designated $\tau_x, \tau_{\rho x} \in F'$; 
+  specifically, 
+  $w, y$, and $F$ would substitute $w', yb$, and $F'$ 
+  in the recipe above. 
+  By assumption, $F$ is a canonical fork for $xy$. 
+  Therefore, 
+  $\rho(F) = \reach_F(t_{\rho x}) = \rho(xy)$, 
+  $t_x$ is $y$-disjoint with $t_{\rho x}$, 
+  and 
+  $\mu_x(F) = \reach_F(t_x) = \mu_x(y)$. 
+  % (It is possible that $t_\rho = t_{\rho x}$.)
+  We wish to show that 
+  $\mu_x(F')$ satisfies~\eqref{eq:mu-lowerbound}. 
+
+  If $b = \A$ then, by construction,
+  $F' = F$ and, therefore,
+  % $\tau_\rho = 
+  % t_\rho$, 
+  % $\tau_x = t_x$, and $\tau_{\rho x} = t_{\rho x}$. 
+  % Thus 
+  % $\tau_x$ and $\tau_{\rho x}$ are $yb$-disjoint.
+  % Since the $F'$-reach of every $F$-tine is one plus its $F$-reach, 
+  % $
+  % \mu_x(F') \geq 
+  % \reach_{F'}(\tau_x)
+  % = \reach_{F'}(t_x)
+  % = \reach_F(t_x) + 1
+  % = \mu_x(y) + 1
+  % $. 
+  $t_x$ and $t_{\rho x}$ are $yb$-disjoint in $F'$.
+  Note that the $F'$-reach of every $F$-tine is one plus its $F$-reach. 
+  Therefore, 
+  $
+  \mu_x(F') 
+  \geq \min(\reach_{F'}(t_{\rho x}), \reach_{F'}(t_x))
+  = \reach_{F'}(t_x)
+  = \reach_F(t_x) + 1
+  = \mu_x(y) + 1
+  $. 
+
+
+  If $b \in \{\h, \H\}$, 
+  all tines in $F'$ with label $|w| + 1$ arise from conservative extensions. 
+  Since the tines $t_x, t_{\rho x}$ are $yb$-disjoint in $F'$, 
+  it follows that $\mu_x(F') \geq \min(\reach_{F'}(t_x), \reach_{F'}(t_{\rho x})) \geq \reach_{F'}(t_x) = \reach_{F}(t_x) - 1 = \mu_x(y) - 1$. 
+  Here, the first inequality follows from the definition of relative margin and 
+  the second one from the fact that $\reach(t_x) \leq \reach(t_{\rho x})$ by assumption. 
+  The first equality follows from Fact~\ref{fact:reach-fork-ext} and 
+  the second one follows from our assumption that the tines $t_{\rho x}, t_x\in F$ witness $\mu_x(F) = \mu_x(y)$. 
+
+  However, we can tighten the above inequality when $\mu_x(y)$ is zero, as follows. 
+  Recall the sets $Z, S, R$, 
+  the zero-reach tine $z_1$, 
+  and the maximum-reach tine $r_1$ 
+  from Figure~\ref{fig:adv-opt}. 
+  Also recall that $z_1$, of all zero-reach tines, 
+  diverges earliest from any maximum-reach tine.
+  As $\reach_F(z_1) = \mu_x(F) = \mu_x(y) = 0$, 
+  it follows that 
+  % $z_1 \in Z$. 
+  % Thus there must be a tine $t^* \in R$ 
+  % $\ell(z_1 \Intersect t^*) = \min\{\ell(z \Intersect t) : z \in Z, t \in R\}$.
+  % In particular, 
+  $z_1$ and $r_1$ must be $y$-disjoint.
+  Let $\sigma_1 \in F'$ be the conservative extension of $z_1$.
+
+
+  \begin{description}[font=\normalfont\itshape\space]
+    \item[If $\rho(xy) \geq 1$ and $\mu_x(y) = 0$]
+      then $\sigma_1$ is the only new extension in $F'$ 
+      and it has reach zero in $F'$.
+      % then $\sigma_1$ must be $yb$-disjoint with $t^*$ in $F'$.
+      Note that 
+      $\reach_{F'}(r_1) = \reach_F(r_1) - 1 = \rho(F) - 1 \geq 0$ 
+      since $\rho(F) = \rho(xy) \geq 1$ by assumption. 
+      It follows that $\mu_x(F') \geq \min(\reach_{F'}(\sigma_1), \reach_{F'}(r_1) ) \geq \reach_{F'}(\sigma_1) = 0$. 
+
+
+
+
+    \item[If $\rho(xy) = 0$ and $\mu_x(y) = 0$] 
+      then $Z = R$ and $|Z| \geq 2$. 
+      % % there must be two zero-reach $y$-disjoint tines in $F$.
+      % % Specifically, 
+      % there must be a zero-reach tine $z \in R$ so that 
+      % % and 
+      % the pair $z_1, z$ are $y$-disjoint. 
+      % %  and, 
+      % % in particular,
+      % % $\ell(z_1 \Intersect z) = \min_{t_1, t_2 \in R} \ell(t_1 \Intersect t_2)$. 
+      If $b = \h$, 
+      $\sigma_1$
+      is the only tine in $F'$ with the maximum reach, zero. 
+      Note that 
+      $\reach_{F'}(r_1) = \reach_F(r_1) - 1 = \rho(F) - 1 \geq -1$. 
+      Since $\sigma_1$ and $r_1$ are $yb$-disjoint, 
+      it follows that 
+      $\mu_x(F') \geq \min(\reach_{F'}(\sigma_1), \reach_{F'}(r_1) ) 
+      \geq \reach_{F'}(r_1) \geq = -1$.
+
+      On the other hand, if $b = \H$ then 
+      $F'$ contains two new conservative extensions, 
+      $\sigma_1$ and $\sigma_2$, 
+      both with label $|xy| + 1$, 
+      where $z_1 \Prefix \sigma_1$ and $r_1 \Prefix \sigma_2$.  
+      These extensions, therefore, are $yb$-disjoint 
+      and have zero reach.
+      It follows that $\mu_x(F') \geq 0$.
+  \end{description}
+\end{proof}
+
+
+Note that 
+if we want \eqref{eq:mu-lowerbound} 
+to hold only for \emph{a given prefix} $x \PrefixEq w$ 
+(a scenario pertinent in~\cite{LinearConsistencySODA}), 
+the adversary $\Adversary^*$ 
+% in Proposition~\ref{prop:mu-lowerbound} 
+(which produces a canonical fork) 
+would be an overkill. 
+Instead, 
+we can use a simpler, prefix-aware adversary 
+such as the one mentioned 
+at the outset of Section~\ref{sec:opt-adversary}; 
+let us call this strategy $\Adversary$. 
+In addition, 
+instead of assuming Theorem~\ref{thm:opt-adversary-canonical}, 
+it suffices to assume 
+Proposition~\ref{prop:mu-lowerbound} inductively 
+for all strings of length $|w|$. 
+Let $F$ be the fork 
+built by $\Adversary$ for the string $w = xy$.
+In conjunction with Proposition~\ref{prop:mu-upperbound}, 
+this would imply ``$\rho(F) = \rho(w)$ and 
+$\mu_x(F) = \mu_x(y),$'' 
+a critical property used inside the above proof. 
+We omit further details.
+
+
+\subsection{Proof of Theorem~\ref{thm:relative-margin} and Theorem~\ref{thm:opt-adversary-canonical}}
+
+
+
+\paragraph{Proof of Theorem~\ref{thm:relative-margin}.}
+Let $w \in \{\h, \H, \A\}^*$. 
+If $w = \varepsilon$ then, by Claim~\ref{claim:rho-mu-A}, 
+$\rho(\varepsilon) = 0$. 
+If $|w| \geq 1$,~\eqref{eq:rho-recursive} is implied by 
+the combination of 
+Claim~\ref{claim:rho-mu-A},~\eqref{eq:rho-upperbound} and~\eqref{eq:rho-lowerbound}. 
+
+
+Let $w = xy$ be an arbitrary decomposition. 
+We proceed by induction on $|y|$. 
+If $|y| = 0$ then 
+Claim~\ref{claim:rho-mu-A} implies that $\mu_x(\varepsilon) = \rho(x)$. 
+Otherwise,~\eqref{eq:mu-relative-recursive} 
+is implied by the combination of 
+Claim~\ref{claim:rho-mu-A},~\eqref{eq:mu-upperbound} and~\eqref{eq:mu-lowerbound}.
+
+% The ``additionally'' part of Theorem~\ref{thm:relative-margin} 
+% is proven in Theorem~\ref{thm:opt-adversary-canonical}.
+\hfill\qed
+
+
+\paragraph{Proof of Theorem~\ref{thm:opt-adversary-canonical}.}
+The proof is by induction on $|w|$. 
+If $w$ is the empty string $\varepsilon$, 
+the only fork $F \Fork \varepsilon$ is the trivial fork 
+containing a single (honest) root vertex. 
+By Claim~\ref{claim:rho-mu-A}, 
+$F$ satisfies $\rho(\varepsilon) = 0$ 
+and 
+$\mu_\varepsilon(\varepsilon) = \rho(\varepsilon) = 0$.
+
+Now, let $n$ be a non-negative integer and 
+let $w$ be a characteristic string of length $n+1$. 
+Assume that Theorem~\ref{thm:opt-adversary-canonical} 
+holds for all characteristic strings of length $0, 1, \ldots, n$. 
+% In particular, this means that the fork $F_{n}$ 
+% built by $\Adversary^*$ for $w_1 \ldots w_{n}$ is canonical, 
+% i.e., for every decomposition $w_1 \ldots w_{n} = xy$, 
+% $\mu_x(F_{n}) = \mu_x(y)$.
+Note that this assumption satisfies 
+the premise in Proposition~\ref{prop:mu-lowerbound}. 
+A combined application of 
+Claim~\ref{claim:rho-mu-A}, Proposition~\ref{prop:mu-upperbound}, 
+and Proposition~\ref{prop:mu-lowerbound} 
+implies 
+Theorem~\ref{thm:opt-adversary-canonical} 
+for $|w| = n + 1$.
+\hfill\qed
+
+
+
+
+
+
+
+
+

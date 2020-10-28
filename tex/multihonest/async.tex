@@ -1,0 +1,424 @@
+We set the stage by stating the $\Delta$-synchronous model.
+
+\input{model-async}
+
+\paragraph{Road-map for the proof.}
+Let $w \in \{\perp, \h, \H, \A\}^*$, 
+$w' = \Reduce(w), n = |w|$, and $m = |\Reduce|$. 
+Our roadmap forward is as follows:
+\begin{enumerate}
+  \item 
+  Show that there is a bijection between 
+  $\Delta$-forks for $w$ and 
+  synchronous forks for $w'$. 
+  In particular, for each $\Delta$-fork $F \DeltaFork w$ 
+  there is an isomorphic synchronous fork $F' \Fork_0 w'$ 
+  and a bijective map $\{i \in [n] : w_i \neq \perp\} \rightarrow [m]$. 
+  This is shown in Proposition~\ref{prop:reduction-bijection}.
+
+  \item Show that if $w$ violates $\Delta$-settlement 
+  then some prefix $b \Prefix \Reduce(w)$ violates 
+  a suitably-defined combinatorial event $B_\Delta$.   
+  It is important that we can analyze this event 
+  using the techniques and results we have already established.
+  This is done in Lemma~\ref{lemma:async-catalan-uvp}.
+
+  \item Since the decisions made by $\Reduce$ at each slot 
+  depends on the $\Delta$ future slots, 
+  the distribution of the last few symbols of $\Reduce(w)$ 
+  will be ``distorted'' no matter how $w$ is distributed. 
+  Assuming $w$ has i.i.d.\ symbols, we need to 
+  show that the symbols 
+  in the aforementioned prefix $b \Prefix \Reduce(w)$ 
+  are i.i.d.\ as well. 
+  This is done in Lemma~\ref{prop:reduction-indep}.
+
+  \item Obtain a bound on $Pr[B_\Delta]$ in Bound~\ref{bound:unique-honest-catalan-Delta} and 
+  proceed to prove Theorem~\ref{thm:main-async}.
+\end{enumerate}
+
+
+
+\subsection{Structural properties of the reduction map}
+An important property of the reduction $w' = \Reduce(w)$ is that 
+it readily provides a bijection between $\Delta$-forks for $w$ 
+and synchronous forks for $w'$.
+
+\begin{proposition}\label{prop:reduction-bijection}
+  Let $w \in \{\perp, \h, \H, \A\}^*$ 
+  and $w' = \Reduce(w)$. 
+  Then, for every $\Delta$-fork $F \Fork w$ there is 
+  a synchronous fork $F' \Fork_0 w'$ 
+  which is isomorphic to $F$. 
+  $F'$ is called the \emph{image of $F$ under $\Reduce$}.
+  % Let $m : V(F) \rightarrow V(F')$ be the said isomorphism. 
+  % Furthermore, writing $w' = xy$ and taking 
+  % any $t \in F$, 
+  % let $u \in F'$ be the longest prefix of $m(t), \ell(u) \leq |x|$. 
+  % Then $\length(u) \geq \length(t) - |y|$.
+\end{proposition}
+\begin{proof}[Proof sketch.]
+  Let $F'$ be a copy of $F$. 
+  % Let $m : V(F) \rightarrow V(F')$ be the said isomorphism. 
+  Establish the natural bijection $m: V(F) \rightarrow V(F')$ 
+  given by the copying proess, 
+  i.e., $u \mapsto m(u)$, and 
+  relabel the vertices as 
+  \begin{equation}\label{eq:pi-reduction}
+    \text{$\ell(m(u)) = \pi(\ell(u))$ for each vertex $u \in F$}
+    \,.
+  \end{equation}
+  Set $r(F') = m(r(F))$ and $\ell(r(F')) = 0$.
+  It suffices to check that $F' \Fork_0 w'$, 
+  i.e., $F'$ is a valid (synchronous) fork for $w'$. 
+  Specifically, 
+  if there are two honest slots $h_1, h_2$ in $w$ 
+  within a distance $\Delta$ of each other, 
+  then the former honest slot is mapped to 
+  an adversarial slot in $w'$. 
+  Therefore, in $F'$, 
+  an honest vertex is aware of 
+  all honest vertices with smaller labels.
+% 
+  % The previous discussion implies that $t \in F$ implies  $\length(t) = \length(m(t))$. 
+  % The equation in the claim follows since 
+  % the trailing $|y|$ slots in $w'$ can add at most $|y|$ vertices to 
+  % any tine $m(t) \in F', \ell(m(t)) \leq |x|$.
+\end{proof}
+
+
+Next, we show that 
+a $\Delta$-settlement violation in $w$ implies 
+a combinatorial event in $\Reduce(w)\TrimSlot{\Delta} \in \{\h, \H, \A\}^*$. 
+It follows that we can use our existing stochastic techniques 
+to bound $\Delta$-settlement violations on $w$. 
+
+Let $w' \in \{\h, \H, \A\}^*$ be a characteristic string. 
+Define $b_i \in \{\pm 1\}$ as $b_i = 1$ iff $w'_i = \A$. 
+Let $S = (S_i)_{i =0}^{|w'|}$ be a simple biased walk on $\Z$ 
+defined as $S_0 = 0, S_i = S_{i-1} + b_i$.
+
+
+
+\begin{lemma}\label{lemma:async-catalan-uvp}
+  Let $w \in \{\perp, \h, \H, \A\}^*, \Delta, s, k \in \NN$ 
+  so that $|x| = s$ and $x_{s} \neq \perp$. 
+  % and $a' = \Reduce(a), |a'| = \Delta$.     
+  Let $w' = \Reduce(w)$ and 
+  write $w' = x'y'z'a'$ so that $|a'| = \Delta$ and $|y'| \geq 2k$. 
+  Recall the simple biased walk $S = (S_i)$ on $w'$ defined above.
+  Let $E$ denote the event that 
+  a slot $c'$ in $y'$ is Catalan in $x'y'z'$ 
+  \emph{and} $S_{c' + k + i} \leq S_{c'} - \Delta$ for all $i \geq 0$.
+  % Let $G_y$ be the event that 
+  % there is a uniquely honest slot $c$ in $y'_1 \ldots y'_k$ 
+  % that is Catalan in $w'$. 
+  % Let $B_\Delta$ be the event that 
+  % $S_{c + k + i} \geq S_{c} - \Delta$ for some $i \geq 0$. 
+  % % Let $E_y$ be the event that 
+  % there are at least $1 + \Delta$ 
+  % slots in $y'$ that are 
+  % Catalan in $x'y'z'$ and, in addition, 
+  % that the earliest one of these slots is uniquely honest. 
+  If $E$ occurs then 
+  $s$ is $(|y'|,\Delta)$-settled in $w$. 
+  % Here, 
+  % settlement is defined in~\ref{def:settlement-delta} and 
+\end{lemma}
+% We insist that the event $E_y$ in the lemma is sufficient, but not necessary, 
+% for the conclusion to hold.\footnote{ 
+%   In fact, there are other combinatorial events that lead to tighter tail bounds; 
+%   we defer the relevant analysis for a future version of this manuscript.
+% }
+\begin{proof}
+  % \subsection{Proof of Lemma~\ref{lemma:async-catalan-uvp}}
+  % Let $k' = k$ 
+  % and observe that any sequence of $k'$ vertices on a tine 
+  % must span at least $k'$ contiguous slots. 
+  % Let $r' = \pi(s) + k$ 
+  % and let $I' = [\pi(s), r']$.
+  Let $\pi$ be the bijection described after Definition~\ref{def:reduction-map}.
+  Note that $|x'| = \pi(s)$. 
+  Assume that $E$ occurs. 
+  % Let the slots $c'_i, i \in [1+\Delta]$ be Catalan in $x'y'z'$ 
+  % so that 
+  %  $|x'| < c_1 < \cdots < c_{1 + \Delta} \leq |x'y'|$.
+  Thus $y'$ contains a uniquely honest slot $c'$ which is Catalan in $x'y'z'$. 
+  Note that $S_{|w'|} \leq S_{|x'y'z'|} + \Delta \leq (S_{c} - \Delta) + \Delta \leq S_{c'}$ 
+  where the second inequality follows from the assumption that $E$ occurs. 
+  It follows that $c'$ is Catalan in $w'$ as well. 
+  Therefore, 
+  by Theorem~\ref{thm:unique-honest}, 
+  $c'$ has the UVP in $w'$.     
+  Let $c$ be the integer satisfying $c' = \pi(c)$. 
+
+  Let $b \PrefixEq xyz, |b| \geq |xy|$ and $b' = \Reduce(b) \PrefixEq x'y'z'$. 
+  (Necessarily, $|b'| \geq |x'y'|$.)
+  Since the reduction map gives an isomorphism between every 
+  $\Delta$-fork for $b$ and 
+  its unique image (which is a synchronous fork for $b'$) 
+  under the reduction $\Reduce$, 
+  it follows that $c$ has the UVP in $w$. 
+
+  For any $\Delta$-fork $F \DeltaFork b$, 
+  let $u \in F, \ell(u) = c$ be 
+  the unique vertex contained by every tine 
+  $t \in F$ viable at the onset of any slot after $c$. 
+  Consider all tines $\tau \in F$ so that 
+  % $\LengthBeyond{\tau}{s} \geq 1 + |y'|$ 
+  $\tau$ has at least $|y'|$ vertices with label at least $s + 1$.
+  and $\tau$ is viable at the onset of slot $\ell(\tau) + 1$. 
+  Since $\ell(\tau) \geq |xy| \geq c$, 
+  it follows that $u \PrefixEq \tau$. 
+  Thus all these tines $\tau$ 
+  agree about slot $s$ since $s < c = \ell(u)$. 
+  In particular, if $F$ contains two maximum-length tines $\tau_1, \tau_2$, 
+  each with at least $|y'|$ vertices after slot $s$, 
+  then they would agree about slot $s$. 
+  In fact, $\ell(\tau_1 \Intersect \tau_2) \geq c > s$. 
+  Hence $s$ must be $(|y'|, \Delta)$-settled in $F$ and, 
+  since $F$ was arbitrary, 
+  $s$ must be $(|y'|, \Delta)$-settled in $w$. 
+  % \hfill$\qed$
+  % 
+\end{proof}
+
+
+
+
+\subsection{Stochastic properties of the reduction map}
+It turns out that 
+if the bits in $w$ are i.i.d.\ then 
+so are the bits in a suitable prefix of $\Reduce(w)$ 
+albeit with a slightly different distribution 
+(which accounts for the absence of the empty slots). 
+Specifically, for any string $x = x_1 x_2 \ldots $ on any alphabet and any $k \in \NN$, 
+define $x\TrimSlot{k} \triangleq x_1 \ldots x_{|x| - k}$.
+
+\begin{proposition}\label{prop:reduction-indep}
+  Let $T \in \NN, w = w_1 \ldots w_T \in \{\perp, \h, \H, \A\}^T$ 
+  be a sequence of i.i.d.\ symbols, 
+  and define $p_\sigma \triangleq \Pr[w_1 = \sigma]$ for each $\sigma \in \{\perp, \h, \H, \A\}$.
+  Let $x = \Reduce(w)$ and let $\ell = |x|$. 
+  Write $f = 1 - p_\perp$ and $\alpha = (1 - f)^\Delta$. 
+  Then the symbols in the string $x\TrimSlot{\Delta}$ are i.i.d.\ 
+  with 
+  \begin{align}\label{eq:reduction-dist}
+    \begin{matrix*}[l]
+      \Pr[x_i = \h] &=& p_\h \cdot \alpha / f\,, \\
+      \Pr[x_i = \H] &=& p_\H \cdot \alpha / f\,, \quad \text{and}\\
+      \Pr[x_i = \A] &=& 1 - \alpha + p_\A \cdot \alpha / f\,
+    \end{matrix*}
+  \end{align}
+  for each $i \in [\ell - \Delta]$.
+\end{proposition}
+\begin{proof}
+  % \subsection{Proof of Proposition~\ref{prop:reduction-indep}}
+  First let us pretend for a moment that $T = \infty$; 
+  then $\ell = \infty$ as well. 
+  Let us write the infinite sequence $w$ as a concatenation of segments 
+  of $\perp$s punctuated by a single non-$\perp$ symbol. 
+  That is, write $w = b_0 e_1 b_1 e_2 b_2 \ldots$ 
+  where, for $i = 0, 1, \ldots$, $b_i = \perp^*$ and $e_i \in \{\h, \H, \A\}$. 
+  The reduction map $\Reduce$ translates a segment $e_i b_i$ into a symbol $z_i$ 
+  as follows:
+  \begin{align*}
+    z_i &= \begin{cases}
+      \A &\quad \text{if $e_i = \A$ or $|b_i| \leq \Delta - 1$}\, \\
+      e_i &\quad \text{if $e_i \in \{\h, \H\}$ and $|b_i| \geq \Delta$}\,.
+    \end{cases}
+  \end{align*}
+  In particular, the segments $e_i b_i$ as well as 
+  the events that determine the value of an $z_i$ are disjoint. 
+  Therefore, the symbols in the infinite sequence 
+  $z_1 z_2 \ldots = \Reduce(w_1 w_w \ldots)$ are 
+  independent and identically distributed.
+
+  If $T$ is finite, however, the last $\Delta$ symbols 
+  of $x = \Reduce(w)$ are ``distorted'' 
+  in that the translated symbols in this region will be more favored to be $\A$s. 
+  However, since the last $\Delta$ symbols of $x$ must correspond to 
+  at least $\Delta$ trailing symbols of $w$, 
+  it follows that $x_1 \ldots x_{\ell - \Delta}$ 
+  is a prefix of $z_1 z_2 \ldots\ $. 
+
+ %  The probabilities in~\eqref{eq:reduction-dist} 
+  % are a straightforward interpretation of the translation rule above.
+  It remains to compute the probabilities. 
+  Let $q_\sigma = \Pr[z_i = \sigma]$ for any $i$ and $\sigma \in \{\h, \H, \A\}$. 
+  Then 
+  $
+    q_\h = p_\h/(1 - p_\perp) p_\perp^{\Delta} = p_\h \alpha/f,
+    q_\H = p_\H \alpha/f
+  $, 
+  and 
+  $
+  q_\A 
+    = 1 - (q_\h + q_\H) 
+    = 1 - (p_\h + p_\H)\alpha/f 
+    = 1 - (f - p_\A)\alpha/f 
+    = 1 - \alpha + p_\A \alpha/f
+  $.
+  % \hfill$\qed$    
+\end{proof}
+
+The final ingredient to proving Theorem~\ref{thm:main-async} 
+is a tail bound for (the complement of) the event $E$ 
+in Lemma~\ref{lemma:async-catalan-uvp}. 
+
+
+\begin{bound}\label{bound:unique-honest-catalan-Delta}
+  % Assume the premise of Bound~\ref{bound:unique-honest-catalan}. 
+  Let $T, s, k \in \NN, T \geq s + 2k + \Delta$ and 
+  $\epsilon, q_\h \in (0, 1)$ so that 
+  the characteristic string $w' \in \{\h, \H, \A\}^T$ 
+  satisfies the $(\epsilon, q_\h)$-Bernoulli condition. 
+  Write $w' = x'y'z'$ so that $y' = w_s \ldots w_{s + 2k - 1}$. 
+  Let $G$ denote the event that 
+  $w'$ has a Catalan slot $c$ 
+  which belongs to $y'_1 \ldots y'_k$. 
+  Condition on $G$. 
+  Let $\Delta \in \NN$ and 
+  recall the simple biased random walk $S = (S_i)$ on $w'$ 
+  defined above Lemma~\ref{lemma:async-catalan-uvp}. 
+  Let $B_\Delta$ be the event that 
+  $S_{c + k + i} \geq S_{c} - \Delta$ for some $i \geq 0$. 
+  Then for large $k$, 
+  \begin{align}\label{eq:prob-Delta-after-catalan}
+    \Pr_w[B_\Delta \mid G] \leq 
+      \exp\left( 
+        -k\cdot \Omega(\epsilon^2)
+        % -k \left(\Omega(\min(\epsilon^3, \epsilon^2 q_\h)) + \epsilon^2 /2 \right) 
+        + 
+        \frac{\epsilon(1+\Delta)}{1 - \epsilon} 
+    \right)
+    \,.
+  \end{align}
+  % where $b(k, \epsilon)$ is the right-hand side 
+  % in the probability in Bound~\ref{bound:unique-honest-catalan}.
+\end{bound}
+% \subsection{Proof sketch of Bound~\ref{bound:unique-honest-catalan-Delta}}\label{sec:catalan-Delta-estimates}
+\begin{proof}~
+  For simplicity, write $p = q_\A$, and $q = q_\h + q_\H$. 
+  Conditioned on $G$, $S_c \geq S_{c + i}$ for all $i \geq 1$. 
+  Let $y = y'[c + 1 : c + k]$ so that $|y| = k$.
+  Moreover, $\#_\A(y) \leq \#_\h(y) + \#_\H(y)$. 
+  Let $f_i(k), i = 0, 1, \ldots$ be the probability that 
+  $S_{c + k} = S_c - i$. 
+  Thus we wish to upper-bound $f(\Delta, k) \triangleq \sum_{i = 0}^\Delta f_j(k)$.
+
+% \sum_{a = 0}^{\lceil k/2 \rceil - 1} 
+  Write $a = E_\A(y)$ and $h = k - a$ 
+  and suppose $h - a = j$ for some $j = 0, 1, 2, \ldots$\ .
+  Hence, for a fixed $j$, we have $h = (k+j)/2$ and $a = (k-j)/2$. 
+  In addition, $k$ and $j$ has the same parity.
+  Thus, 
+  \begin{align*}
+    f_j(k) 
+    &= {k\choose (k+j)/2} p^{(k-j)/2} q^{(k+j)/2} 
+    = {k\choose (k+j)/2} (pq)^{k/2} (q/p)^{j/2} 
+    \leq {k\choose k/2} (pq)^{k/2} (q/p)^{j/2} \\
+    &= O(1)\cdot \frac{2^k}{\sqrt{\pi k}} \cdot (1 - \epsilon^2)^k 2^{-k} \cdot (q/p)^{j/2} 
+    = O(1)\cdot  \frac{(1 - \epsilon^2)^{k/2}}{\sqrt{k}} \cdot (q/p)^{j/2}
+    % \,.
+  \end{align*}
+  since $p = (1 - \epsilon)/2$ and $q = (1+\epsilon)/2$. 
+  It follows that 
+  \begin{align*}
+    f(\Delta, k) &=\sum_{j = 0}^\Delta f_j(k) 
+    \leq \frac{O(1)}{\sqrt{k}}\cdot  (1 - \epsilon^2)^{k/2} \sum_{j = 0}^\Delta (q/p)^{j/2}
+    \leq \frac{O(1)}{\sqrt{k}}\cdot  \exp(- k \epsilon^2/2) \cdot (1 + \Delta) (q/p)^{\Delta/2}
+    \,.
+  \end{align*}
+  Since 
+  \begin{align*}
+    (q/p)^{1/2}
+    &= \left(\frac{1+\epsilon}{1 - \epsilon}\right)^{1/2}
+    = \left(1 + \frac{2\epsilon}{1 - \epsilon}\right)^{1/2} 
+    \leq \exp(\epsilon/(1 - \epsilon)) 
+    \,,
+  \end{align*}
+  we have 
+  \begin{align*}
+    % \Pr[B_\Delta \mid G_c]
+    f(\Delta, k)
+    &\leq \frac{O(1 + \Delta)}{\sqrt{k}}\cdot \exp\bigl(-k \epsilon^2/2 + (1 + \Delta) \epsilon/(1 - \epsilon) \bigr)
+    \,.
+  \end{align*}
+  Note that for fixed $\epsilon$ and $\Delta$, $f(\Delta, k)$ decreases geometrically in $k$. 
+  Thus $\Pr[B_\Delta \mid G_c] = \sum_{t \geq k} f(\Delta, t)$ 
+  is no more than the quantity in~\eqref{eq:prob-Delta-after-catalan}.
+\end{proof}
+
+
+\subsection{Proof of Theorem~\ref{thm:main-async}}
+  The symbols in $w$ are independent and identically distributed.
+  Write 
+  % $w = xa$ where $|x| \geq s, |a| = \Delta$ and 
+  $w' = \Reduce(w), w' = x'y'z'a', |a'| = \Delta$ and $|y'| \geq 1+\Delta$. 
+  Let $k$ be an integer so that $|y'| = 2k$. 
+  Recall the random walk $S = (S_i)$ on $w'$ 
+  defined above Lemma~\ref{lemma:async-catalan-uvp}. 
+  Let $G_1$ denote the (good) event that 
+  a slot $c'$ in $y'$ is Catalan in $x'y'z'$. 
+  Let $G_2$ denote the (good) event that 
+  $S_{c' + k + i} \leq S_{c'} - \Delta$ for all $i \geq 0$. 
+  By Lemma~\ref{lemma:async-catalan-uvp}, 
+  $G_1 \Intersect G_2$ implies $\overline{A}$. 
+  (Here, $\overline{\cdot}$ denotes the complement.) 
+  The contrapositive of the above statement gives us 
+  \begin{equation}\label{eq:G1G2}
+    \Pr[A] \leq \Pr[\overline{G_1}] + \Pr[\overline{G_2} \mid G_1]
+    \,.
+  \end{equation}
+
+  The terms on the right-hand side can be bounded from above 
+  using Bounds~\ref{bound:unique-honest-catalan} 
+  and~\ref{bound:unique-honest-catalan-Delta}, respectively, 
+  provided the symbols in $x'y'z'$ are i.i.d.\ with 
+  $\Pr[x'_1 = \A] = (1 - \epsilon)/2$. 
+  Let us check whether this condition holds. 
+  % It remains to check whether the symbols in $x'y'z'$ are i.i.d.\ with 
+  % $\Pr[x'_i = \A] = (1 - \epsilon)/2$. 
+  We have $f = 1 - p_\perp$ and $\alpha = (1-f)^\Delta$. 
+  Proposition~\ref{prop:reduction-indep} 
+  states that 
+  the symbols of $x'y'z'$ are i.i.d.\ 
+  with distribution given by~\eqref{eq:reduction-dist}. 
+  For each $\sigma \in \{\h, \H, \A\}$ we write 
+  $p'_\sigma = \Pr[x'_1 = \sigma]$. 
+
+  The condition~\eqref{eq:condition-prob-delta} 
+  can be equivalently stated as 
+  $1 - (1 - p_\A/f)\alpha = (1 - \epsilon)/2$. 
+  We check that 
+  $p'_\A 
+  = 1 - (p'_\h + p'_\H) 
+  = 1 - (p_\h + p_\H)\alpha/f
+  = 1 - (f - p_\A)\alpha/f
+  = 1 - (1 - p_\A/f)\alpha
+  = (1 - \epsilon)/2
+  $ 
+  and, consequently, $p'_\h + p'_\H = (1 + \epsilon)/2$. 
+
+  Hence we can directly apply 
+  Bound~\ref{bound:unique-honest-catalan-Delta} 
+  on the terms in the right-hand side of~\eqref{eq:G1G2} 
+  to conclude that 
+  \[
+    \Pr[A] \leq \exp\left( 
+      % -k\cdot \Omega(\epsilon^2)
+      -k \left(\Omega(\min(\epsilon^3, \epsilon^2 q_\h)) \right) 
+      + 
+      \frac{\epsilon(1+\Delta)}{1 - \epsilon} 
+    \right)
+    \,.
+  \]
+
+  The claim involving the distribution $\mathcal{W}$ 
+  follows from the analogous claim in Theorem~\ref{thm:main}. 
+  % This completes the proof of Theorem~\ref{thm:main-async}. 
+  \hfill $\qed$  
+
+
+

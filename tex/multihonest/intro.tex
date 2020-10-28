@@ -1,0 +1,267 @@
+Proof-of-Stake (PoS) blockchain protocols have emerged as a viable
+alternative to resource-intensive Proof-of-Work (PoW) blockchain
+protocols such as Bitcoin and Ethereum. These PoS protocols are
+organized in rounds (which we call \emph{slots} in this paper); their
+most critical algorithmic component is a leader election procedure
+which determines---for each slot---a subset of participants with the
+authority to add a block to the blockchain. Existing security analyses
+of these protocols are logically divided into two components: the
+first reasons about the properties of the leader election process, the
+second reasons about the combinatorial properties of the blockchains
+that can be produced by an \emph{idealized} leader schedule in the
+face of adaptive adversarial control of some participants. An
+attractive side effect of this structure is that the combinatorial
+considerations can be treated independently of other aspects of the
+protocol. A recent article of Blum et al.~\cite{LinearConsistency}
+gave an axiomatic treatment of this combinatorial portion of the
+analysis which we extend in this paper.
+
+These common combinatorial arguments can be formulated with very
+little information about the leader election process.  Specifically,
+current analyses focus on three parameters:
+\begin{itemize}
+\item $p_\h$, the probability that a slot is \emph{uniquely honest}, having a single honest leader;
+\item $p_\H$, the probability that a slot is \emph{multiply honest}, having multiple, but honest,
+  leaders; and
+\item $p_\A$, the probability that a slot has at least one adversarial leader.
+\end{itemize}
+Our major contribution is a generic, rigorous guarantee of consistency
+under the most desirable assumption\footnote{ 
+  Consistency is unachievable in the case $p_\h + p_\H < p_\A$.
+  %leaves little room for consistency
+%since in this case  
+%the adversary can create a private protocol execution identically
+%distributed to that of the honest parties and by selectively disclosing it, it
+%can break consistency.
+  See \cite{GK18} for a detailed discussion of the honest majority
+  assumption. } $p_\h + p_\H > p_\A$ that achieves optimal consistency
+error $\exp(-\Theta(k))$ as a function of confirmation time $k$. Our
+analysis can be directly applied to existing protocols to improve
+their consistency guarantees.
+
+To contrast this with existing literature, the analysis of Ouroboros
+Praos~\cite{Praos} and Ouroboros Genesis~\cite{Genesis}
+%\footnote{The chain selection
+%  rule in Genesis is a combination of the usual longest-chain rule and
+%  a chain-density based rule.}
+require the threshold assumption $p_\h - p_\H > p_\A$ to achieve the
+optimal consistency error of $e^{-\Theta(k)}$. Note how multiply
+honest slots actually \emph{detract} from security, appearing
+negatively in the basic security threshold. The consistency analyses
+in Snow White~\cite{SnowWhite} and Sleepy Consensus~\cite{Sleepy}
+assume an improved threshold $p_\h > p_\A$; however, they only
+establish a consistency error bound of $e^{-\Theta(\sqrt{k})}$. Note
+here that multiply honest slots appear neutrally. All existing
+analyses break down if $p_\h < p_\A$, i.e., when the uniquely
+honest slots are less probable than the adversarial slots.
+
+% {\color{red} XXXX I got to here.}
+
+Multiply honest slots may arise by design, e.g., when each player
+checks privately whether he is a leader.  They may also occur
+naturally in the non-synchronous setting when the time between the
+broadcast of two blocks is exceeded by network delay---in this case
+the party issuing the later block may not be aware of the earlier
+block which can result the two blocks sharing the same chain history,
+a de facto incidence of multiple honest leaders. The role of these
+slots is rather delicate: while it is good for the system to have many
+honest blocks, \emph{concurrent} blocks can help the adversary in
+creating two long, diverging blockchains that might jeopardize the
+consistency property. Our new analysis shows that this second effect
+can be mitigated, achieving consistency error bound of
+$e^{-\Theta(k)}$ under the (tight) assumption $p_\h + p_\H > p_\A$.
+
+
+
+\paragraph{Our results and contributions.} 
+As described above, we show for the first time that PoS blockchain
+protocols using the longest-chain rule can achieve a consistency error
+of $e^{-\Theta(k)}$ under the desirable condition
+$p_\h + p_\H > p_\A$.  This improves the security guarantee of all
+``longest chain rule''  PoS protocols such as Praos~\cite{Praos},
+Genesis~\cite{Genesis}, and Snow White~\cite{SnowWhite}
+(we remark that other PoS protocols such as Algorand~\cite{DBLP:journals/corr/Micali16} 
+operate in a different setting where explicit participation bounds are assumed
+and forks can be prevented).
+We discuss
+our results in more detail before turning to the model and proofs.
+
+% \begin{itemize}
+% \item
+Our analysis in the simple synchronous model achieves the same
+asymptotic error bound as in~\cite{LinearConsistencySODA}---the
+tightest result in the literature---under a much weaker assumption,
+namely $p_\h + p_\H > p_\A$.  Thus PoS protocols can in fact achieve
+consistency with $p_\h < p_\A$, a regime beyond reach of all previous analyses. 
+When uniquely honest slots are rare 
+(i.e., when $p_\h$ is very small), 
+our bound has the desired dependence on $p_\h$. 
+Moreover, when $p_\H = 0$ (i.e., all honest slots are in fact
+uniquely honest), we exactly recover the bound
+in~\cite{LinearConsistencySODA}. 
+We also give an algorithm to explicitly compute the probability 
+that a given slot encounters a consistency violation 
+under the idealized leader election mechanism. 
+The time and space required by this algorithm is cubic 
+in the length of the protocol execution.
+
+Next, we consider a variant model where the honest players use a
+consistent tie-breaking rule when selecting the longest chain.  (I.e.,
+when a fixed set of blockchains of equal length are presented to a
+collection of honest players, they all select the same chain.
+In previous models, the adversary had the right to break such ties by influencing
+network delivery.)
+Assuming $p_\h + p_\H > p_\A$, we prove that the consistency error
+bound in this model is identical to the $e^{-\Theta(k)}$ bound
+in~\cite{LinearConsistencySODA} \emph{even when $p_\h =
+  0$}. No existing analysis survives in this regime.
+
+% Thus not only is our analysis a first in this parameter regime, but
+% our bound is also the tightest in any regime.
+
+  % \item 
+\paragraph{$\Delta$-synchronous setting.}
+In the $\Delta$-synchronous
+communication setting, all messages are delivered with at most
+a $\Delta$ delay. Our results mentioned above can be transferred to
+this setting using the \emph{$\Delta$-synchronous to synchronous reduction
+approach} used in the Ouroboros Praos analysis~\cite{Praos}. Thus, we
+can achieve a consistency error probability of $e^{-\Theta(k)}$ in this
+setting as well. 
+This analysis is presented in 
+Section~\ref{sec:async}.
+
+  % \item 
+\paragraph{A technical overview.}
+We initially work in the synchronous communication model and extend
+the synchronous combinatorial framework
+of~\cite{LinearConsistency} to accommodate multiply honest
+slots. 
+% Many of the important constructs and proofs from their
+% development break down
+% and some critical combinatorial notions 
+% % in their framework 
+% % of ``relative margin'' and ``balanced forks'' 
+% do not retain their direct significance in the multi-leader setting. 
+% It appears that we need new tools with the right expressive properties.
+
+First, our analysis focuses on a combinatorial event called a ``Catalan
+slot.''\footnote{The name is a nod to the \emph{Catalan number} in
+  combinatorics: The $n$th Catalan number $C_n$ is the number of
+  strings $w \in \{0, 1\}^{2n}$ so that every prefix $x$ of $w$
+  satisfies $\#_0(x) \geq \#_1(x)$.} Catalan slots are honest slots
+$c$ with the property that any interval containing $c$ possesses
+strictly more honest slots---with any number of honest leaders---than
+adversarial ones. The analysis of~\cite{SnowWhite} and ~\cite{Sleepy}
+introduced this basic concept, though they counted only uniquely
+honest slots. In comparison with their analysis, then, our treatment
+has two important advantages: first of all, we let multiply honest
+slots count in the analysis and, additionally, we achieve strikingly
+stronger error bounds: specifically, we achieve optimal settlement
+error of $\exp(-\theta(k))$ rather than $\exp(-\theta(\sqrt{k}))$.
+
+A Catalan slot $c$ acts as a barrier for the adversary in that if an
+honest blockchain from a slot $h < c$ is padded with adversarial
+blocks and presented to an honest observer at slot $c + 1$, the
+observer will never adopt this blockchain.  As a result, the chains
+adopted by this honest observer must contain \emph{some} block from
+slot $c$.  Note that this is true \emph{even if $c$ is
+  multiply honest}.  A critical observation is that \emph{a slot is
+  Catalan if and only if all competitive blockchains in future slots
+  contain at least one block from this slot}.  Thus, if a Catalan slot
+$c$ is uniquely honest, all blockchains that are eligible to be
+adopted by future honest players must contain the (only) honest block
+issued from slot $c$.  We call this the ``Unique Vertex Property''
+(UVP).  Note how the UVP is reminiscent of the ``Common Prefix
+Property'' (CP) in the literature. Thus, together, the UVP and 
+Catalan slots act as a conduit between consistency
+violations and the underlying stochastic process. 
+
+Our major technical challenge is to bound the probability that Catalan
+slots are infrequent. Here we break away entirely from the analysis
+of~\cite{SnowWhite} and approach the question using the theory of
+generating functions and stochastic dominance. We find an exact
+generating function for a related event and use this, by dominance, to
+control the undesirable event that a long window of slots is devoid of
+Catalan slots. This yields
+% permits us to achieve
+asymptotically optimal settlement bounds.
+
+Finally, it follows from the discussion above that if two consecutive
+slots are Catalan then any subsequent honest block must contain, in
+its prefix, a block from each of these slots.  In a setting where all
+honest players use a consistent longest-chain selection rule,
+% Theorem~\ref{thm:multiple-honest} further states
+we show that both slots have UVP as well.  Since Catalan slots can be
+multiply honest, PoS protocols can achieve a consistency error bound
+of $e^{-\Theta(k)}$ in this model even if $p_\h = 0$.
+
+In a separate line of reasoning, in Section~\ref{sec:recursion}, 
+we generalize the fork-theoretic framework of~\citet{LinearConsistency} for the multi-leader setting. 
+Here, we characterize the UVP 
+in terms of the so-called ``relative margin,'' 
+a combinatorial property of a given slot. 
+We describe an adversary who optimally attacks the UVP 
+of all slots, simultaneously. 
+Next, we prove a recurrence relation for relative margin. 
+Suppose each slot is 
+independently and identically chosen 
+(by the leader election mechanism) 
+to be either uniquely honest, multiply honest, or adversarial. 
+The recurrence relation mentioned above then 
+leads to an algorithm to explicitly compute 
+the probability that 
+a given slot encounters a consistency violation; 
+see Section~\ref{sec:exact-prob}. 
+In contrast, the Catalan slot-centric characterization of the UVP 
+gives us only an asymptotic bound on this probability. 
+It can be concluded that the fork-framework, after all, 
+is expressive enough to capture consistency violations 
+in the multi-leader setting.
+%No existing
+%analysis can handle this parameter regime.
+
+
+\paragraph{Outline.}
+We specify our model in Section~\ref{sec:model} and focus on a
+specific consistency property called ``$k$-settlement.''  This section
+also contains our main theorems; the proofs are deferred to
+Section~\ref{sec:bounds-main-proofs}.  In
+Section~\ref{sec:definitions}, we describe amplifications
+% further necessary elements of
+to the fork framework of~\cite{LinearConsistency} in order to
+%so that we can
+explore the relationship between Catalan slots and the UVP. 
+In Section~\ref{sec:bounds-main-proofs},
+we present two bounds on the stochastic events of interest, e.g., the
+rarity of a Catalan slot; these bounds lead to short proofs of the
+main theorems.  The proofs of these bounds are presented next in
+Section~\ref{sec:estimates} which contains all of our probabilistic
+arguments.  
+
+Section~\ref{sec:recursion} contains an alternative treatment 
+of the UVP via fork-theoretic notions of~\cite{LinearConsistency}. 
+Along the way, it describes an optimal adversary who simultaneously attacks the consistency of all slots. 
+It also describes an algorithm to compute explicit values 
+for the probability of consistency violations. 
+The proofs of two important theorems from this section 
+are presented subsequently in Section~\ref{sec:margin-proof}.
+
+
+Our treatment of the $\Delta$-synchronous setting is
+presented in Section~\ref{sec:async}.  In Section~\ref{sec:cp}, we
+treat the traditional Common Prefix (CP) violations using our bounds
+on the UVP.  
+
+In Appendix~\ref{sec:cp-forks}, 
+we characterize common prefix violations 
+in the presence of multiply honest slots 
+using ``balanced forks'' from~\cite{LinearConsistency} (and, importantly, 
+without using Catalan slots).
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

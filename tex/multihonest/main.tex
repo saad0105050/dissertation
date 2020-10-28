@@ -1,0 +1,326 @@
+\documentclass{article}
+\usepackage{fullpage}
+\usepackage{amsmath,amsthm}
+\usepackage{authblk}
+
+\usepackage{stix2}
+ % \usepackage{libertine}
+
+%===========================
+
+\usepackage{microtype}
+\usepackage{amsfonts,amssymb}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\newtheorem{claim}{Claim}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{bound}{Bound}
+\newtheorem{fact}{Fact}
+\newtheorem*{fact*}{Fact}
+
+\theoremstyle{definition}
+\newtheorem{remark}{Remark}
+\newtheorem{observation}{Observation}
+
+\bibliographystyle{plainnat}
+
+
+
+% \usepackage{caption,subcaption}
+\usepackage{tikz}
+\usetikzlibrary{automata,arrows,positioning,calc}
+\usepackage{pgfplots}
+% \pgfplotsset{compat=1.15}
+\usepackage{subfiles}
+\usepackage[numbers, sectionbib]{natbib}
+\usepackage[inline]{enumitem}
+\usepackage{hhline}
+\usepackage{multirow}
+\usepackage{mathtools}
+
+
+\usepackage{hyperref}
+
+\newcommand{\Ignore}[1]{}
+
+
+\newcommand{\gmargin}{\mathbf{m}}
+\DeclareMathOperator{\Exp}{\mathbb{E}}
+\DeclareMathOperator{\argmax}{arg\,max}
+\DeclareMathOperator{\argmin}{arg\,min}
+\newcommand{\gf}[1]{\mathsf{#1}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\hdepth}{\mathbf{d}}
+\DeclareMathOperator{\length}{length}
+\DeclareMathOperator{\depth}{depth}
+\DeclareMathOperator{\height}{height}
+\DeclareMathOperator{\gap}{gap}
+\DeclareMathOperator{\reach}{reach}
+\DeclareMathOperator{\reserve}{reserve}
+\DeclareMathOperator{\divergence}{div}
+\DeclareMathOperator{\tdivergence}{tdiv}
+\newcommand{\Slot}{\textsl{sl}}
+\newcommand{\slot}{\Slot}
+\newcommand{\fprefix}{\sqsubseteq}
+\newcommand{\Adversary}{\mathcal{A}}
+\newcommand{\Challenger}{\mathcal{C}}
+\newcommand{\Distribution}{\mathcal{D}}
+\newcommand{\dominatedby}{\preceq}
+\newcommand{\StationaryRho}{\mathcal{R}_\infty}
+\newcommand{\DistRho}{\mathcal{R}}
+\newcommand{\Poly}{\mathrm{poly}}
+\newcommand{\SuchThat}{:}
+\newcommand{\Given}{\mid}
+\newcommand{\Union}{\cup}
+\newcommand{\BigUnion}{\bigcup}
+\newcommand{\Fork}{\vdash}
+\newcommand{\ForkPrefix}{\sqsubseteq}
+\newcommand{\SlotDiv}{\mathrm{div_{\mathsf{slot} }}}
+\newcommand{\PrefixEq}{\preceq}
+\newcommand{\Prefix}{\prec}
+% \newcommand{\LCR}{\mathrm{LC}}
+\newcommand{\DominatedBy}{\preceq}
+\newcommand{\Chain}{\mathcal{C}}
+\newcommand{\Intersect}{\cap}
+\newcommand{\SlotCP}{\mathrm{CP}^{\mathsf{slot}}}
+\newcommand{\kSlotCP}[1][k]{{#1}\text{-}\SlotCP}
+\newcommand{\CP}{\mathrm{CP}}
+\newcommand{\kCP}[1][k]{{#1}\text{-}\CP}
+\newcommand{\defeq}{\triangleq}
+\newcommand{\TrimSlot}[1]{^{\lfloor {#1}}}
+\newcommand{\SlotDivergence}{\mathrm{div}_{\mathsf{slot}}}
+\newcommand{\pinch}[2]{{#2}^{\vartriangleright {#1} \vartriangleleft} }
+\newcommand{\cut}[2]{{#2}^{{#1} \vartriangleleft} }
+\newcommand{\h}{\mathtt{h}}
+\renewcommand{\H}{\mathtt{H}}
+% \newcommand{\HH}{\mathsf{H}}
+\newcommand{\A}{\mathtt{A}}
+\newcommand{\Hheavy}{\h\H\text{-heavy}}
+\newcommand{\Aheavy}{\A\text{-heavy}}
+
+\newcommand{\Reduce}{\rho_\Delta}
+\newcommand{\DeltaFork}{\Fork_\Delta}
+% \newcommand{\LengthBeyond}[2]{ {#1}/{#2} }
+% \newcommand{\Restrict}[2]{ {#1}\big|_{#2} }
+% \newcommand{\LengthRestrict}[2]{ \length\left( \Restrict{#1}{#2} \right) }
+
+
+
+\makeatletter
+% \renewcommand\maketitle{\AB@maketitle} % revert \maketitle to its old definition
+\renewcommand\AB@affilsepx{\quad\protect\Affilfont} % put affiliations into one line
+\makeatother
+
+
+%============ Authors ================
+\author[1,3]{Aggelos Kiayias}
+\author[2]{Saad Quader}
+\author[2,3]{Alexander Russell}
+
+\affil[1]{University of Edinburgh}
+\affil[2]{University of Connecticut}
+\affil[3]{IOHK}
+
+
+
+
+
+%---------------------------
+
+\begin{document}
+
+\title{
+Consistency of 
+Proof-of-Stake Blockchains
+with Concurrent Honest Slot Leaders%*
+% \thanks{\color{red}Identify applicable funding agency here. If none, delete this.}
+}
+
+
+\maketitle
+
+  
+
+\begin{abstract}
+  We improve the fundamental security threshold of 
+  eventual consensus Proof-of-Stake
+  (PoS) blockchain protocols under longest-chain rule, 
+  reflecting for the first time the
+  positive effect of rounds with concurrent honest leaders.  Current
+  analyses of these protocols 
+  reduce consistency to the dynamics of an abstract, round-based block
+  creation process that is determined by three probabilities:
+  \begin{itemize}
+  \item $p_\A$, the probability that a round has at least one adversarial leader;
+  \item $p_\h$, the probability that a round has a single honest leader; and
+  \item $p_\H$, the probability that a round has multiple, but honest, leaders.
+  \end{itemize}
+  We present a 
+  consistency analysis that achieves the optimal threshold $p_\h + p_\H > p_\A$. 
+  This is a first in the literature and can be applied
+  to both the simple synchronous setting and the setting with bounded
+  delays. 
+  Moreover, we achieve the optimal consistency error $e^{-\Theta(k)}$ where $k$ is the confirmation time. 
+  We also provide an efficient algorithm to explicitly calculate these error probabilities in the synchronous setting.
+
+  
+  All existing consistency analyses either incur a penalty
+  for rounds with concurrent honest leaders, 
+  or treat them neutrally. 
+  Specifically, the consistency analyses in Ouroboros Praos (Eurocrypt 2018) and
+  Genesis (CCS 2018) assume that the probability of a uniquely honest
+  round exceeds that of the other two events combined 
+  (i.e., $p_\h - p_\H > p_\A$); the analyses in
+  Sleepy Consensus (Asiacrypt 2017) and Snow White (Fin. Crypto 2019)
+  assume that a uniquely honest round is more likely than an
+  adversarial round 
+  (i.e., $p_\h > p_\A$). 
+  In addition,
+  previous analyses completely break down when uniquely honest rounds
+  become less frequent, i.e., $p_\h < p_\A$. 
+  These
+  thresholds determine the critical trade-off between the honest majority,
+  network delays, and consistency error.
+
+  Our new results can be directly applied to improve the 
+  consistency guarantees of the existing protocols. 
+  We complement these results with a consistency analysis in the setting
+  where uniquely honest slots are rare, even letting $p_\h = 0$, under
+  the added assumption that honest players adopt a consistent chain
+  selection rule.
+  % Our analysis provides a direct connection between
+  % the Ouroboros analysis by Blum et al. (SODA 2020) focusing on
+  % ``relative margin'' and 
+  % the Sleepy consensus analysis (Asiacrypt 2017) focusing on
+  % ``strong pivots.''
+
+  %% ============ ICDCS abstract =====================
+  %
+  % We improve the fundamental security threshold of 
+  % eventual consensus Proof-of-Stake
+  % (PoS) blockchain protocols 
+  % under the longest-chain rule, 
+  % reflecting the positive effect of rounds with concurrent honest leaders.  
+  % Current security analyses 
+  % reduce consistency to the dynamics of an abstract, round-based block
+  % creation process that is determined by three events associated with
+  % a round: 
+  % (i) event $A$: at least one adversarial leader, 
+  % (ii) event $S$: a single honest leader, and 
+  % (iii) event $M$: multiple, but honest, leaders. We present 
+  % an asymptotically optimal 
+  % consistency analysis assuming  
+  % that an honest round 
+  % is more likely than an adversarial round 
+  % (i.e., $\Pr[S] + \Pr[M] > \Pr[A]$); 
+  % this threshold is optimal.
+  % This is a first in the literature and can be applied
+  % to both the simple synchronous communication as well as 
+  % communication with bounded delays.
+
+  % In all existing consistency analyses, 
+  % event $M$ is either penalized 
+  % or treated neutrally.
+  % Specifically, 
+  % the consistency analyses in Ouroboros Praos (Eurocrypt 2018) and
+  % Genesis (CCS 2018) assume that $\Pr[S] - \Pr[M] > \Pr[A]$; the analyses in
+  % Sleepy Consensus (Asiacrypt 2017) and Snow White (Fin. Crypto 2019)
+  % assume that $\Pr[S] > \Pr[A]$. 
+  % We emphasize that these
+  % thresholds determine the critical trade-off between the honest majority,
+  % network delays, and consistency error.
+  % Our new results can be directly applied to improve the 
+  % security guarantees of the existing protocols. 
+  
+  % We complement these results by analyzing the setting
+  % where $S$ is rare, even allowing $\Pr[S] = 0$, under the added assumption
+  % that honest players adopt a consistent chain selection rule. 
+  % In contrast, existing analyses completely break down 
+  % if $\Pr[S] < \Pr[A]$. 
+
+
+\end{abstract}
+
+% Proof-of-Stake blockchains, security, consistency, concurrent honest slot leaders
+
+\section{Introduction}
+% \cite{Praos}
+\input{intro}
+
+\section{The model and our main theorems}\label{sec:model}
+\input{model}
+
+\section{Unique Vertex Property via Catalan slots}\label{sec:definitions}
+\input{definitions}
+% \paragraph{Structural properties of a fork.}
+\input{fork}
+\subsection{Catalan slots and the UVP}\label{sec:catalan}
+\input{catalan-cp}
+
+
+\section{Main theorems via tail bounds for Catalan slots}\label{sec:bounds-main-proofs}
+\input{bounds}
+
+\section{Proofs of Bounds~\ref{bound:unique-honest-catalan} and~\ref{bound:two-catalans}}\label{sec:estimates}
+\input{estimates}
+
+\section{An optimal online adversary against slot settlement}
+\label{sec:recursion}
+\input{recursive-formulation}
+\subsection{An algorithm to compute exact settlement probabilities}
+\label{sec:exact-prob}
+\input{exact-probabilities}
+
+\section{Proofs of Theorem~\ref{thm:relative-margin} and Theorem~\ref{thm:opt-adversary-canonical}}
+\label{sec:margin-proof}
+\input{margin-proof}
+
+\section{The semi-synchronous setting}\label{sec:async}\label{sec:async-model}
+\input{async}
+
+
+\section{The common prefix property}\label{sec:cp}\label{sec:cp-model}
+\input{cp}
+
+
+\section*{Acknowledgments}
+We thank Peter Ga\v{z}i (IOHK) for finding a bug in Fact~\ref{fact:fork-structure} in a previous version of this paper. 
+
+
+\bibliography{forks,abbrev0,crypto_crossref}
+
+\appendix
+
+
+% \section{Catalan slots and relative margin}
+% \label{sec:fork-margin-catalan}\label{sec:catalan-margin}
+% \input{fork-margin-catalan}
+
+
+\break
+\newpage
+\section{CP violations and balanced forks with concurrent honest leaders}
+\label{sec:cp-forks}
+\input{cp-forks}
+
+
+
+
+
+% \section{Figures}\label{sec:figures}
+% \input{figures}
+
+
+
+
+% \section{IEEE}
+% \input{ieee_blob}
+
+\end{document}

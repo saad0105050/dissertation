@@ -1,0 +1,52 @@
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[scale=0.85,>=stealth', auto, semithick,
+    honest/.style={circle,draw=black,thick,text=black,double,font=\small},
+    malicious/.style={fill=gray!10,circle,draw=black,thick,text=black,font=\small}]
+    \node at (0,-2) {$w =$};
+    \node at (1,-2) {$\h$};
+    \node[honest]    at (1,-.5)  (ab1) {$1$};
+    \node at (2,-2) {$\A$};
+    \node[malicious] at (2,0)  (b2) {$2$}; \node[malicious] at (2,1) (c1) {$2$};
+    \node at (3,-2) {$\h$};    \node[honest]    at (3,1)  (c2) {$3$};
+    \node at (4,-2) {$\A$};    \node[malicious] at (4,0)  (b3) {$4$}; \node[malicious] at (4,-1) (a2) {$4$};
+    \node[malicious] at (4,1) (c3) {$4$};
+    \node at (5,-2) {$\h$};    \node[honest]    at (5,-1) (a3) {$5$};
+    \node at (6,-2) {$\H$};    \node[honest]    at (6,0)  (b4) {$6$}; \node[honest]    at (6,-1)  (a4) {$6$};
+    \node at (7,-2) {$\A$};    \node[malicious] at (7,1)  (c4) {$7$};
+    \node at (8,-2) {$\A$};    \node[malicious] at (8,1)  (c5) {$8$};
+    \node at (9,-2) {$\H$};    \node[honest]    at (9,0)  (b5) {$9$}; \node[honest]    at (9,-1)  (a5) {$9$};
+    \node[honest] at (-1,0) (base) {$0$};
+    % \node[state,honest] at (3,-1) (bottom) {};
+    % \node[state,honest] at (7,1) (top) {$H$};
+    \draw[thick,->] (base) to[bend left=10] (c1);
+    \draw[thick,->] (base) to[bend right=10] (ab1);
+    \draw[thick,->] (ab1) to[bend right=10] (a2);
+    \draw[thick,->] (a2) -- (a3);
+    \draw[thick,->] (a3) -- (a4);
+    \draw[thick,->] (ab1) to[bend left=10] (b2);
+    \draw[thick,->] (b2) -- (b3);
+    \draw[thick,->] (b3) -- (b4);
+      % \draw[thick,->] (b4) -- (b5);
+    \draw[thick,->] (c4) to[bend right=10] (b5);
+    \draw[thick,->] (a4) -- (a5);
+    \draw[thick,->] (c1) -- (c2);
+    \draw[thick,->] (c2) -- (c3);
+    \draw[thick,->] (c3) -- (c4);
+    \draw[thick,->] (c4) -- (c5);
+    % \draw[thick,<->] (3,0) -- (7,0) node[pos=.5] {$\gap(f)$};
+  \end{tikzpicture}
+  \caption{A fork $F$ for the characteristic string $w = \h\A\h\A\h\H\A\A\H$;
+    vertices appear with their labels and honest vertices are
+    highlighted with double borders. Note that the depths of the
+    (honest) vertices associated with the honest indices of $w$ are
+    strictly increasing. Note, also, that this fork has three disjoint
+    paths of maximum depth. 
+    In addition, two honest vertices have label 6 and two more have label 9, 
+    indicating the fact that two honest leaders are associated with each of the (honest) slots 6 and 9. 
+    Honest vertices with the same label are concurrent and, therefore, cannot extend each other.
+    Note that the two honest vertices with label 6 extend different vertices with the same depth. 
+    This is allowed since any tie in the longest-chain rule is broken by the adversary. 
+    }
+  \label{fig:fork}
+\end{figure}

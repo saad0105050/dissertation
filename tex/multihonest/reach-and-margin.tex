@@ -1,0 +1,396 @@
+
+\subsection{Closed forks, reach, and extensions}
+\begin{definition}[Closed fork]
+  A fork $F$ is \emph{closed} if every leaf is honest. For convenience, we say the trivial fork is closed.
+\end{definition}
+Closed forks have two nice properties that make them especially useful in reasoning about the view of honest parties.
+First, 
+all honest observers will select a unique longest tine from this fork 
+(since all longest tines in a closed fork are honest, 
+honest parties are aware of all previous honest blocks, 
+they observe the longest chain rule, and they employ the same consistent tie-breaking rule).  
+Second, 
+% recalling our description of the
+% settlement game, 
+closed forks intuitively capture decision points for the adversary.
+The adversary can potentially show many tines to many honest parties, 
+but once an honest node has been placed on top of 
+a tine, any adversarial blocks beneath it are part of the public record and are visible to all honest parties. 
+For these
+reasons, we will often find it easier to reason about closed forks than arbitrary forks. % (without loss of generality).
+
+The next few definitions are the start of a general toolkit for reasoning about an adversary's capacity to build highly diverging paths in forks, based on the underlying characteristic string.
+%current state of a fork.
+
+%%%%Reach and margin
+\begin{definition}[Gap, reserve, and reach]\label{def:gap-reserve-reach}
+For a closed fork $F \vdash w$ and its unique longest tine $\hat{t}$, we define the \emph{gap} of a tine $t$ to be $\gap(t)=\length(\hat{t})-\length(t)$.
+Furthermore, we define the \emph{reserve} of $t$, denoted $\reserve(t)$, to be the number of adversarial indices in $w$ that appear after the terminating vertex of $t$. More precisely, if $v$ is the last vertex of $t$, then
+\[
+  \reserve(t)=|\{\ i \mid w_i=1 \ and \ i > \ell(v)\}|\,.
+  \]
+These quantities together define the \emph{reach} of a tine: $
+\reach(t)=\reserve(t)-\gap(t)$.
+\end{definition}
+
+The notion of reach can be intuitively understood as a measure of
+the resources available to our adversary in the settlement
+game. Reserve tracks the number of slots in which the adversary has
+the right to issue new blocks.  When reserve exceeds gap (or
+equivalently, when reach is nonnegative), such a tine could be
+extended---using a sequence of dishonest blocks---until it is as long
+as the longest tine. Such a tine could be offered to an honest player
+who would prefer it over, e.g., the current longest tine in the
+fork. In contrast, a tine with negative reach is too far behind to be
+directly useful to the adversary at that time.
+
+\begin{definition}[Maximum reach]
+For a closed fork $F\vdash w$, we define $\rho(F)$ to be the largest reach attained by any tine of $F$, i.e., 
+\[
+\rho(F)=\underset{t}\max \ \reach(t)\,.
+\]
+Note that $\rho(F)$ is never negative (as the longest tine of any fork always has reach at least 0). We overload this notation to denote the maximum reach over all forks for a given characteristic string: 
+\[
+\rho(w)=\underset{\substack{F\vdash w\\\text{$F$ closed}}}\max\big[\underset{t}\max \ \reach(t)\big]\,.
+\]
+\end{definition}
+
+Reach of vertices is always non-increasing as we move down a tine. 
+That is, if $B_1, B_2, \ldots$ are vertices on the same tine in the root-to-leaf order, then 
+$\reach(B_i) \leq \reach(B_{i+1})$. 
+The inequality is strict if $B_{i + 1}$ is honest. 
+Consequently, the reach of an adversarial tine is no more than 
+the reach of the last honest vertex in that tine. 
+In any fork, the reach of a maximum-length tine is always non-negative. 
+Hence, an honest tine with the maximum length over all honest tines 
+will always have a non-negative reach. 
+Thanks to the monotonicity of the honest-depth function $\hdepth(\cdot)$, 
+if there are multiple honest tines 
+having the (same) maximum length among all honest tines, 
+they must have the same label. 
+Therefore, if $h$ is the last honest slot in $w$ and 
+$t$ a maximum-length honest tine with label $h$,  
+then $\reach(t) \geq 0$. 
+
+
+% {\color{red} Fix this.}
+% \begin{fact}\label{fact:fork-structure-reach}
+%   Let $w \in \{\h, \H, \A\}^T$ be a characteristic string, 
+%   $s \in [T + 1]$ be an integer, 
+%   $x \PrefixEq w, |x| = s - 1$. 
+%   Let 
+%   $F$ be a fork for $w$, 
+%   $B$ an honest vertex in $F$, 
+%   $h = \ell(B)$, and 
+%   $I = [h + 1, s - 1]$.
+%   Let $F_x \Fork x$ be a fork prefix of $F$ so that 
+%   $F_x$ contains all honest tines from $F$ with labels at most $s - 1$. 
+%   The following statements are equivalent: 
+%   \begin{enumerate*}[label=(\roman*)]
+%     \item \label{fact-reach-part:Aheavy} $I$ is $\Aheavy$; 
+%     \item \label{fact-reach-part:viable-adv-ext} 
+%       $B$ has an adversarial extension $t, \ell(t) \in I$ so that $t$ is 
+%       viable at the onset of slot $s$; and
+%     \item \label{fact-reach-part:nonneg-reach} $\reach_{F_x}(B) \geq 0$;
+%   \end{enumerate*}      
+% \end{fact}
+% \begin{proof}
+%   The equivalence between items~\ref{fact-reach-part:Aheavy} and~\ref{fact-reach-part:viable-adv-ext} has already been shown in Fact~\ref{fact:fork-structure}. 
+%   \begin{description}[font=\normalfont\itshape\space]
+
+%     \item[\ref{fact-reach-part:nonneg-reach} implies~\ref{fact-reach-part:Aheavy}.]
+%       By assumption, $\reach_{F_x}(B)  = \reserve_{F_x}(B) - \gap_{F_x}(B) \geq 0$.               
+%       Since $\reserve_{F_x}(B) = \#_\A(I)$ and $\gap_{F_x}(B) \geq \#_\h(I) + \#_\H(I)$, 
+%       it follows that $\#_\A(I) \geq \#_\h(I) + \#_\H(I)$. 
+
+%     \item[\ref{fact-reach-part:viable-adv-ext} implies~\ref{fact-reach-part:nonneg-reach}.]
+%       Since $t$ is an adversarial extension of $B$, 
+%       it contains only adversarial vertices from $I$. 
+%       By assumption, $t$ is viable at the onset of slot $s$.
+%       It follows that $\#_\A(I) \geq \gap_{F_x}(B)$.
+%       Since $\reserve_{F_x}(B) = \#_\A(I)$, we have 
+%       $\reach_{F_x}(B) = \reserve_{F_x}(B) - \gap_{F_x}(B) \geq 0$.  
+      
+%   \end{description}            
+% \end{proof}
+
+
+
+
+
+
+\paragraph{Non-negative reach, $\A$-heaviness, and viable adversarial extensions.}
+Let $w \in \{\h, \H, \A\}^T$,   
+$s \in [T + 1]$, and 
+$F \Fork w_1 \ldots w_{s - 1}$ an arbitrary fork. 
+Let $B \in F$ be an honest vertex 
+and $t$ a maximum-length tine in $F$.
+Consider the following statements: 
+\begin{enumerate}[label=(\alph*)]
+  \item \label{fact-reach-part:viable-adv-ext} $B$ has an adversarial extension viable at the onset of slot $s$.
+  \item \label{fact-reach-part:nonneg-reach} $\reach_{F}(B)$ is non-negative.
+  \item \label{fact-reach-part:Aheavy} The interval $I = [\ell(B) + 1, s - 1]$ is $\Aheavy$. 
+  \item \label{fact-reach-part:conservative} $\length(t) = \#_\h(I) + \#_\H(I) + \length(B)$.     
+\end{enumerate}
+
+\begin{fact}\label{fact:fork-structure-reach}
+    ~\ref{fact-reach-part:viable-adv-ext} $\Longrightarrow$
+    \ref{fact-reach-part:nonneg-reach} $\Longrightarrow$
+    \ref{fact-reach-part:Aheavy}.
+    In addition, if we assume~\ref{fact-reach-part:conservative}, then 
+    ~\ref{fact-reach-part:Aheavy} $\Longrightarrow$ 
+    ~\ref{fact-reach-part:nonneg-reach} $\Longrightarrow$
+    ~\ref{fact-reach-part:viable-adv-ext}.
+\end{fact}
+Fact~\ref{fact:fork-structure-reach} can be seen as 
+a refinement of Fact~\ref{fact:fork-structure} 
+when $F$ is a closed fork. 
+\begin{proof}~
+  \begin{description}[font=\normalfont\itshape\space]
+    \item[\ref{fact-reach-part:viable-adv-ext} implies~\ref{fact-reach-part:nonneg-reach}.]
+      An adversarial extension of $B$ 
+      contains only adversarial vertices from $I$. 
+      If this extension is viable at the onset of slot $s$, 
+      $\#_\A(I)$ must be at least $\gap_{F}(B)$.
+      Since $\reserve_{F}(B) = \#_\A(I)$, we have 
+      $\reach_{F}(B) = \reserve_{F}(B) - \gap_{F}(B) \geq 0$.  
+      
+    \item[\ref{fact-reach-part:nonneg-reach} implies~\ref{fact-reach-part:Aheavy}.]
+      By assumption, $\reach_{F}(B)  = \reserve_{F}(B) - \gap_{F}(B) \geq 0$.               
+      $t$ contains at least $\#_\h(I) + \#_\H(I)$ vertices from 
+      the interval $I$; 
+      hence, $\gap_{F}(B) \geq \#_\h(I) + \#_\H(I)$. 
+      Since $\reserve_{F}(B) = \#_\A(I)$, 
+      it follows that $\#_\A(I) \geq \#_\h(I) + \#_\H(I)$. 
+
+    \item[\ref{fact-reach-part:conservative} and~\ref{fact-reach-part:Aheavy} implies~\ref{fact-reach-part:nonneg-reach}.]
+      Since $I$ is $\Aheavy$, 
+      $\reserve_F(B) = \#_\A(I) \geq \#_\h(I) + \#_\H(I)$. 
+      However, since~\ref{fact-reach-part:conservative} holds, 
+      the latter quantity equals $\length(t) - \length(B) = \gap_F(B)$. 
+      It follows that $\reach_F(B) = \reserve_F(B) - \gap_F(B) \geq 0$. 
+
+    \item[\ref{fact-reach-part:conservative} and~\ref{fact-reach-part:nonneg-reach} implies~\ref{fact-reach-part:viable-adv-ext}.]
+      $I$ contains at least $\gap_F(B)$ adversarial slots. 
+      We can use these slots augment $B$ 
+      into an adversarial tine $t'$ 
+      of length at least $\length(t)$. 
+      Thus $t'$ will be viable at the onset of slot $s$.
+  \end{description}  
+\end{proof}
+
+
+Observe that for any characteristic string $x$, 
+one can \emph{extend} (i.e., augment) a closed fork prefix $F \Fork x$ 
+into a larger closed fork $F' \Fork x0$ so that $F \ForkPrefix F'$. 
+A \emph{conservative extension} is a minimal extension in that 
+it consumes the least amount of reserve (cf. Definition~\ref{def:gap-reserve-reach}), 
+leaving the remaining reserve to be used in future.
+Extensions and, in particular, conservative extensions 
+play a critical role in the exposition that follows. 
+
+\begin{definition}[Extensions]\label{def:extension}  
+  Let $w \in \{\h, \H, \A\}^*$ be a characteristic string 
+  and $F$ a closed fork for $w$. 
+  Let $F'$ be a closed fork for $wb, b \in \{\h, \H\}$ 
+  so that $F \ForkPrefix F'$. 
+  We say that \emph{$F'$ is an extension of $F$} if 
+  every honest vertex in $F'$ either belongs to $F$ or has label $|w| + 1$. 
+  Let $\sigma \in F'$ be an honest vertex with $\ell(\sigma) = |w| + 1$ 
+  and let $s$ be the longest honest prefix of $\sigma$. 
+  (Necessarily, $s \in F$.)
+  We say that \emph{$\sigma$ is an extension of $s$}. 
+  The new tine $\sigma$ is a \emph{conservative extension} if 
+  % $\height(F) + 1 = \max_{t \in S} \length(t)$.  
+  $\height(F') = \height(F) + 1$.  
+\end{definition} 
+Since $F'$ is closed, all longest tines in $F'$ are honest and they have label $|w| + 1$.
+% , i.e., they belong to $S$ in the above definition.
+Let $\hat{t}$ be the unique longest honest tine in $F'$ 
+under the consistent longest-chain selection rule 
+in Axiom~\ref{axiom:tie-breaking}.
+Now consider a tine $\sigma \in S$. 
+Since $\sigma$ is honest, 
+it follows that 
+$\length(\sigma) 
+\geq 1 + \height(F) 
+= 1 + \length(s) + \gap_F(s)$ 
+where $s \in F$ is the longest honst prefix of $\sigma$.
+The root-to-leaf path in $F^\prime$ 
+that ends at $\sigma$ 
+contains at least $\gap_F(s)$ adversarial vertices $u \in F'$ 
+so that $\ell(u) \in [\ell(s) + 1, |w|]$ and 
+$u \not \in F$. 
+If $\sigma$ is a conservative extension, 
+the number of such vertices is exactly $\gap_F(s)$. 
+% Finally, if $F'$ is a conservative extension, 
+% the height of $F'$ is exactly one more than the height of $F$.
+
+
+\begin{fact}[Extensions and reach]\label{fact:reach-fork-ext}
+  Let $b \in \{\h, \H\}$. 
+  Let $F \Fork w$ and $F^\prime \Fork wb$ be closed forks so that 
+  $F \ForkPrefix F^\prime$ and 
+  $F^\prime$ is obtained from $F$ via one or more extensions 
+  $\sigma \in F^\prime, \ell(\sigma) = |w| + 1$.
+  Then $\reach_{F^\prime}(t) \leq \reach_F(t) - 1$ for every $t \in F$. 
+  If all these extensions are conservative, then 
+  $\reach_{F^\prime}(t) = \reach_F(t) - 1$ for every $t \in F$. 
+  Furthermore, a conservative extension $\sigma$ satisfies 
+  $\reach_{F^\prime}(\sigma) = 0$.
+\end{fact}
+The above fact follows from the claims below.
+\begin{claim}\label{claim:nex}
+  Let $b \in \{\h, \H\}$. 
+  Consider a closed fork $F\vdash w$ and some closed fork $F'\vdash wb$ such that $F\fprefix F'$. 
+  If $t \in F$ then 
+  $\reach_{F'}(t)\leq \reach_{F}(t) - 1$. 
+  The inequality becomes and equality 
+  if $F'$ is obtained via 
+  conservative extensions from $F$.
+\end{claim}
+\begin{proof}
+  We know that $\reach_{F'}(t)=\reserve_{F'}(t)-\gap_{F'}(t).$ From $F$ to $F'$, the length of the longest tine increases by at least one, and the length of $t$ does not change. 
+  It follows that $\gap_{F'}(t) \geq \gap_{F}(t) + 1$. 
+  The inequality becomes an equality 
+  if $F'$ is obtained from $F$ via only conservative extensions. 
+  The reserve of $t$ does not change, because there are no new $\A$s in the characteristic string. Therefore, 
+  $
+    \reach_{F'}(t)
+    =\reserve_{F'}(t)-\gap_{F'}(t)
+    \leq \reserve_{F}(t)-\gap_{F}(t) - 1
+    =\reach_{F}(t) - 1
+  $. 
+\end{proof}
+\begin{claim}\label{claim:ex}
+  Conservative extensions have reach zero.
+  % Let $b \in \{\h, \H\}$. 
+  % Consider closed forks $F\vdash w, F'\vdash wb$ 
+  % such that $F\fprefix F'$. 
+  % If a tine $t$ of $F'$ is a conservative extension 
+  % then $\reach_{F'}(t)=0$.
+\end{claim}
+\begin{proof}
+  Let $b \in \{\h, \H\}$. 
+  Consider closed forks $F\vdash w, F'\vdash wb$ 
+  such that $F\fprefix F'$. 
+  Let $t \in F'$ be a conservative extension. 
+  This means $t$ is honest, $\ell(t) = |w| + 1$, 
+  and 
+  $t$ is a longest tine in $F'$. 
+  The last statement implies $\gap_{F'}(t)=0$. 
+  Since $\reserve_{F'}(t)=0$, it follows that 
+  $\reach_{F'}(t)=\reserve_{F'}(t)-\gap_{F'}(t) = 0$. 
+\end{proof}
+
+
+\subsection{Relative margin}
+\begin{definition}[The $\sim_x$ relations]
+  For two tines $t_1$ and $t_2$ of a fork $F$, we write $t_1 \sim t_2$
+  when $t_1$ and $t_2$ share an edge; otherwise we write
+  $t_1 \nsim t_2$. We generalize this equivalence relation to reflect
+  whether tines share an edge over a particular suffix of $w$: for
+  $w = xy$ we define $t_1 \sim_x t_2$ if $t_1$ and $t_2$ share an edge
+  that terminates at some node labeled with an index in $y$;
+  otherwise, we write $t_1 \nsim_x t_2$ (observe that in this case the
+  paths share no vertex labeled by a slot associated with $y$).  We
+  sometimes call such pairs of tines \emph{disjoint} (or, if
+  $t_1 \nsim_x t_2$ for a string $w = xy$, \emph{disjoint over
+    $y$}). Note that $\sim$ and $\sim_\varepsilon$ are the same
+  relation.
+\end{definition}
+
+\begin{definition}[Margin]\label{def:margin}
+The \emph{margin} of a fork $F\vdash w$, denoted $\mu(F)$, is defined as 
+\begin{equation}\label{eq:margin-absolute}
+\mu(F)=\underset{t_1\nsim t_2}\max \bigl(\min\{\reach(t_1),\reach(t_2)\}\bigr)\,,
+\end{equation}
+where this maximum is extended over all pairs of disjoint tines of
+$F$; thus margin reflects the ``second best'' reach obtained over all
+disjoint tines. In order to study splits in the chain over particular portions of a
+string, we generalize this to define a ``relative'' notion of margin:
+If $w = xy$ for two strings $x$ and $y$ and, as above, $F \vdash w$,
+we define
+\[
+  \mu_x(F)=\underset{t_1\nsim_x t_2}\max \bigl(\min\{\reach(t_1),\reach(t_2)\}\bigr)\,.
+\]
+Note that $\mu_\varepsilon(F) = \mu(F)$.
+
+For convenience, we once again overload this notation to denote the
+margin of a string. $\mu(w)$ refers to the maximum value of $\mu(F)$
+over all possible closed forks $F$ for a characteristic string $w$:
+\[
+\mu(w)=\underset{\substack{F\vdash w,\\ \text{$F$ closed}}}\max \, \mu(F)\,.
+\]
+Likewise, if $w = xy$ for two strings $x$ and $y$ we define
+\[
+\mu_x(y)=\underset{\substack{F\vdash w,\\ \text{$F$ closed}}} \max \, \mu_x(F)\,.
+\]
+%(Cf.~\cite{KRDO17}, which defined and studied the ``absolute'' version
+%$\mu(\cdot)$ of this quantity of~\eqref{eq:margin-absolute}.)
+\end{definition}
+Note that, at least informally, 
+disjoint tines with large reach are of natural
+interest to an adversary who wants to build an $x$-balanced fork, 
+since such a fork contains two (partially disjoint) long tines.
+It is easy to see that 
+if $w = xx'y$ and 
+$\mu_{xx'}(y)$ is negative then $\mu_x(x'y)$ is negative as well.
+
+% \begin{fact}\label{fact:neg-margin}
+%   Let $w$ be a characteristic string 
+%   and let $w = xx'y$ be an arbitrary decomposition. 
+%   If $\mu_{xx'}(y) < 0$ then $\mu_x(x'y) < 0$.
+% \end{fact}
+
+The theorem below shows how to recursively compute $\mu_x(y)$ 
+for a given decomposition $w = xy$.
+
+
+% \subsection{The relative margin recurrence}
+\begin{theorem}\label{thm:relative-margin}
+  Let $\varepsilon$ be the empty string 
+  and $b \in \{\h, \H\}$. 
+  Then $\rho(\varepsilon) = 0$ 
+  and, for all nonempty strings $w \in \{\h, \H, \A\}^*$ 
+  \begin{equation}
+    \rho(w\A) = \rho(w) + 1\,, \qquad\text{and}\qquad
+    \rho(wb) = \begin{cases} 0 & \text{if $\rho(w) = 0$,}\\
+      \rho(w)-1 & \text{otherwise.}
+    \end{cases}
+    \label{eq:rho-recursive}
+  \end{equation}
+
+
+  Furthermore, for any strings $x, y \in\{\h, \H, \A\}\text{\emph{*}}$,
+  $\mu_x(\varepsilon) =\rho(x)$, 
+  \begin{equation}
+    \mu_x(y\A)= \mu_x(y)+1\,,\qquad\text{and}\qquad
+    \mu_x(yb)= \begin{cases}
+      0 & \text{if $\rho(xy) > \mu_x(y)=0$}\,, \\
+      0 & \text{if $\rho(xy) = \mu_x(y) = 0$ and $b = \H$}\,, \\
+      \mu_x(y)-1 & \text{otherwise.}
+    \end{cases}
+    \label{eq:mu-relative-recursive}
+  \end{equation}
+
+  % Additionally, for every $w \in \{\h, \H, \A\}^*$ 
+  % there exists a canonical fork for $w$. 
+\end{theorem}
+The proof of Theorem~\ref{thm:relative-margin} is given in Section~\ref{sec:margin-proof}. 
+Let $w$ be a characteristic string and 
+let $m, k \in \NN$ so that $m + k \leq |w|$. 
+Let $x \Prefix w, |x| = m-1$ and $xy \PrefixEq w, |xy| \geq m + k$.
+If the symbols in $w$ are independent and identically distributed, 
+the recursive formulation in~\eqref{eq:mu-relative-recursive} implies an algorithm --- which takes time and space $O(|w|^3)$ --- 
+for computing the probability that $\mu_x(y) \geq 0$. 
+But this is exactly the probability that slot $m$ is not $k$-settled, 
+according to~\eqref{eq:settlement-uvp} 
+and Lemma~\ref{lemma:uvp-margin} below. 
+In Section~\ref{sec:exact-prob}, 
+we describe this algorithm in more detail and 
+compile some explicit values for this probability.
+
+
+
+

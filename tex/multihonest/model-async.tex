@@ -1,0 +1,212 @@
+% \subsection{Semisynchronous executions}
+  \begin{definition}[Semi-synchronous characteristic string]\label{def:semisync-char-string}
+    Let $\slot_1, \ldots, \slot_{n}$ be a sequence of slots. 
+    A \emph{semi-synchronous characteristic string} $w$ 
+    is an element of $\{\h,\H,\A, \perp\}^n$ 
+    defined for a particular execution of a blockchain protocol 
+    on these slots so that 
+    for $t \in [n]$, 
+    $w_t = \perp$ if $\slot_{t}$ was assigned to no participants; otherwise, 
+    $w_t = \A$ if $\slot_{t}$ was assigned to an adversarial participant; otherwise, 
+    $w_t = \h$ if $\slot_{t}$ was assigned to a single honest participant; otherwise 
+    $w_t = \H$.
+  \end{definition}
+
+
+  In the $\Delta$-synchronous setting, axiom~\ref{axiom:honest-depth} 
+  is replaced by 
+  \begin{enumerate}[label={\textbf{A\arabic*}\textsubscript{$\Delta$}}., ref={\textbf{A\arabic*}\textsubscript{$\Delta$}}, start=4]
+  \item\label{axiom:honest-depth-delta} 
+    In a $\Delta$-synchronous execution, 
+    if two honestly generated blocks $B_1$ and $B_2$ are labeled
+    with slots $\slot_1$ and $\slot_2$ for which $\slot_1 + \Delta < \slot_2$,
+    the length of the unique blockchain terminating at $B_1$ is
+    strictly less than the length of the unique blockchain terminating at $B_2$.
+  \end{enumerate}
+
+  \begin{definition}[$\Delta$-Fork]\label{def:delta-fork}
+    Let $w\in \{\h, \H, \A, \perp\}^n, \Delta \in \{0, 1, 2, \ldots \}$, 
+    $P = \{ i : w_i = \h\}$, and $Q = \{ j : w_j = \H\}$. 
+    A \emph{$\Delta$-fork} for the semi-synchronous string $w$ consists of a directed and rooted
+    tree $F=(V,E)$ with a labeling $\ell:V \to \{0,1,\ldots,n\}$. We insist
+    that each edge of $F$ is directed away from the root vertex. 
+    We require conditions~\ref{fork:root}--\ref{fork:unique-honest} 
+    from Definition~\ref{def:fork} and 
+    % further require that
+    \begin{enumerate}[label=(F{\arabic*}\textsubscript{$\Delta$}), start=4]
+      % \item\label{fork:root-delta} the root vertex $r$ has label $\ell(r)=0$;
+
+      % \item\label{fork:monotone-delta} the labels of vertices along any directed path are strictly increasing;
+
+      % \item\label{fork:unique-honest-delta}\label{fork:multiply-honest-delta} 
+      % each index $i\in P$ 
+      % is the label of exactly one vertex of $F$ and 
+      % each index $j\in Q$ 
+      % is the label of at least one vertices of $F$; and
+
+      \item\label{fork:honest-depth-delta} 
+      for any indices $i,j\in P \Union Q$, 
+      if $i + \Delta < j$ then 
+      the depth of a vertex with label $i$ 
+      is strictly less than 
+      the depth of a vertex with label $j$.
+    \end{enumerate}
+  \end{definition}
+  If $F$ is a $\Delta$-fork for the semi-synchronous characteristic string $w$, we write
+  $F\vdash_\Delta w$.  
+  A $\Delta$-fork generalizes a synchronous fork in Definition~\ref{def:fork} 
+  since the latter is a $\Delta$-fork with $\Delta = 0$. 
+  We sometimes emphasize this fact by writing $F' \Fork_0 w'$ 
+  where $w'$ is a synchronous characteristic string and $F'$ is a synchronous fork.
+  Note that 
+  condition~\ref{fork:honest-depth-delta} 
+  is a direct analogue of axiom~\ref{axiom:honest-depth-delta}.
+  % conditions~\ref{fork:root-delta}--\ref{fork:honest-depth-delta} 
+  (We already know that conditions~\ref{fork:root}--\ref{fork:unique-honest} 
+  are direct
+  analogues of axioms~\ref{axiom:root}--~\ref{axiom:honest}.) 
+
+
+  \begin{definition}[Reduction map]\label{def:reduction-map}
+    For $\Delta \in \NN$, 
+    we define the function $\Reduce : \{\perp, \h, \H, \A\}^* \rightarrow \{\h, \H, \A\}^*$ 
+    inductively as follows: $\Reduce(\varepsilon) = \varepsilon$ and 
+    for $w \in \{\perp, \h, \H, \A\}^*$, 
+    \begin{align}
+      \Reduce(b w) &= 
+      \begin{cases}
+        \Reduce(w) & \quad\text{if $b = \perp$}\,, \\
+        b \Reduce(w) & \quad\text{if $b \in \{\h, \H\}$ and $\{\perp, \A\}^{\Delta} \PrefixEq w$}\,, \\
+        \A \Reduce(w) & \quad\text{otherwise}
+        \,.
+      \end{cases}
+    \end{align}    
+  \end{definition}
+  \noindent
+  Note that in the above definition, 
+  if $w' = \Reduce(w)$ and 
+  $A = \{i : w_i \neq \perp\}$ then $|A| = |w'|$. 
+  Also note that 
+  the reduction $\Reduce$ implicitly defines, for each $w$, 
+  a 
+  bijective, increasing function $\pi : A \rightarrow [|w'|]$. 
+  Note that 
+  $\Reduce$ turns an $\h$ or $\H$ symbol in $w$ 
+  into an $\A$ symbol in $w'$ with a constant probability. 
+  Therefore, for any slot $t$ in $w$, 
+  the reduction map $\Reduce$ 
+  amplifies the probability that the slot $\pi(t)$ 
+  in $w' = \Reduce(w)$ is adversarial. 
+
+
+
+  \begin{definition}[$\Delta$-settlement with parameters $s,k \in \NN$]\label{def:settlement-delta}
+    Let $n \in \NN$ and let $w \in \{\perp, \h, \H, \A\}^n$. 
+    Let $t \in [s + k, n]$ be an integer, $\hat{w} \PrefixEq w, |\hat{w}| = t$, and 
+    let $F$ be any $\Delta$-fork for $\hat{w}$. 
+    We say that a slot $s$ is \emph{not $(k, \Delta)$-settled in $F$} 
+    if $F$ contains 
+    two maximum-length tines $\Chain_1, \Chain_2$ so that 
+    at least one of these tines contains a vertex with label $s$,
+    both tines contain at least $k$ vertices after slot $s$, and 
+    the label of their last common vertex is at most $s - 1$. 
+    % $\LengthBeyond{\Chain_i}{s} \geq 1 + k$ for $i = 1, 2$. 
+    % that ``diverge prior to $s$,'' i.e., they either
+    % contain different vertices labeled with $s$, or one contains a
+    % vertex labeled with $s$ while the other does not. 
+    Otherwise, we say that \emph{slot $s$ is $(k, \Delta)$-settled in $F$}. 
+    We say that \emph{slot $s$ is $(k, \Delta)$-settled in $w$} if, 
+    for each $t \geq s+k$, 
+    it is $(k, \Delta)$-settled in every $\Delta$-fork $F \Fork \hat{w}$ 
+    where $\hat{w} \PrefixEq w, |\hat{w}| = t$.
+  \end{definition}
+  Note that in the above definition, 
+  we truncated $k$ trailing blocks from a tine 
+  whereas in Definition~\ref{def:settlement}, 
+  we truncated from a tine 
+  all trailing blocks corresponding to the last $k$ slots. 
+  Note that this change of perspective is necessary since 
+  $w$ may contain $\perp$ symbols, i.e., empty slots.
+
+
+
+
+    % We define the partial order $\leq$ on $\{\h, \H, \A, \perp\}^T$ 
+    % as follows: 
+    % $x \leq y$ if and only if $\Reduce(x) \leq \Reduce(y)$
+
+
+    \begin{theorem}[Main theorem; $\Delta$-synchronous setting]\label{thm:main-async}
+      Let $f, \epsilon \in (0,1)$ and $\Delta \in \{0, 1, 2, \ldots\}$. 
+      Let $s, k, T \in \NN$ so that $T \geq s + k + \Delta$. 
+      Write $p_\perp = 1 - f$ and $\beta = (1 - f)^\Delta$. 
+      Let $p_\A \in [0, f)$ so that $p_\A, f, \epsilon$, and $\beta$ 
+      satisfy 
+      \begin{equation}\label{eq:condition-prob-delta}
+        p_\A  \beta/f + (1 - \beta) \leq (1 - \epsilon)/2 
+        \,.
+      \end{equation}      
+      Let $p_\h \in (0, f - p_\A]$ and write $p_\H = f - p_\A - p_\h$. 
+      Let $w \in \{\perp, \h, \H, \A\}^T$ be a random variable 
+      so that each 
+      $w_i, i \in [T]$, is independent and identically distributed as
+      follows: $\Pr[w_i = \sigma] = p_\sigma$ for
+      $\sigma \in \{\h, \H, \A, \perp\}$. 
+      Let $\mathcal{B}$ be the distribution of $w$. 
+      % Let $A$ be the event that 
+      % slot $s$ is not $(k, \Delta)$-settled in $w$.
+      Then 
+      $$
+        % \Pr_{w \sim \mathcal{B}}[A]  
+        \Pr_w[\text{slot $s$ is not $(k, \Delta)$-settled in $w$}]  
+          \leq
+        % \exp\bigl(-k\cdot \Theta(\min(\epsilon^3, \epsilon^2 p_\h)) + \Delta \bigr)
+        \exp\left( 
+          % -k\cdot \Omega(\epsilon^2)
+          -k\cdot \Omega(\min(\epsilon^3, \epsilon^2 p_\h \beta/f ) ) 
+          + 
+          \frac{\epsilon(1+\Delta)}{1 - \epsilon} 
+        \right)
+        \,.
+      $$
+      (Here, the asymptotic notation hides constants that do not depend on $\epsilon$ or $k$.)
+      % Let $\mathcal{W}$ be a distribution on $\{\perp, \h, \H, \A\}^T$ 
+      % so that 
+      % $\mathcal{W} \DominatedBy \mathcal{B}$. 
+      % Then $\Pr_{w \sim \mathcal{W}}[A] \leq \Pr_{w \sim \mathcal{B}}[A]$.
+    \end{theorem}
+    
+  
+    The main observation for proving the theorem above is that 
+    a $\Delta$-settlement violation in $w$, 
+    implies a certain combinatorial event (parameterized by $\Delta$) 
+    in a prefix of $\Reduce(w)$. 
+    Specifically, we can analyze the latter event 
+    using techniques developed in proving Theorem~\ref{thm:main}. 
+
+    \paragraph{A comment on consistent chain selection.} 
+    Assuming axiom~\ref{axiom:tie-breaking} is satisfied, 
+    it is easy to prove an analogue of Theorem~\ref{thm:main-bivalent} 
+    in the $\Delta$-synchronous setting; 
+    we need only use Bound~\ref{bound:two-catalans} 
+    in lieu of Bound~\ref{bound:unique-honest-catalan}. 
+    The resulting bound on the probability of a $(k, \Delta)$-settlement violation would be 
+    $$
+      \exp\left( 
+        % -k\cdot \Omega(\epsilon^2)
+        -k\cdot \Omega(\epsilon^3) 
+        + 
+        \frac{\epsilon(1+\Delta)}{1 - \epsilon} 
+      \right)
+      \,.
+    $$
+    We omit further details.
+    % The proof is presented in Section~\ref{sec:async}.
+
+    % Notice that $\Delta$ can only weakly impact the bound when $k$ is large. 
+    % On the other hand, 
+    % the bound ceases to be useful 
+    % when $k \epsilon^3$ is comparable to $\Delta \ln k$ 
+    % or equivalently, 
+    % when $\Delta \gtrapprox \epsilon^3 k/\ln k$. 
+

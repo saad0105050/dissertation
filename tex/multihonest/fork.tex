@@ -1,0 +1,245 @@
+
+  \subsection{Viable blockchains}
+  % Let us lay down the elements from the fork framework of~\cite{LinearConsistencySODA}. 
+  % For completeness, we restate and briefly discuss the pertinent definitions below.
+  A vertex of a fork is said to be \emph{honest} 
+  if it is labeled with an index $i$ such that $w_i \in \{\h, \H\}$; 
+  otherwise, it is said to be \emph{adversarial}.
+
+  \begin{definition}[Tines, length, and height]
+    Let $F \vdash w$ be a fork for a characteristic string.  A
+    \emph{tine} of $F$ is a directed path starting from the root. For
+    any tine $t$ we define its \emph{length} to be the number of edges
+    in the path, and for any vertex $v$ we define its \emph{depth} to be
+    the length of the unique tine that ends at $v$. 
+    If a tine $t_1$ is a strict prefix of another tine $t_2$, we write $t_1 \Prefix t_2$. 
+    Similarly, if $t_1$ is a non-strict prefix of $t_2$, we write $t_1 \PrefixEq t_2$.
+    The longest common prefix of two tines $t_1, t_2$ is denoted by $t_1 \Intersect t_2$. 
+    That is, $\ell(t_1 \Intersect t_2) = \max\{\ell(u) \SuchThat \text{$u \PrefixEq t_1$ and $u \PrefixEq t_2$} \}$. 
+    The \emph{height} of
+    a fork (as is usual for a tree) 
+    is the length of the longest tine,
+    denoted by $\height(F)$. 
+  \end{definition}
+  Let $F \Fork xy$ and 
+  two tines $t_1, t_2 \in F$ are disjoint over $y$. 
+  We say that these tines are \emph{$y$-disjoint}; 
+  equivalently, we also say that \emph{$t_1$ is $y$-disjoint with $t_2$}.
+
+  When an adversary builds a fork, it is natural to imagine that 
+  he ``grows'' an existing fork by adding new vertices and edges. 
+  % We can study this notion via fork prefixes and extensions.
+  \begin{definition}[Fork prefixes]
+    Let $w, x \in \{\h, \H, \A\}^*$ so that $x\PrefixEq w$. 
+    Let $F, F'$ be two forks for $x$ and $w$, respectively. 
+    We say that $F$ is a \emph{prefix} of $F'$ if 
+    $F$ is a consistently labeled subgraph of $F'$. 
+    That is, all vertices and edges of $F$ also appear in $F'$ and 
+    the label of any vertex appearing in both $F$ and $F'$ is identical. 
+    We denote this relationship by $F\fprefix F'$.
+  \end{definition}
+
+  \noindent
+  When speaking about a tine that appears in both $F$ and $F'$, 
+  we place the fork in the subscript of relevant properties.
+  % , e.g., writing $\reach_F$, etc.
+
+  % \subsection{Viable tines, reach, and $\Aheavy$ intervals}
+
+    For any string $x$ (on any alphabet) and a symbol $\sigma$ in that alphabet, 
+    define $\#_\sigma(x)$ 
+    as the number of appearances of $\sigma$ in $x$. 
+    % For example, for a characteristic string $w \in \{\h, \H, \A\}^*$, 
+    % $\#_\h(w)$ is the number of $\h$ appearing in $w$. 
+    When a characteristic string $w \in \{\h, \H, \A\}^T$ is fixed from the context, 
+    we extend this notation to sub-intervals of $[T]$ in a natural way: 
+    For integers $i, j \in [T], i \leq j$, 
+    let $I = [i, j] \subset [T]$ be a closed interval 
+    and define $\#_\sigma(I) = \#_\sigma(w_i \ldots w_j)$ for $\sigma \in \{\h, \H, \A\}$. 
+    A characteristic string $w$ is called $\Hheavy$\ if $\#_\h(w) + \#_\H(w) > \#_1(x)$; 
+    otherwise, it is called $\Aheavy$. 
+    For a given characteristic string $w$ of length $T$, 
+    an interval $I = [i,j] \subseteq [T]$ is called $\Aheavy$\ 
+    if the substring $w_i \ldots w_j$ is $\Aheavy$.
+
+
+    \paragraph{Adversarial extensions.} 
+    Let $x,y$ be two characteristic strings and $|y| \geq 0$.
+    Let $F$ be a fork for $x$ and let $B$ be an honest tine in $F$. 
+    We say that \emph{$B$ has an adversarial extension} 
+    if there is a fork $F' \Fork xy, F \ForkPrefix F'$ and 
+    an adversarial tine $t \in F'$ 
+    so that $B \Prefix t$ and  
+    $B$ is the last honest vertex on $t$. 
+    Note that $t$ can be made disjoint with any $F$-tine 
+    over the interval $[\ell(B) + 1, \ell(t)]$. 
+    
+
+    
+    % In what follows, we record some useful observations about forks that highlight 
+    % the interplay among reach, viability, $\A$-heaviness, and adversarial extensions.
+    % % We stress that these observations do not require the honest players 
+    % % to use a consistent tie-breaking rule such as $\LCR(\cdot)$.
+
+
+    % \begin{fact}\label{fact:fork-structure}
+    %   Let $w \in \{\h, \H, \A\}^T$ be a characteristic string, 
+    %   $s \in [T + 1]$ be an integer, 
+    %   $x \PrefixEq w, |x| = s - 1$. 
+    %   Let 
+    %   $F$ be a fork for $w$, 
+    %   $B$ an honest vertex in $F$, 
+    %   $h = \ell(B)$, and 
+    %   $I = [h + 1, s - 1]$.
+    %   Let $F_x \Fork x$ be a fork prefix of $F$ so that 
+    %   $F_x$ contains all honest tines from $F$ with labels at most $s - 1$. 
+    %   The following statements are equivalent: 
+    %   \begin{enumerate*}[label=(\alph*)]
+    %     % \item \label{fact-part:nonneg-reach} $\reach_{F_x}(B) \geq 0$;
+    %     \item \label{fact-part:Aheavy} $I$ is $\Aheavy$; and 
+    %     \item \label{fact-part:viable-adv-ext} 
+    %       $B$ has an adversarial extension $t, \ell(t) \in I$ so that $t$ is 
+    %       viable at the onset of slot $s$.
+    %   \end{enumerate*}      
+    % \end{fact}
+
+    % \begin{proof}
+    %   First let us prove that~\ref{fact-part:Aheavy} implies~\ref{fact-part:viable-adv-ext}.
+    %   Let $t^*$ be a maximum-length honest tine in $F$ so that $\ell(t^*) \in I$. 
+    %   There can be two cases.
+    %   If $B$ is on $t^*$, 
+    %   the adversarial slots in $I$ can be used to create 
+    %   an adversarial tine $t$ so that 
+    %   i) $B$ is the last honest vertex on $t$, 
+    %   ii) $B$ is the last common vertex between $t$ and $t^*$, and 
+    %   iii) $\length(t) \geq \length(t^*)$ so that 
+    %   $t$ is viable at the onset of slot $s$. 
+    %   Now suppose $B$ is not on $t^*$.
+    %   Let $B^*$ be the first honest vertex on $t^*$ 
+    %   so that $\ell(B^*) \leq \ell(B)$. 
+    %   If the interval $I^\prime = [\ell(B^*) + 1, \ell(B) - 1]$ is non-empty, 
+    %   $t^*$ must contain only adversarial vertices in $I^\prime$. 
+    %   We can build the adversarial tine $t$ as follows: 
+    %   Extend $B^*$ by duplicating the vertices on $t^*$ in the interval $[\ell(B^*) + 1, \ell(B) - 1]$, 
+    %   put $B$ on $t$ 
+    %   and finally, extend $B$ using only adversarial slots from $I$ so that 
+    %   $B^*$ is the last common vertex between $t$ and $t^*$, and 
+    %   $\length(t) \geq \length(t^*)$. 
+    %   Hence $t$ is viable at the onset of slot $s$. 
+
+    %   It remains to prove that~\ref{fact-part:viable-adv-ext} implies~\ref{fact-part:Aheavy}.
+    %   Since $t$ is an adversarial extension of $B$, 
+    %   it contains only adversarial vertices from $I$. 
+    %   By assumption, $t$ is viable at the onset of slot $s$.
+    %   It follows that $\#_\A(I) \geq \#_\h(I) + \#_\H(I)$ 
+    %   since the longest tine grows by at least one vertex 
+    %   for each honest slot in $I$.
+    % \end{proof}
+
+
+
+
+    \paragraph{Viable adversarial extensions and $\A$-heaviness.} 
+    Let $w \in \{\h, \H, \A\}^T$,   
+    $s \in [T + 1]$, and 
+    $F \Fork w_1 \ldots w_{s - 1}$ an arbitrary fork. 
+    Let $B \in F$ be an honest vertex 
+    and $t$ a maximum-length \emph{honest tine} in $F$.
+    Consider the following statements: 
+    \begin{enumerate}[label=(\alph*)]
+      \item \label{fact-part:viable-adv-ext} $B$ has an adversarial extension viable at the onset of slot $s$.
+      \item \label{fact-part:Aheavy} The interval $I = [\ell(B) + 1, s - 1]$ is $\Aheavy$. 
+      \item \label{fact-part:conservative} $\length(t) = \#_\h(I) + \#_\H(I) + \length(B)$.     
+    \end{enumerate}
+
+
+
+    \begin{fact}[]\label{fact:fork-structure}
+    ~\ref{fact-part:viable-adv-ext} $\Longrightarrow$
+    \ref{fact-part:Aheavy}.
+    In addition, if we assume~\ref{fact-part:conservative}, then 
+    ~\ref{fact-part:Aheavy} $\Longrightarrow$ 
+    ~\ref{fact-part:viable-adv-ext}.
+    \end{fact}
+
+    \begin{proof}~
+      \begin{description}[font=\normalfont\itshape\space]
+        \item[\ref{fact-part:viable-adv-ext} implies~\ref{fact-part:Aheavy}.]
+        Let $F' \Fork w_1 \ldots w_{s-1}$ be 
+        a fork so that $F \ForkPrefix F'$ 
+        and $B$ has an adversarial extension $t' \in F'$ 
+        viable at the onset of slot $s$. 
+        Considering the interval $I$, 
+        the longest honest tine in $F'$ 
+        grows by at least $\#_\h(I) + \#_\H(I)$ vertices. 
+        Since the viable tine $t'$ 
+        contains only adversarial vertices from the interval $I$, 
+        it follows that $\#_\A(I)$ must be at least $\#_\h(I) + \#_\H(I)$. 
+        Hence, $I$ is $\Aheavy$.
+
+        \item[\ref{fact-part:conservative} and \ref{fact-part:Aheavy} implies~\ref{fact-part:viable-adv-ext}.]
+        Since $I$ is $\Aheavy$,  
+        $I$ contains at least $\#_\h(I) + \#_\H(I) = \length(t) - \length(B)$ 
+        adversarial slots. 
+        Thus, we can augment $B$ by adding 
+        $\length(t) - \length(B)$ adversarial vertices 
+        from these slots 
+        so that 
+        the resulting adversarial extension is viable 
+        at the onset of slot $s$.
+      \end{description}
+    \end{proof}
+
+
+
+
+
+
+    \begin{corollary}\label{coro:interval-honest-vertices}
+      Let $w$ be a characteristic string, 
+      $F$ be any fork for $w$, 
+      and let $t$ be any tine in $F$.
+      Let $B_1$ and $B_2$ be two honest vertices on $t$ such that 
+      (i) $\ell(B_1) < \ell(B_2)$, 
+      (ii) $t$ contains only adversarial vertices from $I = [\ell(B_1) + 1, \ell(B_2) - 1]$, and 
+      (iii) $t$ contains at least one vertex from $I$.
+      Then $I$ is $\Aheavy$. 
+      % In addition, let $\phi \Fork w_1\ldots w_{\ell(B_2)}$ 
+      % be a prefix of $F$ so that 
+      % $\phi$ contains all honest vertices of $F$ with labels at most $\ell(B_2)$. 
+      % Then $\reach_{\phi}(B_1) \geq 0$.
+    \end{corollary}
+    \begin{proof}
+      By assumption, 
+      the honest vertex $B_2$ builds on some adversarial tine $t^\prime$ 
+      that is viable at the onset of slot $\ell(B_2)$ and, importantly, 
+      contains $B_1$ as its last honest vertex. 
+      By Fact~\ref{fact:fork-structure}, 
+      the interval $I$ is $\Aheavy$.
+      % and, in addition, $\reach_{\phi}(B_1) \geq 0$.
+    \end{proof}
+    
+
+
+
+
+
+
+
+
+
+  % \begin{corollary}[Multiple honest leaders in a slot]\label{obs:multi-honest}
+  %   Let $w \in \{0,1\}^T$ be a charactersitic string 
+  %   and 
+  %   let $s$ be a Catalan slot. 
+  %   All honest vertices from slot $s$ builds on the same honest tine.
+  % \end{corollary}
+  % \begin{proof}
+  %   Let $F$ be any fork for $w$.
+  %   Since $s$ is a Catalan slot, 
+  %   $F$ admints no LCR tie at the onset of slot $s + 1$. 
+  %   Thus the set of all viable longest tines 
+  %   at the onset of slot $s$
+  %   Hence all honest vertices from slot $s$ builds upon 
+  %   the unique honest tine $\tau = \LCR(C)$ 
+  % \end{proof}

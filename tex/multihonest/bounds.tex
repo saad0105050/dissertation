@@ -1,0 +1,127 @@
+
+In the previous section, 
+we explored the structural connection 
+between the UVP and Catalan slots. 
+In this section, we present two bounds 
+on the stochastic event ``Catalan slots are rare.'' 
+Specifically,
+Bound~\ref{bound:unique-honest-catalan} 
+concerns uniquely honest Catalan slots and complements Theorem~\ref{thm:unique-honest}; 
+Bound~\ref{bound:two-catalans} concerns 
+two consecutive Catalan slots and complements Theorem~\ref{thm:multiple-honest}. 
+We defer the proofs till the next section 
+and prove the main theorems below.
+
+% As we shall see, 
+% the main theorems follow easily from these connections. 
+
+
+Recall the $(\epsilon, p_\h)$-Bernoulli condition 
+from~\ref{def:bernoulli-cond}.
+\begin{bound}\label{bound:unique-honest-catalan}
+  Let $T, s, k \in \NN, T \geq s + k$ and  $\epsilon, q_\h \in (0, 1)$. 
+  Let $w$ be a characteristic string satisfying 
+  the $(\epsilon, q_\h)$-Bernoulli condition 
+  and let $y = w_s \ldots w_{s+k-1}$.
+  Then 
+  \[
+    \Pr_w[\text{$w$ does not contain a uniquely honest Catalan slot in $y$}]  
+      \leq 
+      \exp\left(
+        -k\cdot \Omega(\min(\epsilon^3, \epsilon^2 q_\h)) 
+      \right)
+      \,.
+  \]
+\end{bound}
+In particular, 
+% when $q_\H = 0$, 
+when $q_\h = (1+\epsilon)/2$, 
+the bound above coincides with the 
+bound in~\cite{LinearConsistency}; 
+it follows that the current analysis 
+subsumes their result.
+
+
+
+
+\begin{bound}\label{bound:two-catalans}
+  Let $T, s, k \in \NN, T \geq s + k$ and  $\epsilon \in (0, 1)$. 
+  Let $w$ be a bivalent characteristic string satisfying 
+  the $(\epsilon, 0)$-Bernoulli condition 
+  and let $y = w_s \ldots w_{s+k-1}$.
+  Then 
+  \[
+    \Pr_w[\text{$w$ does not contain two consecutive Catalan slots in $y$}]  
+      \leq 
+      \exp\left(
+        - k\cdot \Omega(\epsilon^3(1 + O(\epsilon))) 
+      \right)
+      \,.
+  \]
+\end{bound}
+
+% \noindent 
+% For now, let us defer the proofs of these bounds in Section~\ref{sec:estimates} 
+% and prove the main theorems below. 
+
+
+
+
+\paragraph{Proof of Theorem~\ref{thm:main}.}
+
+  We consider the distribution $\mathcal{B}$ first. 
+  Write $w = xyz, |x| = s - 1$.
+  Recall that  
+  $
+    \mathbf{S}^{s,k}[\mathcal{B}] 
+    = \Pr_{w \sim \mathcal{B}}[\text{$s$ is not $k$-settled in $w$}]
+  $. 
+  Theorem~\ref{thm:unique-honest} and Equation~\eqref{eq:settlement-uvp} implies that 
+  if $w$ contains a uniquely honest Catalan slot $c \in [s, s + k]$ 
+  then slot $s$ must be $k$-settled in $w$. 
+  In fact, by virtue of Fact~\ref{fact:catalan-unique-longest}, 
+  it suffices to take $c \in [s, s + k - 1]$, 
+  i.e., $|x| \leq c \leq |xy|$. 
+  Thus the probability above is bounded by 
+  Bound~\ref{bound:unique-honest-catalan} 
+  which renames $p_\h = q_\h$.
+   % and $p_\H = q_\H$. 
+  This proves the first inequality. 
+  
+  Now let us prove the second inequality. 
+  % Let $a, b \in \{\h,\H,\A\}^*, |a| = |b|$.
+  % Define the partial order $\leq$ on equal-length characteristic strings as follows: 
+  % $a \leq b$ if and only if
+  % for all $i = 1, \ldots, |a|$, $a_i = 1$ implies $b_i = 1$. 
+  For any player playing the settlement game, 
+  let $C$ be the set of strings on which the player wins. 
+  Clearly, $C$ is monotone 
+  with respect to the partial order $\leq$ 
+  defined on $\{\h, \H, \A\}^T$ 
+  (see below Definition~\ref{def:dominance}).  
+  To see why, note that if the player wins 
+  on a specific string $w$, 
+  he can certainly win on any string $w^\prime$ so that $w \leq w^\prime$. 
+  By assumption, 
+  $\mathcal{W} \DominatedBy \mathcal{B}$. 
+  % by the definition of $\epsilon$-martingale condition, 
+  It follows from Definition~\ref{def:dominance} that 
+  $\Pr_{\mathcal{W}}[w] \leq \Pr_{\mathcal{B}}[w]$ 
+  for any $w$ in the monotone set $C$. 
+  By referring to the definition of settlement insecurity 
+  (see Definition~\ref{def:settlement-insecurity}), 
+  we conclude that 
+  $
+    \mathbf{S}^{s,k}[\mathcal{W}] \leq \mathbf{S}^{s,k}[\mathcal{B}]
+  $.
+  \hfill $\qed$  
+
+\paragraph{Proof of Theorem~\ref{thm:main-bivalent}.}
+  This proof is identical to the proof of Theorem~\ref{thm:main} 
+  except that 
+  we need to refer to Theorem~\ref{thm:multiple-honest} in lieu of Theorem~\ref{thm:unique-honest}
+  and Bound~\ref{bound:two-catalans} in lieu of Bound~\ref{bound:unique-honest-catalan}.
+  \hfill $\qed$  
+
+
+

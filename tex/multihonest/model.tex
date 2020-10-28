@@ -1,0 +1,878 @@
+We study the behavior of the elementary \emph{longest-chain rule}
+algorithm, carried out by a collection of participants:
+\begin{itemize}
+  \item In each round,
+each participant collects all valid blockchains from the network; if a
+participant is a leader in the round, he adds a block to the longest
+chain and broadcasts the result.
+\end{itemize}
+Here, ``valid'' indicates that any block appearing in the
+chain was indeed issued by a leader from the associated slot; in the
+PoS setting, this property is guaranteed with digital
+signatures.
+
+We begin by studying this algorithm in the simple, synchronous model
+posited by Blum et. al~\cite{LinearConsistency}. The model adopts a
+synchronous communication network in the presence of a \emph{rushing}
+adversary: in particular,
+\begin{enumerate}[label={\textbf{A\arabic*}}., ref={\textbf{A\arabic*}}, series=axiom, start = 0]
+  \item\label{axiom:message-delivery} 
+  Any message broadcast by an honest participant at the beginning of a
+  particular slot is received by the adversary first, who may decide
+  strategically and individually for each recipient in the network
+  whether to inject additional messages and in which order all messages
+  are to be delivered prior to the conclusion of the slot. 
+\end{enumerate}
+See the comments prior to Section~\ref{sec:model-settlement} for
+further discussion of this network assumption.  A variant of this
+adversarial message-ordering is presented in
+Section~\ref{sec:lcr-model}.  The $\Delta$-synchronous communication
+model is handled in Section~\ref{sec:async}.
+% the full version~\cite{MultiHonestFullVersion}.
+
+
+Given this, it is easy to describe the behavior of the longest-chain
+rule when carried out by a group of honest participants with the extra
+guarantee that exactly one is elected as leader in a slot: Assuming
+that the system is initialized with a common ``genesis block''
+corresponding to $\slot_0$, the players observe a common, linearly
+growing blockchain:
+\begin{center}
+  \begin{tikzpicture}[>=stealth', auto, semithick,
+    flat/.style={circle,draw=black,thick,text=black,font=\small}]
+    \node[flat]    at (0,0)  (base) {$0$};
+    \node[flat]    at (1,0)  (n1) {$1$};
+    \node[flat]    at (2,0)  (n2) {$2$};
+    \node[flat,white]    at (3,0)  (n3) {$\ \ \  $};
+    \node at (3,0) {$\ldots$};
+    \draw[thick,->] (base) to (n1);
+    \draw[thick,->] (n1) to (n2);
+    \draw[thick,->] (n2) to (n3);
+  \end{tikzpicture}
+\end{center}
+\noindent
+Here node $i$ represents the block broadcast by the leader of slot $i$
+and the arrows represent the direction of increasing time.
+%(Note that
+%the requirement of a single leader per slot is important in this
+%simple picture; it is possible for a network adversary to induce
+%divergent views between the players by taking advantage of slots where
+%more than a single honest participant is elected a leader.)
+
+\paragraph{The blockchain axioms: Informal discussion.}
+The introduction of adversarial participants or multiple slot leaders
+complicates the family of possible blockchains that could emerge from
+this process. To explore this in the context of our protocols, we work
+with an abstract notion of a blockchain which
+% (as informally suggested above)
+ignores all internal structure. We consider a fixed assignment of
+leaders to time slots, and assume that the blockchain uses a proof
+mechanism to ensure that any block labeled with slot $\slot_t$ was
+indeed produced by a leader of slot $\slot_t$; this is guaranteed in
+practice by appropriate use of a secure digital signature scheme.
+
+Specifically, we treat a \emph{blockchain} as
+a sequence of abstract blocks, each labeled with a slot number, so
+that:
+\begin{enumerate}[label={\textbf{A\arabic*}}., ref={\textbf{A\arabic*}}, resume=axiom]
+  \item\label{axiom:root} 
+  The blockchain begins with a fixed ``genesis'' block, assigned to slot $\slot_0$.
+  
+  \item\label{axiom:labels} 
+  The (slot) labels of the blocks are in strictly increasing order.
+\end{enumerate}
+It is further convenient to introduce the structure of a directed
+graph on our presentation, where each block is treated as a vertex; in
+light of the first two axioms above, a blockchain is a path beginning
+with a special ``genesis'' vertex, labeled $0$, followed by vertices
+with strictly increasing labels that indicate which slot is associated
+with the block. %(See the example below.)
+\begin{center}
+  \begin{tikzpicture}[>=stealth', auto, semithick,
+    flat/.style={circle,draw=black,thick,text=black,font=\small}]
+    \node[flat]    at (0,0)  (base) {$0$};
+    \node[flat]    at (1,0)  (n1) {$2$};
+    \node[flat] at (2,0)  (n2) {$4$};
+    \node[flat] at (3,0)  (n3) {$5$};
+    \node[flat] at (4,0)  (n4) {$7$};
+    \node[flat] at (5,0)  (n5) {$9$};
+    \draw[thick,->] (base) to (n1);
+    \draw[thick,->] (n1) to (n2);
+    \draw[thick,->] (n2) to (n3);
+    \draw[thick,->] (n3) -- (n4);
+    \draw[thick,->] (n4) -- (n5);
+  \end{tikzpicture}
+\end{center}
+The protocols of interest call for honest players to add a
+\emph{single} block %(to a single previous chain in its local state)
+during any slot. In particular:
+% \begin{enumerate}[label={\textbf{A\arabic*}}., resume=axiom]
+% \item If a slot $\slot_t$ was assigned to a single honest player, 
+% then a single block is created---during the entire protocol---with the label $\slot_t$.
+% \end{enumerate}
+\begin{enumerate}[label={\textbf{A\arabic*}}., ref={\textbf{A\arabic*}}, resume=axiom]
+  \item\label{axiom:honest}
+   Let $k \geq 1$ be an integer. 
+  If a slot $\slot_t$ was assigned to $k$ honest players but no adversarial players, 
+  then $k$ blocks are created---during the entire protocol---each having the label $\slot_t$.
+\end{enumerate}
+Recall that blockchains are \emph{immutable} in the sense that any
+block in the chain commits to the entire previous history of the
+chain; this is achieved in practice by including with each block a
+collision-free hash of the previous block. These properties imply that
+% if a specific slot $\slot_t$ was assigned to a unique honest player,
+% then any chain that includes the unique block from $\slot_t$ 
+% if a specific slot $\slot_t$ was assigned to a unique honest player,
+any chain that includes a block issued by an honest player 
+must also include that block's associated prefix in its entirety.
+
+As we analyze the dynamics of blockchain algorithms, it is convenient
+to maintain an entire family of blockchains at once. As a matter of
+bookkeeping, when two blockchains agree on a common prefix, we can
+glue together the associated paths to indicate this, as shown
+below.
+\begin{center}
+  \begin{tikzpicture}[>=stealth', auto, semithick,
+    flat/.style={circle,draw=black,thick,text=black,font=\small}]
+    \node[flat]    at (0,0)  (base) {$0$};
+    \node[flat]    at (1,0)  (n1) {$2$};
+    \node[flat] at (2,0)  (n2) {$4$};
+    \node[flat] at (3,0)  (n3) {$5$};
+    \node[flat] at (4,.5)  (n4a) {$7$};
+    \node[flat] at (5,.5)  (n5a) {$9$};
+    \node[flat] at (4,-.5)  (n4b) {$8$};
+    \node[flat] at (5,-.5)  (n5b) {$9$};
+    \draw[thick,->] (base) to (n1);
+    \draw[thick,->] (n1) to (n2);
+    \draw[thick,->] (n2) to (n3);
+    \draw[thick,->] (n3) to (n4a);
+    \draw[thick,->] (n4a) to (n5a);
+    \draw[thick,->] (n3) to (n4b);
+    \draw[thick,->] (n4b) to (n5b);
+  \end{tikzpicture}
+  \end{center}
+  When we glue together many chains to form such a diagram, we call it
+  a ``fork''---the precise definition appears below. Observe that
+  while these two blockchains agree through the vertex (block) labeled
+  5, they contain (distinct) vertices labeled 9; this reflects two
+  distinct blocks associated with slot 9 which, in light of the axiom
+  above, 
+  % must have been produced by an adversarial participant.
+  may be produced by either an adversarial participant assigned to slot 9 or 
+  two honest participants, both assigned to slot 9.
+  
+  Finally, as we assume that messages from honest players are
+  delivered before the next slot begins, we note a direct consequence of the longest
+  chain rule:
+\begin{enumerate}[label={\textbf{A\arabic*}}., ref={\textbf{A\arabic*}}, resume=axiom]
+  \item\label{axiom:honest-depth} 
+  If two honestly generated blocks $B_1$ and $B_2$ are labeled
+  with slots $\slot_1$ and $\slot_2$ for which $\slot_1 < \slot_2$,
+  then the length of the unique blockchain terminating at $B_1$ is
+  strictly less than the length of the unique blockchain terminating at $B_2$.
+\end{enumerate}
+Recall that the honest participant(s) assigned to slot
+$\slot_2$ will be aware of the blockchain terminating at $B_1$ that
+was broadcast by an honest player in slot $\slot_1$ as a result of
+synchronicity; according to the longest-chain rule, 
+$B_2$ must have been placed on a chain that was at least this long. In contrast, not
+all participants are necessarily aware of all blocks generated by
+dishonest players, and indeed dishonest players may often want to
+delay the delivery of an adversarial block to a participant or show
+one block to some participants and show a completely different block
+to others.
+
+\paragraph{Characteristic strings, forks, and the formal axioms.}
+Note that with the axioms we have discussed above, whether or not a
+particular fork diagram (such as the one just above) corresponds to a valid
+execution of the protocol depends on how the slots have been awarded to the parties by the
+leader election mechanism. We introduce the notion of a ``characteristic'' string as a convenient
+means of representing information about slot leaders in a given execution.
+% \begin{definition}[Characteristic string]
+%   Let $\slot_1, \ldots, \slot_{n}$ be a sequence of slots. A \emph{characteristic string} $w$ is an element of $\{0,1\}^n$ defined for a particular execution of a blockchain protocol so that
+%   \[
+%     w_t =   \begin{cases}
+%     0 & \text{if $\slot_{t}$ was assigned to a single honest participant},\\
+% %    1 & \text{if $\slot_{t}$ was assigned to an adversarial participant},
+%     1 & \text{otherwise.}
+%   \end{cases}
+% \]
+% \end{definition}
+\begin{definition}[Characteristic string]\label{def:trivalent-char-string}
+  Let $\slot_1, \ldots, \slot_{n}$ be a sequence of slots.  A
+  \emph{characteristic string} $w$ is an element of
+  $\{\h,\H,\A\}^n$. The string $w$ is consistent with a particular
+  execution of a blockchain protocol on these slots if for each
+  $t \in [n]$, (i) if $w_t = \A$, the slot $\slot_t$ is assigned to
+  at least one adversarial participant, (ii) if $w_t = \h$, the slot
+  $\slot_{t}$ is assigned to a unique, honest participant, and (iii)
+  if $w_t = \H$, the slot $\slot_{t}$ is assigned to at least one
+  honest participant and no adversarial participants.
+
+  Observe that when an execution corresponds to a characteristic
+  string $w$, it also corresponds to any string obtained from $w$ by
+  replacing $\h$ symbols with $\H$ symbols.
+% 
+  % \[
+  %   w_t =   \begin{cases}
+  %   \h & \text{if $\slot_{t}$ was assigned to a single participant who is honest},\\
+  %   \H & \text{if $\slot_{t}$ was assigned to two or more participants, all honest},\\
+  %   \A & \text{otherwise.}
+  %   \end{cases}
+  % \]
+\end{definition}
+For two strings $x$ and $w$ on the same alphabet, 
+we write $x \Prefix w$ if and only if $x$ is a strict prefix of $w$. 
+Similarly, 
+we write $x \PrefixEq w$ if and only if either $x = w$ or $x \Prefix w$. 
+The empty string $\varepsilon$ is a prefix to any string. 
+If $w_t \in \{\h, \H\}$, we say that ``$\Slot_t$ is honest'' and 
+otherwise, we say that ``$\Slot_t$ is adversarial.'' 
+With this discussion behind us, we set down the formal object we use
+to reflect the various blockchains adopted by honest players during
+the execution of a blockchain protocol. This definition formalizes the blockchains axioms discussed above.
+
+%%%%Forks
+
+\begin{definition}[Fork]\label{def:fork}
+  Let $w\in \{\h, \H, \A\}^n$, $P = \{ i : w_i = \h\}$, and $Q = \{ j : w_j = \H\}$. 
+  A \emph{fork} for the string $w$ consists of a directed and rooted
+  tree $F=(V,E)$ with a labeling $\ell:V\to\{0,1,\dots,n\}$. We insist
+  that each edge of $F$ is directed away from the root vertex and
+  further require that
+  \begin{enumerate}[label=(F{\arabic*})]
+    \item\label{fork:root} the root vertex $r$ has label $\ell(r)=0$;
+
+    \item\label{fork:monotone} the labels of vertices along any directed path are strictly increasing;
+
+    \item\label{fork:unique-honest}\label{fork:multiply-honest}
+    each index $i\in P$ 
+    is the label of exactly one vertex of $F$ 
+    and 
+    % \item
+    each index $j\in Q$ 
+    is the label of at least one vertex of $F$; and 
+
+    \item\label{fork:honest-depth} 
+    for any indices $i,j\in P \Union Q$, 
+    if $i<j$ then 
+    the depth of a vertex with label $i$ 
+    is strictly less than 
+    the depth of a vertex with label $j$.
+  \end{enumerate}
+\end{definition}
+
+If $F$ is a fork for the characteristic string $w$, we write
+$F\vdash w$.  The conditions~\ref{fork:root}--\ref{fork:honest-depth}
+are analogues of the axioms~\ref{axiom:root}--\ref{axiom:honest-depth}
+above. The formal reflection of axiom~\ref{axiom:honest} by
+condition~\ref{fork:multiply-honest} deserves further comment: We have
+chosen a definition of characteristic string that does not indicate
+the number of honest victories in cases where there may be many; in
+particular, the symbol $\H$ may be associated with any positive number
+of (honest) vertices in the fork. Indeed, we even permit a fork to
+have a \emph{single} honest vertex associated with such a symbol,
+which enlarges the class of forks under consideration for a particular
+characteristic string. This strengthens our results by effectively
+giving the adversary the option to treat $\H$ symbols as $\h$
+symbols. See Fig.~\ref{fig:fork}
+% in Section~\ref{sec:figures} 
+for an example fork. 
+
+\input{figures}
+
+A final notational convention: If $F \vdash x$ and
+$\hat{F} \vdash w$, we say that $F$ is a \emph{prefix} of $\hat{F}$,
+written $F \fprefix \hat{F}$, if 
+% the string $x \in \{0,1\}^\ell$ is a prefix of the string $w \in \{0,1\}^{\ell + m}$ 
+$x \PrefixEq w$
+and $F$ appears as a
+consistently-labeled subgraph of $\hat{F}$. 
+(Specifically, each path of $F$ appears, with identical labels, in $\hat{F}$.) 
+
+
+% Observe that any string of the form $0^k$ has a unique
+% fork consisting of a single path:
+% \begin{center}
+%   \begin{tikzpicture}[scale=1,>=stealth', auto, semithick,
+%     flat/.style={circle,draw=black,thick,text=black,font=\small}]
+%     \node[flat] at (0,0)  (base) {$0$};
+%     \node[flat] at (1,0)  (n1) {$1$};
+%     \node[flat] at (2,0)  (n2) {$2$};
+%     \node[flat] at (5,0)  (n5) {$k$};
+%     \draw[thick,->] (base) to (n1);
+%     \draw[thick,->] (n1) to (n2);
+%     \draw[thick,->,dashed] (n2) to (n5);
+%   \end{tikzpicture}
+% \end{center}
+% On the other hand, there are in fact an infinite number of forks for
+% any string with at least one ``1,'' as slots for which $w_i = 1$ can
+% be associated with any number of vertices. Axiom~\ref{fork:monotone}
+% reflects that any legal chain must consist of blocks with increasing
+% slot labels. Axiom~\ref{fork:unique-honest} reflects the fact that honest plays produce a single block. Axiom~\ref{fork:honest-depth} reflects that each new
+% honest vertex is always placed at a depth strictly greater than all
+% previous honest vertices, because honest users always choose to add
+% their block to the longest visible chain, and we assume honest blocks
+% can be seen by all users. (By contrast, adversaries may play on
+% shorter tines, or may ``hide'' dishonest blocks from other users until
+% later slots.)
+
+
+
+  Let $w$ be a characteristic string.  The directed paths in the fork
+  $F \Fork w$ originating from the root are called \emph{tines}; these
+  are abstract representations of blockchains. (Note that a tine may 
+  not terminate at a leaf of the fork.)  We naturally extend the label
+  function $\ell$ for tines: i.e., $\ell(t) \triangleq \ell(v)$ where
+  the tine $t$ terminates at vertex $v$. The length of a tine $t$ is
+  denoted by $\length(t)$.
+
+ \paragraph{Viable tines.}
+ The longest-chain rule dictates that honest players build on chains
+ that are at least as long as all previously broadcast honest
+ chains. It is convenient to distinguish such tines in the analysis:
+ specifically, a tine $t$ of $F$ is called \emph{viable} if its length
+ is no smaller than the depth of any honest vertex $v$ for which
+ $\ell(v) \leq \ell(t)$. A tine $t$ is \emph{viable at slot $s$} if
+ the length of the portion of $t$ appearing over slots $0,\ldots, s$ 
+ is no smaller than the depths of any honest vertices labeled from these slots. (As noted,
+ the properties~\ref{fork:multiply-honest} and~\ref{fork:honest-depth}
+ together imply that an honest observer at slot $s$ will only adopt a
+ viable tine.)  
+ % The \emph{honest depth} function
+ % $\hdepth : H \rightarrow [n]$ gives the depth of the (unique) vertex
+ % associated with an honest slot; by~\ref{fork:honest-depth},
+ % $\hdepth(\cdot)$ is strictly increasing.
+ The \emph{honest depth} function
+ $\hdepth : P \Union Q \rightarrow [n]$, 
+ defined as $\hdepth(i) = \max_{t \in F} \left\{ \length(t) \SuchThat \ell(t) = i \right\}$, 
+ gives the largest depth of the (honest) vertices 
+ associated with an honest slot; by~\ref{fork:honest-depth},
+ $\hdepth(\cdot)$ is strictly increasing.
+
+
+% \subsection{Comments on the model}\label{sec:model-comments}
+
+
+
+
+
+    % \begin{definition}[Conservative fork]\label{def:conservative-fork}
+    %   The term \emph{conservative fork} is defined inductively, as follows.
+    %   The trivial fork $F_0$ for the empty string $\varepsilon$ 
+    %   is conservative. 
+    %   A fork $F_{T} \Fork w0$ is conservative if 
+    %   the fork prefix $F_{T_1} \ForkPrefix F_T, F_{T-1} \Fork w$ 
+    %   is conservative 
+    %   and every honest tine $t \in F_T$ at slot $T$ 
+    %   is a conservative extension with respect to $F_{T-1}$.
+    %   Likewise, 
+    %   a fork $F_{T} \Fork w1$ is conservative if 
+    %   the fork prefix $F_{T_1} \ForkPrefix F_T, F_{T-1} \Fork w$ 
+    %   is conservative and $F_T = F_{T-1}$. 
+    % \end{definition}
+    % Observe that a conservative fork is closed. 
+
+    % We record the following lemma from [LinearConsistencyPaper].
+    % \begin{lemma}[Optimal online adversary]\label{lemma:online-adversary}
+    %   For every characteristic string $w = xy$ 
+    %   there is a closed fork $F \Fork xy$ 
+    %   so that 
+    %   $\reach(F) = \reach(xy)$ and $\mu_x(F) = \mu_x(y)$. 
+    % \end{lemma}
+    % % Given a charactersistic string $w = xy$, 
+    % % the ``online adversary'' given in the LinearConsistencyPaper 
+    % % creates a conservative fork 
+    % % which achieves the reach and relative margin of the string $xy$. 
+
+
+\subsection{Slot settlement and the Unique Vertex Property}\label{sec:model-settlement}
+  
+  We are now ready to explore the power of an adversary in this
+  setting who has corrupted a (perhaps evolving) coalition of the
+  players. We focus on the possibility that such an adversary can
+  violate the consistency of the honest players'
+  blockchains. In particular, we consider the possibility that, at
+  some time $t$, the adversary conspires to produce two maximum-length blockchains 
+  that diverge prior to a previous slot $s \leq t$; in
+  this case honest players adopting the longest-chain rule may clearly
+  disagree about the history of the blockchain after slot $s$. We call
+  such a circumstance a \emph{settlement violation}.
+
+  To express this in our abstract language, let $F \Fork w$ be a fork
+  corresponding to an execution with characteristic string $w$. Such a
+  settlement violation induces two viable tines $t_1, t_2$ with the
+  same length that diverge prior to a particular slot of interest. We
+  record this below.
+    
+  \begin{definition}[Settlement with parameters $s,k \in \NN$]\label{def:settlement}
+    Let $n \in \NN$ and let $w$ be a characteristic string of length $n$. 
+    Let $t \in [s + k, n]$ be an integer, $\hat{w} \PrefixEq w, |\hat{w}| = t$, and 
+    let $F$ be any fork for $\hat{w}$. 
+    We say that a slot $s$ is \emph{not $k$-settled} in $F$ if 
+    $F$ contains two maximum-length tines $\Chain_1, \Chain_2$ 
+    that ``diverge prior to $s$,'' i.e., they either
+    contain different vertices labeled with $s$, or one contains a
+    vertex labeled with $s$ while the other does not. 
+    Otherwise, we say that \emph{slot $s$ is $k$-settled in $F$}. 
+    We say that \emph{slot $s$ is $k$-settled in $w$} if, 
+    for each $t \geq s+k$, 
+    it is $k$-settled in every fork $F \Fork \hat{w}$ where $\hat{w} \PrefixEq w, |\hat{w}| = t$.
+  \end{definition}
+
+
+
+
+  \begin{figure*}[t]
+    \begin{center}
+      \fbox{
+        \begin{minipage}{\textwidth}
+          \begin{center}
+            \textbf{The $(\Distribution,T;s,k)$-settlement game}
+          \end{center}
+          \begin{enumerate}
+
+          \item A characteristic string $w \in \{\h,\H,\A\}^T$ is drawn from
+            $\mathcal{D}$. (This reflects the results of the leader
+            election mechanism.)
+
+          \item Let $A_0 \vdash \varepsilon$ denote the initial fork for
+            the empty string $\varepsilon$ consisting of a single node
+            corresponding to the genesis block.
+
+          \item For each slot $\Slot_t, t = 1, \ldots, T$ in increasing order:
+            \begin{enumerate}
+            \item\label{game:honest} (Honest slot.)  This case
+              pertains to $w_t \in \{\h, \H\}$.  If $w_t = \h$ then
+              $\Adversary$ sets $k = 1$.  If $w_t = \H$ then
+              $\Adversary$ chooses an arbitrary integer $k \geq 1$.
+              The challenger is then given $k$ and the fork
+              $A_{t-1} \vdash w_1 \ldots w_{t-1}$.  He must determine
+              a new fork $F_{t} \vdash w_1 \ldots w_t$ by adding $k$
+              new vertices (all labeled with $t$) to $A_{t-1}$.  Each
+              new vertex is added at the end of a maximum-length path
+              in $A_{t-1}$.  If there are multiple
+              candidates\footnote{ It is possible that all maximum-length 
+                tines are honest. In the settlement game
+                considered in~\cite{LinearConsistencySODA}, at least
+                one of these tines was adversarial.} 
+              for this path,
+              $\Adversary$ may break the tie.  If $k \geq 2$, multiple
+              vertices (all with label $t$) may be added at the end of
+              the same path.
+
+
+
+            \item 
+            (Adversarial slot.)
+            If $w_t = \A$, this is an adversarial slot. $\Adversary$
+              may set $F_t \vdash w_1\ldots w_t$ to be an arbitrary fork
+              for which $A_{t-1} \fprefix F_t$.
+              
+            \item (Adversarial augmentation.) $\Adversary$ determines an
+              arbitrary fork $A_t \vdash w_1 \ldots, w_{t}$ for
+              which $F_{t} \fprefix A_{t}$.
+            \end{enumerate}
+             Recall that $F \fprefix F'$ indicates that $F'$
+              contains, as a consistently-labeled subgraph, the fork $F$.
+          \end{enumerate}
+          $\Adversary$ \emph{wins the settlement game} if slot $s$ is not
+          $k$-settled in some fork $A_t, t \geq s+k$.
+        \end{minipage}
+      }
+    \end{center}
+  \end{figure*}
+
+
+
+  \begin{definition}[Bottleneck Property (BP) and Unique Vertex Property (UVP)]\label{def:bottleneck-property}\label{def:unique-vertex-property}
+    Let $w \in \{\h, \H, \A\}^T$ be a characteristic string.  
+    A slot $s \in [T]$ is said to have the 
+    \emph{bottleneck property in $w$} 
+    if, 
+    for any fork $F \Fork w$ 
+    and any $k \geq s + 1$, 
+    every tine viable at the onset of slot $k$ 
+    contains, as its prefix, some vertex with label $s$.       
+    Slot $s$ is said to have the \emph{Unique Vertex Property} 
+    if, 
+    for any fork $F \Fork w$, 
+    there is a unique vertex $u \in F$ with label $s$ 
+    so that 
+    for any $k \geq s + 1$, 
+    all tines viable at the onset of slot $k$ 
+    contain, as their common prefix, 
+    the vertex $u$.
+  \end{definition}
+  Thus 
+  if a uniquely honest slot in $w$ has the bottleneck property, 
+  it has the UVP as well.
+  As a consistency property, UVP has several advantages over slot settlement. 
+  First, it easily implies the slot settlement property:
+  let $w \in \{\h, \H, \A\}^T, s \in [T]$, and $k \in [T - s]$. 
+  \begin{equation}\label{eq:settlement-uvp}
+    \text{If a slot $t \in [s, s + k]$ has UVP in $w$ 
+    then $s$ is $k$-settled in $w$.}     
+  \end{equation}  
+  In addition, UVP has a straightforward characterization 
+  using ``Catalan slots'' 
+  (see Theorem~\ref{thm:unique-honest}) 
+  and ``relative margin'' 
+  (see Lemma~\ref{lemma:uvp-margin}); 
+  these characterizations are amenable to stochastic analysis. 
+  Finally, since UVP is structurally reminiscent of the traditional common prefix (CP) violations, 
+  % (see Section~\ref{sec:cp-model}), 
+  UVP easily implies CP. 
+  The analogous statement ``settlement implies CP,'' however, 
+  requires a lengthy proof both in~\cite{LinearConsistency} and in 
+  our framework. See 
+  Appendix~\ref{sec:cp-forks}
+  % the full version~\cite{MultiHonestFullVersion}
+  for details.
+
+
+
+
+\subsection{Adversarial attacks on settlement time; the settlement game}\label{sec:game} 
+
+
+  To clarify the relationship between forks and the chains at play in a
+  canonical blockchain protocol, we define a game-based model below that
+  explicitly describes the relationship between forks and executions.
+  By design, the probability that the adversary wins this game is at
+  most the probability that a slot $s$ is not $k$-settled. 
+  % We remark
+  % that while we focus on settlement violations for clarity, one could
+  % equally well have designed the game around common prefix violations.
+
+  Consider the \emph{$(\Distribution,T;s,k)$-settlement game} 
+  (presented in the box), played
+  between an adversary $\Adversary$ and a challenger $\Challenger$ with
+  a leader election mechanism modeled by an ideal distribution
+  $\Distribution$. Intuitively, the game should reflect the ability of
+  the adversary to achieve a settlement violation; that is, to present
+  two maximum-length viable blockchains to a future honest observer,
+  thus forcing them to choose between two alternate histories which
+  disagree on slot $s$.
+  The challenger plays the role(s) of the honest players during the
+  protocol. 
+
+  It is important to note that the game bestows the player $\Adversary$ 
+  with the power to choose the number of honest vertices in 
+  a multiply honest slot. 
+  Note that this setting makes the player strictly more powerful and, 
+  importantly, implies that 
+  the game is completely determined 
+  by the choices made by $\Adversary$ 
+  (i.e., the actions of the challenger are deterministic). 
+  Consequently, in Definition~\ref{def:settlement-insecurity}, 
+  we can use a single, implicit universal quantifier 
+  over all strategies $\Adversary$; no choices of the challenger are actually necessary to fully describe the game.
+
+
+  \begin{definition}[Settlement insecurity]\label{def:settlement-insecurity}
+    Let $\Distribution$ be a distribution on $\{\h, \H, \A\}^T$. 
+    Let $w \sim \Distribution$ be the string used in the 
+    first step of a $(\Distribution, T; s, k)$-settlement game $G$. 
+    The \emph{$(s,k)$-settlement insecurity} of $\Distribution$ 
+    is defined as 
+    \[
+      \mathbf{S}^{s,k}[\Distribution] \triangleq 
+        \max_{\substack{\hat{w} \PrefixEq w \\ |\hat{w}| \geq s + k}}\,
+        \max_{F \Fork \hat{w}}\, 
+        \Pr\left[\parbox{50mm}{\centering $F$ has two maximum-length tines that diverge prior to slot $s$}\right]
+      \,.
+    \]
+    % this maximum taken over all adversaries $\Adversary$.
+    Note that the probability in the right-hand side is the same as 
+    the probability that $\Adversary$ wins $G$.
+  \end{definition}
+
+  Note that in typical PoS settings the distribution $\Distribution$
+  is determined by the combined stake held by the adversarial players,
+  the leader election mechanism, and the dynamics of the protocol. The
+  most common case (as seen in Snow White~\cite{SnowWhite},
+  Ouroboros~\cite{Ouroboros}, and Ouroboros Praos~\cite{Praos})
+  guarantees that the characteristic string $w = w_1 \ldots w_T$ is
+  drawn from an i.i.d.\ distribution for which
+  $\Pr[w_i = \A] \leq (1 - \epsilon)/2$ for some $\epsilon \in (0, 1)$;
+  here the constant $(1-\epsilon)/2$ is directly related to the stake
+  held by the adversary. Some settings involving adaptive adversaries
+  (e.g., Ouroboros Praos~\cite{Praos}) yield a weaker martingale-type
+  guarantee that
+  $\Pr[w_i = \A \mid w_1, \ldots, w_{i-1}] \leq (1 - \epsilon)/2$.  We
+  can easily handle both types of distributions in our analysis since
+  the former distribution ``stochastically dominates'' the latter.
+  % Let us define below the notion of stochastic dominance. 
+  As a rule, we denote the
+  probability distribution associated with a random variable using
+  uppercase script letters. 
+  \begin{definition}[Stochastic dominance]\label{def:dominance} 
+    Let $X$ and $Y$ be random variables taking values in some set $\Omega$ 
+    endowed with a partial order $\leq$. 
+    We say that $X$ \emph{stochastically dominates} $Y$, 
+    written $Y \dominatedby X$, if 
+    $
+      \mathcal{X}(A) \geq \mathcal{Y}(A)
+      % \,.
+    $ 
+    for all \emph{monotone sets} $A \subseteq \Omega$, 
+    where a set $A \subseteq \Omega$ is called 
+    monotone if $a \in A$ implies $a' \in A$ for all $a \leq a'$.
+    As a special case, when $\Omega = \R$,  $Y \dominatedby X$ if
+    $\Pr[X \geq \Lambda] \geq \Pr[Y \geq \Lambda]$
+    for every $\Lambda \in \R$.  
+    We extend this notion to probability
+    distributions in the natural way.
+  \end{definition}
+
+  Throughout the paper, we adopt the following partial order on
+  $\{\h, \H, \A\}^T$: If $T = 1$, define $\h < \H < \A$.  Otherwise,
+  for two strings $xa, yb \in \{\h, \H, \A\}^T, |a| = |b| = 1$,
+  $xa \leq yb$ if and only if $x \leq y$ and $a \leq b$. When
+  $x \leq y$, one might say that $y$ is ``more adversarial'' than $x$:
+  indeed, if $F \vdash x$ and $x \leq y$ then $F \vdash y$ so that any
+  settlement violation for $x$ induces a settlement violation for $y$.
+
+  \begin{definition}[$(\epsilon, p_\h)$-Bernoulli
+    condition]\label{def:bernoulli-cond}
+    Let $T \in \NN, \epsilon \in (0,1)$, and
+    $p_h \in [0,(1+\epsilon)/2]$. Define $p_\A = (1-\epsilon)/2$ and
+    $p_\H = 1- p_\A - p_\h$.  A random variable $w = w_1 \ldots w_T$
+    taking values in $\{\h, \H, \A\}^T$ is said to satisfy the
+    \emph{$(\epsilon, p_\h)$-Bernoulli condition} if each
+    $w_i, i \in [T]$, is independent and identically distributed as
+    follows: $\Pr[w_i = \sigma] = p_\sigma$ for
+    $\sigma \in \{\h, \H, \A\}$.  The distribution of $w$ is also said
+    to satisfy the $(\epsilon, p_\h)$-Bernoulli condition.
+
+    We frequently use the notation $p_\H$ and $p_\A$ in the context of
+    such a random variable when $\epsilon$ and $p_\h$ can be inferred
+    from context.
+  \end{definition}
+  
+  \begin{theorem}[Main theorem]\label{thm:main}
+    Let $\epsilon, p_\h \in (0, 1)$ and $s, k, T \in \NN$.  
+    Let $\mathcal{B}$ be a distribution 
+    on length-$T$ characteristic strings satisfying 
+    the $(\epsilon, p_\h)$-Bernoulli condition.
+    Then 
+    $
+      \mathbf{S}^{s,k}[\mathcal{B}] 
+        \leq 
+        \exp\left(-k\cdot \Omega( 
+          \min(\epsilon^3, \epsilon^2 p_\h) 
+        \right)
+        % \,.
+    $.
+    Furthermore, 
+    let 
+    $\mathcal{W}$ be a distribution on
+    $\{\h, \H, \A\}^T$ so that 
+    $\mathcal{W} \DominatedBy \mathcal{B}$. 
+    Then $\mathbf{S}^{s,k}[\mathcal{W}] 
+        \leq \mathbf{S}^{s,k}[\mathcal{B}]$.   
+    (Here, the asymptotic notation hides constants that do not depend on $\epsilon$ or $k$.)
+  \end{theorem}
+  Note that the quantity $p_\h$ above cannot be zero.
+  We present the proof in Section~\ref{sec:bounds-main-proofs}. 
+  In Section~\ref{sec:recursion}, 
+  we give a characterization of the UVP which 
+  allows us to explicitly compute $\mathbf{S}^{s,k}[\mathcal{B}]$; 
+  see 
+  % Lemma~\ref{lemma:uvp-margin}, 
+  Theorem~\ref{thm:relative-margin} and 
+  Section~\ref{sec:exact-prob}.
+
+
+  \paragraph{Analysis in the $\Delta$-synchronous setting.} The security
+   game above most naturally models a blockchain protocol over a
+   synchronous network with immediate delivery (because each ``honest''
+   play of the challenger always builds on a fork that contains the fork
+   generated by previous honest plays). However, the model can be easily
+   adapted to protocols in the $\Delta$-synchronous model by applying
+   the $\Delta$-reduction mapping of~\cite{Praos} (which is specifically
+   designed to lift the synchronous analysis to the $\Delta$-synchronous
+   setting).
+   These details appear in Section~\ref{sec:async}.
+
+
+  \paragraph{Public leader schedules.} One attractive feature of this
+  model is that it gives the adversary full information about the future
+  schedule of leaders. The analysis of some protocols indeed demand this
+  (e.g., Ouroboros, Snow White). Other protocols---especially those
+  designed to offer security against adaptive adversaries (Praos,
+  Genesis)---in fact contrive to keep the leader schedule private. Of
+  course, as our analysis is in the more difficult ``full information''
+  model, it applies to all of these systems.
+
+  \paragraph{Bootstrapping multi-phase algorithms; stake shift.} We remark that
+  several existing proof-of-stake blockchain protocols proceed in
+  phases, each of which is obligated to generate the randomness (for
+  leader election, say) for the next phase based on the current stake
+  distribution. The blockchain security properties of each phase are
+  then individually analyzed---assuming clean randomness---which yields
+  a recursive security argument; in this context the game outlined above
+  precisely reflects the single phase analysis.
+
+
+
+
+
+\subsection{A consistent longest-chain selection rule}\label{sec:lcr-model} 
+  % Let $\leq_\pi$ be the lexicographical ordering of the tines in a fork where 
+  % each tine is represented as the list of vertex labels appearing in the tine's root-to-leaf path.
+  % If two tines have the same vertex labels, 
+  % $\leq_\pi$ must break tie in an arbitrary but consistent way. 
+  %
+  % \begin{definition}[Conservative fork]\label{def:conservative-fork}
+  %   The term \emph{conservative fork} is defined inductively, as follows.
+  %   The trivial fork $F_0$ for the empty string $\varepsilon$ 
+  %   is conservative. 
+  %   A fork $F_{T} \Fork w0$ is conservative if 
+  %   the fork prefix $F_{T_1} \ForkPrefix F_T, F_{T-1} \Fork w$ 
+  %   is conservative 
+  %   and every honest tine $t \in F_T$ at slot $T$ 
+  %   is a conservative extension with respect to $F_{T-1}$.
+  %   Likewise, 
+  %   a fork $F_{T} \Fork w1$ is conservative if 
+  %   the fork prefix $F_{T_1} \ForkPrefix F_T, F_{T-1} \Fork w$ 
+  %   is conservative and $F_T = F_{T-1}$. 
+  % \end{definition}
+  % Observe that a conservative fork is closed. 
+
+  % The rushing adversary 
+  % described at the outset of Section~\ref{sec:model} 
+  % can always reorder messages before delivering to a recipient. 
+  Let us 
+  modify axiom~\ref{axiom:message-delivery} as follows:
+    % the adversary uses an arbitrary (but fixed) 
+    % ordering for each subset of honest blockchains. 
+    % When he delivers honest blockchains 
+    % to an honest player, 
+    % he delivers them in this pre-specified order. 
+
+  \begin{enumerate}[label={\textbf{A\arabic*}\ensuremath{^\prime}}., ref={\textbf{A\arabic*}\ensuremath{^\prime}}, start=0]
+  \item\label{axiom:tie-breaking} 
+%     if all maximally long blockchains to be received by an honest party 
+%     are honest, 
+%     the adversary delivers these blockchains
+    % in an arbitrary but consistent order.
+    % Suppose two honest recipients receive 
+    % the same set $L$ of maximally long blockchains. 
+    % If all chains in $L$ end in honest blocks then 
+    % the adversary delivers the elements of $L$ to these honest recipients 
+    % in an arbitrary but consistent order.
+    In addition to axiom~\ref{axiom:message-delivery},  
+    an arbitrary but consistent 
+    longest-chain tie-breaking rule 
+    is used by all honest participants.
+  \end{enumerate}
+  % Note that 
+  % the adversary is free to deliver adversarial blockchains 
+  % in any order, interleaving the honest chains if he so wishes. 
+  As a consequence, 
+  if two honest participants observe 
+  the same set of blockchains of maximum length, 
+  they will extend the same blockchain.
+  % there is no competitive adversarial blockchain 
+  % when delivering to an honest recipient, 
+  % he relinquishes his right to 
+  % reorder the maximally long honest blockchains. 
+
+
+
+  \begin{definition}[Bivalent characteristic
+    string]\label{def:bivalent-char-string}
+    Let $\slot_1, \ldots, \slot_{n}$ be a sequence of slots. 
+    A \emph{bivalent characteristic string} $w$ 
+    is an element of $\{\H,\A\}^n$ 
+    defined for a particular execution of a blockchain protocol on these slots so that 
+    for $t \in [n]$, 
+    $w_t = \A$ if $\slot_{t}$ is assigned to an adversarial participant, 
+    and $w_t = \H$ otherwise.
+    % \[
+    %   w_t =   \begin{cases}
+    %   \H & \text{if $\slot_{t}$ was assigned to one or more participants, all honest},\\
+    %   \A & \text{otherwise.}
+    %   \end{cases}
+    % \]
+  \end{definition}
+  The definition of a fork for a bivalent characteristic string is
+  identical to Definition~\ref{def:fork} (somewhat simplified as a
+  bivalent string does not contain any $\h$ symbol).
+  Also note that the $(\epsilon, 0)$-condition 
+  from Definition~\ref{def:bernoulli-cond} 
+  is well-defined for bivalent characteristic strings.
+  %  except the following: 
+  % \begin{enumerate}[label=(F{\arabic*}.),start=3]
+  %   \item\label{fork:multiply-honest-bivalent}
+  %     % \label{fork:unique-honest}\label{fork:multiply-honest} 
+  %     each index in $\{j : w_j = \H\}$ 
+  %     is the label of at least one vertex of $F$.
+  % \end{enumerate}
+  % However, condition~\ref{fork:multiply-honest-bivalent} above 
+  % is identical to the condition~\ref{fork:multiply-honest} 
+  % in Definition~\ref{def:fork} 
+  % since $w$ does not contain the symbol $\h$.
+
+  Let $w$ be a bivalent characteristic string, $F$ a fork for $w$, and
+  $F'$ a fork for $w\H$ so that $F \ForkPrefix F'$ and any honest
+  vertex in $F' \setminus F$ has label $|w| + 1$.  If $F$ contains a
+  maximum-length adversarial tine, there is no guarantee that two
+  honest observers at slot $|w| + 1$ will agree on the longest chain:
+  the adversary may chose to expose the adversarial chain to one and
+  not the other.
+  In this case, we say that \emph{$F$ has a tie for the longest-chain
+  rule}---or, in short, that \emph{$F$ has an LCR tie}.  
+  % For example, consider the two honest vertices 
+  % with label 6 in Figure~\ref{fig:fork}. 
+  % Although both observe 
+  % the (honest) vertex with label 5, 
+  % only the top one observes 
+  % the middle (adversarial) vertex with label 4.
+  When there
+  is no LCR tie (that is, no maximum-length adversarial tine), all
+  honest slot leaders at slot $|w| + 1$ necessarily extend the same
+  honest tine determined by the consistent longest-chain tie-breaking
+  rule.
+
+
+
+  \begin{theorem}[Main theorem; consistent tie-breaking]\label{thm:main-bivalent}
+    % Let $\epsilon \in (0, 1), s, k, T \in \NN$.  Let
+    % $\mathcal{W}$ and $\tilde{\mathcal{B}}_\epsilon$ be two distributions on
+    % $\{\H, \A\}^T$ where 
+    % $\tilde{\mathcal{B}}_\epsilon$ is defined above and
+    Let $\epsilon \in (0, 1)$ and $s, k, T \in \NN$.  
+    Let $\mathcal{B}$ be a distribution 
+    on length-$T$ bivalent characteristic strings 
+    satisfying the $(\epsilon, 0)$-Bernoulli condition. 
+    Let 
+    $\mathcal{W}$ be a distribution on
+    $\{\H, \A\}^T$ so that 
+    $\mathcal{W} \DominatedBy \mathcal{B}$. 
+    Then 
+    $
+      \mathbf{S}^{s,k}[\mathcal{W}] 
+        \leq \mathbf{S}^{s,k}[\mathcal{B}] 
+        \leq 
+        \exp\bigl(-k \cdot \Omega(\epsilon^3 (1 + O(\epsilon) ) )\bigr)
+      % \,.
+    $. 
+    % for large $k$. 
+    (Here, the asymptotic notation hides constants that do not depend on $\epsilon$ or $k$.)
+  \end{theorem}
+
+  The proof is deferred to Section~\ref{sec:bounds-main-proofs}.
+  Note that the theorem above states that a 
+  PoS protocol can achieve optimal consistency error 
+  even with a leader election scheme 
+  that produces no uniquely honest slots. 
+  In contrast, Theorem~\ref{thm:main} requires 
+  a non-zero probability for uniquely honest slots.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

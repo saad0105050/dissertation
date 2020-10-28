@@ -1,0 +1,168 @@
+% \subsection{The Common Prefix  (CP) property}\label{sec:cp-model} 
+  For the sake of simplicity, 
+  assume the synchronous communication model from Section~\ref{sec:game}; 
+  the $\Delta$-synchronous setting can be handled in the same way 
+  as delineated in Sections~\ref{sec:async-model} and~\ref{sec:async}.
+
+  The common prefix property with parameter $k$ asserts
+  that, for any slot index $s$, if an honest observer at slot $s + k$
+  adopts a blockchain $\Chain$, the prefix $\Chain[0 : s]$ will be
+  present in every honestly-held blockchain at or after slot $s + k$.
+  (Here, $\Chain[0 : s]$ denotes the prefix of the blockchain $\Chain$
+  containing only the blocks issued from slots $0, 1, \ldots, s$.)
+
+  We translate this property into the framework of forks.  Consider a
+  tine $t$ of a fork $F \vdash w$.  The \emph{trimmed} tine
+  $t\TrimSlot{k}$ is defined as the portion of $t$ labeled with slots
+  $\{ 0, \ldots, \ell(t) - k\}$. For two tines, we use the notation
+  $t_1 \PrefixEq t_2$ to indicate that the tine $t_1$ is a
+  prefix of tine $t_2$.
+
+  \begin{definition}[Common Prefix Property with parameter $k \in \NN$]\label{def:cp-slot}
+    Let $w$ be a characteristic string. A fork $F \vdash w$ satisfies
+    $\kSlotCP$ if, for all pairs $(t_1, t_2)$ of viable tines $F$ for
+    which $\ell(t_1) \leq \ell(t_2)$, we have $t_1\TrimSlot{k} \PrefixEq t_2$. 
+    Otherwise, we say that the tine-pair $(t_1, t_2)$ is a witness to a $\kSlotCP$ violation.
+    Finally, \emph{$w$ satisfies $\kSlotCP$} if every fork $F \vdash w$ satisfies $\kSlotCP$.
+    %We
+    %denote this property by $\kSlotCP$.
+    % Let $\Chain_1$ and $\Chain_2$ be two blockchains adopted by 
+    % two (not necessarily distinct) honest players 
+    % at the onset of slots $r_1$ and $r_2$, respectively, with $r_1 \leq r_2$. 
+    % Then $\Chain_1\TrimSlot{k} \PrefixEq \Chain_2$. 
+    % We denote this property by $\kSlotCP$.
+  \end{definition} 
+  If a string $w$ does not possess the $\kSlotCP$ property, 
+  we say that \emph{$w$ violates $\kSlotCP$}.
+  Observe that traditionally
+  (cf. \cite{GKL17}), 
+  the truncated chain 
+  % $\Chain\TrimSlot{k}$ 
+  is defined in terms of
+  deleting a suffix of (block-)length $k$ from $\Chain$. 
+  We denote this traditional version of the common prefix property as the
+  $\kCP$ property. Note, however, that a $\kCP$ violation immediately
+  implies a $\kSlotCP$ violation; hence, bounding the probability of a
+  $\kSlotCP$ violation is sufficient to rule out both events.
+
+  \paragraph{Connection with the UVP.}
+  Note that 
+  if $w$ admits a $\kSlotCP$ violation, 
+  then there must be a fork $F$ containing 
+  two distinct viable tines $t_1, t_2, \ell(t_1) \leq \ell(t_2)$ 
+  so that $\ell(t_1) - \ell(t_1 \Intersect t_2) \geq k + 1$. 
+  Then $t_1$ must contain a vertex $v, \ell(t_1 \Intersect t_2) < \ell(v) \leq \ell(t_1) - k$ 
+  so that $v$ does not belong to $t_2$. 
+  % Recall the UVP from Section~\ref{sec:catalan}.   
+  If every substring $x$ of $w$ with $|x| \geq k$, contained a slot with the UVP then 
+  we would never have a $\kSlotCP$ violation. 
+  Therefore, 
+  \begin{align}\label{eq:cp-uvp}
+    \parbox{20mm}{\centering $w$ violates $\kSlotCP$}
+    &\implies
+    \parbox{45mm}{\centering
+      $w$ has a substring $y, |y| \geq k$ so that 
+      no slot indexed by $y$ has the UVP in $w$.
+    }
+  \end{align}
+
+
+  Recall that a uniquely honest Catalan slot has the UVP. 
+  This fact allows us to bound 
+  the probability of common prefix violations by 
+  reasoning only about Catalan slots.\footnote{ 
+  One can also prove Theorem~\ref{thm:main-CP} 
+  by 
+  directly showing---as is done in~\cite{LinearConsistency}---that 
+  a $\kSlotCP$ violation implies a $k$-settlement violation 
+  and then appealing to Theorem~\ref{thm:main}. 
+  The proof of the implication 
+  turns out to be quite long and complicated 
+  compared to the short proof above; 
+  see Appendix~\ref{sec:cp-forks}.
+  A positive side of this this alternate proof, however,  
+  is that it shows how arguments in~\cite{LinearConsistency} 
+  can be adapted to our generalized fork framework.
+  }
+
+  \begin{theorem}[Main theorem; CP version] \label{thm:main-CP} Let
+    $\epsilon, p_\h \in (0,1)$ and $T, k \in \NN, T \geq k$. 
+    Let $w$ be a length-$T$ characteristic string satisfying the $(\epsilon, p_\h)$-Bernoulli condition. 
+    % be a random variable satisfying the $\epsilon$-martingale condition.
+    Then
+    $$
+      \Pr_{w}[\text{$w$ violates $\kCP$}] 
+        \leq 
+      \Pr_{w}[\text{$w$ violates $\kSlotCP$}] 
+        \leq T \cdot 
+        \exp\bigl(-k\cdot \Omega(\min(\epsilon^3, \epsilon^2 p_\h))\bigr)
+        \,.
+    $$
+    
+    Next, suppose that axiom~\ref{axiom:tie-breaking} is satisfied. 
+    If $w$ is a length-$T$ bivalent characteristic string satisfying the $(\epsilon, 0)$-Bernoulli condition 
+    then
+    $$
+      \Pr_{w}[\text{$w$ violates $\kCP$}] 
+        \leq 
+      \Pr_{w}[\text{$w$ violates $\kSlotCP$}] 
+        \leq T \cdot 
+        \exp\bigl(-k \cdot \Omega(\epsilon^3 (1 + O(\epsilon)))\bigr)
+        \,.
+    $$
+  \end{theorem}
+  \begin{proof}
+% \paragraph{Proof of Theorem~\ref{thm:main-CP}}
+    \newcommand{\EpsCat}{\mathsf{\varepsilon}}
+    (The first claim.) 
+    % Let $w \in \{\h, \H, \A\}^T$ be a (trivalent) characteristic string 
+    % sampled from a distribution satisfying the $\epsilon$-martingale condition.
+    Let $s \in [T - k]$.
+    Let $\EpsCat_{k}$ be 
+    the probability that $y = w_s \ldots w_{s+k-1}$ contains no slot with the UVP in $w$. 
+    Then, recalling~\eqref{eq:cp-uvp}, we can apply a union bound 
+    over all substrings of $w$ of length at least $k$ to get 
+    $
+      \Pr[\text{$w$ violates $\kSlotCP$}] 
+        \leq T\, \sum_{r \geq  k} \EpsCat_{r}
+    $
+    where the factor $T$ represents a summation over all $s \in [T - k + 1]$. 
+    By Theorem~\ref{thm:unique-honest}, 
+    if a substring $y$ of $w$ does not contain a slot with the unique vertex property in $w$, 
+    $y$ cannot contain a uniquely honest slot that is Catalan in $w$.
+    Therefore, $\EpsCat_k$ is no more than the error probability from Bound~\ref{bound:unique-honest-catalan}. 
+    Since $\EpsCat_k$ decreases exponentially in $k$, 
+    we can write 
+    \begin{align*}
+      \Pr[\text{$w$ violates $\kSlotCP$}] 
+        &\leq T\cdot O(1) \cdot \EpsCat_{k}
+        % \\&\leq T 
+        %   \begin{cases}
+        %     \exp\left(-k\cdot \Theta(\min(\epsilon^3, \epsilon^2 q_\h) \right) & \text{if $q_\h \rightarrow 0$}\,,\\
+        %     \exp\left(-k\cdot \Theta( \min(\epsilon^3, \epsilon q_\h/q_\H) \right) & \text{otherwise}
+        %     \,.
+        %   \end{cases}
+        \,.
+    \end{align*}
+    This proves the second inequality. 
+    The first inequality follows since, 
+    in a given characteristic string, 
+    a $\kCP$ violation implies a $\kSlotCP$ violation.
+
+    (The second claim.) 
+    The proof in this case 
+    is identical to the preceding argument except that 
+    we need to refer to Theorem~\ref{thm:multiple-honest} in lieu of Theorem~\ref{thm:unique-honest}
+    and Bound~\ref{bound:two-catalans} in lieu of Bound~\ref{bound:unique-honest-catalan}.
+    % \hfill $\qed$  
+  \end{proof}
+  \paragraph{The $\Delta$-synchronous setting.} 
+  A $\kCP$ violation in a $\Delta$-fork for a string $w \in \{\perp, \h, \H, \A\}^*$ 
+  would imply 
+  a $\kCP$ violation in the corresponding synchronous fork 
+  in the string $\Reduce(w) \in \{\h, \H, \A\}^*$ 
+  and, consequently, a $\kSlotCP$ violation in $\Reduce(w)$. 
+  % Hence the probability of the former event 
+  % is no more than that in Theorem~\ref{thm:main-async} 
+  % applied on the string $\Reduce(w)$. 
+  We omit further details.

@@ -1,0 +1,940 @@
+\hrule
+
+
+
+      \begin{theorem}[No LCR tie iff the last slot is left-Catalan]\label{thm:lcr-tie-left-catalan}
+        Let $w \in \{0,1\}^T$ be a charactersitic string. 
+        Slot $T$ is left-Catalan 
+        if and only if 
+        $w$ admits no fork with an LCR tie at the onset of slot $T + 1$.
+      \end{theorem}
+      \begin{proof}
+        ~
+        \begin{description}[font=\normalfont\itshape\space]
+          \item[Forward direction.]
+          Suppose $F \Fork w$ is a fork which contains 
+          at least two longest tines at the onset of slot $T + 1$ so that 
+          one of them is adversarial. 
+          We claim that $T$ is not a left-Catalan slot.
+          Let $t$ be this adversarial tine and  
+          let $B$ be the last honest block on $t$. 
+          Since $t$ is viable at the onset of slot $T + 1$, 
+          by Fact~\ref{fact:fork-structure}, 
+          the interval $[\ell(B) + 1, T]$ must be $\Aheavy$. 
+
+
+
+          \item[Reverse direction.]
+          Suppose $T$ is \emph{not} a left-Catalan slot; 
+          we claim that there is a fork for $w$ with an LCR tie.
+          In particular, $w$ has a decomposition $w = xy$ so that 
+          $y$ is the longest $\Aheavy$ suffix of $w$. 
+          Let $I$ be the interval indexed by the slots of $y$.
+          If $w$ is the all-ones string, we trivially get an LCR tie. 
+          Hence assume that $w$ contains at least one honest slot and, 
+          in particular, 
+          observe that by construction, 
+          $I$ must contain the last honest slot in $w$. 
+          Next, observe that if $w$ ends in one or more adversarial slots, 
+          it is always possible to create an adversarial tine which is 
+          at least as long as the longest honest tine, 
+          leading to an LCR tie at the onset of slot $T + 1$. 
+          Thus assume that $T$ is an honest slot.
+          Finally, let $F$ be a fork for $w$ 
+          and let $C$ be the set of all longest tines in $F$.
+
+          \begin{description}[font=\normalfont\itshape\space]
+            \item[If $|C| \geq 2$ and $C$ contains an adversarial tine:]
+            We are done; $F$ produces an LCR tie at the onset of slot $T + 1$.
+
+            \item[If $C$ contains only honest tines:] 
+            If $|C| = 1$, let $t$ be the only member in $C$.
+            Otherwise, let $t = \LCR(C)$. 
+            In either case, $t$ is an honest tine.
+            %  and notice that 
+            % either $t$ is  or it is an adversarial tine longer than $t$.
+            % In either case, 
+            Below, we construct a new adversarial longest tine $t^\prime$ 
+            so that $\length(t^\prime) = \length(t)$. 
+            This would imply that the modified fork admits 
+            an LCR tie at the onset of slot $T + 1$.
+
+            Let $B$ be the last honest block 
+            on tine $t$ issued from the prefix $x$.
+            (If no such block is present, we can take $B$ to be the genesis block.)
+            We augment the fork $F$ as follows: 
+            i) Extend $B$ by duplicating the (adversarial) blocks 
+            that appear on $t$ after $\ell(B)$ but within the slots indexed by $x$; 
+            let $B^\prime$ be the last of these newly created blocks. 
+            Let $n = \length(t) - \depth(B^\prime)$.
+            ii) Extend $B^\prime$ using the first $n$ adversarial slots in $I$;  
+            let $t^\prime$ be the 
+            newly created (adversarial) tine. 
+            Such an extension is always possible since $I$ is $\Aheavy$.
+            By construction, $t \neq t^\prime$ and $\length(t^\prime) = \length(t)$. 
+
+            \item[If $C = \{t\}$ where $t$ is an adversarial tine.]
+            Let $\tau$ be a tine ending in (the honest) slot $T$. 
+            It follows that $\length(t) > \length(\tau)$ 
+            since, otherwise, $C$ would contain $\tau$.
+            In addition, $\ell(t) < \ell(\tau) = T$ and, as a result, 
+            $t$ cannot contain any block from slot $T$. 
+            In fact, we can say more: 
+            the number of trailing adversarial blocks in 
+            every tine $\hat{t} \in F$ so that $\length(\hat{t}) > \length(\tau)$ 
+            is at least $n_{\hat{t}} \triangleq \length(\hat{t}) - \length(\tau)$.
+            Let us delete $n_{\hat{t}}$ trailing adversarial blocks 
+            from every tine $\hat{t}$ above. 
+            The resulting fork must contain a longest honest tine $\tau$ 
+            plus at least one longest adversarial tine. 
+            As a result, this new fork is a witness to an LCR tie at the onset of slot $T + 1$.
+          \end{description}
+
+        \end{description}
+
+      \end{proof}
+
+    % \subsection{CP implies adjacent Catalan slots}
+
+    %   \begin{fact}[CP implies adjacent Catalan slots]\label{fact:cp-implies-catalan-multiple-honest}
+    %     Let $w \in \{0,1\}^T$ be a characteristic string 
+    %     and let $s \in [T]$ so that $s-1, s$ are honest slots in $w$.  
+    %     Suppose $w$ has the following property: 
+    %     for any fork $F \Fork w$ 
+    %     % constructed under the LCR tie-breaking rule $\LCR(\cdot)$ 
+    %     and any slot $k, k \geq s + 1$, 
+    %     every tine $t$ viable at the onset of slot $k$ 
+    %     contains, in its prefix, 
+    %     a unique tine 
+    %     $\tau, \ell(\tau) = s$ which 
+    %     builds upon a unique tine $\rho, \ell(\rho) = s - 1$.
+    %     Then the two slots $s-1$ and $s$ are Catalan.
+    %   \end{fact}
+    %   \begin{proof}
+    %     Fact~\ref{fact:almost-cp-implies-catalan} implies that 
+    %     $s$ and $s - 1$ must be Catalan slots. 
+
+    %     % Fact~\ref{fact:almost-cp-implies-catalan} implies that 
+    %     % $s - 1$ must be Catalan. 
+    %     % We claim that 
+    %     % there can be no $\Aheavy$ interval $I \subset [s, T]$.
+    %     % Suppose, toward a contradiction, 
+    %     % that $I$ is the longest of such $\Aheavy$ intervals. 
+    %     % Necessarily, $I$ can be written as $I = [s, h - 1]$ 
+    %     % where either $h$ is an honest slot or $h = T$.
+    %     % Consider a fork $F$ 
+    %     % containing two blocks $\rho, \rho^\prime$ from slot $s - 1$ 
+    %     % where, by our assumption, all relevant viable tines 
+    %     % contain $\rho$ as the common prefix.
+    %     % However, since $I$ is $\Aheavy$, 
+    %     % $F$ can be augmented with an adversarial tine $t$ 
+    %     % that is viable at the onset of slot $h$ and---importantly--- 
+    %     % contains $\rho^\prime$ as its last honest block. 
+    %     % This would violate the uniqueness of the common prefix $\rho$.
+    %     % Therefore, every interval of the form $[s, b], b \geq s$ must be $\Hheavy$. 
+
+    %     % The above argument shows that $s$ is a right-Catalan slot.
+    %     % Since $s - 1$ is a Catalan slot, the honest slot $s$ is left-Catalan and, therefore, Catalan.
+    %   \end{proof}
+
+    % \subsubsection{CP implies negative relative margin}
+
+  %   \begin{fact}[CP implies negative relative margin]\label{fact:cp-implies-neg-margin-multiple-honest}
+  %     Let $w \in \{0,1\}^T$ be a characteristic string 
+  %     and let $s \in[2, T]$ be an integer such that 
+  %     both $s$ and $s - 1$ are honest slots in $w$.  
+  %     Suppose $w$ has the following property: 
+  %     For any slot $k, k \geq s + 1$ and 
+  %     any fork $F \Fork w$
+  %     where honest nodes use $\LCR(\cdot)$ to select the longest chain, 
+  %     every tine $t$ viable at the onset of slot $k$ 
+  %     contains, in its prefix, a 
+  %     unique tine $\rho, \ell(\rho) = s - 1$.
+  %     Then 
+  %     \begin{enumerate}[label=\roman*.]
+  %       \item\label{margin-s-1-multihonest} 
+  %       $\mu_{x}(y) < 0$ 
+  %       for all decompositions $w = xyz$ 
+  %       so that $|x| < s, |xy| \geq s$; and 
+        
+  %       \item\label{margin-s-multihonest} 
+  %       $\mu_{x^\prime}(y^\prime) < 0$ 
+  %       for all decompositions $w = x^\prime y^\prime z$ 
+  %       so that $|x^\prime| < s - 1, |x^\prime y^\prime| \geq s - 1$. 
+  %     \end{enumerate} 
+  %   \end{fact}
+  %   \begin{proof}
+  %     Recall that the statements in Part~\ref{thm:part-cp-multiple-honest} 
+  %     and Part~\ref{thm:part-catalan-multiple-honest} 
+  %     of Theorem~\ref{thm:multiple-honest} 
+  %     are equivalent. 
+  %     Thus we can assume that the slots $s, s - 1$ are in fact Catalan slots. 
+
+  %     \begin{description}[font=\normalfont\itshape\space]
+  %       \item[Part~\ref{margin-s-1-multihonest}]
+  %       Let $m^\prime, n^\prime \in \NN, m^\prime < s - 1 \leq n^\prime \leq T$.
+  %       Write $w = x^\prime y^\prime z$ with $|x^\prime| = m^\prime$ and $|x^\prime y^\prime| = n^\prime$. 
+  %       (Thus $|y^\prime| \geq 1$ and $y^\prime_1 = w_{s-1}$.)
+  %       Let $F$ be any fork for $x^\prime y^\prime$. 
+  %       The reach of the longest honest tine $\tilde{t}$ in $F$ is always zero 
+  %       and by assumption, it contains $\rho$ as a prefix.
+  %       Let $A^\prime$ be the set of tines $t$ such that 
+  %       $t$ is $y^\prime$-disjoint with $\tilde{t}$. 
+  %       Thus $t$ cannot contain $\rho$ as a prefix and, in fact, 
+  %       $t$ cannot be viable at the onset of slot $|x^\prime y^\prime| + 1$.
+  %       We wish to show that $\reach(t) < 0$ for all $t \in A^\prime$. 
+  %       Note that the reach of an adversarial tine 
+  %       is no more than the reach of the last honest block on that tine. 
+  %       Let $B$ be an honest block on $t$ so that $\ell(B) \leq s - 2$; 
+  %       we wish to show that $\reach(B) < 0$.
+  %       Since $s - 1$ is a Catalan slot, the interval $I = [\ell(B) + 1, T]$ 
+  %       is $\Hheavy$.
+  %       By Part~\ref{reach:$\Hheavy$-neg-reach}, $\reach(B) < 0$.
+  %       Since the above argument is true for any fork $F \Fork x^\prime y^\prime$, 
+  %       we conclude that $\mu_{x^\prime}(y^\prime) < 0$. 
+
+  %       \item[Part~\ref{margin-s-multihonest}]
+  %       Let $m, n \in \NN, m < s \leq n \leq T$.
+  %       Write $w = x y z$ with $|x| = m$ and $|x y| = n$. 
+  %       (Thus $|y| \geq 1$ and $y_1 = w_{s}$.)
+  %       Let $F$ be any fork for $x y$. 
+  %       The reach of the longest honest tine $\tilde{t}$ in $F$ is always zero 
+  %       and by assumption, it contains $\rho$ as a prefix. 
+  %       Let $\tau$ be the block on $\tilde{t}$ so that $\ell(\tau) = s$.
+
+  %       Let $h$ be an honest slot, $h \leq s - 1$ 
+  %       and let $B_h$ be an honest block from slot $h$. 
+  %       Since $s$ is a Catalan slot,         
+  %       every interval $[h + 1, T]$ is $\Hheavy$. 
+  %       By Part~\ref{reach:$\Hheavy$-neg-reach} of Fact~\ref{fact:ext-reach}, 
+  %       $\reach(B_h) < 0$. 
+  %       Note that the reach of an adversarial tine is no more than the reach of its last honest block.
+  %       Consider a tine $t$ whose last honest vertex comes from the interval $[1, s - 1]$. 
+  %       (Necessarily, $t$ is $y$-disjoint with $\tilde{t}$.)
+  %       It follows that $\reach(t) < 0$. 
+
+  %       Let $A$ be the set of tines $t$ such that 
+  %       $t$ is $y$-disjoint with $\tilde{t}$ 
+  %       and $t$ contains an honest block from the interval $[s, T]$. 
+  %       (Note that $t$ does not contain $\tau$ as a prefix.)
+  %       It suffices to consider only honest tines $t$ since 
+  %       the reach of an adversarial tine is no more 
+  %       than the reach of its last honest block.
+  %       Suppose $t$ is viable at the onset of slot $|xy| + 1$.
+  %       By assumption, $t$ contains $\rho$ as a prefix but, by construction, 
+  %       $t$ does not contain $\tau$.
+  %       As $t, \tilde{t}$ are $y$-disjoint and $t$ is viable, 
+  %       the interval $s, T$ must be
+  %       Let $B$ be the first honest block on $t$ in the interval $[s, T]$. 
+
+
+  %       By Fact~\ref{fact:catalan-unique-longest}, 
+  %       there are no viable adversarial tine at the onset of slot $s + 1$. 
+  %       Let $h$ be the first honest slot after slot $s$. 
+  %       Since the interval $[s-1, h - 1]$ is $\Aheavy$, 
+  %       every honest leader at slot $h$ builds on a unique tine $\tau,\ell(\tau) = s$ 
+  %       determined by the longest-chain selection rule. 
+  %       Furthermore, if an honest slot leader at slot $h^\prime \geq h + 1$ 
+  %       builds on a viable adversarial tine $t^\prime$ 
+  %       that does not contain a block from slot $h$ then, 
+  %       by assumption, 
+  %       the last honest block on $t^\prime$ must contain $\rho$
+
+
+
+
+  %       \begin{description}
+  %         \item[If $t$ is viable.]
+  %         ~
+  %         \begin{description}
+  %           \item[If $t$ contains no block from slot $s$.]
+  %           We claim that this is impossible. 
+  %           Let $B_2$ be the first honest block on $t$ after slot $s$ 
+  %           and let $h = \ell(B_2)$.
+  %           (If $B_2$ does not exist, take $h = T + 1$.)
+  %           $t$ must contain, as its prefix, some adversarial tine $t^\prime$ 
+  %           such that $t^\prime$ is viable at the onset of slot $h$ and, 
+  %           importantly, the last honest block on $t^\prime$ 
+  %           is $\rho$ (instead of $\tau$). 
+  %           By Fact~\ref{fact:viable-adv-tine-$\Aheavy$}, 
+  %           the interval $I = [s, h - 1]$ must be $\Aheavy$. 
+  %           However, it contradicts the fact that $s$ is a Catalan slot. 
+  %           Thus $t$ must contain some block from slot $s$.
+            
+  %           \item[If $t$ contains a block from slot $s$.]
+  %           {\color{red} This looks like okay.}
+  %         \end{description}
+
+  %         \item[If $t$ is not viable.]
+  %         To do
+  %       \end{description}
+
+
+  %       We claim that $t$ must contain some block from slot $s$: 
+  %       to see this, note that
+  %       it may (or may not) contain some other block from slot $s$.
+
+  %        as a prefix and, in fact, 
+  %       $t$ cannot be viable at the onset of slot $|x^\prime y^\prime| + 1$.
+  %       We wish to show that $\reach(t) < 0$ for all $t \in A^\prime$. 
+  %       Note that the reach of an adversarial tine 
+  %       is no more than the reach of the last honest block on that tine. 
+  %       Let $B$ be an honest block on $t$ so that $\ell(B) \leq s - 2$; 
+  %       we wish to show that $\reach(B) < 0$.
+  %       Since $s - 1$ is a Catalan slot, the interval $I = [\ell(B) + 1, T]$ 
+  %       is $\Hheavy$.
+  %       By Part~\ref{reach:$\Hheavy$-neg-reach}, $\reach(B) < 0$.
+  %       Since the above argument is true for any fork $F \Fork x^\prime y^\prime$, 
+  %       we conclude that $\mu_{x^\prime}(y^\prime) < 0$. 
+
+  %     \end{description}
+
+
+
+  %   \end{proof}
+
+
+  %   Below is another proof which does not use the fact that the slots $s, s - 1$ 
+  %   the statement of Fact~\ref{fact:cp-implies-neg-margin-multiple-honest} 
+  %   are in fact Catalan slots.
+  %   \begin{proof}
+  %     Let $k \in [s + 1, |x^\prime y^\prime| + 1]$. 
+
+  %     \begin{description}[font=\normalfont\itshape\space]
+  %       \item[Part~\ref{margin-s-1-multihonest}]
+  %       Let $m^\prime, n^\prime \in \NN, m^\prime < s - 1 \leq n^\prime \leq T$.
+  %       Write $w = x^\prime y^\prime z$ with $|x^\prime| = m^\prime$ and $|x^\prime y^\prime| = n^\prime$. 
+  %       (Thus $|y^\prime| \geq 1$ and $y^\prime_1 = w_{s-1}$.)
+  %       Let $F$ be any fork for $x^\prime y^\prime$.
+  %       By assumption, 
+  %       all tines in $F$ viable at the onset of slot $|x^\prime y^\prime| + 1$ 
+  %       have, as their common prefix, 
+  %       {\color{blue}a unique honest tine} $\rho, \ell(\rho) = s - 1$. 
+        
+  %       Let $A$ be the set of tines that are 
+  %       $y^\prime$-disjoint with the longest honest tine in $F$. 
+  %       We claim that any tine $t \in A$ 
+  %       must have $\reach(t) < 0$. 
+  %       Let us identify a block $B$ on $t$, as follows.
+  %       \begin{description}[font=\normalfont\itshape\space]
+  %         \item[If $t$ is honest.]
+  %         If $\ell(t) \leq s - 1$ then, trivially, 
+  %         $t$ must come from a slot indexed by $x^\prime$;
+  %         in this case, we set $B = t$.
+  %         If $\ell(t) \geq s + 1$ then 
+  %         $t$ must build on some viable tine which, by assumption, 
+  %         contains $\rho$ as a prefix and thus $t \not \in A$; 
+  %         hence this is not possible. 
+  %         If $\ell(t) = s$ and $t$ is viable at the onset of slot $s + 1$, 
+  %         $t$ must contain $\rho$ as its prefix (and thus $t \not \in A$).
+  %         Hence if $\ell(t) = s$ and $t \in A$, 
+  %         $t$ is not viable at the onset of slot $s + 1$. 
+  %         Since all honest nodes employ a consistent longenst-chain tie-breaking rule, 
+  %         this can ony happen if $t$ builds on 
+  %         some adversarial tine $t^\prime, t^\prime \in A, \ell(t^\prime) \leq s - 2$. 
+  %         Let $B$ be the last honest block on $t^\prime$. 
+  %         In any case, $\ell(B) \leq s - 2$.
+
+  %         \item[If $t$ is adversarial.]
+  %         Let $B$ be the last honest block on $t$.
+  %         By the discussion above, $\ell(B) \leq s - 2$. 
+  %       \end{description}
+  %       \noindent
+  %       Thus $B$ is an honest block with $\ell(B) \leq s - 2$.
+  %       By our assumption, there can be no augmentation of $F$ 
+  %       (via adding new vertices and edges) 
+  %       so that the new fork would contain an adversarial tine $\tilde{t}$ 
+  %       viable at the onset of slot $|x^\prime y^\prime| + 1$ 
+  %       so that $B$ is the last honest block on $\tilde{t}$.
+  %       Using the contrapositive of 
+  %       Part~\ref{reach:$\Aheavy$} of Fact~\ref{fact:ext-reach}, 
+  %       we conclude that $\reach(B) < 0$.
+  %       As the reach of an adversarial tine is no more than the reach of its last vertex, 
+  %       it follows that in any fork $\phi \Fork x^\prime y^\prime$, 
+  %       $\reach(u) < 0$ where 
+  %       the tine $u$ is $y^\prime$-disjoint 
+  %       with the longest honest tine in the fork $\phi$.
+  %       It follows that $\mu_{x^\prime}(y^\prime) < 0$.
+
+  %       \item[Part~\ref{margin-s-multihonest}]
+  %       To do.
+
+  %     \end{description}
+      
+
+
+  %     Since slot $s$ belongs to $y$, 
+  %     $F$ cannot contain two tines 
+  %     such that 
+  %     i) both tines are viable at the onset of slot $|xy| + 1$ 
+  %     and, at the same time, 
+  %     ii) disjoint over the length of $y$. 
+  %     % As any $x$-balanced fork for $xy$ requires two maximally long tines 
+  %     % that are disjoint over $y$, 
+  %     In particular, 
+  %     $F$ cannot be $x$-balanced. 
+  %     As $F$ was an arbitrary fork for $xy$, 
+  %     no fork for $xy$ can be $x$-balanced (for our choice of $m, k$).
+  %     According to Fact~\ref{fact:margin-balanced}, 
+  %     we conclude that 
+  %     the relative margin $\mu_x(y)$ must be strictly negative.
+  %     Since $m, k$ satisfy $m < s \leq k \leq T$, 
+  %     the above conclusion applies to 
+  %     all decompositions $w = xyz$ where $|x| < s$ and $|xy| \geq s$.
+  %   \end{proof}
+
+
+
+
+  \subsubsection{Negative relative margin implies {\color{blue}left-Catalan} slot}
+
+
+    \begin{fact}[Negative relative margin implies a left-Catalan slot]\label{fact:neg-margin-implies-catalan}
+      Let $w \in \{0,1\}^T$ be a characteristic string 
+      and let $s \in [T]$ be an honest slot in $w$.  
+      If slot $s$ is margin-critical then 
+      it is left-Catalan.
+    \end{fact}
+    \begin{proof}
+      Recall that $s$ is an honest slot by assumption. 
+      If $s = 1$, the claim follows since, by definition, 
+      slot $1$ is left-Catalan if and only if $w_1 = 0$. 
+      Now suppose $s \geq 2$.
+      We will show that $s$ must be a left-Catalan slot. 
+      For a contradiction, suppose $s$ is \emph{not} a left-Catalan slot. 
+      Then there must be a $\Aheavy$ (open) interval $I = (a, b) \ni s$ 
+      such that both $a, b$ are honest slots, $a \leq s - 1$, and $b \geq s + 1$. 
+      Let us write $w = xy^\prime z$ 
+      so that $|x| = s - 1$ and $|xy^\prime| = b - 1$. 
+      (Thus the slot $s$ is the first slot in $y^\prime$. 
+      In addition, $\mu_x(y^\prime)$ is negative by assumption.)
+      Let $F^\prime$ be a fork for $xy^\prime$ 
+      and let $t^\prime$ be the longest honest tine in $F^\prime$. 
+      Necessarily, $\reach(t^\prime) \geq 0$.
+      Since $I$ is $\Aheavy$, we can 
+      extend the honest block at slot $a$---using 
+      only the adversarial slots in $I$---to 
+      create a tine $t^+$ so that $\length(t^+) = \length(t^\prime)$, 
+      i.e., $\gap(t^+) = 0$. 
+      Thus $\reach(t^+) = \reserve(t^+) - \gap(t^+) \geq 0$ 
+      since reserve is always non-negative.
+      Thus the augmented fork $F^+$, 
+      which is comprised of $F^\prime$ plus the new tine $t^+$, 
+      contains two tines---each with a non-negative reach---that are also 
+      disjoint over the length of $y^\prime$. 
+      Thus $F^+ \Fork xy^\prime$ is an $x$-balanced fork and, 
+      by Fact~\ref{fact:margin-balanced}, 
+      $\mu_x(y^\prime)$ must be non-negative; 
+      but this violates our prior observation that $\mu_x(y^\prime)$ is negative; 
+      hence the desired contradiciton.
+      Therefore, $s$ must be a left-Catalan slot.
+      
+    \end{proof}
+
+
+\subsection{CP and margin with multiple honest slots}
+  \begin{conjecture}[CP and relative margin]\label{thm:multiple-honest-cp-margin}
+    Let $w \in \{0,1\}^T$ be a characteristic string 
+    and let $s \in[2, T]$ be an integer such that 
+    both $s$ and $s - 1$ are honest slots in $w$.  
+    Denote by $M$ the following event:
+    \begin{enumerate}[label=\roman*.]
+      \item $\mu_{x}(y) < 0$ 
+      for all decompositions $w = xyz$ 
+      so that $|x| < s, |xy| \geq s$; and 
+      \item $\mu_{x^\prime}(y^\prime) < 0$ 
+      for all decompositions $w = x^\prime y^\prime z$ 
+      so that $|x^\prime| < s - 1, |x^\prime y^\prime| \geq s - 1$. 
+    \end{enumerate}       
+    A strong-CP event with parameter $s$ implies $M$, 
+    and 
+    $M$ implies a weak-CP event with parameter $s$.
+    {\color{blue} Equivalence?}
+  \end{conjecture}
+
+  \begin{proof}
+    ~
+    \paragraph{Event $M$ implies weak-CP.} 
+    Consider any slot $k, k \geq s + 1$ and consider any fork $F$ for $w$.
+    By Lemma~\ref{lemma:neg-margin-implies-bottleneck}, 
+    every tine $t$ viable at the onset of slot $k$
+    must contain a block from slot $s$. 
+    Similarly, for any slot $k^\prime, k^\prime \geq s$,
+    every tine $t$ viable at the onset of slot $k^\prime$
+    must contain a block from slot $s - 1$. 
+    As $s, s - 1$ are honest slots and 
+    honest nodes use $\LCR(\cdot)$ to select the longest chain to build upon, 
+    all honest tines $\tau, \ell(\tau) = s$ 
+    must build on a unique tine $\rho, \ell(\rho) = s - 1$.
+    {\color{red} But it does not show that $\tau$ is unique.}
+
+
+    % By the equivalence of 
+    % Part~\eqref{thm:part-margin-multiple-honest} and Part~\eqref{thm:part-cp-multiple-honest} 
+    % of our claim, 
+    % slot $s - 1$ must be Catalan. 
+    % Hence, 
+    % by Fact~\ref{fact:catalan-unique-longest}, 
+    % all blocks from slot $s$ 
+    % must build on a unique honest tine $\rho$ from slot $s - 1$. 
+    % Thus $\rho$ is a common prefix for all tines viable at the onset of slot $k$.
+
+    \paragraph{Strong-CP implies event $M$:} 
+    Using Theorem~\ref{thm:multiple-honest-cp-catalan}, 
+    assume that the first two statements are equivalent.
+
+    \begin{description}[font=\normalfont\itshape\space]
+      \item[Strong-CP implies Part (i) of event $M$.]
+      Let $m^\prime, n^\prime \in \NN, m^\prime < s - 1 \leq n^\prime \leq T$.
+      Write $w = x^\prime y^\prime z$ with $|x^\prime| = m^\prime$ and $|x^\prime y^\prime| = n^\prime$. 
+      (Thus $|y^\prime| \geq 1$ and $y^\prime_1 = w_{s-1}$.)
+      Let $F$ be any fork for $x^\prime y^\prime$. 
+      The reach of the longest honest tine $\tilde{t}$ in $F$ is always zero 
+      and by assumption, it contains $\rho$ as a prefix.
+      Let $A^\prime$ be the set of tines $t$ such that 
+      $t$ is $y^\prime$-disjoint with $\tilde{t}$. 
+      Thus $t$ cannot contain $\rho$ as a prefix and, in fact, 
+      $t$ cannot be viable at the onset of slot $|x^\prime y^\prime| + 1$.
+      We wish to show that $\reach(t) < 0$ for all $t \in A^\prime$. 
+      Note that the reach of an adversarial tine 
+      is no more than the reach of the last honest block on that tine. 
+      Let $B$ be an honest block on $t$ so that $\ell(B) \leq s - 2$; 
+      we wish to show that $\reach(B) < 0$.
+      Since $s - 1$ is a Catalan slot, the interval $I = [\ell(B) + 1, T]$ 
+      is $\Hheavy$.
+      By Part~\ref{reach:$\Hheavy$-neg-reach}, $\reach(B) < 0$.
+      Since the above argument is true for any fork $F \Fork x^\prime y^\prime$, 
+      we conclude that $\mu_{x^\prime}(y^\prime) < 0$. 
+
+
+      \item[Strong-CP implies Part (ii) of event $M$.]
+      Let $m, n \in \NN, m < s \leq n \leq T$.
+      Write $w = x y z$ with $|x| = m$ and $|x y| = n$. 
+      (Thus $|y| \geq 1$ and $y_1 = w_{s}$.)
+      Let $F$ be any fork for $x y$. 
+      The reach of the longest honest tine $\tilde{t}$ in $F$ is always zero 
+      and by assumption, it contains $\rho$ as a prefix. 
+      Let $\tau$ be the block on $\tilde{t}$ so that $\ell(\tau) = s$.
+
+      Let $h$ be an honest slot, $h \leq s - 1$ 
+      and let $B_h$ be an honest block from slot $h$. 
+      Since $s$ is a Catalan slot,         
+      every interval $[h + 1, T]$ is $\Hheavy$. 
+      By Part~\ref{reach:$\Hheavy$-neg-reach} of Fact~\ref{fact:ext-reach}, 
+      $\reach(B_h) < 0$. 
+      Note that the reach of an adversarial tine is no more than the reach of its last honest block.
+      Consider a tine $t$ whose last honest vertex comes from the interval $[1, s - 1]$. 
+      (Necessarily, $t$ is $y$-disjoint with $\tilde{t}$.)
+      It follows that $\reach(t) < 0$. 
+
+      Next, we wish to show that $\reach(t) < 0$ for all tines $t, \ell(t) \geq s$.
+      Let $h$ be an honest slot from the interval $s, T$. 
+      Let $t$ be a tine which contains 
+      its last honest vertex (let us call it $B$) from slot $h$ and, 
+      importantly, $t$ is $y$-disjoint with $\tilde{t}$, i.e., the longest tine in $F$. 
+      Note that $t$ cannot be viable at the onset of slot $|xy| + 1$ since, otherwise,       
+      it would contain $\tau$ from slot $s$ 
+      (this would contradict the fact that $t$ is $y$-disjoint with $\tilde{t}$). 
+      Thus $B$ is not viable at the onset of slot $|xy| + 1$. 
+      Since $F$ is an arbitrary tine, the interval $I = [h + 1, T]$ must $\Hheavy$. 
+      By Part~\ref{reach:$\Hheavy$-neg-reach} of Fact~\ref{fact:ext-reach}, 
+      $\reach(B) < 0$.
+      Note that the reach of an adversarial tine 
+      is no more than the reach of the last honest block on that tine. 
+      Therefore, 
+      for all forks for $xy$ and all tines $t \in F$ 
+      that are $y$-disjoint with the longest tine in $F$, 
+      $\reach(t) < 0$. 
+      We conclude that $\mu_x(y) < 0$.
+    \end{description}
+
+  \end{proof}
+\hrule
+
+
+  % -------------------------------------------
+  % \begin{fact}[Catalan slot implies common prefix]\label{fact:catalan-convergence}
+  %   Let $w \in \{0,1\}^T$ be a characteristic string 
+  %   and $s$ a Catalan slot with $s \leq T - 1$. 
+  %   Let $F$ be any fork for $w$ and 
+  %   let $\tau = \LCR(C)$ 
+  %   where $C$ is the set of tines (in $F$) from slot $s$. 
+  %   For any slot $k, k \geq s + 1$, 
+  %   every tine $t \in F$ 
+  %   that is viable at the onset of slot $k$ 
+  %   must contain $\tau$ as its prefix. 
+  % \end{fact}
+  % \begin{proof}
+  %   As $s$ is a Catalan slot, slots $s$ and $s + 1$ must be honest. 
+  %   By Fact~\ref{fact:catalan-unique-longest}, 
+  %   the honest tine $\tau$ is the uniquely identified viable tine 
+  %   at the onset of slot $s + 1$.    
+  %   Let $t$ be a viable tine at the onset of some slot $k, k \geq s + 2$. 
+  %   We claim that $\tau$ must be a prefix of $t$. 
+  %   Suppose, for a contradiction, that 
+  %   $t$ does not contain $\tau$ as its prefix. 
+  %   Below, we argue that this leads to a contradiction. 
+
+  %   Let $B_1$ be the last honest block on $t$ such that $\ell(B_1) \leq s - 1$.
+  %   Likewise, let $B_2$ be the first honest block on $t$ such that $\ell(B_2) \geq s + 1$. 
+  %   Let $I$ be the interval $[\ell(B_1) + 1, \ell(B_2) - 1]$. 
+  %   If $I$ is empty, $\ell(B_2) = s + 1$ and by Observation~\ref{obs:multi-honest}, 
+  %   $B_2$ builds on $\tau$. 
+  %   Therefore, let us assume that $I$ is non-empty.
+
+  %   \begin{description}[font=\normalfont\itshape\space]
+  %     \item[If $t$ does not contain a block from slot $s$.]
+  %     By construction, $t$ does not contain any honest blocks 
+  %     from the interval $I$. 
+  %     Thus the block $B_2$ is built upon 
+  %     some adversarial tine which  
+  %     i) contains $B_1$ as its last honest block and 
+  %     ii) is viable at the onset of slot $\ell(B_2)$. 
+  %     By Fact~\ref{fact:viable-adv-tine-$\Aheavy$},       
+  %     the interval $I$ must be $\Aheavy$. 
+  %     However, since $I \ni s$, it contradicts the fact that $s$ is a Catalan slot. 
+
+  %     \item[If $t$ contains a block $B$ from slot $s$ so that $\depth(B) < \length(\tau)$.]
+  %     Note that $t$ must contain adversarial blocks from the non-empty interval $I$ 
+  %     (otherwise, $B_2$ would build on some honest block from $I$;  
+  %     this contradicts the fact that $B_2$ is 
+  %     the first honest block on $t$ from slots $s + 1, s+2, \ldots$).
+  %     Let $B_3$ be the first adversarial block on $t$ 
+  %     which precedes $B_2$ and 
+  %     $\depth(B_3) = \hdepth(\ell(B_3))$. 
+  %     Let $t^\prime$ be the tine ending with $B_3$; 
+  %     thus $t^\prime$ 
+  %     is a shortest viable adversarial tine 
+  %     at the onset of slot $\ell(B_3) + 1$. 
+  %     Necessarily, $t^\prime$ must be disjoint with the 
+  %     longest honest tine from the interval $J = [s + 1, \ell(t^\prime)]$. 
+  %     By Fact~\ref{fact:viable-adv-tine-$\Aheavy$}, 
+  %     $J$ must be a $\Aheavy$ interval and, 
+  %     in addition, 
+  %     $\#_1(J) \geq \#_0(J) + k$ 
+  %     where we define $k = \length(\tau) - \depth(B)$. 
+  %     By assumption, $k \geq 1$ and hence 
+  %     $\#_1(J) > \#_0(J)$. 
+  %     It follows that the interval $[s, \ell(B_3)]$ is $\Aheavy$ as well, 
+  %     contradicting the fact that $s$ is a Catalan slot.
+  %     % every tine $t^\prime$ created at the honest slot $s + 1$ 
+  %     % always builds upon $\tau$. 
+  %     % Thus $t$ cannot contain $t^\prime$ as a prefix as well.
+  %     % $B_2$ must builds on the
+
+
+  %     \item[If $t$ contains a block $B$ from slot $s$ so that $B \neq \tau, \depth(B) = \length(\tau)$.]
+  %     To do.
+
+
+  %     \item[Blah blah]
+
+  %     \item[If $t$ is an adversarial tine.]
+  %     There must be a last honest block $B$ common to both $\tau$ and $t$. 
+  %     Let $h = \ell(B)$ and note that $h \leq s - 1$. 
+  %     (If $s = 1$, we can take $B$ as the genesis block and $h = 0$.) 
+  %     Since $t$ is an adversarial tine viable at the onset of slot $k$, 
+  %     by Fact~\ref{fact:viable-adv-tine-$\Aheavy$},       
+  %     the interval $I = [h + 1, k - 1]$ must be $\Aheavy$. 
+  %     However, 
+  %     the interval $I$ contains $s$ and, 
+  %     since $s$ is a Catalan slot, 
+  %     $I$ is $\Hheavy$. 
+  %     This is a contradiction.
+
+
+  %     \item[If $t$ is an honest tine.]    
+  %     % \textbf{LOOK HERE}
+  %     Let $h_1 = \ell(B_1)$ and $h_2 = \ell(B_2)$.
+  %     By construction, $t$ does not contain any honest blocks from the interval $J = [h_1 + 1, h_2 - 1]$. 
+  %     Thus the block $B_2$ is built upon 
+  %     some adversarial tine $t^\prime$ which  
+  %     i) contains $B_1$ as its last honest block and 
+  %     ii) is viable at the onset of slot $h_2$. 
+  %     By repeating the argument of the preceding case 
+  %     with adversarial tine $t^\prime$ and interval $J$, 
+  %     we derive a contradiction. 
+  %   \end{description}
+  %   It follows that every viable tine $t \in F, \ell(t) \geq s + 1$ must contain $\tau$ as its prefix.
+  % \end{proof}
+  % ----------------------------------------------
+
+  \begin{fact}[Last Catalan slot implies deepest balanced fork]\label{fact:catalan-implies-balanced-fork}
+    Let $w \in \{0,1\}^T$ be a characteristic string which contains at least one Catalan slot. 
+    If $s$ is the last Catalan slot, then 
+    the deepest $x$-balanced fork for $w = xy$ 
+    occurs when $|x| = s$. 
+  \end{fact}
+  \begin{proof}
+    Suppose $s$ is the last Catalan slot in $w$. 
+    Thus every slot $r, r \geq s + 1$ belongs to some $\Aheavy$ interval. 
+    These intervals ``cover'' the slots $s + 1, \ldots, T$. 
+    In particular,  
+    consider an ordered collection of $\Aheavy$ intervals 
+    $\mathcal{F} = \{I_1, I_2, \ldots\}$ where 
+    the following conditions hold.
+    i) Writing $I_i = [a_i, b_i] \subset [T]$, we require that $a _i \leq a_{i + 1}$
+    ii) For $i \geq 2$, 
+    the interval $I_i$  
+    has non-empty overlaps with $I_{i-1}$. 
+    For $i \leq |\mathcal{F}|$, 
+    the interval $I_i$  
+    has non-empty overlaps with $I_{i + 1}$. 
+    iii) The union of these intervals is the interval $[s + 1, T]$.
+    And iv) Of all collections of intervals that satisfy the anove conditions, 
+    $\mathcal{F}$ has the smallest cardinality. 
+    Let $k = |\mathcal{F}|$ and observe that 
+    $s$ cannot be in any of these intervals; 
+    in fact, $a_1 = s + 1$.
+
+    Let $F$ be any fork for $w$ and let $t$ be a longest tine in $F$. 
+    If there are multiple longest tines, we are done. 
+    Otherwise, 
+    By Fact~\ref{fact:catalan-convergence-multiple-honest}, 
+    $t$ must contain, as its prefix, the unique honest tine $\tau$ with $\ell(\tau) = s$.
+    Let $h$ be first honest slot in $s, s+1, \ldots, T$.
+    We will construct a tine $t^\prime$ with only adversarial nodes 
+    so that $\length(t^\prime) = \length(t)$ and the tines 
+    $t, t^\prime$ will be disjoint over the interval $[s+1, T]$. \textbf{Double check} 
+    
+    Define $B_0^*$ as the last block on $\tau$.
+    For every interval $I_i, i = 1, \ldots, k$, do the following. 
+    \begin{itemize}
+      \item Let $t[I_i]$ be the segment of the longest tine $t$ 
+      pertaining to the interval $I_i$. 
+      Let $n_i$ be the number of nodes in $t[I_i]$.
+
+      \item Use the first $n_i$ adversarial slots in $I_i$ 
+      to extend $B_{i-1}^*$ with a sequence of $n_i$ nodes. 
+      This is possible since $I_i$ is $\Aheavy$. 
+      Define $B_i^*$ as the last of these nodes 
+      that falls in the interval $I_i \setminus I_{i+1}$; 
+    \end{itemize}
+    Let $t^\prime$ be 
+    the tine ending in the adversarial block $B_{n_k, k}$. 
+    By construction, it has the same length as the tine $t$ 
+    and, in addition, it is completely disjoint with $t$ over the interval $[s + 1, T]$. 
+    This the promised tine $t^\prime$. 
+    Let $F^\prime$ be the augmented fork $F$, i.e., 
+    it contains all tines of $F$ plus all nodes in the root-to-leaf path in $t^\prime$. 
+    Writing $w = xy, |x| = s$, it is clear that $F^\prime$ is an $x$-balanced fork.  
+
+    Recall from Fact~\ref{fact:catalan-convergence-multiple-honest} that 
+    for all forks for $w$, all tines viable at the onset of any slot $r, r \geq s + 1$ 
+    must contain $\tau$ as a prefix. 
+    Thus there can be no balanced forks that contains two tines diverging beyond slot $s$. 
+    Hence $F^\prime$ is the deepest balanced fork for $w$.
+  \end{proof}
+
+
+
+
+% \subsection{Sleepy terminology}
+%   Consider an extended characteristic string $w^\prime \in \{0, 1, +, \perp\}^{T^\prime}$ 
+%   and the reduced string $w = \rho_\Delta(w^\prime) \in \{0,1\}^T$.
+
+%   \begin{definition}[Convergence opportunity]\label{def:conv-opp}
+%     Let $c$ be a uniquely honest slot in $w^\prime \in \{0, 1, +, \perp\}^{T^\prime}$, 
+%     where $c \leq T - \Delta$. 
+%     The interval $I_c = [c - \Delta, c + \Delta]$ 
+%     is called a \emph{convergence opportunity}---sometimes written CO in short---if 
+%     the substring $w^\prime[c - \Delta, c + \Delta]$ 
+%     satisfies the pattern $\{1, \perp \}^\Delta 0 \{1, \perp\}^\Delta$. 
+%     If $c \leq \Delta$, 
+%     the interval $I_c = [0, c + \Delta]$ and 
+%     the pattern  
+%     $\{1, \perp \}^{c - 1} 0 \{1, \perp\}^\Delta$ 
+%     is used instead. 
+%     When $I_c$ is understood from the context, 
+%     we simply say that the slot $c$ is a convergence opportunity.
+%   \end{definition}
+%   Note that if a uniquely honest slot $c$ is accompanied by 
+%   an honest slot within $\Delta$ slots in either direction, 
+%   $c$ is not a convergence opportunity.
+%   We use $\#_c(I)$ to indicate the number of convergence opportunities 
+%   in an interval $I$ for the extended characteristic string $w^\prime$.
+%   A block issued from an convergence opportunity is called a \emph{CO-block} in short. 
+%   If $c, c^\prime$ are two COs such that there is no CO in the interval $[c + 1, c^\prime - 1]$, 
+%   then $c, c^\prime$ are called \emph{adjacent} COs.
+
+%   \begin{observation}[Convergence opportunity and the reduction map]
+%     Let $c$ be a slot in $w = \rho_\Delta(w^\prime)$ 
+%     so that $w_{c-1} w_c = 00$ 
+%     and let $c^\prime$ be the corresponding slot in $w^\prime$. 
+%     Then $c^\prime$ is a convergence opportunity. 
+%     However, the converse does not hold. 
+%   \end{observation}
+
+%   Let $c$ be a convergence opportunity and let $h, h^\prime$ be two 
+%   honest slots (unqiue or otherwise) such that $c - h > \Delta$ and 
+%   $h^\prime - c > \Delta$. 
+%   Let $B_h, B_c, B_{h^\prime}$
+%   Then $\depth(B_c) \geq \depth(B_h) + 1$ and $\depth(B_{h^\prime}) \geq \depth(B_c) + 1$.
+
+%   Let $F$ be a fork.
+%   For any tine $t$ in $F$, 
+%   let $B, B^\prime$ be two blocks issued from 
+%   two consecutive convergence opportunities. 
+%   Consider the interval $I = [\ell(B) + 1, \ell(B^\prime) - 1]$. 
+%   We have $\depth(\hat{B}) \geq \depth(B) + \#_c(I) + 1$. 
+%   In particular, $t$ contains at least $\#_c(I)$ blocks from the interval $I$. 
+
+%   % \begin{observation}\label{obs:ext-$\Aheavy$-async}
+%   %   Fix an extended characteristic string $w^\prime \in \{0, 1, +, \perp\}^*$ 
+%   %   and 
+%   %   let $B, B^\prime$ be two blocks issued from 
+%   %   two consecutive convergence opportunities $c, \hat{c}$ in $w^\prime$. 
+%   %   (There can be zero or more uniquely honest slots between the slots $c$ and $\hat{c}$.)
+%   %   Then $\depth(B^\prime) \geq \depth(B) + 1$. 
+%   %   Suppose these blocks are on the same tine and 
+%   %   let $k = \depth(\hat{B}) - \depth(B) - 1$. 
+%   %   If $k \geq 0$, then 
+%   %   all $k$ blocks between $\hat{B}$ and $B$ must be adversarial. 
+%   %   That is, let $I = [\ell(B) + 1, \ell(B^\prime) - 1]$; 
+%   %   and hence $I$ contains at least $\depth(\hat{B}) - \depth(B) - 1$ adversarial slots.
+%   %   and, in particular, $I$ must be $\Aheavy$.
+%   % \end{observation}
+
+
+%   \begin{definition}[Pivot]\label{def:pivot} 
+%     Let $w^\prime \in \{0, 1, +, \perp\}^{T^\prime}$ be an extended chracteristic string. 
+%     Let $a \in \NN$. 
+%     A slot $s$ in $w^\prime \in \{0, 1, +, \perp\}^{T^\prime}$ 
+%     is called an \emph{$a$-pivot} if, 
+%     for every interval $I \subseteq [T^\prime]$ such that $c \in I$, 
+%     either $\#_c(I) > \#_1(I)$ or $\#_1(I) = 0$ 
+%     A slot is called a \emph{strong pivot} if it is an $a$-pivot for all $a \in [T^\prime]$.
+%   \end{definition}
+
+%   In other words, if a slot $s$ is contained in an size-$a$ interval $I$ 
+%   where $\#_c(I) \leq \#_1(I)$, $s$ is not an $a$-pivot. 
+%   Observe that for any strong pivot $s$, any interval $I \ni s$, 
+%   and two adjacent COs $c, c^\prime \in I$, 
+%   $\#_1([c + 1, c - 1]) = 0$.
+
+
+%   \begin{lemma}\label{lemma:pivot-divergence}
+%     Let $w \in \{0,1, +, \perp\}^T$ be 
+%     an extended characteristic string and 
+%     suppose the slot $s$ is a strong pivot. 
+%     For any fork $F$ for $w$, all viable tines 
+%     ending at slots after $s$ must 
+%     pass through the unique honest block emitted from 
+%     the first honest slot in the interval $s, s+1, \ldots, T$\ . 
+%   \end{lemma}
+%   \begin{proof}
+%     ~
+%     % \paragraph{Case: $s$ is an honest slot.} 
+%     % Let $B^*$ be the unique honest block issued at slot $s$. 
+%     % We claim that any viable tine $t \in F$ must contain $B^*$. 
+%     % For a contradiction, suppose it does not. 
+%     % On the tine $t$, identify 
+%     % the last honest block $B$ in the interval $[1, s]$ 
+%     % and the first honest block $\hat{B}$ in the interval $[s, T]$. 
+%     % The interval $I = [\ell(B) + 1, \ell(\hat{B}) - 1]$ 
+%     % is non-empty as it includes slot $s$ 
+%     % and, in addition, $t$ contains no honest block from $I$.
+%     % By Observation~\ref{obs:ext-$\Aheavy$}, 
+%     % $I$ must be $\Aheavy$, contradicting the fact that $s$ is a strong pivot. 
+%     % Hence all viable tines $t$, such that $\length(t) \geq \depth(B^*)$, 
+%     % agree on the (unique) block issued at the honest slot $s$.
+
+
+%     \paragraph{Case: $s$ is not a convergence opportunity.} 
+%     Let $t$ be a viable tine with $\ell(t) \geq s$.
+%     On the tine $t$, identify 
+%     the block $B$ from the last CO in the interval $[1, s - 1]$ 
+%     and 
+%     the block $\hat{B}$ from the first CO in the interval $[s + 1, T^\prime]$. 
+%     Suppose these blocks exist.
+%     (If not, \textbf{to do}.) 
+%     Let $I = [\ell(B) + 1, \ell(\hat{B}) - 1]$.
+%     Clearly, $\depth(\hat{B}) = \depth(B) + 1 + \#_c(I)$ 
+%     and in particular, 
+%     $t[I]$ must contain at least $\#_c(I)$ non-CO blocks and, 
+%     therefore, 
+%     $I$ contains at least $\#_c(I)$ non-CO slots.
+%     We claim that the interval  
+%     cannot contain an honest slot. 
+%     Specifically, by Observation~\ref{obs:ext-$\Aheavy$}, 
+%     if $I$ is not an empty interval, it must be $\Aheavy$. 
+%     But $I$ cannot be $\Aheavy$ since $s$ is a strong pivot; 
+%     hence $I$ must be an empty interval and, in particular, 
+%     we have $\ell(B) = s - 1, \ell(\hat{B}) = s + 1$.
+
+%     Let us consider another tine $t^\prime$ 
+%     and identify, on $t^\prime$, 
+%     the closest honest blocks $C, \hat{C}$ on both sides of slot $s$. 
+%     By repeating the argument above, 
+%     In particular, we have $\ell(C) = s - 1 = \ell(B)$ and 
+%     $\ell(\hat{C}) = s + 1 = \ell(\hat{B})$. 
+%     Since there can be a unique honest vertex in an honest slot, 
+%     we must have $B = C, \hat{B} = \hat{C}$ and, therefore, 
+%     both $t_1$ and $t_2$ must agree about the (honest) block issued from slot $s - 1$.
+%   \end{proof}
+
+% \subsection{Pivots and balanced forks}
+%   This takes us to the following interesting fact.
+
+%   \begin{fact}\label{fact:pivot-fork}
+%     Let $w \in \{0,1\}^T$ be a characteristic string. 
+%     The following statements are equivalent:
+%     1) Slot $s$ is the last strong pivot in $w$; and 
+%     2) There exists a balanced fork for $w$; 
+%     in particular, the deepest $x$-balanced fork for $w = xy$ 
+%     occurs when $|x| = s$.
+%   \end{fact}
+%   \begin{proof}
+%     (\emph{Strong pivot implies the deepest balanced fork.})
+%     Suppose $s$ is the last strong pivot in $w$. 
+%     (If no such slot is present, we can take slot $0$, 
+%     i.e., the genesis slot, as $s$.) 
+%     Thus every slot $r, r \geq s + 1$ belongs to some $\Aheavy$ interval. 
+%     These intervals ``cover'' the slots $s + 1, \ldots, T$. 
+%     In particular, for some $k \in \NN$, 
+%     let $\mathcal{F} = (I_1, I_2, \ldots, I_k), I_i \subset [T]$ be 
+%     an ordered collection of these $\Aheavy$ intervals 
+%     so that 
+%     1) $I_i$ has non-empty overlaps with $I_{i-1}$ and $I_{i+1}$
+%     (boundary cases are handled naturally) 
+%     and 
+%     2) the union of the $I_i$s is the interval $[s + 1, T]$. 
+%     (Notice that $s \not \in I_i$ as $s$ is a strong pivot and every $I_i$ is $\Aheavy$.)
+%     Let $k = |\mathcal{F}|$.
+
+%     Let $F$ be any fork for $w$ and let $t$ be a longest tine in $F$. 
+%     If there are multiple longest tines, we are done. 
+%     Otherwise, let $h$ be first honest slot in $s, s+1, \ldots, T$.
+%     We will construct a tine $t^\prime$ with only adversarial blocks 
+%     so that $\length(t^\prime) = \length(t)$ and the tines 
+%     $t, t^\prime$ will be disjoint over the interval $[s+1, T]$. \textbf{Double check} 
+    
+%     For every interval $I_i, i = 1, \ldots, k$, do the following. 
+%     \begin{itemize}
+%       \item Let $t[I_i]$ be the segment of the longest tine $t$ 
+%       pertaining to the interval $I_i$. 
+%       Let $n_i = \length(t[I_i])$.
+
+%       \item Use the first adversarial slots in $I_i$ 
+%       to create a sequence of $n_i$ blocks 
+%       $b_{1, i}, \ldots, b_{n_i, i}$. 
+%       Let $b_i^*$ be the last block that falls in the interval $I_i \setminus I_{i+1}$; 
+%       Define $b_0^*$ as the last block on the tine segment $t[0 : s]$.
+%       Finally, make $b_{i,1}$ a child of $b_{i -1}^*$. 
+%     \end{itemize}
+%     Notice that the tine ending in the adversarial block $b_{n_k, k}$ has the same length as $t$, 
+%     and, in addition, it is completely disjoint with $t$ over the interval $[s + 1, T]$. 
+%     This the promised tine $t^\prime$.
+%     Thus the fork $F$ augmented with $t^\prime$ is an $x$-balanced fork 
+%     where we write $w = xy, |x| = s$. 
+%     % This is the deepest balanced fork for $w$ since 
+%     % by Fact~\ref{fact:pivot-divergence}, 
+%     % every viable tine
+    
+
+
+%     For the other direction, 
+%     let $F$ be the ``deepest'' $x$-balanced fork for $w = xy$ 
+%     in the sense that $|y|$ is maximum over all decompositions $w = xy$ 
+%     that yield an $x$-balanced fork.
+%   \end{proof}
