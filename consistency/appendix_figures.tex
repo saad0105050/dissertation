@@ -1,0 +1,55 @@
+
+%See the two Fig.~\ref{fig:balanced} and Fig.~\ref{fig:x-balanced} for examples.
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[>=stealth', auto, semithick,
+  	honest/.style={circle,draw=black,thick,text=black,double,font=\small},
+ 	 malicious/.style={fill=gray!10,circle,draw=black,thick,text=black,font=\small}]
+  	\node at (0,-2) {$w =$};
+	\node at (1,-2) {$0$}; \node[honest] at (1,-.7) (b1) {$1$};
+	\node at (2,-2) {$1$}; \node[malicious] at (2,.7) (a1) {$2$};
+	\node at (3,-2) {$0$}; \node[honest] at (3,.7) (a2) {$3$};
+	\node at (4,-2) {$1$}; \node[malicious] at (4,-.7) (b2) {$4$};
+	\node at (5,-2) {$0$}; \node[honest] at (5,-.7) (b3) {$5$};
+	\node at (6,-2) {$1$}; \node[malicious] at (6,.7) (a3) {$6$};
+  	\node[honest] at (-1,0) (base) {$0$};
+	\draw[thick,->] (base) to[bend left=10] (a1);
+	    \draw[thick,->] (a1) -- (a2);
+	    \draw[thick,->] (a2) -- (a3);
+	\draw[thick,->] (base) to[bend right=10] (b1);
+	    \draw[thick,->] (b1) -- (b2);
+	    \draw[thick,->] (b2) -- (b3);
+    \end{tikzpicture}	
+  \caption{A balanced fork}
+  \label{fig:balanced}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[>=stealth', auto, semithick,
+  	honest/.style={circle,draw=black,thick,text=black,double,font=\small},
+ 	 malicious/.style={fill=gray!10,circle,draw=black,thick,text=black,font=\small}]
+  	\node at (0,-2) {$w =$};
+	\node at (1,-2) {$0$}; \node[honest] at (1,0) (ab1) {$1$};
+	\node at (2,-2) {$0$}; \node[honest] at (2,0) (ab2) {$2$};
+	\node at (3,-2) {$0$}; \node[honest] at (3,.7) (a3) {$3$};
+	\node at (4,-2) {$1$}; \node[malicious] at (4,-.7) (b3) {$4$};
+	\node at (5,-2) {$0$}; \node[honest] at (5,-.7) (b4) {$5$};
+	\node at (6,-2) {$1$}; \node[malicious] at (6,.7) (a4) {$6$};
+  	\node[honest] at (-1,0) (base) {$0$};
+	\draw[thick,->] (base) -- (ab1);
+	\draw[thick,->] (ab1) -- (ab2);
+	\draw[thick,->] (ab2) to[bend left=10] (a3);
+	 	\draw[thick,->] (a3) -- (a4);
+	\draw[thick,->] (ab2) to[bend right=10] (b3);
+		\draw[thick,->] (b3) -- (b4);
+    \end{tikzpicture}	
+  \caption{An $x$-balanced fork, where $x=00$}
+  \label{fig:x-balanced}
+\end{figure}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

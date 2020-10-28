@@ -1,0 +1,588 @@
+
+% \newcommand{\EarliestDiverging}{\mathrm{EarliestDivergingTine}}
+% \newcommand{\Disjoint}{\mathrm{DisjointWith}}
+% \newcommand{\MaxReachTines}{\mathrm{MaxReachTines}}
+% \newcommand{\Tines}{\mathrm{Tines}}
+
+
+
+
+
+Let $w$ be a characteristic string, written $w = xy$, 
+and recall the online fork-building strategy from Section~\ref{sec:strategy-x}. 
+In Proposition~\ref{prop:muxy0-lowerbound-adv}, 
+we showed that the fork produced by this strategy (for the string $w$) 
+always contains a tine-pair $(t_\rho, t_x)$ that witnesses $\mu_x(y)$. 
+In this section, we present an online fork-building strategy 
+which produces a fork that \emph{simultaneously} contains, 
+for every prefix $x \PrefixEq w$, 
+a tine-pair that witnesses $\mu_x(y)$. 
+These forks are called \emph{canonical forks}, defined below.
+\begin{definition}[Canonical forks]
+	Let $w_1 \ldots w_T \in \{0,1\}^T$. 
+	For $n = 0, 1, \ldots, T$, a \emph{canonical fork $F_n$ for $w = w_1\ldots w_n$} 
+	is inductively defined as follows. 
+	If $n = 0$ then $F_0$ is the trivial fork for the empty string; 
+	it consists of a single (honest) vertex and no edge. 
+	If $n \geq 1$, the following holds: 
+	$F_n$ is a closed fork so that $F_{n-1} \ForkPrefix F_n$. 
+	$F_n$ contains an honest tine $\tau_\rho$ so that 
+	$\reach(\tau_\rho) = \rho(F_n) = \rho(w)$. 
+	For every decomposition $w = xy, x \Prefix w$, 
+	% $\mu_x(F_n) = \mu_x(y)$ and, in addition, 
+	$F_n$ contains an honest tine $\tau_x$ 
+	so that the tine-pair $(\tau_\rho, \tau_x)$ witnesses $\mu_x(F_n) = \mu_x(y)$. 
+	% It also contains a tine $\tau_w$ so that $\reach(\tau_w) = \mu_w(\varepsilon)$. 
+	% The sequence $(F_n), n = 0, 1, \ldots, T$ is called a \emph{canonical sequence of forks for $w$}. 
+	The (possibly non-distinct) designated tines $\tau_\rho$ and $\tau_x, x \Prefix w$ 
+	are called the \emph{witness tines}.
+\end{definition}
+Note that if one's objective is to create a fork 
+which contains many early-diverging tine-pairs witnessing large relative margins, 
+a canonical fork is the best one can hope for. 
+
+
+
+
+
+
+\subsection{An online strategy for building canonical forks}
+	Let $w$ be a characteristic string, 
+	written as $w = xy$, and 
+	let $F$ be a fork for $w$. 
+	If the tines $t_1, t_2 \in F$ are disjoint over $y$, 
+	we say \emph{$t_1$ and $t_2$ are $y$-disjoint}, or equivalently, 
+	\emph{$t_1$ is $y$-disjoint with $t_2$}. 
+	Note that this means $\ell(t_1 \Intersect t_2) \leq |x|$. 
+	Given two sets of tines $A, B$ in the same fork, 
+	we say that a tine $t \in A$ \emph{diverges earliest with respect to $B$} if 
+	$t = \arg \min_{t_a \in A}\left\{ \min_{t_b \in B} \ell(t_a \Intersect t_b) \right\}$.	
+	Let $\leq_\pi$ be the lexicographical ordering of the tines where 
+	each tine is represented as the list of vertex labels appearing in the tine's root-to-leaf path.
+	If two tines have the same vertex labels, 
+	we allow $\leq_\pi$ to break tie in an arbitrary but consistent way. 
+
+	The fork-building strategy $\Adversary^*$ presented in Figure~\ref{fig:adv-opt} 
+	builds canonical forks in an online fashion, i.e., 
+	it scans the characteristic string $w$ once, from left to right, 
+	maintains a ``current fork,'' 
+	and updates it after seeing each new symbol by only adding new vertices. 
+	Since the final fork $F \Fork w$ is canonical, 
+	it satisfies $\mu_x(F) = \mu_x(y)$ simultaeneously for all decompositions $w = xy$; 
+	hence we call $\Adversary^*$ the \emph{optimal online adversary}. 
+	% In connection with Figure~\ref{fig:adv-opt}, note that 
+	% $
+	% % \reach_{F^\prime}(\tau_{w^\prime}) = 
+	% \reach_{F^\prime}(\tau_\rho) = \rho(F^\prime)$ 
+	% and $\reach_{F^\prime}(\tau_w) = \reach_{F^\prime}(t_\rho)$.
+
+
+
+
+
+	% Define $\Tines(F)$ as the set of all tines in $F$ and 
+	% \[
+	% 	\MaxReachTines_F(A) = \{t \in A \SuchThat \text{$\reach_F(t)$ is maximum over all $t \in A$}\}
+	% 	\,.
+	% \]
+	% % When the fork $F$ is understood from the context, we omit the subscript $F$. 
+	% We write $\MaxReachTines(F)$ to denote the set of tines with the largest reach in fork $F$. 
+
+	% For $A, B \subseteq \Tines(F)$, define
+	% \[
+	% 	\EarliestDiverging_B(A) = \min_{\leq_\pi} \{a^* \SuchThat \text{$a^* \in A$ minimizes $\ell(a \Intersect b), a \in A, b \in B$}\}
+	% 	\,.
+	% \]
+	% If $B$ has a single element $b$, we write $\EarliestDiverging_b(A)$.
+	% % For any set $B \subseteq \Tines(F)$, define 
+	% % \[
+	% % 	\Disjoint_F(B,y) = \{ t \in F \SuchThat \text{$t$ is $y$-disjoint with every tine $b \in B$ }\}
+	% % 	\,.
+	% % \]
+	% % When $B$ has a single element $b$, we overload the above notation and write $\Disjoint_F(b, y)$. 
+	% Finally, for any tine $\tau \in F$, define 
+	% \[
+	% 	\Disjoint_F(\tau,y) = \{ t \in F \SuchThat \text{$t$ is $y$-disjoint with $\tau$ }\}
+	% 	\,.
+	% \]
+	% % When $B$ has a single element $b$, we overload the above notation and write $\Disjoint_F(b, y)$. 
+
+
+\begin{figure}[!h]
+	\begin{center}
+	  \fbox{
+	    \begin{minipage}{.9 \textwidth}
+	      \begin{center}
+	        \textbf{The strategy $\Adversary^*$}
+	      \end{center}
+				Let $w = w_1 \ldots w_n \in \{0,1\}^n$ and $w_{n + 1} \in \{0, 1\}$. 
+				If $n = 0$, set $F_0 \Fork \varepsilon$ as 
+				the trivial fork comprising a single vertex. 
+				Otherwise, for $n \geq 0$, 
+				let $F_n$ be the closed fork 
+				built recursively by $\Adversary^*$ for the string $w$. 
+				If $w_{n + 1} = 1$, set $F_{n + 1} = F_n$.
+				Otherwise, 
+				the closed fork $F_{n + 1} \Fork w0$ 
+				is the result of a 
+				single conservative extension 
+				of a tine $s \in F_n$ into a new honest tine 
+				$\sigma \in F_{n+1}, \ell(\sigma) = n + 1$; 
+				The tine $s$ can be identified as follows. 
+				If $F_n$ contains no tine with reach zero, 
+				$s$ is the unique longest tine in $F_n$. 
+				Otherwise, 
+				$s$ is the reach-zero tine 
+				that diverges earliest with respect to 
+				the set of maximal-reach tines in $F_n$. 
+				If there are multiple candidates for $s$, 
+				select the one with the smallest $\leq_\pi$-rank.
+	      \begin{center}
+	        \textbf{Designating the witness tines}
+	      \end{center}
+		% \paragraph{Designating the witness tines.}
+			Writing $w^\prime = w w_{n + 1}, F = F_n$, and $F^\prime = F_{n + 1}$, 
+			identify the tines 
+			$
+			\tau_\rho, \tau_w, 
+			% , \tau_{w^\prime} 
+			\tau_x \in F^\prime, x \Prefix w
+			$ as follows. 
+			% If there are multiple candidates for any designated tine then 
+			% select the one with the smallest $\leq_\pi$-rank. 
+			Let $R^\prime$ be the set of $F'$-tines with the maximal $F'$-reach. 
+			Set $\tau_\rho$ as the element of $R'$ with smallest $\leq_\pi$-rank. 
+			% Set $\tau_{w'}$ as the element of $R'$ that diverges earliest from $\tau_\rho$; 
+			% if there are multiple candidates, select the one with the smallest $\leq_\pi$-rank.
+			Let $A$ be the set of $F$-tines that attain the reach $\max_{t \in F} \reach_{F'}(t)$. 
+			Set $\tau_{w}$ as the element in $A$ that diverges earliest with respect to $R'$; 
+			if there are multiple candidates, select the one with the smallest $\leq_\pi$-rank.
+			For every decomposition $w = xy, |y| \geq 1, |x| \geq 0$, do as follows. 
+			Let $B_x$ be the set of $F'$-tines that are $yw_{n+1}$-disjoint 
+			with \emph{some} maximal-reach tine $r' \in R'$. 
+			Let $C_x$ be the set of tines in $B_x$ that attain the reach $\max_{t \in B_x} \reach_{F'}(t)$. 
+			Set $\tau_{x}$ as the element in $C_x$ that diverges earliest with respect to $R'$; 
+			if there are multiple candidates, select the one with the smallest $\leq_\pi$-rank. 
+
+			% \begin{align}\label{eq:canonical-tines}
+			% 	\begin{cases}
+			% 	&\tau_\rho = \min_{\leq_\pi} \, R^\prime \,, \\
+			% 	&\tau_x = \EarliestDiverging_{R^\prime}\bigl(\MaxReachTines_{F^\prime}(\Union_{r^\prime \in R^\prime}\Disjoint_{F^\prime}(r^\prime, y w_{n+1}))\bigr) \,,\\ 
+			% 	&\tau_w = \EarliestDiverging_{\tau_\rho}\bigl( \MaxReachTines_{F^\prime}(\Tines(F)) \bigr) \,, \\
+			% 	&\tau_{w^\prime} = \EarliestDiverging_{\tau_\rho}\bigl( R^\prime \bigr) 
+			% 	\,.			
+			% 	\end{cases}
+			% \end{align}
+			
+			% \begin{enumerate}
+			% 	\item Set $\tau_\rho$ as the maximal-reach $F'$-tine. 
+			% 	Set $\tau_{w'}$ as the maximal-reach $F'$-tine that diverges earliest from $\tau_\rho$.
+				
+			% 	\item Let $M_w$ be the set of $F$-tines that attain the reach $\max_{t \in F} \reach_{F'}(t)$. 
+			% 	Set $\tau_{w}$ as the element in $M_w$ that diverges earliest from $\tau_\rho$.
+
+			% 	\item For every decomposition $w = xy, |y| \geq 1, |x| \geq 0$, do as follows. 
+			% 	Let $M'_x$ be the set of $F'$-tines that are $yw_{n+1}$-disjoint with \emph{some} maximal-reach tine $r' \in R'$. 
+			% 	Let $M_x$ be the tines in $M'_x$ that attain the reach $\max_{t \in M'_x} \reach_{F'}(t)$. 
+			% 	Set $\tau_{x}$ as the element in $M_x$ that diverges earliest with respect to $R'$.
+
+			% \end{enumerate}
+
+	    \end{minipage}
+	  }
+	\end{center}
+	\caption{Optimal online adversary $\Adversary^*$}
+	\label{fig:adv-opt}
+ \end{figure}
+	% \paragraph{The strategy $\Adversary^*$.}
+
+	
+
+
+	\begin{theorem}[$\Adversary^*$ builds canonical forks]\label{thm:canonical-fork}
+		Let $w \in \{0,1\}^n$ and $b \in \{0,1\}$. 
+		Let $F \Fork w$ and $F^\prime \Fork wb$ be two closed forks 
+		built by the strategy $\Adversary^*$ 
+		so that $F \ForkPrefix F^\prime$ and suppose, in addition, 
+		that $F$ is canonical. 
+		Then $F^\prime$ is canonical as well.
+	\end{theorem}
+	We remark that the fork-building strategy $\Adversary^*$ 
+	would certainly satisfy Proposition~\ref{prop:muxy0-lowerbound-adv} and, therefore, 
+	satisfy the recurrence relation~\eqref{eq:mu-relative-recursive} as well.
+
+\subsection{Winning the \texorpdfstring{$(\Distribution,T;s,k)$-}{}settlement game, optimally}\label{sec:adv-winning-settlement-game} 
+	Consider the player in the $(\Distribution,T;s,k)$-settlement game 
+	who, at the first step, samples 
+	a characteristic string $w \sim \Distribution, w = w_1 w_2 \ldots w_T$. 
+	Since the challenger is deterministic, 
+	the game is completely determined by the characteristic string 
+	and the choices of the player. 
+	In particular, for a given prefix $x \Prefix w, |x| = s - 1$, 
+	consider the decompositions $w = xyz$. 
+	The player's chance of winning the game will be maximized if, 
+	for every $y, |y| \geq k + 1$ (so that $n = |xy|\geq s + k$),
+	the fork $F_n \Fork xy$ 
+	contains a tine-pair $(\tau_\rho, \tau_x)$ that witnesses $\mu_x(y)$. 
+	In fact, 
+	if $\mu_x(y) \geq 0$ for some $y$ then, 
+	as shown in Fact~\ref{fact:margin-balance}, 
+	the player wins the game by
+	augmenting $F_n$ to an $x$-balanced fork $A_n \Fork xy$. 
+	% In particular, he can do so 
+	% by adding only $\gap(\tau_n)$ adversarial vertices to the tine $\tau_n \in F_n$. 
+	% See the discussion in Section~\ref{sec:args-survey} and 
+	% Observation~\ref{obs:settlement-balanced-fork} 
+	% for the relationship between a balanced fork and the settlement violation.
+
+	Note, in addition, that if $F_n$ is canonical, 
+	the player can optimally play $(\Distribution, T; s, k)$-settlement games 
+	\emph{simultaneously} for every $s \in [n - k]$. 
+	That is, given a distribution $\Distribution$, 
+	a canonical fork $F_n$ gives the player 
+	the largest probability 
+	of causing a settlement violation at as many slots $s \in [n - k]$ as possible, 
+	at once.
+	% Therefore, we shift our attention to characterizing an online strategy to build canonical forks.
+
+\subsection{Proof of Theorem~\ref{thm:canonical-fork}}
+	By assumption, $F$ is a canonical fork. 
+	Thus $\reach_F(t_\rho) = \rho(w)$ 
+	% $\reach_F(t_w) = \mu_w(\varepsilon) = \rho(w)$ 
+	and 
+	for every prefix $x \Prefix w$, 
+	$\reach_F(t_x) = \mu_x(y)$. 
+	Let $w' = wb$ and let $\tau_\rho, \tau_w, 
+	% \tau_{w^\prime}, 
+	\tau_x \in F^\prime, x \Prefix w$ 
+	be the purported witness tines in $F'$. 
+	Note that $\tau_x$ must be 
+	$yb$-disjoint with $\tau_\rho$ by construction. 
+	We wish to show that 
+	$\reach_{F^\prime}(\tau_\rho) = \rho(w b)$, 
+	$\reach_{F^\prime}(\tau_w) = \mu_{w}(b)$,  
+	% $\reach_{F^\prime}(\tau_{w^\prime}) = \mu_{w^\prime}(\varepsilon)$, 
+	and 
+	$\reach_{F^\prime}(\tau_x) = \mu_x(y b)$ for $x \Prefix w$.	
+	% It would be helpful to note that in any fork, 
+	% the reach of a tine 
+	% is no more than the reach of the last honest vertex on that tine. 
+
+	\begin{description}[font=\normalfont\itshape\space]
+		\item[If $b = 1$.]
+			In this case, $F^\prime = F$ and $w^\prime = w 1$. 
+			Examining the rule for assigning $\tau_\rho, \tau_x$, and $\tau_w$, 
+			we see that 
+			$\tau_\rho = 
+			% \tau_{w^\prime} 
+			= t_\rho$, 
+			$\tau_w = t_\rho$, and 
+			$\tau_x = t_x$ for all decompositions $w = xy, x \Prefix w$. 
+			Since $F^\prime = F$ and $b = 1$, 
+			the $F^\prime$-reach of every $F$-tine is one plus its $F$-reach. 
+			Thus for any $x, x \Prefix w$, writing $w^\prime = xy1$, we have 
+			$\mu_x(y1) 
+			= 1 + \mu_x(y) 
+			= 1 + \reach_F(t_x) 
+			= \reach_{F^\prime}(t_x)
+			= \reach_{F^\prime}(\tau_x)$.
+			Similarly, 
+			$\rho(w1) 
+			= 1 + \rho(w) 
+			% = \rho(w^\prime)
+			= \reach_{F^\prime}(t_\rho)
+			= \reach_{F^\prime}(\tau_\rho)
+			$.
+			By construction, 
+			$\tau_w$ has the largest reach in $F$; 
+			but this means $\reach_{F'}(\tau_w) = \rho(F') = \rho(w1)$ but, 
+			on the other hand, $\mu_w(1) = 1 + \mu_w(\varepsilon) = 1 + \rho(w) = \rho(w1)$; 
+			hence $\reach_{F^\prime}(\tau_w) = \mu_w(1)$. 
+			% Finally, by examining the rule for assigning $\tau_{w'}$, 
+			% $\reach_{F^\prime}(\tau_{w^\prime}) = \rho(F^\prime) = \rho(w^\prime) = \mu_{w^\prime}(\varepsilon)$. 
+
+		\item[If $b = 0$.]
+			The contingencies of this case 
+			is covered by Propositions~\ref{prop:optadv-tau-rho},~\ref{prop:optadv-tau-mu-x}, and~\ref{prop:optadv-tau-mu-w}.
+
+	\end{description}
+
+	% To complete the proof, we only need to state and prove 
+	% Propositions~\ref{prop:optadv-tau-rho},~\ref{prop:optadv-tau-mu-x}, and~\ref{prop:optadv-tau-mu-w}.
+	For convenience, let us record the following fact 
+	which compacts Claims~\ref{claim:ex} and~\ref{claim:nex}.
+
+	\begin{fact}\label{fact:reach-fork-ext}
+		Let $F \Fork w$ and $F^\prime \Fork w0$ be closed forks so that 
+		$F \ForkPrefix F^\prime$ and 
+		$F^\prime$ differs from $F$ by a single conservative extension 
+		$\sigma \in F^\prime, \ell(\sigma) = |w| + 1$.
+		Then $\reach_{F^\prime}(t) = \reach_F(t) - 1$ for every $t \in F$ and,  
+		in addition, $\reach_{F^\prime}(\sigma) = 0$.
+	\end{fact}
+
+	In the rest of the exposition, we will frequently use 
+	the above fact along with Lemma~\ref{lem:margin} and Lemma~\ref{lem:relative-margin}, 
+	often without an explicit reference.
+
+	% \begin{lemma}[Recursive description of relative margin]\label{lem:relative-margin}
+	% \end{lemma}
+
+	\begin{proposition}\label{prop:optadv-tau-rho}
+		Assume the premise of Theorem~\ref{thm:canonical-fork} with $b = 0$.
+		Then $F^\prime$ contains witness tines $\tau_\rho, \tau_{w0}$ 
+		so that 
+		$\reach_{F^\prime}(\tau_\rho) = \rho(w0)$ and 
+		$\reach_{F^\prime}(\tau_{w0}) = \mu_{w 0}(\varepsilon)$. 
+	\end{proposition}
+	\begin{proof}~
+		Recall that $\sigma \in F^\prime, \ell(\sigma) = |w| + 1$ 
+		is a conservative extension to 
+		a tine $s \in F, \reach_F(s) = 0$ 
+		so that $\reach_{F^\prime}(\sigma) = 0$. 
+		Also recall that $\mu_z(\varepsilon) = \rho(z)$ for any characteristic string $z$. 
+		Finally, note that it suffices to show that 
+		$\reach_{F^\prime}(\tau_\rho) \geq \rho(w0)$ and 
+		$\reach_{F^\prime}(\tau_{w0}) \geq \mu_{w 0}(\varepsilon)$. 
+
+		% Consider the following contingencies based on $\rho(w)$.
+
+		% \begin{description}[font=\normalfont\itshape\space]
+			% \item[If $\rho(w) > 0$.]
+				Suppose $\rho(w) > 0$. 
+				Using Fact~\ref{fact:reach-fork-ext}, Lemma~\ref{lem:relative-margin}, 
+				and examining the rule for assigning $\tau_\rho$
+				$\reach_{F^\prime}(\tau_\rho) 
+				\geq \reach_{F^\prime}(t_\rho) 
+				= \reach_F(t_\rho) - 1 
+				= \rho(w) - 1 
+				 = \rho(w0)
+				$. 
+			% \item[If $\rho(w) = 0$.]
+				Otherwise, suppose $\rho(w) = 0$.
+				We know that $\rho(w0)$ is zero as well. 
+				By construction, 
+				$\reach_{F^\prime}(\tau_\rho) 
+				\geq \reach_{F^\prime}(\sigma) 
+				= 0 = \rho(w0)
+				$. 
+		% \end{description}
+
+		Examining the rule for assigning $\tau_{w0}$, we have 
+		$\reach_{F^\prime}(\tau_{w0}) = \rho(F^\prime) 
+		= \rho(w0) = \mu_{w0}(\varepsilon)$. 	
+	\end{proof}
+
+
+
+	\begin{proposition}\label{prop:optadv-tau-mu-w}
+		Assume the premise of Theorem~\ref{thm:canonical-fork} with $b = 0$.
+		Then $F^\prime$ contains a witness tine $\tau_w$ 
+		so that 
+		$\reach_{F^\prime}(\tau_w) = \mu_w(0)$. 
+	\end{proposition}
+	\begin{proof}
+		Recall that $\sigma \in F^\prime, \ell(\sigma) = |w| + 1$ 
+		is a conservative extension to 
+		a tine $s \in F, \reach_F(s) = 0$ 
+		so that $\reach_{F^\prime}(\sigma) = 0$. 
+		Consider the following contingencies based on $\rho(w)$.
+
+		\begin{description}[font=\normalfont\itshape\space]
+			\item[If $\rho(w) > 0$.]
+				Thus $\mu_w(0) = \mu_w(\varepsilon) - 1 = \rho(w) - 1 = \rho(w0)$.
+				There are two mutually exclusive scenarios 
+				based on $\tau_\rho$ and $\sigma$.
+				If $\tau_\rho = \sigma$ then, by construction, 
+				$\tau_w \neq \sigma$ and, in addition, 
+				$\tau_w$ is the $F$-tine with the largest $F^\prime$-reach; 
+				by Fact~\ref{fact:reach-fork-ext}, 
+				$\tau_w$ must have the largest $F$-reach as well, i.e.,	
+				$\reach_{F}(\tau_w) = \rho(w)$. 
+				This implies 
+				$\reach_{F^\prime}(\tau_w) = \reach_{F}(\tau_w) - 1 = \rho(w) - 1 = \mu_w(0)$. 
+				On the other hand, if $\tau_\rho \neq \sigma$ then $\tau_\rho \in F$ and, 
+				Examining the rule for assigning $\tau_w$, 
+				$\reach_{F^\prime}(\tau_w) = \reach_{F^\prime}(\tau_\rho) = \rho(w0) = \mu_w(0)$. 
+
+			\item[If $\rho(w) = 0$.]
+				Since $\rho(F) = \rho(w) = 0$, 
+				Fact~\ref{fact:reach-fork-ext} tells us that 
+				every $F$-tine must have a negative reach in $F^\prime$. 
+				Since $\rho(F^\prime)$ is non-negative, 
+				it must be the case that $\tau_\rho = \sigma$. 
+				We can reuse the argument from the subcase ``$\tau_\rho = \sigma$'' of the preceding case and conclude that $\reach_{F^\prime}(\tau_w) = \mu_w(0)$.
+		\end{description}
+	\end{proof}
+
+
+
+	\begin{proposition}\label{prop:optadv-tau-mu-x}
+		Assume the premise of Theorem~\ref{thm:canonical-fork} with $b = 0$.
+		Let $x \Prefix w$ and write $w = xy$.
+		Then $F^\prime$ contains a witness tine $\tau_x$ 
+		so that 
+		$\reach_{F^\prime}(\tau_x) = \mu_x(y0)$. 
+	\end{proposition}
+	\begin{proof}~
+		Note that it suffices to show that 
+		$\reach_{F^\prime}(\tau_x) \geq \mu_x(y0)$. 
+		Let $R$ be the set of $F$-tines with the maximal $F$-reach and 
+		let $R^\prime$ be the set of $F'$-tine with the maximal $F'$-reach. 
+		We know that $t_x$ is $y$-disjoint with $t_\rho$ in $F$. 
+		Consider the following mutually exclusive cases.
+
+		\begin{description}[font=\normalfont\itshape\space]
+			\item[If $\rho(w) > 0$ and $\mu_x(y) = 0$.]
+				We know that $s \neq t_\rho$, and 
+				that $\mu_x(y0) = 0$ using Lemma~\ref{lem:relative-margin}. 
+				By our choice of $s$, 
+				$\ell(s \Intersect t_\rho) \leq \ell(t_x \Intersect t_\rho)$ 
+				since $\reach_F(t_x) = \mu_x(y) = 0$.
+				Since $t_x$ is $y$-disjoint with $t_\rho$, so is $s$. 			
+				Recall that $\reach_{F^\prime}(\tau_x)$ is the largest among all tines 
+				that are $y0$-disjoint with $\tau_\rho$. 
+
+				\begin{description}[font=\normalfont\itshape\space]
+					\item[If $\tau_\rho = t_\rho$.]
+						Thus $t_x$ is $y0$-disjoint with $\tau_\rho$. 
+						It follows that $\reach_{F^\prime}(\tau_x) \geq \reach_{F^\prime}(\sigma) = 0$ 
+						(since $\sigma$ must be $y0$-disjoint with $\tau_\rho = t_\rho$). 
+						Since $0 = \mu_x(y0)$ by~\ref{eq:mu-relative-recursive}, 
+						$\reach_{F^\prime}(\tau_x) \geq \mu_x(y0)$, as desired.
+						% Now, either $\ell(\tau_x) = n + 1$ or $\ell(\tau_x) \leq n$. 
+						% In the former case, $\sigma = \tau_x$ 
+						% and hence $\reach_{F^\prime}(\tau_x) = 0$. 
+						% In the latter case, 
+						% we have $\reach_{F^\prime}(\tau_x) \leq \reach_{F}(\tau_x) \leq \mu_x(y) = 0$. 
+						% Here, the first inequality follows from Fact~\ref{fact:reach-fork-ext} 
+						% and the second inquality follows since $\tau_x$ is $y$-disjoint with $\tau_\rho = t_\rho$. 
+						% Hence $\reach_{F^\prime}(\tau_x) = 0 = \mu_x(y0)$.
+
+					\item[If $\tau_\rho \neq t_\rho$.]
+						This is possible if $\rho(w) = 1, \rho(w0) = 0$, and $t_\rho, \sigma \in R^\prime$. 
+						Note that $|R^\prime| \geq 2$ (since $\sigma, t_\rho \in R^\prime$). 
+						If there are two $y0$-disjoint tines $r_1^\prime, r_2^\prime \in R^\prime$ 
+						then $\reach_{F^\prime}(\tau_x) \geq 0 = \mu_x(y0)$. 
+						% However, since $\rho(w0) = 0$, we actually have 
+						% $\reach_{F^\prime}(\tau_x) = 0 = \mu_x(y0)$.
+						Otherwise, all tines $r^\prime \in R^\prime$ share a vertex indexed by $y$. 
+						Since $t_x$ is $y$-disjoint with $t_\rho$, 
+						it must be $y$-disjoint (and thus $y0$-disjoint) with 
+						every $r^\prime \in R^\prime$ as well. 
+						Examining the rule for assigning $\tau_x$, we conclude that $\tau_x = t_x$ and, 
+						therefore,  
+						$\reach_{F^\prime}(\tau_x) = \reach_{F^\prime}(t_x) = \mu_x(y) = 0 = \mu_x(y0)$. 
+			\end{description}
+
+		
+			\item[If $\rho(w) = 0$.]
+				Let $x \Prefix w$ and note that 
+				$\mu_x(y0) = \mu_x(y) - 1$. 
+				In addition, by Fact~\ref{fact:reach-fork-ext}, 
+				$\sigma$ will be the unique tine in $F^\prime$ 
+				with the maximal reach $\rho(F^\prime) = \rho(w0) = 0$, 
+				i.e., $\tau_\rho = \sigma$.
+				By construction, $\tau_x$ has the largest reach 
+				among all $F^\prime$-tines that are $y0$-disjoint with $\tau_\rho$. 
+				If $s = t_\rho$ 
+				then all $F$-tines will have a negative reach in $F^\prime$. 
+				In this case, we have $\tau_\rho = \sigma$ and, consequently, 
+				$\tau_x = t_x$. 
+				Hence $\reach_{F^\prime}(\tau_x) = \reach_{F^\prime}(t_x) 
+				= \reach_{F}(t_x) - 1 = \mu_x(y) - 1 = \mu_x(y0)$. 
+				
+				Now suppose $s \neq t_\rho$ and notice that 
+				$s$ cannot be a prefix of $t_\rho$ since, in that case, $\reach_F(s) < \reach_F(t_\rho) = 0$. 
+				Hence $s$ must have diverged from $t_\rho$ at some slot $d = \ell(s \Intersect t_\rho)$.
+				
+				\begin{description}[font=\normalfont\itshape\space]
+					\item[If $d > |x|$.]
+						Then $t_x$ and $s$ will be $y$-disjoint in $F$ 
+						i.e., $t_x$ will be $y0$-disjoint in $F^\prime$ 
+						with the unique maximal-reach tine $\sigma$.
+						By construction, 
+						$\reach_{F^\prime}(\tau_x) \geq \reach_{F^\prime}(t_x) = \mu_x(y) - 1 = \mu_x(y0)$.
+
+					\item[If $d \leq |x|$.]
+						Now $s$ has the largest reach (zero) in $F$ and, 
+						in particular, it is a uniquely identifiable tine that diverges earliest 
+						with respect to $R$; 
+						we conclude that $s = t_x$, i.e., $\mu_x(y) = \reach_F(s) = 0$. 					
+						This means the tine $t_\rho$ (which must be in $R$) 
+						is $y0$-disjoint with $\tau_\rho = \sigma$ in $F^\prime$ 
+						and, in addition, it has the largest $F^\prime$-reach of all tines $t \in F^\prime, t \neq \sigma = \tau_\rho$. 
+						Examining the rule for assigning $\tau_x$, we conclude that 
+						$\reach_{F^\prime}(\tau_x) = \reach_{F^\prime}(t_\rho) = \reach_F(t_\rho) - 1 = -1$. 
+						However, by Lemma~\ref{lem:relative-margin}, we also have 
+						$\mu_x(y0) = \mu_x(y) - 1 = -1 = \reach_{F^\prime}(\tau_x)$ 
+						since $\mu_x(y) = 0$.
+
+				\end{description}
+
+			\item[If $\rho(w) > 0$ and $\mu_x(y) \neq 0$.]
+				We know that $\reach_{F^\prime}(\tau_x) \leq \mu_x(y0) = \mu_x(y) - 1$. 
+				We wish to show that $\reach_{F^\prime}(\tau_x) \geq \mu_x(y0)$. 
+				% \textbf{What if $t_x = t_\rho$?}
+
+				\begin{description}[font=\normalfont\itshape\space]
+					\item[If $\reach_F(s) = 0$.]
+						Then $s \not \in \{t_\rho, t_x\}$  
+						and 
+						$\reach_{F^\prime}(t_\rho) = \reach_F(t_\rho) - 1 = \rho(w) - 1 = \rho(w0)$. 
+						It follwos that $t_\rho \in R^\prime$. 
+						Note that $t_x$ is $y0$-disjoint with $t_\rho$ in $F^\prime$ and, in addition, that 
+						$\tau_x$ has the largest reach among all tines 
+						that are $y0$-disjoint with some tine $r^\prime \in R^\prime$. 
+						Therefore, 
+						$\reach_{F^\prime}(\tau_x) \geq \reach_{F^\prime}(t_x) = \reach_{F}(t_x) - 1 = \mu_x(y) - 1 = \mu_x(y0)$. 
+
+					\item[If $\reach_F(s) \neq 0$.]	
+					% \item[If $\reach_F(s) \neq 0$ and $s = t_\mu_x$.]	
+					% 	Thus $F$ contains no tine with reach zero and $s$ is the longest tine in $F$. 			
+					% 	Suppose $s = t_x$. 
+					% 	Then 
+					% 	$\sigma$ will be $y0$-disjoint with $t_\rho$ in $F^\prime$ 
+					% 	and, as before, 
+					% 	$\reach_{F^\prime}(t_\rho) = \rho(w0)$. 
+					% 	Since $\sigma$ and $t_\rho$ are $y0$-disjoint, 
+					% 	a similar argument as in the preceding case would complete the claim.
+
+					% \item[If $\reach_F(s) \neq 0, s = t_\rho \neq t_x$.]	
+					% \item[If $\reach_F(s) \neq 0, s = t_\rho \neq t_x$, and $|R| \geq 2$.]	
+					% 	There must be a tine $t^* \in R$ with the largest $F$-reach 
+					% 	which is $y$-disjoint with $t_x$. 
+					% 	Retracing our argument above, the claim will follow since 
+					% 	these tines are $y0$-disjoint in $F^\prime$ as well. 
+
+					% \item[If $\reach_F(s) \neq 0, s = t_\rho \neq t_x$, and $R = \{t_\rho\}$.]	
+					% 	% If $\rho(w) = 1$ then $t_\rho \in R^\prime$ and, as a result, 
+					% 	% $t_x$ will be $y0$-disjoint with $t_\rho$ in $F^\prime$ and the claim would follow. 
+					% 	% Otherwise, suppose $\rho(w) \geq 2$. 
+						Then $s$ must be the longest tine in $F$.
+						Considering fork $F^\prime$,
+						if some tine $r^\prime \in R^\prime$ is $y0$-disjoint with $t_\mu$ 
+						then, as in the preceding case, 
+						$\reach_{F^\prime}(\tau_x) \geq \mu_x(y0)$. 
+						Otherwise, $\ell(r^\prime \Intersect t_x) > |x|$ for every tine $r^\prime \in R^\prime$, 
+						i.e., no maximal-reach $F^\prime$-tine is $y0$-disjoint with $t_x$. 
+						Since $\ell(t_x, t_\rho) \leq |x|$ by assumption 
+						and $\tau_\rho \in R^\prime$, it follows that 
+						$\ell(\tau_\rho \Intersect t_\rho) \leq |x|$, i.e., 
+						$t_\rho$ is $y0$-disjoint with $\tau_\rho$.
+						Therefore, 
+						$\reach_{F^\prime}(\tau_\mu) \geq \reach_{F^\prime}(t_\rho) = \reach_{F}(t_\rho) - 1 = \rho(w) - 1 \geq \mu_x(y) - 1 = \mu_x(y0)$. 
+						Here, the second inequality is true since $\mu_x(y) \leq \rho(xy) = \rho(w)$.
+
+				\end{description}
+
+
+		\end{description}
+		
+	\end{proof}
+
+	This completes the proof of Theorem~\ref{thm:canonical-fork}. 
+	\hfill $\qed$
+
+
+

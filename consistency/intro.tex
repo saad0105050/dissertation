@@ -1,0 +1,384 @@
+
+A blockchain is a data structure consisting of a collection of data
+blocks placed in linear order. It further requires that
+% It has the characteristic that
+each block contains a collision-free hash of the previous block: thus
+blocks implicitly commit to the entire prefix of the blockchain
+preceding them. This elementary data structure has remarkable
+applications in distributed computing, and now appears as an essential
+component of consensus protocols in a wide variety of models and
+settings; this notably includes both the ``permissionless'' setting
+popularized by Bitcoin and the classic ``permissioned'' model.
+
+Such consensus protocols call for players to collaboratively assemble
+a blockchain by repeatedly selecting players to add blocks.
+%A blockchain is a hash-chain that is collaboratively constructed by a
+%set of players.
+%
+%New blocks are added to the chain by players chosen
+Specifically, the protocol determines a stochastic process resembling
+a lottery: each ``leader'' selected by the lottery is then responsible
+for broadcasting a new block. While the algorithmic details of this
+lottery depend heavily on the protocol, the outcome can be privately
+determined and provides the winning player a proof of leadership that
+can be publicly demonstrated. Assuming that the expected wait time for
+some player to win the lottery is constant, the blockchain experiences
+steady growth when players follow the protocol.
+
+Network infelicities, adversarial behavior, or the possibility that
+two players simultaneously win the lottery can lead to disagreements
+among the players about the current blockchain. Thus protocols adopt a
+``chain selection rule'' that determines how players should break ties
+among the various chains they observe on the network; ideally, the
+combination of the chain selection rule and the lottery should
+guarantee that the players' blockchains agree, perhaps with the
+exception of a short suffix. The emblematic chain selection strategy
+among such systems is the \emph{longest-chain rule}, which calls for
+players to adopt the longest chain among various contenders.
+
+%Note that each player runs its own
+%lottery attempting to extend a certain hash-chain it is aware of.
+%Players choose which hash-chain to extend via some greedy criterion
+%such as picking the longest hash-chain they have seen thus far.
+%
+%Implementing the lottery mechanism and the criterion for
+%chain selection yields a particular blockchain protocol instantiation. 
+
+The first blockchain protocol was the core of the sensational Bitcoin
+system~\cite{Nakamoto2008}; it adopted a lottery mechanism based on a
+cryptographic puzzle~\cite{C:DwoNao92,hashcash}---also
+known as \emph{proof-of-work or PoW, for short}---and a chain
+selection rule favoring chains that represent more work. The system is
+particularly notable for its ability to survive in a
+permissionless setting---where players may freely join and
+depart---even when a portion of the players are actively attacking the
+protocol. Unfortunately, the proof-of-work mechanism makes quite
+striking energy demands: the system currently consumes as much
+electricity as a small country.\footnote{See e.g., 
+\url{https://digiconomist.net/bitcoin-energy-consumption} where it is reported
+that Bitcoin 
+annual energy consumption is on the order of at least 50 Twhr at the time of writing. } This motivated the blockchain
+community to exploring alternative lottery mechanisms, e.g.,
+proof-of-stake
+(PoS)~\cite{DBLP:journals/corr/BentovGM14,DBLP:conf/asiacrypt/PassS17,KRDO17},
+proof of
+space~\cite{C:DFKP15,DBLP:journals/iacr/ParkPAFG15}
+and others~\cite{cryptoeprint:2016:035}. The proof-of-stake mechanism
+is particularly attractive from the perspective of efficiency, as it
+makes no assumption of external computational resources.
+
+The fundamental consistency property---critical in all these
+blockchain systems---is \emph{common-prefix}
+(cf.~\cite{DBLP:conf/eurocrypt/GarayKL15}). It precisely captures the
+intuition described above: by trimming a $k$-block suffix from the
+chain held by any honest player the resulting blockchain is a prefix
+of the blockchain possessed by any honest party at any future point of
+the execution. A principal goal in the analysis of these systems is a
+to guarantee common prefix, for an appropriate value of $k$, even if
+some of the players collude to disrupt the protocol. Common prefix is
+typically only shown to hold with high probability $1-\varepsilon$,
+where $\varepsilon$ is an error term that is a function of
+$k$. The exact dependency of $\varepsilon$ on $k$ is critically
+important: it determines the length of the suffix that is to be
+removed from a blockchain in order to ensure that the remaining prefix
+will be retained at any future point of the execution. This directly
+imposes a lower bound on how long one has to wait for information in
+the blockchain (such as a payment transaction) to ``settle.''
+Additionally, many blockchain protocols internally rely on common
+prefix for correctness; thus the relationship between $\varepsilon$ and
+$k$ is critical to establishing the regime of correctness of the
+entire protocol.
+
+%Under mild assumptions one must have
+A relatively straightforward lower bound for $\varepsilon$ is 
+$\varepsilon \geq \exp(-\alpha k )$ for some $\alpha>0$.  This lower
+bound applies when there is a coalition of adversarial players of
+constant fraction,
+% that may be adversarial which is
+the case of primary interest in practice. The result is easy to infer
+from the analysis of~\cite{Nakamoto2008}, where a strategy is
+demonstrated that violates common prefix with such probability (this
+is referred to as a ``double-spending'' attack in that paper). The
+tightness of this bound is an important open problem. For the special
+case of proof-of-work an upper bound of $\exp(-\Omega(k))$ was shown
+first in \cite{DBLP:conf/eurocrypt/GarayKL15} and further verified in
+extended security models
+by~\cite{DBLP:conf/crypto/GarayKL17,DBLP:conf/eurocrypt/PassSS17}.
+%(here the parameter $T$ corresponds to the total run-time of the
+%blockchain).
+In the proof-of-stake setting, on the other hand, the tightness of the
+bound remains open.  While recent proof-of-stake algorithms have been
+presented with rigorous analyses that rival proof-of-work in many
+regards, they suffer from a quadratic relationship between $k$ and
+$\log(\varepsilon)$. For example, the Ouroboros
+protocols~\cite{KRDO17,DBLP:conf/eurocrypt/DavidGKR18,DBLP:journals/iacr/BadertscherGKRZ18},
+as well as Snow White~\cite{DBLP:journals/iacr/BentovPS16a}, provide
+an upper bound on $\varepsilon$ of $\exp(-\Omega(\sqrt{k}))$; this
+should be compared with $\varepsilon = \exp(-\Theta(k))$ for
+proof-of-work. The significant gap from the known lower bound was
+attributed to a notable, general attack that distinguished PoS from
+PoW: Known as the \emph{nothing-at-stake} problem, this refers to the
+ability of an adversarial coalition of players to strategically reuse
+a winning PoS lottery to extend multiple blockchains.
+
+
+\ignore{%%%%%%  
+The success of Bitcoin and, in general, usage of blockchains for
+supporting and archiving the results of consensus has led to
+a concerted effort to develop rigorous formal tools for reasoning
+about blockchain dynamics. These efforts were motivated both by the
+Bitcoin proof-of-work blockchain itself and the desire for alternative
+blockchain protocols that are organized around other resources (e.g.,
+proof-of-space, proof-of-stake, etc.).
+% In particular,
+% Bitcoin adopts a ``proof-of-work'' convention which demands that
+% participants compete in a continuing race to solve computational
+% problems. This mechanism is remarkably successful, trusted, and
+% well-understood; on the other hand, it demands unsatisfactory resource
+% commitment that grows with the population and commitment of its
+% participants. One influential counter-proposal calls for participants
+% to be weighted by their stake; a quantity determined by the blockchain
+% itself.
+In this article, we establish rigorous, quantitative bounds on the
+time necessary for transactions to settle for a broad family of
+blockchain protocols adopting the \emph{longest-chain rule}, notably
+including proof-of-stake blockchains such as 
+Snow White~\cite{DBLP:journals/iacr/BentovPS16a} and 
+the Ouroboros family~\cite{KRDO17,DBLP:conf/eurocrypt/DavidGKR18,DBLP:journals/iacr/BadertscherGKRZ18}. 
+The principal feature of our new analysis is that it applies to
+\emph{proof-of-stake} based blockchain systems,
+which must contend
+with challenging adversarial behavior that does not exist in
+proof-of-work systems:
+\begin{itemize}
+\item \emph{Nothing at stake attacks.} When an adversary has the right
+  to extend a proof-of-stake blockchain, he may produce many different
+  blocks that extend different chains of the system or, similarly,
+  yield many different extensions of a particular longest chain---this
+  corresponds to ``nothing at stake'' attacks that can permit an
+  adversary to construct, on-the-fly, competing blockchains at no
+  cost. In contrast, the \emph{total} number of blocks produced by a
+  minority adversary in a proof-of-work based system is dominated by
+  the number of blocks that are honestly produced, and constructing additional blocks
+  requires additional work.
+\item \emph{Known leader schedules.} In some proof-of-stake based
+  blockchains, (part or all of) the future schedule of participants
+  permitted to add to the chain is public. In contrast, the right to
+  add a block in proof-of-work settings is determined in a stochastic
+  online fashion that does not permit the adversary significant
+  ``look-ahead''.
+\end{itemize}
+}%%%%%%%%%%%%%%%%
+
+\paragraph{Our results.}
+Our objective is to control the common-prefix error
+$\varepsilon$ as tightly as possible while
+making minimal assumptions on the underlying blockchain
+protocol.  We work in a general model formulated by a simple family of
+\emph{blockchain axioms}. The axioms themselves are easy to interpret
+and few in number. This permits us to abstract many features of the
+underlying blockchain protocol (e.g., the details of the
+leader-election process, the cryptographic security of the relevant
+signature schemes and hash functions, and randomness generation),
+while still establishing results that are strong enough to directly
+incorporate into existing specific analyses.
+%%(For example, our techniques can directly improve
+%the analysis of Snow White, Ouroboros, Ouroboros Praos, and Ouroboros
+%Genesis.)
+
+Our most interesting finding is a quite tight theory of common prefix
+that depends \emph{only on the schedule of participants certified to
+  add a block}. Under common assumptions about this schedule, we
+achieve the optimal relationship $\varepsilon =
+\exp(-\Theta(k))$. This directly improves the common prefix guarantees
+(and settlement times) of existing proof-of-stake blockchains such as
+Snow White~\cite{DBLP:journals/iacr/BentovPS16a},
+Ouroboros~\cite{KRDO17}, Ouroboros
+Praos~\cite{DBLP:conf/eurocrypt/DavidGKR18}, and Ouroboros
+Genesis~\cite{DBLP:journals/iacr/BadertscherGKRZ18}.
+%
+%analysis of~\cite{KRDO17}, which established that the probability of
+%a ``depth-$k$'' settlement failure at time $T$ was no more than
+%$T \exp(-\Omega(\sqrt{k}))$. Our new techniques establish
+%that the probability of a settlement failure at time $T$ is no more
+%than $\exp(-\Omega(k))$. 
+%%Note that this is independent of the
+%%the time elapsed $T$, 
+Specifically, this improves the scaling in the exponent from
+$\sqrt{k}$ to $k$ and establishes a tight characterization for
+$\varepsilon = \exp(-\Theta(k))$. (In fact, we even obtain reasonable
+control of the constants.)  We remark that our assumptions about the
+schedule distribution can be weakened---without any effect on the
+final bounds---to apply to martingale-style distributions such
+as those that arise in the analysis of adaptive
+adversaries~\cite{DBLP:conf/eurocrypt/DavidGKR18,DBLP:journals/iacr/BadertscherGKRZ18}.
+%While we discuss this in detail later, we remark that
+%this is important for applying our techniques to security proofs
+%involving adaptive adversaries.% and, in particular, to the
+%analysis of the Ourorboros Genesis protocol.
+
+Our new analysis offers an additional, but lower order, improvement for
+several of these blockchains. The existing analysis of, e.g.,
+Ouroboros Praos~\cite{DBLP:conf/eurocrypt/DavidGKR18}, required a
+union bound to be taken over the entire lifetime of the protocol in
+order to rule out a common prefix violation at a particular point of
+time; thus such events were actually bounded above by a function of
+the form $T \exp(-\Omega(\sqrt{k}))$, where $T$ is the lifetime of the
+protocol. While this event \emph{does} depend on the entire dynamics
+of the protocol, we show how to avoid this pessimistic tail bound to
+achieve a ``single shot'' common prefix violation---at a particular
+time of interest---of form $\exp(-\Theta(k))$; this removes the
+dependence on $T$.
+
+From a technical perspective, we contrast the structure of our proofs
+with existing techniques for the PoW case. The PoW results find a
+direct connection between common-prefix and the behavior of a biased,
+one-dimensional random walk. Interestingly, our results give a tight
+relationship between the general (e.g., PoS) case and a pair of
+\emph{coupled} biased random walks. A major challenge in the analysis
+is to bound the behavior of this richer stochastic process.  Our tools
+yield precise, explicit upper bounds on the probability of persistence
+violations that can be directly applied to tune the parameters of
+deployed PoS systems. See Appendix~\ref{sec:exact-prob} where we
+record some concrete results of the general theory. The importance of
+these results in the practice of PoS blockchain systems cannot be
+overstated: they provide, for the first time, concrete error bounds
+for settlement times for PoS blockchains that follow the longest chain
+rule.
+
+
+
+\paragraph{Further analytic details.} Our approach begins with the
+graph-theoretic framework of \emph{forks} and \emph{margin} developed
+for the analysis of the Ouroboros~\cite{KRDO17} protocol.  (A fork is
+an abstraction of the protocol execution given the outcomes of the
+leader-election process.)  We begin by generalizing the notion of
+margin to account for local, rather than global, features of a leader
+schedule, and provide an exact, recursive closed form for this new
+quantity (see Section~\ref{sec:recursion}). This proof identifies an
+optimal online adversary (i.e., a fork-building strategy whose current
+decisions do not depend on the future) for PoS blockchain algorithms
+%when
+%divergence is measured in slots. 
+%In addition, we present an \emph{optimal} online adversary 
+with the remarkable property that the sequence of forks produced by
+this adversary \emph{simultaneously} achieve the worst-case (slot)
+common-prefix violations associated with all slots (see
+Section~\ref{sec:canonical-forks}). We then study the stochastic
+process generated when the \emph{characteristic string}---a Boolean
+string representing the outcome of the leader election scheme---is
+given by a family of i.i.d.\ Bernoulli random variables. In this case,
+we identify a generating function that bounds the tail events off
+interest, and analytically upper bound the growth of the function. We
+then show how to extend the analysis to the setting where the
+characteristic string is drawn from a martingale sequence.  As it
+happens, this more general distribution arises naturally in the
+analyses of PoS protocols that survive adaptive adversaries; e.g.,
+Ouroboros Genesis~\cite{DBLP:journals/iacr/BadertscherGKRZ18}.  We
+obtain the pleasing result that the common prefix error probability in
+the martingale case is no more than that in the i.i.d.\ Bernoulli
+case.
+
+\paragraph{Direct consequences.} 
+Our results establish consistency bounds in a quite general
+setting---see below: In particular, they directly imply
+$\exp(-\Theta(k))$ consistency for the Sleepy consensus (Snow
+White)~\cite{DBLP:conf/asiacrypt/PassS17}, Ouroboros~\cite{KRDO17},
+Ouroboros Praos~\cite{DBLP:conf/eurocrypt/DavidGKR18}, and Ouroboros
+Genesis~\cite{DBLP:journals/iacr/BadertscherGKRZ18} blockchain
+protocols. (The Ouroboros Praos and Ouroboros Genesis analyses in fact
+directly relied on an earlier e-print version of the present article
+for their settlement estimates.)
+
+\paragraph{Related work.} 
+Blockchain protocol analysis in the PoW-setting was initiated
+in~\cite{DBLP:conf/eurocrypt/GarayKL15} and further improved in
+\cite{DBLP:conf/eurocrypt/PassSS17,DBLP:conf/crypto/GarayKL17}.  The
+established security bounds for consistency are linear in the security
+parameter.  Sleepy
+consensus~\cite[Theorem~13]{DBLP:conf/asiacrypt/PassS17} provides a
+consistency bound of the form
+$\exp(-\Omega(\sqrt{k}))$. %\footnote{We note that the term $T$ stems from a union bound applied over all communication rounds (CHECK XXX).}
+Note that~\cite{DBLP:conf/asiacrypt/PassS17} is not a PoS protocol per
+se, but it is possible to turn it into one (as was demonstrated in
+\cite{DBLP:journals/iacr/BentovPS16a}). The analysis of the Ouroboros
+blockchain~\cite{KRDO17} achieves $\exp(-\Omega(\sqrt{k}))$. We remark
+that the analyses of Ouroboros
+Praos~\cite{DBLP:conf/eurocrypt/DavidGKR18} and Ouroboros
+Genesis~\cite{DBLP:journals/iacr/BadertscherGKRZ18} developed
+significant new machinery for handling other challenges (e.g.,
+adaptive adversaries, partial synchrony), but directly referred to a
+preliminary version of this article to conclude their guarantees of
+$ \exp(-\Omega(k))$.
+
+
+
+%which were only experimentally verified. 
+
+Our results complement the recent results of
+\cite{DBLP:journals/corr/abs-1809-06528}, which also considers
+longest-chain PoS protocols. \cite{DBLP:journals/corr/abs-1809-06528}
+focuses on identifying dynamics unique to longest-chain PoS
+protocols. In particular, they show that longest-chain PoS protocols
+that are \emph{predictable} (i.e., for which some portion of the
+schedule of slot leaders is known ahead of time) are necessarily
+vulnerable to ``predictable double-spends.''  The conventional defense
+against such attacks is to wait for the specified settlement time to
+elapse before accepting a transaction, which (until now) has resulted
+in slow confirmation times. As such,
+\cite{DBLP:journals/corr/abs-1809-06528} raised the question of
+whether long confirmation times are a necessary evil in longest-chain
+PoS blockchains.  As double-spending attacks imply a consistency
+violation, our results show that PoS protocols can safely decrease
+settlement times to asymptotically match PoW protocols without
+sacrificing security against double-spends.
+
+Because we focus on the longest-chain rule, our
+analysis is not applicable to protocols like
+Algorand~\cite{DBLP:journals/corr/Micali16} which, in fact, offer
+settlement in expected constant time without invoking blockchain
+reorganisation or forks; however, Algorand lacks the ability to
+operate in the ``sleepy''~\cite{DBLP:conf/asiacrypt/PassS17} or
+``dynamic availability''~\cite{DBLP:journals/iacr/BadertscherGKRZ18}
+setting.
+% (which permits an evolving population of participants).
+In our combinatorial analysis, synchronous operation is assumed
+against a rushing adversary; this is without loss of generality
+vis-a-vis the result of \cite{DBLP:conf/eurocrypt/DavidGKR18} where it
+was shown how to reduce the combinatorial analysis in the partially
+synchronous setting to the synchronous one.  We note that a number of
+works have shown how to use a blockchain protocol to bootstrap a
+cryptographic protocol that can offer faster settlement time under
+stronger assumptions than honest majority, e.g., Hybrid
+Consensus~\cite{DBLP:conf/wdag/PassS17} or
+Thunderella~\cite{DBLP:conf/eurocrypt/PassS18}; our results are
+orthogonal and synergistic to those since they can be used to improve
+the settlement time bounds of the blockchain protocol that operates as
+a fallback mechanism.
+
+\paragraph{Outline.} We begin in Section~\ref{sec:model} by describing
+a simple general model for blockchain
+dynamics. Section~\ref{sec:definitions} builds on this model to set
+down a number of basic definitions required for the proofs. The first
+part of the main proof is described in Section~\ref{sec:recursion},
+which develops a ``relative'' version of the theory of margin
+from~\cite{KRDO17}; most details are then relegated to
+Section~\ref{sec:margin-proof} in order to move quickly to the
+consistency estimates in Section~\ref{sec:estimates}.  In
+Section~\ref{sec:canonical-forks}, we present an optimal online
+adversary who can simultaneously maximize the relative margins for all
+prefixes of the characteristic string.  \ignore{We then provide two
+  different settlement estimates in Section~\ref{sec:estimates};
+  roughly, the two bounds trade off generality with the strength of
+  the final estimates.} Finally, in Appendix~\ref{sec:exact-prob}, we
+compute exact upper bounds on $k$-settlement error probabilities for
+various values of $k$ and describe a simple $O(k^3)$-time algorithm to
+compute these probabilities in general.
+%The \texttt{C++} source code is publicly available 
+%at~\href{https://github.com/saad0105050/forkable-strings-code}{https://github.com/saad0105050/forkable-strings-code}~\cite{PrForkableCode}.
+ 
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

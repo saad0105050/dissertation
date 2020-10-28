@@ -1,0 +1,529 @@
+In this section, we show that a common prefix violation implies the
+existence of a balanced fork. This allows us to bound consistency
+errors by reasoning about balanced forks.  In particular,
+inequality~\eqref{eq:pr-cp-fork} is a direct consequence of the
+theorem below.
+
+\begin{theorem}\label{thm:cp-fork}
+  Let $k, T \in \NN$.  
+  Let $w \in \{0,1\}^T$ be a characteristic string which violates $\kSlotCP$. 
+  Then 
+  there exist a decomposition $w = xyz$ and a fork $\hat{F} \Fork xy$, 
+  where $|y| \geq k + 1$, 
+  so that $\hat{F}$ is $x$-balanced. 
+  %
+  % Then $w$ can be written $w = xyz$, where 
+  % % $x,y, z \in \{0,1\}^*$, 
+  % $|y| \geq k + 1$, so that 
+  % there is an $x$-balanced fork $\hat{F} \Fork xy$. 
+\end{theorem}
+
+\newcommand{\Final}[1]{\tilde{#1}}
+
+% \subsection{Proof of Theorem~\ref{thm:cp-fork}}
+\begin{proof}
+  
+  % \newcommand{\Base}{x}
+
+  % The proof closely follows the argument of \cite[Theorem 4.26]{KRDO17}.  
+  Recall that $\ell(t)$ is the slot index of the last vertex of tine
+  $t$.  Define $A \triangleq \bigcup_{F \Fork w} A_F$ where, for a
+  given fork $F \Fork w$, define
+  \[
+    A_F \triangleq \left\{
+      (\tau_1, \tau_2) \SuchThat \parbox{60mm}{       
+      $\tau_1, \tau_2$ are two viable tines in the fork $F$, 
+      $\ell(\tau_1) \leq \ell(\tau_2)$, and 
+      the pair $(\tau_1, \tau_2)$ is a witness to a $\kSlotCP$ violation}
+     \right\}
+     \,.
+  \]
+  % Consider the set of tine-pairs $(\tau_1, \tau_2)$ from all forks on $w$, 
+  % such that $\ell(\tau_1) \leq \ell(\tau_2)$ and the pair witnesses a $\kSlotCP$ violation. 
+  % Let $T$ be the set of all such tine-pairs.
+  % \begin{definition}[Slot divergence]    
+  % \end{definition}
+  Define the \emph{slot divergence} of two tines as 
+  $\SlotDivergence(\tau_1, \tau_2) \defeq \ell(\tau_1) - \ell(\tau_1 \Intersect \tau_2)$ 
+  where $\tau_1 \Intersect \tau_2$ denotes the common prefix 
+  of the tines $\tau_1$ and $\tau_2$. 
+  Recalling the definition of a $\kSlotCP$ violation, it is clear that 
+  \begin{equation}\label{eq:divergence}
+      \SlotDivergence(\tau_1, \tau_2) \geq k + 1 \quad \text{for all } (\tau_1, \tau_2) \in A
+      \,.
+  \end{equation}
+  % For concreteness and simplicity, we assume that the nodes in $F$ 
+  % have been suitably labeled so that the following two conditions are met:
+  Notice that there must be a tine-pair $(t_1, t_2) \in A$ which satisfies the following two conditions: 
+    \begin{equation}\label{eq:tines}
+      \SlotDivergence(t_1, t_2) 
+      % = \SlotDivergence(w) 
+      % = \max_{(\tau_1, \tau_2) \in T} \SlotDivergence(\tau_1, \tau_2) 
+      \text{ is maximal over $A$}
+      \,, \text{and}
+    \end{equation}
+  % and
+  \begin{equation}\label{eq:minimality}
+    | \ell(t_2) - \ell(t_1) | 
+    \text{ is minimal among all tine-pairs in $A$ 
+      for which~\eqref{eq:tines} holds.}
+  \end{equation}
+  The tines $t_1, t_2$ will play a special role in our proof; 
+  let $F$ be a fork containing these tines. 
+
+  \paragraph{The prefix $x$, fork $F_x$, and vertex $u$.} 
+  Let $u$ denote the last vertex on the tine
+  $t_1 \cap t_2$, as shown in the diagram below, and let
+  $\alpha \triangleq \ell(u) = \ell(t_1 \cap t_2)$. 
+  Let $x \triangleq w_1, \ldots, w_\alpha$ 
+  and let $F_x$ be the fork-prefix of $F$ supported on $x$. 
+  We will argue that $u$ must be honest and, in addition, that 
+  $F_x$ must contain a unique longest tine $t_u$ terminating 
+  at the vertex $u$. 
+  We will also identify a substring $y, |y| \geq k + 1$ 
+  such that $w$ can be written as $w = xyz$. 
+  Then we will construct a balanced fork $\tilde{F}_y \Fork y$ by 
+  modifying the subgraph of $F$ supported on $y$. 
+  We will finish the proof by constructing an $x$-balanced fork by 
+  suitably appending $\tilde{F}_y$ to $F_x$.
+  % and then appealing to Fact~\ref{fact:margin-balance}.
+    
+  \begin{center}
+      \begin{tikzpicture}[>=stealth', auto, semithick,
+        unknown/.style={circle,draw=black,thick,font=\small},
+        honest/.style={circle,draw=black,thick,double,font=\small},
+        malicious/.style={fill=gray!10,circle,draw=black,thick,font=\small}]
+        \node[honest] at (0,0) (u) {$u$};
+        \node[malicious] at (3,.5)  (z1) {};
+        \node[malicious] at (5,-.5)   (z2) {};
+        \path (z1) ++(.4,.4) node {$t_1$};
+        \path (z2) ++(.4,.4) node {$t_2$};
+        \draw[thick,<-] (u) to (-1,0);
+        \draw[thick,<-,gray] (z1) to[out=180,in=20] (u);
+        \draw[thick,<-,gray] (z2) to[out=180,in=-20] (u);
+      \end{tikzpicture}
+    \end{center}
+  %  Let $\beta$ denote the smallest honest index of $w$ for which
+  %  $\beta \geq \ell(t_2) = \max(\ell(t_1), \ell(t_2))$, with the convention that
+  %  $\beta = n+1$ if there is no such index.
+
+    \paragraph{$u$ must be an honest vertex.}
+    We observe, first of all, that the vertex $u$ cannot be adversarial:
+    otherwise it is easy to construct an alternative fork
+    $F^\prime \Fork w$ and a pair of tines in $F^\prime$ that violate~\eqref{eq:tines}. 
+    Specifically, construct $F^\prime$ from $F$ by
+    adding a new (adversarial) vertex $u^\prime$ to $F$ for which
+    $\ell(u^\prime) = \ell(u)$, adding an edge to $u^\prime$ from the
+    vertex preceding $u$, and replacing the edge of $t_1$ following $u$
+    with one from $u^\prime$; then the other relevant properties of the
+    fork are maintained, but the slot divergence of the resulting tines has
+    increased by at least one. (See the diagram below.)
+    \begin{center}
+      \begin{tikzpicture}[>=stealth', auto, semithick,
+        unknown/.style={circle,draw=black,thick,font=\small},
+        honest/.style={circle,draw=black,thick,double,font=\small},
+        malicious/.style={fill=gray!10,circle,draw=black,thick,font=\small}]
+        \node[malicious] at (2,0) (v) {$u$};
+        \node[malicious,dotted] at (2,1) (u) {$u^\prime$};
+        \node[unknown] at (4,-.5)  (b1) {};
+        \node[unknown] at (4,.5)  (a1) {};
+        \node[unknown] at (0,0) (base) {};
+        \node at (7,.5) (t1) {$t_1$};
+        \node at (7,-.5) (t2) {$t_2$};
+        % \node[state,honest] at (3,-1) (bottom) {};
+        % \node[state,honest] at (7,1) (top) {$H$};
+        \draw[thick,->] (base) -- (v);
+        \draw[thick,->] (v) -- (a1);
+        \draw[thick,->] (v) -- (b1);
+        \draw[thick,->,dotted] (u) -- (a1);
+        \draw[thick,->,dotted] (base) -- (u);
+        \draw[thick,<-,gray] (t1) to[in=20,out=200] (a1);
+        \draw[thick,<-,gray] (t2) to[in=20,out=200] (b1);
+        \draw[thick,<-,gray] (base) to (-1,0);
+        % \draw[thick,<->] (3,0) -- (7,0) node[pos=.5] {$\gap(f)$};
+      \end{tikzpicture}
+    \end{center}
+    
+    \paragraph{$F_x$ has a unique, longest (and honest) tine $t_u$.}
+    A similar argument implies that the fork
+    $F_x$ has a unique vertex of depth $\depth(u)$: namely, $u$ itself. In
+    the presence of another vertex $u^\prime$ (of $F_x$) with depth
+    $\depth(u)$, ``redirecting'' $t_1$ through $u^\prime$ (as in the
+    argument above) would likewise result in a fork with 
+    a larger slot divergence. 
+    To see this, notice that $\ell(u^\prime)$ must be strictly less than $\ell(u)$ 
+    since $\ell(u)$ is an honest slot (which means $u$ is the only vertex at that slot).
+    Thus $\ell(\cdot)$ would indeed be increasing along
+    this new tine (resulting from redirecting $t_1$).
+    As $\alpha$ is the last index of the string $x$, this additionally
+    implies that $F_x$ has no vertices of depth exceeding $\depth(u)$. 
+    Let $t_u \in F_x$ be the tine with $\ell(t_u) = \alpha$. 
+    \begin{equation}\label{eq:tu}
+        \text{The honest tine $t_u$ is the unique longest tine in $F_x$}
+        \,.
+    \end{equation}
+    
+    
+
+    % Without loss of generality we may assume that $\ell(z_2)$, the
+    % honest index labeling $z_2$, is in fact the first honest index in
+    % $w$ appearing after $\ell(z_1)$. To justify this, let $\beta$ denote
+    % this first honest index of $w$ after $\ell(z_1)$ and let $x$ denote
+    % the unique vertex of $F$ for which $\ell(x) = \beta$. Note that
+    % $\hdepth(x) > \hdepth(z_1)$. If the tine $t$ ending at $x$ shares an
+    % edge with $t_1$ after $u$, then $t$ is disjoint from $t_2$ after $u$
+    % and it follows that $\divergence(t,t_2) > \divergence(t_1,t_2)$, a
+    % contradiction. Thus $t$ shares no edges with $t_1$ after $u$, and
+    % $\length(t) > \length(t_1)$; it follows that
+    % $\divergence(t_1,t) = \divergence(t_1,t_2)$ and we may assume
+    % $t_2 = t$ in the remainder of the argument.
+    
+
+    \paragraph{Identifying $y$.}
+    Let $\beta$ denote the smallest honest index of $w$ for which
+    $\beta \geq \ell(t_2)$, with the convention that if there is no such
+    index we define $\beta = T + 1$. 
+    Observe that $\beta - 1 \geq \ell(t_1)$. 
+    (If $\ell(t_2)$ is an honest slot then $\beta = \ell(t_2)$ 
+    but $\ell(t_1) < \ell(t_2)$. 
+    The case $\ell(t_1) = \ell(t_2)$ is possible if $\ell(t_2)$ is an adversarial slot; 
+    but then $\beta > \ell(t_2)$.)
+    These indices, $\alpha$ and $\beta$, distinguish the
+    substrings $y = w_{\alpha+1} \ldots w_{\beta-1}$ and 
+    $z = w_{\beta} \ldots w_T$; 
+    we will focus on $y$ in the remainder of the proof. 
+    Since the function
+    $\ell(\cdot)$ is strictly increasing along any tine, observe that
+    \begin{equation*}
+        |y| 
+        = \beta - \alpha - 1 
+        \geq \ell(t_1) - \ell(u) 
+        \geq k + 1
+        \,.
+    \end{equation*}
+    Hence $y$ has the desired length and it suffices to establish that it is forkable.
+    We can extract from $F$ a balanced fork (for $y$) in
+    two steps: (i.) we subject the fork $F$ to some minor
+    restructuring to ensure that all ``long'' tines pass through $u$;
+    (ii.) we construct a flat fork by treating the vertex $u$ as the
+    root of a portion of the subtree of $F$ labeled with the indices of
+    $y$. At the conclusion of the construction, the segments of the
+    two tines $t_1$ and $t_2$ will yield the required ``long, disjoint, equal-length''
+    tines satisfying the definition of a balanced fork.
+
+    
+    \paragraph{Honest indices in $xy$ have low depths.}
+    The minimality assumption~\eqref{eq:minimality} implies that any honest
+    index $h$ for which $h < \beta$ has depth no more than
+    $\min(\length(t_1),\length(t_2))$: specifically,
+    \begin{equation}\label{eq:honest-depth}
+      h < \beta \quad\Longrightarrow \quad \hdepth(h) \leq \min(\length(t_1), \length(t_2))\,.
+    \end{equation}
+    To see this, consider an honest index $h,h < \beta$ and a tine $t_h$
+    for which $\ell(t_h) = h$. Recall that $t_1$ and $t_2$ are viable and 
+    that $h < \ell(t_2)$. (If $\ell(t_2)$ is honest, it is obvious. 
+    Otherwise, $h < \ell(t_2) < \beta$ since $\ell(t_2)$ is adversarial.) 
+    As $t_2$ is viable, it follows immediately that
+    $\hdepth(h)  = \length(t_h) \leq \length(t_2)$. 
+    Similarly, if $h \leq \ell(t_1)$
+    then $\hdepth(h) \leq \length(t_1)$ since $t_1$ is viable as well. 
+    The remaining case, i.e., when $\ell(t_1) < h < \ell(t_2)$, can be ruled out 
+    by the argument below.
+
+    \paragraph{There is no honest index between $\ell(t_1)$ and $\ell(t_2)$.}
+    We claim that 
+    \begin{equation}\label{eq:no-honest-index}
+        \text{There is no honest index $h$ satisfying $\ell(t_1) < h < \ell(t_2)$}
+        \,.
+    \end{equation}
+    The claim above is trivially true if $\ell(t_1) = \ell(t_2)$.
+    Otherwise, suppose (toward a contradiction) 
+    that $h$ is an honest index satisfying $\ell(t_1) < h < \ell(t_2)$. 
+    Let $t_h$ be the (honest) tine at slot $h$. 
+    The tine-pair $(t_1, t_h)$ may or may not be in $A$. 
+    We will show that both cases lead to contradictions.
+    \begin{itemize}
+      \item If $(t_1, t_h)$ is in $A$ and $\ell(t_1 \Intersect t_h) \leq \ell(u)$, 
+      $\SlotDivergence(t_1, t_h)$ is at least $\SlotDivergence(t_1, t_2)$. 
+      In fact, due to~\eqref{eq:tines}, this inequality must be an equality. 
+      However, the assumption $\ell(t_1) < h < \ell(t_2)$ contradicts~\eqref{eq:minimality}. 
+
+      \item If $(t_1, t_h)$ is in $A$ and $\ell(t_1 \Intersect t_h) > \ell(u)$, 
+      it follows that $\SlotDivergence(t_h, t_2) > \SlotDivergence(t_1, t_2)$. 
+      As the latter quantity is at least $k + 1$, $(t_h, t_2)$ must be in $A$. 
+      The preceding inequality, however, contradicts~\eqref{eq:tines}.
+
+      \item If $(t_1, t_h) \not \in A$, 
+      $\SlotDivergence(t_1, t_h)$ is at most $k$.
+      As $\SlotDivergence(t_1, t_2)$ is at least $k + 1$, 
+      % it follows that $\ell(t_1) - \ell(t_1 \Intersect t_h) > \ell(u)$.
+      $t_h$ and $t_1$ must share a vertex after slot $\ell(u)$. 
+      Since $\ell(t_1) < h < \ell(t_2)$ by assumption, 
+      $\SlotDivergence(t_h, t_2) > \SlotDivergence(t_1, t_2) \geq k + 1$ 
+      and, as a result, $(t_h, t_2) \in A$. 
+      However, the preceding strict inequality violates condition~\eqref{eq:tines}. 
+    \end{itemize}
+    
+    
+
+
+    % -----------------------------
+
+
+    % We show the impossibility of the above assumption in two steps. 
+    % First, we deduce that $(t_1, t_h), (t_h, t_2) \not \in A$. 
+    % Second, we show that the above deduction is contradictory.
+    % \begin{description}[]
+    %   \item[Step 1: Deducing $(t_1, t_h), (t_h, t_2) \not \in A$.]
+    %   First, note that $\ell(t_1) - \ell(u)$ is at least $k + 1$ since 
+    %   the pair $(t_1, t_2)$ witnesses a $\kSlotCP$ violation.
+    %   Now let us reason about the (viable) tine-pairs $(t_1, t_h)$ and $(t_h, t_2)$. 
+    %   Suppose $(t_1, t_h) \in A$. 
+    %   If $t_h$ does not pass through the vertex $u$, 
+    %   $\SlotDivergence(t_1, t_h)$ will be strictly greater than $\SlotDivergence(t_1, t_2)$ 
+    %   since $t_1$ and $t_2$ split at $u$. 
+    %   However, this violates the maximality condition~\eqref{eq:tines}. 
+    %   Thus $t_h$ must pass through $u$. 
+    %   Next, observe that if $\SlotDivergence(t_1, t_h)$ equals $\SlotDivergence(t_1, t_2)$, 
+    %   then~\eqref{eq:minimality} is violated since $\ell(t_1) < h < \ell(t_2)$. 
+    %   Hence $\SlotDivergence(t_1, t_h)$ must be strictly smaller than $\SlotDivergence(t_1, t_2)$ 
+    %   and, consequently, $t_1$ and $t_h$ must share an edge after the slot $\ell(u)$. 
+    %   But then $t_h$ must be disjoint with $t_2$ after the slot $\ell(u)$. 
+    %   As $h > \ell(t_1)$, $\SlotDivergence(t_h, t_2)$ is at least $\SlotDivergence(t_1, t_2)$ 
+    %   and, as a result, $(t_h, t_2)$ must witness a $\kSlotCP$ violation. 
+    %   This means $(t_h, t_2) \in A$. 
+    %   However, since $\ell(t_1) < h < \ell(t_2)$, the minimality condition~\eqref{eq:minimality} is violated. 
+    %   Thus the tine-pair $(t_1, t_h)$ cannot be in $A$. 
+    %   By retracing the above argument but substituting $t_1$ for $t_2$ and vice versa, 
+    %   we likewise deduce that the tine-pair $(t_h, t_2)$ cannot be in $A$. 
+    %   Hence 
+    %   \[
+    %     \max\left(\SlotDivergence(t_1, t_h), \SlotDivergence(t_h, t_2) \right) \leq k
+    %     \,.
+    %   \]
+
+    %   \item[Step 2: Contradiction.]
+    %   However, as we argued before, if $\SlotDivergence(t_1, t_h) \leq k$, 
+    %   then $t_1$ and $t_h$ must share an edge after the slot $\ell(u)$ 
+    %   and, as a result, $t_h$ and $t_2$ will be disjoint after the slot $\ell(u)$.
+    %   As $h - \ell(u) > \ell(t_1) - \ell(u) \geq k + 1$, 
+    %   the pair $(t_h, t_2)$ must be a witness to a $\kSlotCP$ violation. 
+    %   Thus $(t_h, t_2)$ must be in $A$, contradicting our previous deduction. 
+    %   Similarly, the assumption $\SlotDivergence(t_h, t_2) \leq k$ leads to a contradiction as well.
+    %   Therefore, our original assumption $\ell(t_1) < h < \ell(t_2)$ must be invalid. 
+    %   Thus there can be no honest index strictly between $\ell(t_1)$ and $\ell(t_2)$.
+    % \end{description}
+
+
+    % ------------------------------------------
+
+
+    % As $\ell(t_h) > \ell(t_1)$, it follows that $\SlotDivergence(t_1, t_h) \geq \SlotDivergence(t_1, t_2)$
+    % Towards a contradiction, consider a tine $t_h$ for which $\ell(t_h) = h$.
+
+    % Observe that both $\SlotDivergence(t_1, t_h)$ and 
+    % $\SlotDivergence(t_h, t_2)$ are at least $k+1$ and hence the pairs
+    % $(t_1, t_h)$ and $(t_h, t_2)$ are in $A$. 
+    % The tine $t_h$ diverges from $t_1$ 
+    % either before, at, or after $u$. 
+    % If $t_h$ diverges from $t_1$ before $u$, 
+    % $\SlotDivergence(t_1, t_h) > \SlotDivergence(t_1, t_2)$ which violates~\eqref{eq:tines}. 
+    % On the other hand, if it diverges after $u$, it may or may not share an edge with $t_1$. 
+    % If it shares an edge with $t_1$ after $u$ then it is disjoint with $t_2$ 
+    % and hence $\SlotDivergence(t_h, t_2) > \SlotDivergence(t_1, t_2)$, violating~\eqref{eq:tines}. 
+    % However, if $t_h$ does not share an edge with $t_1$ after $u$, 
+    % we have $\SlotDivergence(t_1, t_h) > \SlotDivergence(t_1, t_2)$, violating~\eqref{eq:tines}. 
+
+
+
+    % Observe that both $\SlotDivergence(t_1, t_h)$ and 
+    % $\SlotDivergence(t_h, t_2)$ are at least $k+1$ and hence the pairs
+    % $(t_1, t_h)$ and $(t_h, t_2)$ are in $A$. 
+    % The tine $t_h$ diverges from $t_1$ 
+    % either before, at, or after $u$. 
+    % If $t_h$ diverges from $t_1$ before $u$, 
+    % $\SlotDivergence(t_1, t_h) > \SlotDivergence(t_1, t_2)$ which violates~\eqref{eq:tines}. 
+    % On the other hand, if it diverges after $u$, it may or may not share an edge with $t_1$. 
+    % If it shares an edge with $t_1$ after $u$ then it is disjoint with $t_2$ 
+    % and hence $\SlotDivergence(t_h, t_2) > \SlotDivergence(t_1, t_2)$, violating~\eqref{eq:tines}. 
+    % However, if $t_h$ does not share an edge with $t_1$ after $u$, 
+    % we have $\SlotDivergence(t_1, t_h) > \SlotDivergence(t_1, t_2)$, violating~\eqref{eq:tines}. 
+
+    
+
+  %   In particular, we wish to guarantee that $\hdepth(h) \leq
+  %   \length(t_1)$. For the sake of contradiction, assume that
+  %   $\length(t_h) = \hdepth(h) > \length(t_1)$.  
+     
+  %   If $t_h$ diverges from $t_i$ prior to $u$ for some $i \in \{1,2\}$, then $\max( \divergence(t_1, t_h), \divergence(t_h, t_2)) > \divergence(t_1, t_2)$; this violates~\eqref{eq:tines}. 
+  %   Considering the tine
+  %   $t_h$, we separately investigate two cases depending on whether
+  %   $t_h$ shares an edge with $t_1$ after the vertex $u$. If, indeed,
+  %   $t_h$ and $t_1$ share an edge after the vertex $u$ then $t_h$ and
+  %   $t_2$ do not share such an edge, i.e., $t_h$ and $t_2$ are disjoint. 
+  %   Hence we observe that $\divergence(t_h, t_2) > \divergence(t_1, t_2) \geq k+1$ and thus $(t_h, t_2) \in A$; this contradicts~\eqref{eq:tines} which claims $\div(t_1, t_2)$ is the largest of all $(\tau_1, \tau_2) \in A$. 
+  %   If, on the other hand, $t_h$
+  %   shares no edge with $t_1$ after $u$, we similarly observe that 
+  %   $(t_1, t_h) \in A$ and $\divergence(t_1, t_h) \geq \divergence(t_1, t_2)$ while
+  %   $|t_h - \ell(t_1)| < |\ell(t_2) - \ell(t_1)|$, which
+  %   contradicts~\eqref{eq:minimality}.
+
+  \paragraph{A fork $\pinch{u}{F}$ where all long tines go through $u$.}
+    In light of the remarks above, we observe that the fork $F$ may be
+    ``pinched'' at $u$ to yield an essentially identical fork
+    $\pinch{u}{F} \vdash w$ with the exception that all tines of length
+    exceeding $\depth(u)$ pass through the vertex $u$. Specifically, the
+    fork $\pinch{u}{F} \vdash w$ is defined to be the graph obtained
+    from $F$ by changing every edge of $F$ directed towards a vertex of
+    depth $\depth(u) + 1$ so that it originates from $u$. To see that
+    the resulting tree is a well-defined fork, it suffices to check that
+    $\ell(\cdot)$ is still increasing along all tines of
+    $\pinch{u}{F}$. For this purpose, consider the effect of this
+    pinching on an individual tine $t$ terminating at a particular
+    vertex $v$---it is replaced with a tine $\pinch{u}{t}$ defined so
+    that:
+    \begin{itemize}
+    \item If $\length(t) \leq \depth(u)$, the tine $t$ is unchanged:
+      $\pinch{u}{t} = t$.
+    \item Otherwise, $\length(t) > \depth(u)$ and $t$ has a vertex $v$
+      of depth $\depth(u) + 1$; note that $\ell(v) > \ell(u)$ because
+      $F_x$ contains no vertices of depth exceeding $\depth(u)$. Then
+      $\pinch{u}{t}$ is defined to be the path given by the tine
+      terminating at $u$, a (new) edge from $u$ to $v$, and the suffix
+      of $t$ beginning at $z$. (As $\ell(v) > \ell(u)$ this has the
+      increasing label property.)
+    \end{itemize}
+    Thus the tree $\pinch{u}{F}$ is a legal fork on the same vertex set;
+    note that the depths of vertices in $F$ and $\pinch{u}{F}$ are
+    identical.
+    
+    \paragraph{Constructing a shallow fork $F_y \Fork y$.}
+    By excising the tree rooted at $u$ from this pinched fork
+    $\pinch{u}{F}$, we may extract a fork for the string
+    $w_{\alpha+1} \dots w_T$. Specifically, consider the induced
+    subgraph $\cut{u}{F}$ of $\pinch{u}{F}$ given by the vertices
+    $\{u\} \cup \{ v \mid \depth(v) > \depth(u)\}$. By treating $u$ as a
+    root vertex and suitably defining the labels $\cut{u}{\ell}$ of
+    $\cut{u}{F}$ so that $\cut{u}{\ell}(v) = \ell(v) - \ell(u)$, this
+    subgraph has the defining properties of a fork for
+    $w_{\alpha+1} \ldots w_T$. In particular, considering that
+    $\alpha$ is honest it follows that each honest index $h > \alpha$
+    has depth $\hdepth(h) > \length(u)$ and hence $h$ labels a vertex in
+    $\cut{u}{F}$.  For a tine $t$ of $\pinch{u}{F}$, we let $\cut{u}{t}$
+    denote the suffix of this tine beginning at $u$, which forms a tine
+    in $\cut{u}{F}$. (If $\length(t) \leq \depth(u)$, we define
+    $\cut{u}{t}$ to consist solely of the vertex $u$.)  Note that
+    $\cut{u}{t_1}$ and $\cut{u}{t_2}$ share no edges in the fork
+    $\cut{u}{F}$.
+    
+    Finally, let $F_y$ denote the subtree obtained from $\cut{u}{F}$
+    as the union of all tines $\cut{u}{t}$ of $\cut{u}{F}$ so that all
+    labels of $\cut{u}{t}$ are drawn from $y$ (as it appears as a prefix
+    of $w_{\alpha+1} \ldots w_T$), and
+    \begin{equation}\label{eq:tines-Fy}
+      \length(\cut{u}{t}) \leq \max_{\substack{h \leq |y|\\ \text{$h$ honest} } } \hdepth(h)
+      \,.
+    \end{equation}
+    It is immediate that $F_y \vdash y$. 
+    
+    \paragraph{Two longest viable tines in $F_y$.}
+    Consider the tines $\cut{u}{t_1}$ and $\cut{u}{t_2}$. As mentioned
+    above, they share no edges in $\cut{u}{F}$ and hence the prefixes
+    $\check{t_1}$ and $\check{t_2}$ (of $\cut{u}{t_1}$ and
+    $\cut{u}{t_2}$) appearing in $F_y$ share no edges. 
+    % By~\eqref{eq:tines-Fy}, 
+    % the lengths of $\check{t}_1, \check{t}_2 \in F_y$ are 
+    % at most $\hdepth(h)$ where $h$ is the largest honest index in $y$.
+    We wish to
+    show that these prefixes have the maximal length in $F_y$, making $F_y$ balanced, as desired. 
+    Let $h$ be the largest honest index in $y$. 
+    Since the lengths of the tines in $F_y$ 
+    are at most $\hdepth(h)$, 
+    it suffices to show that the lengths of 
+    $\check{t}_i, i \in \{1,2\}$ is at least $\hdepth(h)$. 
+
+    This is immediate for the tine
+    $\check{t}_1$ since all labels of $\cut{u}{t_1}$ are drawn from
+    $y$ and, considering~\eqref{eq:honest-depth}, its depth is
+    at least that of all relevant honest vertices. 
+    As for $\check{t_2}$,
+    observe that if $\ell(t_2)$ is not honest then $\beta > \ell(t_2)$
+    so that, as with $\check{t}_1$, the tine $\check{t}_2$ is labeled by
+    $y$ so that the same argument, relying
+    on~\eqref{eq:honest-depth}, ensures that the $\length(\check{t}_2)$ 
+    is at least 
+    the depth of all relevant honest vertices. 
+    If $\ell(t_2)$ is
+    honest, $\beta = \ell(t_2)$, and the terminal vertex of
+    $\cut{u}{t_2}$ does not appear in $F_y$ (as $\ell(\cut{u}{t_2})$ falls outside 
+    $y$). In this case, however,
+    $\length(\cut{u}{t_2}) > \hdepth(h)$ for any honest index $h$ of
+    $y$. 
+    It follows that
+    $\length(\check{t_2})$, which equals $\length(\cut{u}{t_2}) - 1$, 
+    is at least the
+    depth of any honest index of $y$, as desired. 
+    Thus we have proved
+    \begin{equation}\label{eq:two-long-tines}
+        \text{$\check{t}_1$ and $\check{t}_2$ are 
+        two maximally long viable tines in $F_y \Fork y$}
+        \,.
+    \end{equation}
+
+    \paragraph{Constructing a flat fork $\tilde{F}_y \Fork y$.}    
+    Let us identify the fork prefix $\tilde{F}_y \ForkPrefix F_y$ which 
+    is either identical to $F_y$ or differs from $F_y$ 
+    in only one of the tines $\check{t}_1, \check{t}_2$. 
+    In particular, if $\length(\check{t}_1) = \length(\check{t}_2)$, we set $\tilde{F}_y = F_y$. 
+    Otherwise, let $\check{t}_a$ be the longer of the two tines $\check{t}_1, \check{t}_2$; 
+    let $\check{t}_b$ be the shorter one. 
+    We modify $F_y$ by deleting some trailing adversarial nodes from $\check{t}_a$ 
+    until it has the same length as $\check{t}_b$; 
+    we set $\tilde{F}_y$ as the resulting fork 
+    and, in addition, 
+    set $\tilde{t}_b = \check{t}_b$ and 
+    $\tilde{t}_a$ as the tine after trimming $\check{t}_a$. 
+    
+    We claim that $\tilde{F}_y$ is balanced. 
+    The claim is obvious if $\length(\check{t}_1) = \length(\check{t}_2)$.
+    Otherwise, thanks to~\eqref{eq:two-long-tines}, 
+    it remains to show that the longer tine, $\check{t}_a$, 
+    has sufficiently many trailing adversarial nodes which, 
+    if deleted, yields $\length(\Final{t}_1) = \length(\Final{t}_2)$. 
+    To that end, let $h_i$ be the index of the last honest vertex 
+    on $\check{t}_i \in F_y, i \in \{1,2\}$. 
+  %   Since $t_1, t_2$ were viable tines in $F$, it follows that $\length(\check{t_1}) \geq \hdepth(h_2)$ and 
+  %   $\length(\check{t_2}) \geq \hdepth(h_1)$.
+    
+    Suppose $\length(\check{t}_2) > \length(\check{t}_1)$. 
+    By~\eqref{eq:no-honest-index}, we also have $\length(\check{t}_1) \geq \hdepth(h_2)$  
+    and hence we can trim some of the trailing adversarial nodes from $\check{t}_2$ 
+    to get the tine $\Final{t}_2$ 
+    whose length is the same as that of $\check{t}_1$. 
+    Otherwise, suppose $\length(\check{t}_1) > \length(\check{t}_2)$. 
+    Since $t_2$ is a viable tine in $F$, we also have $\length(\check{t}_2) \geq \hdepth(h_1)$. 
+    Thus we can trim some of the trailing adversarial nodes from $\check{t}_1$
+    to have a tine $\Final{t}_1$ 
+    whose length is the same as that of $\check{t}_2$. 
+    In any case, the quantity $\min(\length(\Final{t}_1), \length(\Final{t}_2))$ 
+    remains the same as $\min(\length(\check{t}_1), \length(\check{t}_2))$. 
+    Thus the fork $\tilde{F}_y$ has at least two tines, $\Final{t}_1$ and $\Final{t}_2$, that achieve the maximum length of all tines in $\tilde{F}_y$; hence $\tilde{F}_y$ is balanced.
+
+    
+    \paragraph{An $x$-balanced fork $\hat{F} \ForkPrefix F$.} 
+    Let us identify the root of the fork $\tilde{F}_y$ with the vertex $u$ of $F_x$ and 
+    let $\hat{F}$ be the resulting graph (after ``gluing'' the root of $\tilde{F}_y$ to $u$). 
+    By~\eqref{eq:tu}, it is easy to see that the fork 
+    $\hat{F} \ForkPrefix F$ 
+    is indeed a valid fork on the string $x y$. 
+    Moreover, $\hat{F}$ is $x$-balanced since $\tilde{F}_y$ is balanced. 
+    The claim in Theorem~\ref{thm:cp-fork} follows immediately since $|y| \geq k + 1$.
+  \end{proof}
+
+
+
+  % \end{proof}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

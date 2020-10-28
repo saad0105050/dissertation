@@ -1,0 +1,339 @@
+\def\lncs{0}
+
+%=============== Not using LLNCS format ================
+\ifnum\lncs=0
+  \documentclass{article}
+  \usepackage{fullpage}
+  \usepackage{amsmath,amsthm}
+  \usepackage{authblk}
+
+  \usepackage{stix2}
+%  \usepackage{newtxmath,newtxtext}
+
+  \newtheorem{theorem}{Theorem}
+  \newtheorem{proposition}{Proposition}
+  \newtheorem{definition}{Definition}
+  \newtheorem{claim}{Claim}
+  \newtheorem{lemma}{Lemma}
+  \newtheorem{corollary}{Corollary}
+  \newtheorem{observation}{Observation}
+  \newtheorem{bound}{Bound}
+  \newtheorem{fact}{Fact}
+
+  \theoremstyle{definition}
+  \newtheorem{remark}{Remark}
+  \newtheorem{remark*}{Remark}
+  
+  
+  % No need for extra qed after proofs
+  %\renewcommand{\qed}{}
+  %\renewcommand{\qedhere}{}
+  
+%===================== Using LLNCS format ========================
+\else
+  % \documentclass[runningheads]{llncs}
+  % \usepackage{amsmath}
+  % \pagestyle{headings}
+  
+  % \spnewtheorem{bound}[theorem]{Bound}{\bfseries}{\itshape}
+  % \spnewtheorem{fact}[theorem]{Fact}{\bfseries}{\itshape}
+
+  % \author{}
+  % \institute{}
+
+  % \newcommand{\qedhere}{\qed}
+  % \renewcommand{\paragraph}[1]{\subsubsection*{\textbf{#1}}}
+    
+\fi
+%==================== End switching on LLNCS ====================
+\usepackage{color}
+\usepackage{ifthen}
+
+\long\def\red#1\par{\par\bigskip{\color{red}#1}\par}
+\def\showauthnotes{0}
+
+\ifthenelse{\showauthnotes=1}
+{
+\newcommand{\authnote}[2]{{{[#1: #2]~}}}
+}
+{ \newcommand{\authnote}[2]{} }
+
+\newcommand{\aggelos}[1]{\authnote{\color{magenta}Aggelos}{#1}}
+
+\bibliographystyle{plainnat}
+
+\usepackage{microtype}
+\usepackage{amsfonts,amssymb}
+\usepackage{hyperref}
+\usepackage{caption,subcaption}
+\usepackage{tikz}
+\usetikzlibrary{automata,arrows,positioning,calc}
+\usepackage{pgfplots}
+\usepackage{subfiles}
+\usepackage[numbers, sectionbib]{natbib}
+\usepackage{enumitem}
+\usepackage{hhline}
+\usepackage{multirow}
+
+\newcommand{\ignore}[1]{}
+
+
+\newcommand\gmargin{\mathbf{m}}
+\DeclareMathOperator{\Exp}{\mathbb{E}}
+\DeclareMathOperator{\argmax}{arg\,max}
+\DeclareMathOperator{\argmin}{arg\,min}
+\newcommand{\gf}[1]{\mathsf{#1}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\hdepth}{\mathbf{d}}
+\DeclareMathOperator{\length}{length}
+\DeclareMathOperator{\depth}{depth}
+\DeclareMathOperator{\height}{height}
+\DeclareMathOperator{\gap}{gap}
+\DeclareMathOperator{\reach}{reach}
+\DeclareMathOperator{\reserve}{reserve}
+\DeclareMathOperator{\divergence}{div}
+\DeclareMathOperator{\tdivergence}{tdiv}
+\newcommand{\slot}{\textsl{sl}}
+\newcommand{\fprefix}{\sqsubseteq}
+\newcommand{\Adversary}{\mathcal{A}}
+\newcommand{\Challenger}{\mathcal{C}}
+\newcommand{\Distribution}{\mathcal{D}}
+\newcommand{\dominatedby}{\preceq}
+\newcommand{\StationaryRho}{\mathcal{R}_\infty}
+\newcommand{\DistRho}{\mathcal{R}}
+\newcommand{\Poly}{\mathrm{poly}}
+\newcommand{\SuchThat}{\, : \,}
+\newcommand{\Union}{\cup}
+\newcommand{\BigUnion}{\bigcup}
+\newcommand{\PrefixEq}{\preceq}
+\newcommand{\Prefix}{\prec}
+\newcommand{\ForkPrefix}{\fprefix}
+\newcommand{\Trim}[1]{^{\lceil {#1}}}
+% \newcommand{\TrimSlot}[1]{\left[1:-{#1}\right]}
+\newcommand{\TrimSlot}[1]{^{\lceil {#1}}}
+\newcommand{\Fork}{\vdash}
+\newcommand{\pinch}[2]{{#2}^{\vartriangleright {#1} \vartriangleleft} }
+\newcommand{\cut}[2]{{#2}^{{#1} \vartriangleleft} }
+\newcommand{\Chain}{\mathcal{C}}
+\newcommand{\Intersect}{\cap}
+\newcommand{\SlotCP}{\mathrm{CP}^{\mathsf{slot}}}
+\newcommand{\kSlotCP}[1][k]{{#1}\text{-}\SlotCP}
+\newcommand{\CP}{\mathrm{CP}}
+\newcommand{\kCP}[1][k]{{#1}\text{-}\CP}
+\newcommand{\defeq}{\triangleq}
+\newcommand{\SlotDivergence}{\mathrm{div}_{\mathsf{slot}}}
+
+
+
+%============== Title ================
+\title{%Rigorous
+  The combinatorics of the longest-chain rule:\\
+  Linear consistency for proof-of-stake blockchains\thanks{
+    Erica Blum's work was partly supported by financial assistance award 70NANB19H126 
+    from U.S. Department of Commerce, National Institute of Standards and Technology. 
+    Aggelos Kiayias' research was partly supported by H2020 Grant \#780477, PRIViLEDGE. 
+    Cristopher Moore's research was partly supported by NSF grant BIGDATA-1838251. 
+    Alexander Russell's work was partly supported by NSF Grant \#1717432.
+  }
+  }
+
+\ifnum\lncs=1
+%  \titlerunning{Settlement Times}
+\fi
+
+
+
+
+%============ Authors ================
+\ifnum\lncs=0
+  \author[1]{Erica Blum}
+  \author[2,5]{Aggelos Kiayias}
+  \author[3]{Cristopher Moore}
+  \author[4]{Saad Quader}
+  \author[4,5]{Alexander Russell}
+
+  \affil[1]{University of Maryland, College Park}
+  \affil[2]{University of Edinburgh}
+  \affil[3]{Santa Fe Institute}
+  \affil[4]{University of Connecticut}
+  \affil[5]{IOHK}
+
+  \else
+
+%  \author{Authors blinded}
+% \author{Erica Blum \inst{1}  \and 
+%   Aggelos Kiayias \inst{2,5}   \and
+%   Cristopher Moore \inst{3}    \and
+%   Alexander Russell \inst{4,5} \and
+%   Saad Quader \inst{4} 
+% }
+
+% \institute{
+%   {University of Maryland, College Park}  \and
+%   {University of Edinburgh}               \and
+%   {Santa Fe Institute}                    \and
+%   {University of Connecticut}             \and
+%   {IOHK}
+% }
+
+\fi
+
+
+%==================== Begin document ================
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  Blockchain data structures maintained via the longest-chain rule
+  have emerged as a powerful algorithmic tool for consensus
+  algorithms. The technique---popularized by the Bitcoin
+  protocol---has proven to be remarkably flexible and now supports
+  consensus algorithms in a wide variety of settings. Despite such
+  broad applicability and adoption, current analytic understanding of
+  the technique is highly dependent on details of the protocol's
+  leader election scheme. A particular challenge appears in the
+  proof-of-stake setting, where existing analyses suffer from
+  quadratic dependence on suffix length.
+
+  We describe an axiomatic theory of blockchain dynamics that permits
+  rigorous reasoning about the longest-chain rule in quite general
+  circumstances and establish bounds---optimal to within a
+  constant---on the probability of a consistency violation. This settles
+  a critical open question in the proof-of-stake setting where we
+  achieve linear consistency for the first time.
+
+  Operationally, blockchain consensus protocols achieve consistency by
+  instructing parties to remove a suffix of a certain length from
+  their local blockchain. While the analysis of Bitcoin guarantees
+  consistency with error $2^{-k}$ by removing $O(k)$ blocks, recent
+  work on proof-of-stake (PoS) blockchains has suffered from quadratic
+  dependence: (PoS) blockchain protocols, exemplified by Ouroboros
+  (Crypto 2017), Ouroboros Praos (Eurocrypt 2018) and Sleepy Consensus
+  (Asiacrypt 2017), can only establish that the length of this suffix
+  should be $\Theta(k^2)$.  This consistency guarantee is a
+  fundamental design parameter for these systems, as the length of the
+  suffix is a lower bound for the time required to wait for
+  transactions to settle.  Whether this gap is an intrinsic limitation
+  of PoS---due to issues such as the ``nothing-at-stake''
+  problem---has been an urgent open question, as deployed PoS
+  blockchains further rely on consistency for protocol correctness: in
+  particular, security of the protocol itself relies on this
+  parameter. Our general theory directly improves the required suffix
+  length from $\Theta(k^2)$ to $\Theta(k)$. Thus we show, for the
+  first time, how PoS protocols can match proof-of-work blockchain
+  protocols for exponentially decreasing consistency error.
+
+  Our analysis focuses on the articulation of a two-dimensional stochastic
+  process that captures the features of interest, an exact recursive
+  closed form for the critical functional of the process, and tail
+  bounds established for associated generating functions that dominate
+  the failure events. Finally, the analysis provides an explicit
+  polynomial-time algorithm for exactly computing the
+  exponentially-decaying error function which can directly inform
+  practice.
+\end{abstract}
+
+  % Blockchain consensus protocols achieve consistency by instructing
+  % parties to remove a suffix of a certain length from their local
+  % blockchain.  The current state of the art in proof-of-stake (PoS)
+  % blockchain protocols, exemplified by Ouroboros (Crypto 2017),
+  % Ouroboros Praos (Eurocrypt 2018) and Sleepy Consensus (Asiacrypt
+  % 2017), suggests that the length of this suffix should be
+  % $\Theta(k^2)$ for the consistency error to be exponentially
+  % decreasing in $k$.  This is in contrast with proof-of-work (PoW)
+  % based blockchains for which it is known that a suffix of length
+  % $\Theta(k)$ is sufficient for the same type of exponentially
+  % decreasing consistency error.  This quadratic gap in consistency
+  % guarantee is quite significant as the length of the suffix is a
+  % lower bound for the time required to wait for transactions to
+  % settle.  Whether this gap is an intrinsic limitation of PoS---due to
+  % issues such as the ``nothing-at-stake'' problem---or it can be
+  % improved---was an open question. In this work, we put forth a novel
+  % and general probabilistic analysis for PoS consistency that improves
+  % the required suffix length from $\Theta(k^2)$ to $\Theta(k)$. Thus
+  % we show, for the first time, how PoS protocols can match PoW
+  % blockchain protocols for exponentially decreasing consistency error.
+  % Moreover, our detailed analysis provides an explicit polynomial-time
+  % algorithm for exactly computing the exponentially-decaying error
+  % function which can directly inform practice.
+
+
+% To-Do:
+% \begin{enumerate}
+% \item Detail the model and connection to blockchain protocols. 
+% Consider the 2-player game. 
+% \item Introduce a computational method for computing the density. 
+% \item Applications: (i) Improving the Common Prefix bound on Ouroboros paper. 
+% (can we refine the analysis of the union bound)
+% (ii) Providing an exact lower bound on confirmation time for given a certain
+% risk level against a double spending attacker that has x amount of stake. 
+% \end{enumerate}
+
+% We then provide two rigorous estimates on the basic event of interest---that an adversary can produce a fork that covers a particular portion of a blockchain.
+
+\section{Introduction }
+\input{intro.tex}
+
+\section{The blockchain axioms and the settlement security model}
+\label{sec:model}
+\input{model.tex}
+
+\section{Definitions}
+\label{sec:definitions}
+\input{definitions}
+
+\section{Common prefix violation and balanced forks}
+\label{sec:cp-forks}
+\input{cp-forks}
+          
+\section{A simple recursive formulation of relative margin}
+\label{sec:recursion}
+\input{recursive-formulation}
+
+\section{General settlement guarantees and proof of main theorems}
+\label{sec:estimates}
+\input{estimates}
+
+\section{Proof of the relative margin recurrence}
+\label{sec:margin-proof}
+\input{margin-proof.tex}
+
+\section{Canonical forks and an optimal online adversary}
+\label{sec:canonical-forks}
+\input{canonical-forks.tex}
+
+\section*{Acknowledgments}
+We are grateful to Shreyas Gandlur and Bruce Hajek (UIUC) 
+for their suggestion about 
+using the dominance argument in the proof of Bound~\ref{bound:geometric}. 
+
+\bibliography{forks,abbrev0,crypto_crossref}
+
+\appendix
+
+\section{Exact settlement probabilities}
+\label{sec:exact-prob}
+\input{exact-probabilities}
+
+%\section{Stationary distribution for $\rho(x)$}
+%\label{sec:dominance-app}
+%\input{dominance-app}
+
+\section{A forkability bound for strings satisfying the \texorpdfstring{$\epsilon$}{epsilon}-martingale condition}
+\label{sec:martingale-proof}
+\input{martingale-proof}
+
+
+% \section{Figures}
+% \label{sec:figures}
+% \input{appendix_figures}
+
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

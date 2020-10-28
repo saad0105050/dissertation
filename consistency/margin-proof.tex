@@ -1,0 +1,736 @@
+% As promised, we now step back to consider the recursive definition of relative margin in detail (and prove 
+% Lemma~\ref{lem:relative-margin}). Our analysis proceeds by cases. In each case, we prove an upper bound on relative 
+% margin in slot $\slot_{i+1}$ given the state of the system in slot $\slot_i$. 
+% % Furthermore, we give a simple strategy for the 
+% % settlement game that achieves this upper bound in each slot.
+
+% The analysis of \cite{KRDO17} defines an adversary that maximizes margin by processing a characteristic string. In 
+% particular, the authors show that she will always succeed in building a balanced fork, if one exists for that characteristic 
+% string. This result naturally suggests the possibility of 
+% an adversary who maximizes relative margin (for a given prefix $x$) and, 
+% whenever possible, builds $x$-balanced forks. 
+% Such an adversary 
+% would also be able to optimally position herself to cause a settlement violation at slot $|x| + 1$. 
+% (See our discussion about $x$-balanced forks in Section~\ref{sec:definitions} 
+% and settlement violations in Section~\ref{sec:args-survey}). 
+
+
+% % Looking ahead, in Section~\ref{sec:canonical-forks}, 
+% % we will present a fork-building strategy $\Adversary^*$---dubbed 
+% % the ``optimal online adversary''---and prove that 
+% % a fork $F \Fork w$ built by 
+% % $\Adversary^*$ \emph{simultaneously} contains witness tines $t^x \in F$ 
+% % so that $\reach(t^x) = \mu_x(y)$ 
+% % for \emph{all} decompositions $w = xy$. 
+% % However, before we can argue about this strong strategy, 
+% % we need a proof of Lemma~\ref{lem:relative-margin}. 
+% In the proof of Lemma~\ref{lem:relative-margin}, 
+% which takes the center stage of this section, 
+% we analyze a certain 
+% % similar (but simpler) 
+% fork-building strategy. 
+% This strategy, 
+% given some information about the decompostion $w = xyz$ (more on this below), 
+% seeks to recursively build a fork $F \Fork w$ 
+% that maximizes $\mu_x(F)$ over all forks for $w$. 
+% % \emph{without any knowledge of the decomposition} $w = xy$. 
+% Since its choices depend only on the prefix of $w$ it has seen so far, 
+% this is an \emph{online strategy}. 
+
+
+
+We set the stage by formally defining \emph{fork prefixes}.
+
+\begin{definition}[Fork prefixes]
+Let $w, x \in\{0,1\}^*$ so that $x\PrefixEq w$. 
+Let $F, F'$ be two forks for $x$ and $w$, respectively. 
+We say that $F$ is a \emph{prefix} of $F'$ if 
+$F$ is a consistently labeled subgraph of $F'$. 
+That is, all vertices and edges of $F$ also appear in $F'$ and 
+the label of any vertex appearing in both $F$ and $F'$ is identical. 
+We denote this relationship by $F\fprefix F'$.
+\end{definition}
+
+\noindent
+When speaking about a tine that appears in both $F$ and $F'$, 
+we place the fork in the subscript of relevant properties, e.g., writing $\reach_F$, etc.
+
+Observe that for any Boolean strings $x$ and $w, x \PrefixEq w$, 
+one can \emph{extend} (i.e., augment) a fork prefix $F \Fork x$ into a larger fork $F' \Fork w$ so that $F \ForkPrefix F'$. 
+A \emph{conservative extension} is a minimal extension in that 
+it consumes the least amount of reserve (cf. Definition~\ref{def:gap-reserve-reach}), 
+leaving the remaining reserve to be used in future.
+Extensions and, in particular, conservative extensions 
+play a critical role in the exposition that follows. 
+\begin{definition}[Conservative extension of closed forks]\label{def:extension}  
+
+  Let $w$ be a Boolean string, $F$ a closed fork for $w$, 
+  and let $s$ be an honest tine in $F$.
+  Let $F'$ be a closed fork for $w0$ so that $F \ForkPrefix F'$ and 
+  $F'$ contains an honest tine $\sigma, \ell(\sigma) = |w| + 1$. 
+  We say that \emph{$F'$ is an extension of $F$} or, equivalently, 
+  that \emph{$\sigma$ is an extension of $s$}, if $s \Prefix \sigma$. 
+  If, in addition, 
+  $\length(\sigma) = \height(F) + 1$, 
+  we call this extension a \emph{conservative extension}.
+\end{definition}
+Clearly, $\sigma$ is the longest tine in $F^\prime$. 
+Since $\sigma$ is honest, 
+it follows that 
+$\length(\sigma) 
+\geq 1 + \height(F) 
+= 1 + \length(s) + \gap(s)$.
+The root-to-leaf path in $F^\prime$ 
+that ends at $\sigma$ 
+contains at least $\gap(s)$ adversarial vertices $u \in F'$ 
+so that $\ell(u) \in [\ell(s) + 1, |w|]$ and 
+$u \not \in F$. 
+If $\sigma$ is a conservative extension, 
+the number of such vertices is exactly $\gap(s)$ 
+and, in particular, 
+the height of $F'$ is exactly one more than the height of $F$.
+
+
+The main ingredients to proving Lemma~\ref{lem:relative-margin} 
+are a fork-building strategy for the string $xy$ 
+and Propositions~\ref{prop:muxy0-lowerbound-adv} 
+and~\ref{prop:muxy0-upperbound}. 
+Specifically, 
+recall equation~\eqref{eq:mu-relative-recursive}. 
+The first proposition shows that the fork $F \Fork xy0$ 
+built by the said strategy achieves 
+$\mu_x(F) \geq \mu_x(y0)$ while 
+the second proposition shows that this value, in fact, is the largest possible, 
+i.e., $\mu_x(y0) \leq \mu_x(y0)$.
+In addition, any fork-building strategy 
+whose forks satisfy the premise of Proposition~\ref{prop:muxy0-lowerbound-adv} 
+can be used to prove Lemma~\ref{lem:relative-margin}. 
+% \begin{remark*}  
+%   Since the statement of Proposition~\ref{prop:muxy0-upperbound} 
+%   concerns only a specific value of the relative margin, 
+%   its statement applies to any fork for $xy0$. 
+%   In addition, observe that any fork-building strategy 
+%   whose forks satisfy Proposition~\ref{prop:muxy0-lowerbound-adv} 
+%   can be used to prove Lemma~\ref{lem:relative-margin}. 
+%  \end{remark*}  
+
+
+
+
+\subsection{A fork-building strategy to maximize \texorpdfstring{$x$-}{}relative margin}\label{sec:strategy-x}
+Any fork $F \Fork xy$ contains two tines $t_x, t_\rho$ 
+so that $\reach(t_\rho) = \rho(F), \reach_F(t_x) = \mu_x(F)$, 
+and the tines $t_x, t_\rho$ are disjoint over the suffix $y$. 
+We say that the tine-pair $(t_\rho, t_x)$ 
+is a \emph{witness} to $\mu_x(F)$.
+
+
+% \paragraph{The strategy.}
+Let $x,y \in \{0,1\}^*$ and write $w = xy$. 
+Recursively build closed forks $F_0, F_1, \ldots, F_{|w|}$ 
+where $F_i \Fork w_1 \ldots w_i, i \geq 1$ and 
+$F_0 \vdash \varepsilon$ is the trivial fork 
+consisting of a single vertex 
+corresponding to the genesis block. 
+For $i = 0, 1, \ldots, |w| - 1$ in increasing order, do as follows.  
+If $w_{i + 1} = 1$, set $F_{i+1} \leftarrow F_{i}$. 
+If $w_{i+1}=0$, 
+set $F_{i + 1} \Fork w0$ 
+as a conservative extension of $F_i \Fork w$ so that 
+$\sigma \in F_{i+1}, \ell(\sigma) = i + 1$ 
+is a conservative extension of a tine $s \in F_i$ 
+identified as follows. 
+If $F_i$ contains no zero-reach tine, 
+$s$ is the unique longest tine in $F_i$. 
+Otherwise, 
+first identify a maximal-reach tine $t_\rho \in F_i$ as follows:
+if $i \geq |x| + 1$, $t_\rho$ is a maximal-reach tine in $F_i$ 
+which belongs to a tine-pair witnessing $\mu_x(F_i)$; 
+otherwise, $t_\rho$ can be an arbitrary maximal-reach tine in $F_i$. 
+Finally, $s$ is the zero-reach tine in $F_i$ 
+that diverges earliest from $t_\rho$. 
+If there are multiple candidates for $s$ or $t_\rho$, break tie arbitrarily.
+
+
+% Note that we have enough reserve to extend any zero-reach $F_i$-tine 
+% to make it as long as the longest tine in $F_i$.
+% However, if a zero-reach tine is not extended now, 
+% it can never be extended later (see Claim~\ref{claim:nex}). 
+% Finally, observe that there is always a unique longest (honest) tine in a closed fork.
+
+
+
+
+%-------------------------- Relative margin lower bound via Adversary ------------
+\begin{proposition}\label{prop:muxy0-lowerbound-adv}
+  Let $x, y$ be arbitrary Boolean strings, $|y| \geq 1$ and $w = xy$. 
+  Let $F \Fork w$ and $F^\prime \Fork w0$ be two closed forks 
+  built by the strategy 
+  above 
+  % in Section~\ref{sec:strategy-x} 
+  so that $F \ForkPrefix F^\prime$ and suppose, in addition,
+  that $\rho(F) = \rho(xy)$ and $\mu_x(F) = \mu_x(y)$. 
+  Then $\rho(F^\prime) = \rho(xy0)$ and 
+  $\mu_x(F^\prime) \geq \mu_x(y0)$.
+\end{proposition}
+
+
+
+\subsection{Proof of Proposition~\ref{prop:muxy0-lowerbound-adv}}
+  Before we proceed further, let us record two useful results related to conservative extensions 
+  and closed fork prefixes. 
+
+  \begin{claim}[A conservative extension has reach zero]\label{claim:ex}
+    Consider closed forks $F\vdash w, F'\vdash w0$ 
+    such that $F\fprefix F'$. 
+    If a tine $t$ of $F'$ is a conservative extension 
+    then $\reach_{F'}(t)=0$.
+  \end{claim}
+  \begin{proof}
+    We have assumed that $t$ is a conservative extension, 
+    so its terminal vertex must be the new honest node. 
+    By definition, 
+    $\reach_{F'}(t)=\text{reserve}_{F'}(t)-\text{gap}_{F'}(t)$. 
+    Honest players will only place nodes 
+    at a depth strictly greater than all other honest nodes, 
+    so we infer that $t$ is the longest tine of $F'$, 
+    and so $\text{gap}_{F'}(t)=0$. 
+    Moreover, we observe that 
+    there are no 1s occurring after this point 
+    in the characteristic string, 
+    and so $\text{reserve}_{F'}(t)=0$. 
+    Plugging these values into 
+    our definition of $\reach$ 
+    we see that $\reach_{F'}(t)=0-0=0$. 
+  \end{proof}
+
+  %Intuitively, a tine that arises by extension in an honest slot must be the longest tine of the fork, because honest players will only extend a chain with maximum length. Moreover, there are no dishonest slots after the final honest slot, so the remaining reserve is 0. Therefore, reach is exactly 0.
+
+  \begin{claim}[Reach of non-extended tines]\label{claim:nex}
+    Consider a closed fork $F\vdash w$ and some closed fork $F'\vdash w0$ such that $F\fprefix F'$. If $t \in F$ then 
+    $\reach_{F'}(t)\leq \reach_{F}(t) - 1$. 
+    The inequality becomes and equality 
+    if $F'$ is obtained via a conservative extension from $F$.
+  \end{claim}
+  \begin{proof}
+    Definitionally, we know that $\reach_{F'}(t)=\text{reserve}_{F'}(t)-\text{gap}_{F'}(t).$ From $F$ to $F'$, the length of the longest tine increases by at least one, and the length of $t$ does not change, so we observe that $\gap_{F'}(t) \geq \gap_{F}(t) + 1$ 
+    with equality only for conservative extensions. 
+    The reserve of $t$ does not change, because there are no new 1s in the characteristic string. Therefore, 
+    $
+      \reach_{F'}(t)
+      =\text{reserve}_{F'}(t)-\text{gap}_{F'}(t)
+      \leq \text{reserve}_{F}(t)-\text{gap}_{F}(t) - 1
+      =\reach_{F}(t) - 1
+      % \,.
+      % \qedhere
+    $. 
+    % $\qed$
+  \end{proof}
+
+  % Now we are ready do prove Proposition~\ref{prop:muxy0-lowerbound-adv}.
+  % \begin{proof}[Proof of Proposition~\ref{prop:muxy0-lowerbound-adv}]
+    Assume the premise of Proposition~\ref{prop:muxy0-lowerbound-adv}.
+    That is, $F$ is a fork for $xy$ so that 
+    $\rho(F) = \rho(xy), \mu_x(F) = \mu_x(y)$, 
+    and the tine $t_\rho$ identified by the fork-building strategy in Section~\ref{sec:strategy-x} 
+    belongs to an $F$-tine-pair $(t_\rho, t_x)$ that witnesses $\mu_x(F)$. 
+    To recap, this means 
+    $\reach_F(t_\rho) = \rho(F) = \rho(x)$, 
+    $\reach_F(t_x) = \mu_x(F) = \mu_x(y)$,  
+    and the tines $t_\rho, t_x$ are disjoint over $y$ 
+    (i.e., $\ell(t_\rho \Intersect t_x) \leq |x|$). 
+    In addition, since $\sigma \in F'$ is a conservative extension of $s$, 
+    we have $\reach_{F'}(\sigma) = 0$.
+    Finally, let $S$ be the set of all zero-reach tines in $F$.
+    
+    We will break this part of the proof into several cases 
+    based on the relative reach and margin of the fork. 
+
+    \paragraph{Case 1: $\rho(xy) > 0$ and $\mu_x(y)=0$.} 
+    We wish to show that 
+    $\rho(F') = \rho(xy0)$ and 
+    $\mu_x(F') \geq 0$. 
+    Since $\rho(F) > 0$, $s \neq t_\rho$ and therefore, 
+    By~\eqref{eq:rho-recursive} and Claim~\ref{claim:nex}, 
+    Thus 
+    $\rho(F^\prime) 
+    \geq \reach_{F'}(t_\rho) 
+    = \reach_F(t_\rho) - 1 
+    = \rho(xy) - 1 
+    = \rho(xy0)
+    $. Therefore, 
+    $\rho(F^\prime) = \rho(xy0)$.
+
+    Since $\mu_x(y)=0$, 
+    $t_x$ is a candidate for being selected as $s$ and hence 
+    $\ell(s \Intersect t_\rho) \leq \ell(t_x \Intersect t_\rho) \leq |x|$. 
+    Thus $\sigma, t_\rho \in F'$ are disjoint over $y0$ 
+    and, therefore, $\mu_x(F') \geq \reach_{F'}(\sigma) = 0$.
+    
+
+    \paragraph{Case 2: $\rho(xy)=0$.}
+    We wish to show that 
+    $\rho(F') = \rho(xy0)$ and 
+    $\mu_x(F') \geq \mu_x(y) - 1$. 
+    Since there is at least one zero-reach tine, $\reach_F(s) = 0$ 
+    and, in addition, $t_\rho \in S, |S| \geq 1$.
+    Since $\reach_{F'}(\sigma) = 0 = \rho(xy0)$ by~\eqref{eq:rho-recursive}, 
+    $\sigma$ has the maximal reach in $F'$ and, 
+    in particular, $\rho(F') = \rho(xy0)$.
+    Depending on $S$ and $s$, there are three possibilities. 
+      If $s = t_\rho$, 
+      this means $S=\{t_\rho\}$, 
+      $t_x$'s $F'$-reach is one less than 
+      its $F$-reach, 
+      and $\sigma, t_x$ are still disjoint over $y0$.   
+      Hence $\mu_x(F') \geq \reach_F(t_x) - 1 = \mu_x(y)-1$.       
+      If $s = t_x$, 
+      then 
+      $t_\rho$'s $F'$-reach is one less than 
+      its $F$-reach 
+      and $\sigma, t_\rho$ are disjoint over $y0$. 
+      Hence $\mu_x(F') \geq \reach_F(t_\rho) - 1 
+      = \rho(xy) -1 \geq \mu_x(y)-1$.
+      Finally, suppose $s \neq t_\rho$ and $s \neq t_x$. 
+      Then $\mu_x(y) = \reach_F(t_x) < 0$ and, in addition, 
+      $s$ (and $\sigma$) must share an edge with $t_\rho$ somewhere over $y$ since otherwise, 
+      we would have achieved $\mu_x(y)=0$. 
+      As a result, $t_x$ and $\sigma$ must be disjoint over $y0$. 
+      Hence $\mu_x(F') \geq \reach_{F'}(t_x) = 
+      \reach_F(t_x) - 1 = \mu_x(y) - 1$.
+
+    \paragraph{Case 3: $\rho(xy) > 0,\mu_x(y)\neq 0$.}
+    We wish to show that 
+    $\rho(F') = \rho(xy0)$ and 
+    $\mu_x(F') \geq \mu_x(y) - 1$.
+    In this case, $s \neq t_\rho$ and $s \neq t_x$ and therefore, 
+    $\reach_{F'}(t_i)=\reach_{F}(t_i)-1$ for $i = {1,2}$. 
+    The tines $t_\rho, t_x$ are still disjoint over $y0$. 
+    In addition, $t_\rho$ will still have the maximal reach in $F'$ 
+    since $\reach_{F'}(t_\rho) = \rho(xy) - 1 = \rho(xy0)$ by~\ref{eq:rho-recursive}. 
+    Therefore, 
+    $\rho(F') = \rho(xy0)$ and, in addition, 
+    $\mu_x(F') \geq \reach_{F'}(t_x) = \reach_{F}(t_x) - 1 = \mu_x(y)-1$.
+
+
+  % \end{proof}
+  This complete the proof of Proposition~\ref{prop:muxy0-lowerbound-adv}.
+  \hfill $\qed$
+
+
+
+% We use the remainder of this section to prove Lemma~\ref{lem:relative-margin}. 
+% Before doing so, however, we make two observations about conservative extensions and closed fork prefixes.
+
+
+
+% \paragraph{Assumptions about $\Adversary_x$.} 
+% The strategy $\Adversary_x$ recursively produces a fork $F^\prime \Fork wb, b \in \{0, 1\}$. 
+% Let $F$ be the closed fork produced by $\Adversary_x$ for the string $w = xy$.
+% As we will show below, 
+% $F^\prime$ will have the following property: 
+% if $\mu_x(F) = \mu_x(y)$ then $\mu_x(F^\prime) = \mu_x(yb)$. 
+% In order to strengthen our results (and match the setting used for the settlement game), 
+% we assume that $\Adversary_x$ is
+% given $w$ in its entirety ahead of time; 
+% however, we note that $\Adversary_x$ does not need this information 
+% to produce $F^\prime$ with the claimed property.
+% In fact, $\Adversary_x$'s decision-making at each slot depends only on knowing whether 
+% the current slot (i.e., $|w| + 1$) is honest or dishonest, 
+% the current fork $F \Fork w$, 
+% % (built recursively by $\Adversary_x$), 
+% and a designated tine $t_\rho \in F$ which is a \emph{witness to $\mu_x(F)$}. 
+% Specifically, note that $F$ always contains two tines $t_x, t_x^*$ 
+% so that $\reach(t_x^*) = \rho(F), \reach_F(t_x) = \mu_x(F)$, 
+% and $t_x, t_x^*$ are disjoint over the suffix $y$. 
+% Thus we set $t_\rho = t_x^*$.
+% Although $\Adversary_x$ does not specifically need to know $x$, 
+% she needs to know $t_\rho$ which, clearly, depends on $x$.
+% $\Adversary_x$ does not need to know $t_x$, however. 
+
+
+
+
+% % \paragraph{Notation.}
+% % We again adopt the notation used in~\cite{KRDO17}, with a few additions:
+% % let $t_1 = t_\rho, t_2 = t_x$, and let 
+% % $\hat{t}$ be the longest tine of $F$.
+% % Finally, let $S$ represent the set of tines $t$ of $F$ such that reach$(t)=0$. 
+% % (We will sometimes refer to such tines as \emph{critical tines}.)
+
+% % \paragraph{Overview of the algorithm.}
+% % In order to maximize relative margin, the adversary uses 
+% % the following reasoning (formally described in Figure~\ref{fig:A}).
+% % During each slot, she learns whether the next slot is honest or dishonest, 
+% % and decides what (if any) changes to make to the fork $F$.
+% % If the next token of the characteristic string is a 1, 
+% % she makes no changes to $F$ and simply bides her time.
+% % If the next token of the characteristic string is a 0,
+% % she looks for tines with reach precisely $0$. 
+% % Any such tine (1) is close enough in length to the longest tine that
+% % she can expend her reserve to catch up, and 
+% % (2) may fall too far behind if she waits any longer, so she
+% % will choose to add new blocks to some critical tine $t\in S$.
+% % (If there is more than one tine with reach 0, 
+% % she selects $t\in S$ that branches from $t_1$
+% % earliest in the fork.) 
+% % She appends $\gap(t)$ dishonest nodes to $t$ before adding an honest node to the end.
+% % If there are no tines with reach exactly 0, she simply appends an honest
+% % node to the longest tine, $\hat{t}$. 
+% % (Note that this description is consistent with the behavior of an adversary and challenger 
+% % in the settlement game, but for the sake of brevity 
+% % the adversary plays both roles here.) 
+% % We will prove that this strategy maximizes relative margin below.
+
+% \begin{figure}
+% \begin{center}
+%   \fbox{
+%     \begin{minipage}{.9 \textwidth}
+%       \begin{center}
+%         \textbf{Algorithm $\Adversary_x$}
+%       \end{center}
+      
+%       \begin{enumerate}
+%       \item Fix $w \in \{0,1\}^n$, and set $F_0 \vdash \varepsilon$ to the trivial fork (consisting of a single node
+%         corresponding to the genesis block).
+%       \item For each slot $\slot_i = \{ \slot_{1}, \ldots, \slot_{n}\}$ in increasing order:
+%       \begin{enumerate}
+%      	 \item Set $S\leftarrow \{t\in F_i : \reach(t)=0\}$. 
+%        Set $\hat{t}$ as the longest tine in $F_i$. 
+
+%        \item If $i \geq |x| + 1$, 
+%        set $t_\rho$ as a maximal-reach tine in $F_i$ which is also a witness to $\mu_x(F_i)$. 
+%        Otherwise, set $t_\rho$ as an arbitrary maximal-reach tine in $F_i$.
+%        %  $\hat{t}\leftarrow \argmax_{t\in F_i}\length(t)$; 
+% 	 	    % $t_1\leftarrow\argmax_{t\in F_i}\reach(t)$
+
+%      	 \item If $w_i=0$: 
+% 	 	\begin{itemize}
+% 		\item If $S$ is nonempty: select the tine $t\in S$ that diverges from $t_\rho$ earliest in $w$.
+% 		 Determine $F_{i+1}$ from $F_i$ by appending to $t$ a chain of $\gap(t)$ dishonest nodes followed by one honest node.
+% 		 \item If $S$ is empty: determine $F_{i+1}$ from $F_i$ by appending one honest node to $\hat{t}$.
+% 		 \end{itemize}
+%      	 \item Else if $w_i=1$: set $F_{i+1}$ equal to $F_{i}$.
+%       	\end{enumerate}
+%       \end{enumerate}
+%     \end{minipage}
+%   }
+% \end{center}
+% \end{figure}\label{fig:A}
+
+%\begin{claim}
+%The optimal online adversary produces forks with maximal reach and margin, and by that measure performs at least as well as the purist adversary.
+%\end{claim}
+%
+%\begin{proof}
+%We will walk through the proof that the purist adversary maximizes reach and margin, and show that the optimal online adversary's
+%decisions will always produce forks at least as favorable
+%for producing a balanced fork as those achieved by the purist adversary~\cite[Lemma 4.19]{KRDO17}.
+%
+%First, we consider the case when the next slot is dishonest. Both adversaries choose
+%to make no changes to the fork. Trivially, the optimal online adversary's new fork is
+%at least as ``forkable'' as the purist's new fork.
+%
+%When the next slot is honest, we distinguish between three different cases,
+%based on maximum reach and margin. In each case, the general game is the same:
+%the optimal online adversary extends a tine belonging to the set of critical tines whenever possible.
+%If there are multiple tines in $S$, she picks the tine that branches off from $t_1$ earliest
+%(i.e., the last node shared by both tines occurs at the earliest possible slot).
+%If $S$ is empty, she extends $\hat{t}$. 
+%
+%
+%\begin{description}
+%\item[The case $\rho(w)>\mu(w)=0$.] We are guaranteed that $S$ is nonempty,
+%since $\mu(w)=0$ implies $t_2$ is in  $S$. Moreover, even if there are other tines in $S$,
+%the adversary will always prefer $t_2$, since it is completely disjoint from $t_1$.
+%Therefore, in this case, the optimal online adversary extends $t_2$ by $1^{\text{gap}(t_2)}0$.
+%Now, we must check that the resulting fork, $F'$, achieves the statistics $\rho(w0)=\rho(w)-1$
+%and $\mu(w0)=0$. Because $t_1$ was untouched, its gap increases by 1 and its reserve stays the same.
+%Therefore, $\rho(w0)\geq \text{reach}_{F'}(t_1)=\text{reach}_{F}(t_1)-1=\rho(w)-1$.
+%The extension of $t_2$, meanwhile, is disjoint from $t_1$ and has reach 0, so
+%$\mu(w0)\geq \text{reach}_{F'}(t_2')=0$. It is clear that in this case, the optimal online adversary
+%makes at least as much progress as the purist adversary.
+%
+%\item[The case $\rho(w)=0$.] In this case, $t_1$ is guaranteed to be in $S$; however,
+%we do not know whether $S$ contains $t_2$ (or any other tines). We will consider
+%several sub-cases based on the contents of $S$. 
+%
+%\begin{itemize}
+%	\item If $S=\{ t_1\}$, then the adversary extends $t_1$ by $1^{\text{gap}(t_1)}0$.
+%	This is the same extension that our purist adversary would choose, so there is nothing to show here.
+%	\item If $t_1$ and $t_2$ are both elements of  $S$, we have two disjoint tines, each with reach 0,
+%	and so the labels $t_1$ and $t_2$ are interchangeable. For simplicity's sake, assume that
+%	the adversary extends $t_1$ by $1^{\text{gap}(t_1)}0$, just like the original adversary.
+%	\item The last sub-case occurs when $t_2$ is not in $S$ (or equivalently, when $\mu(w)=$ reach$(t_2)<0$),
+%	but there is some tine $s$ in $S$ that is distinct from both $t_1$ and $t_2$. Note that $s$ must share an edge with $t_1$;
+%	if $s$ and $t_1$ are disjoint, then $\mu(w)=0$. The optimal online adversary cannot make any progress
+%	on a full-length balanced fork at this time, since there are no valid extensions to be made on the
+%	other branch, but she is content to work on a partial fork by extending $s$ by
+%	$1^{\text{gap}(s)}0$. The extension of $s$ has reach 0, so $\rho(w0)\geq0$, as desired.
+%	In the new fork, $t_2$ is disjoint from the extension of $s$, so
+%	$\mu(w0)\geq\text{reach}_{F'}(t_2)=\text{reach}_{F}(t_2)-1=\mu(w)-1$.
+%\end{itemize}
+%
+%
+%\item[The case $\rho(w)>0$ and $\mu(w)\neq0$.] The original proof states that any extension
+%is acceptable in this case and will produce a fork with the appropriate statistics, so the optimal online adversary
+%can pick any $s\in S$. If $S$ is empty, she defaults to extending $\hat{t}$.
+%\end{description}
+%
+%We have shown that, in all cases, the optimal online adversary does at least as well as the purist adversary.
+%This tells us that if $w$ is forkable, then our adversary will succeed in creating a balanced fork for $w$.
+%\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+% Pairs of forks $F_{i-1}\vdash w_1\dots w_{i-1}$ and
+% $F_i\vdash w_1\dots w_{i}$ (such that $F_{i-1}\fprefix F_i$) are particularly relevant to our analysis, because we are interested in how the fork changes with each new slot. Suppose $w_i=0$, i.e., 
+% slot $\slot_i$ is honest, and consider the closed prefixes of $F_{i-1}$ and $F_{i}$. (Recall that a closed fork is
+% derived by ``pruning" any adversarial nodes from the end of tines until all leaves are honest.) The graphs of these closed 
+% prefixes differ by either a single honest node, or a
+%  chain of dishonest nodes---an ``adversarial augmentation,'' in the language of the settlement game---followed by a single 
+%  honest node. We call the tine of $F_i$ that contains all the new nodes an \emph{extension}, since it is the tine that the 
+%  adversary has chosen to extend and 
+%  present to the challenger during that slot. In other words, an extension consists of the ``new" honest node added by the 
+%  challenger, as well as any adversarial nodes beneath the new honest node that did not appear in the closed fork from the 
+%  previous slot. When considering closed forks, we observe that there is a \emph{unique} extension associated with each honest slot.
+% %We are especially interested in pairs of forks $F\vdash w$ and $F'\vdash w'$ such that $F$ is a prefix of $F'$ and $w'=wc$ for $c\in\{0,1\}$. By considering possible forks $F'$, which we can informally imagine as possible ``future'' versions of $F$, we will build intuition for how forks grow and change with each new slot. In particular, in the special case when $F$ and $F'$ are closed forks and $w'=w0$, $F'$ differs from $F$ by exactly one closed tine, consisting of a tine of $F$ followed by a directed path consisting of (0 or more) adversarial vertices and terminating with an honest leaf. (Note that this is guaranteed only when $F$ and $F'$ are both closed.)
+
+
+
+
+% Now we are ready to proceed with our proof of Lemma~\ref{lem:relative-margin}. The structure of the proof closely follows the analogous proof for the recursive definition of margin given in Lemma 4.19 of ~\cite{KRDO17}; however, it incorporates the definition and analysis of the new adversary.
+
+\subsection{Proof of Lemma~\ref{lem:relative-margin}}
+
+% \begin{proof}[Proof of Lemma~\ref{lem:relative-margin}]
+Let $F$ be a closed fork for the characteristic string $xy$. 
+Let $t_\rho, t_x \in F$ be the two tines that witness $\mu_x(F)$, 
+i.e., $\reach(t_\rho) = \rho(F), \reach_F(t_x) = \mu_x(F)$, 
+and $t_\rho, t_x$ are disjoint over $y$. 
+Let $\hat{t}$ be the longest tine in $F$.
+
+In the base case, where $y=\varepsilon$, we observe that any two tines of $F$ are disjoint over $y$. Moreover, even a single tine $t_\rho$ is disjoint with itself over $\varepsilon$. Therefore, the relative margin $\mu_x(\varepsilon)$ must be greater than or equal to the reach of the tine $t$ that achieves $\text{reach}(t)=\rho(x)$. The relative margin must also be less than or equal to $\rho(x)$, because that is, by definition, the maximum reach over all tines in all forks $F\vdash w$. Putting these facts together, we have $\mu_x(\varepsilon)=\rho(x)$.
+
+Moving beyond the base case, we will consider a pair of closed forks $F\vdash xy$ and $F'\vdash xyb$ 
+such that $F \fprefix F'$, $x,y\in\{0,1\}^*$, $|y| \geq 1$, and $b \in\{0,1\}$. 
+If $b=1$, we have set $F' = F$. The reach of each tine increases by 1 from $F$ to $F'$ 
+since the gap has not changed but the reserve has increased by one. Therefore, $\mu_x(y1) = \mu_x(y)+1$, as desired.
+
+If $b=0$, however, things are more nuanced. 
+% Considering the equality in~\ref{eq:mu-relative-recursive}, 
+% Proposition~\ref{prop:muxy0-lowerbound-adv} proves that the left-hand side is at least the right-hand side, 
+% and Proposition~\ref{prop:muxy0-upperbound} proves that the left-hand side is at most the right-hand side. 
+Consider the following proposition:
+
+
+  % % We will break this part of the proof into several cases based on the relative reach and margin of the fork. In each case, we will prove the lower bound by showing how the adversary $\mathcal{A}$ can achieve some value of $\mu_x(y0)$, 
+  % % and then use a proof by contradiction to show that this value is also the upper bound.
+
+
+  % %\begin{description}
+  % %\item[Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.] 
+  % \paragraph{Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.} 
+  % Let $F$ be some fork for $xy$ such that $\rho(F)=\rho(xy)$ and $\mu_x(F)=\mu_x(y)$. $\mathcal{A}$ will build on some tine $t$ with $\reach(t)=0$, and break ties by choosing to extend the tine that branches from $t_1$ as early as possible. In fact, in this case we are guaranteed that any tine she chooses will diverge from $t_1$ prior to the beginning of $y$: because $\mu_x(y)=0$, we know that the tine $t_2$ associated with $\mu_x(y)$ is disjoint with $t_1$ over $y$ and is in the set of critical tines. Based on our description of $\mathcal{A}$, she will either build on $t_2$, or on another tine that diverges from $t_1$ even earlier, and is also disjoint with $t_1$ over $y$. This shows that any such extension guarantees $\mu_x(y0)$ is at least 0, as the extension and $t_1$ form a pair of tines disjoint over $y0$.
+
+  % %%%ub on $\rho(xy)>0$ and $\mu_x(y)=0$
+  % Now we will show the corresponding upper bound. Let $F'$ be a closed fork for the characteristic string $w=xy0$ such that $\rho(F')=\rho(xy0)$ and $\mu_x(F')=\mu_x(y0)$, and let $F\vdash xy$ be the unique closed fork such that $F\fprefix F'$. 
+  % % Let $t_1$ and $t_2$ be the tines of $F'$ that achieve $\rho(xy0)$ and $\mu_x(y0)$, respectively. 
+  % Let $t_1$ and $t_2$ be the tine-pair in $F'$ that is a witness to $\mu_x(y0)$, i.e., 
+  % $\reach_{F'}(t_1) = \rho(xy0), \reach_{F'}(t_2) = \mu_x(y0)$, and $t_1, t_2$ disjoint over $y0$. 
+  % Suppose (toward a contradiction) that $\mu_x(y0)>0$. Then neither $t_1$ or $t_2$ is an extension because, as we proved in Claim ~\ref{claim:ex}, extensions have reach exactly 0. This means that $t_1$ and $t_2$ existed in $F$, and had strictly greater reach in $F$ than they do presently in $F'$ (by Claim ~\ref{claim:nex}). 
+  % Because $t_1$ and $t_2$ 
+  % % have been implicitly 
+  % are 
+  % assumed to be disjoint over $y0$, they must also be disjoint over $y$; therefore the margin of $F$ must be at least $\min\{\reach_F(t_1),\reach_F(t_2)\}$. Following this line of reasoning, we have $$\mu_x(y)\geq\min\{\reach_F(t_i)\}>\min\{\reach_{F'}(t_i)\}=\mu_x(y0)>0.$$ This contradicts our original assumption for the case, which states that $\mu_x(y)=0.$ We can conclude that $\mu_x(y0)\leq0$, as desired.
+
+  % %%%lb on $\rho(xy)=0$
+  % %\item[Case 2: $\rho(xy)=0$.]
+  % \paragraph{Case 2: $\rho(xy)=0$.}
+  %  We will analyze this case with the help of subcases based on the contents of $S$, the set of critical tines. If $S=\{t_1\}$, $\mathcal{A}$ will extend $t_1$. The resulting extension has reach 0, so $\rho(xy0)\geq0$. Additionally, $t_2$'s reach decreases by 1, and the extension and $t_2$ are still disjoint over $y$, so $\mu_x(y0)\geq\mu_x(y)-1$. If $S$ contains both $t_1$ and $t_2$, $\mathcal{A}$ extends $t_2$, because it is totally disjoint from $t_1$ over $y$ and has reach 0. The extension still has reach 0, so $\rho(xy0)\geq0$. Furthermore, the reach of $t_1$ decreases by 1, and the extension and $t_1$ are disjoint over $y$, so $\mu_x(y0)\geq\rho(xy)-1\geq\mu_x(y)-1$.
+  % Lastly, if $S$ contains some critical tine $s$ distinct from $t_1$ but $S$ does not contain $t_2$, $\mathcal{A}$ will extend $s$. The resulting extension of $s$ has reach 0, so $\rho(xy0)\geq0$. Note that because $t_2$ is not in $S$, reach$(t_2)<0$. This implies that $s$ (and its extension) must share an edge with $t_1$ somewhere over $y$, as otherwise we would achieve $\mu_x(y)=0$. As a result, $t_2$ and the extension of $s$ must be disjoint over $y$, and they have reach $\mu_x(y)-1$ and 0 respectively, so they act as witnesses to prove that $\mu_x(y0)\geq\mu_x(y)-1$.
+
+  % %%%ub on $\rho(xw)=0$
+  % Next, we want to prove the corresponding upper bound. Suppose $F'\vdash xy0$ is a closed fork such that $\rho(xy0)=\rho(F')$ and $\mu_x(y0)=\mu_x(F')$, and let $F\vdash xy$ be the unique closed fork such that $F\fprefix F'$. Define $t_1,$ $t_2$ to be a pair of tines disjoint over $y$ in $F'$ such that $\reach_{F'}(t_1)=\rho(F')$ and $\reach_{F'}(t_2)=\mu_x(F')=\mu_x(y0)$. 
+  % First, it will be helpful to determine some facts about $t_1$. Specifically, we claim that $t_1$ must be an extension. Suppose $t_1$ is not an extension. The fact that $t_1$ achieves maximum reach implies that $t_1$ has non-negative reach, because the longest tine always achieves reach 0, so $t_1$ must do at least as well as the longest tine. Furthermore, Claim ~\ref{claim:nex} states that all tines other than the extended tine see their reach decrease. Therefore, if $t_1$ was not extended, then $t_1$ as it appeared in $F$ must have had strictly positive reach. This contradicts the central assumption of the case, i.e., that $\rho(xy)=0$. Therefore, we conclude that $t_1$ arose from extension.
+
+  % Having established that $t_1$ must arise from extension, we know that the tine prefix of $t_1$ that is present in $F$ must have reach of at least 0. Additionally, we have assumed $\rho(xy)=0$, so $\reach_F(t_1)\leq0$. Together, these statements tell us that $\reach_F(t_1)=0.$ Restricting our view to $F$, we see that $t_1$ (as it appeared in $F$) and $t_2$ are disjoint over $y$, and so it must be true that $\min\{\reach_F(t_1),\reach_F(t_2)\}\leq\mu_x(y).$ Because $\reach_F(t_1)=0$ and $\reach_F(t_2)\leq\rho(xy)=0$, we can simplify that statement to $\reach_F(t_2)\leq\mu_x(y)$. Finally, because $t_2$ was not extended from $F$ to $F'$, Claim ~\ref{claim:nex} tells us that $\reach_{F'}(t_2)<\reach_F(t_2).$ Taken together, these two inequalities show that $\reach_{F'}(t_2)<\reach_F(t_2)\leq\mu_x(y)$. Reach is always an integer, and so $\mu_x(y0)=\reach_{F'}(t_2)<\mu_x(y)$ implies  $\mu_x(y0)=\reach_{F'}(t_2)\leq\mu_x(y)-1$, as desired.
+
+  % %%%lb for $\rho(xw)>0,\mu_x(w)\neq0$
+  % %\item[Case 3: $\rho(xy)>0,\mu_x(y)\neq0$.]
+  % \paragraph{Case 3: $\rho(xy)>0,\mu_x(y)\neq0$.}
+  % Suppose by induction that we have $F\vdash xy$ and tines $t_1$, $t_2$ such that $\rho(xy)=\rho(F)=\reach_{F}(t_1)$ and $\mu_x(y)=\mu_x(F)=\reach_{F}(t_2)$. $\mathcal{A}$ will minimally extend a tine $s$ with reach 0, if one exists, or $\hat{t}$. As a result of this extension, we know that $\reach_{F'}(t_i)=\reach_{F}(t_i)-1$. The witnesses $t_1$ and $t_2$ will still be disjoint over $y0$, so $\mu_x(y0)\geq\mu_x(y)-1$.
+
+  % %%ub for $\rho(xw)>0,\mu_x(w)\neq0$
+  % Now we need to prove the corresponding upper bound. Let $F'\vdash xy0$ be a closed fork such that $\mu_x(y0)=\mu_x(F')$, and let $F\vdash xy$ be the unique closed fork such that $F\fprefix F'$. Additionally, let $t_1$ and $t_2$ be tines disjoint over $y$ such that $\reach_{F'}(t_1)=\rho(F')$ and $\reach_{F'}(t_2)=\mu_x(y0)$. We will break this case into sub-cases. In the first sub-case, suppose that neither $t_1$ nor $t_2$ arose from extension. Then $\min\{\reach_F(t_1),\reach_F(t_2)\}\leq\mu_x(y)$, because $t_1$ and $t_2$ existed in $F$ and must be disjoint over $y$ (by virtue of being disjoint over $y0$). Furthermore, our claim about reach of non-extended tines implies that $\reach_{F'}(t_i)<\reach_F(t_i)$ for $i\in\{1,2\}$. Therefore, 
+  % $$\mu_x(y0)=\min\{\reach_{F'}(t_1),\reach_{F'}(t_2)\}<\min\{\reach_{F}(t_1),\reach_{F}(t_2)\}\leq\mu_x(y),$$ 
+  % as desired. For the second sub-case, suppose either $t_1$ or $t_2$ arose from extension. It must be true that $\reach_{F'}(t_2)\leq 0$, because either $t_2$ is the extension (and therefore has reach exactly 0) or $t_1$ is the extension and we have $\reach_{F'}(t_2)=\mu_x(y0)\leq\rho(xy0)=\reach_{F'}(t_1)=0$. Recall that we have assumed $\mu_x(y)\neq0$. If $\mu_x(y)>0,$ we are done: certainly $\mu_x(y0)\leq0<\mu_x(y)$. If, however, $\mu_x(y)<0$, there is more work to do. Suppose $\mu_x(y)<0.$ In this case, it is not possible for $t_2$ to have been the extension. To see why, consider the following: if $t_2$ arose from extension, then it must have had some precursor in $F$ with non-negative reach. Additionally, by our claim about non-extended tines, we see that $\reach_F(t_1)>\reach_{F'}\geq 0$. Therefore, $t_1$ and the precursor to $t_2$ would be a pair of tines that achieve margin greater than or equal to 0. By contradiction, $t_2$ cannot have arisen from extension, so we do not need to worry about this case. The last remaining scenario is the one in which $\mu_x(y)<0$ and $t_1$ arises from extension. In this scenario, $t_2$ cannot have been the extension (since there is only one!) so we can invoke our claim about reach of non-extended tines once again to see that $\reach_F(t_2)>\reach_{F'}(t_2).$ Using a now-familiar line of reasoning, note that $t_2$ and $t_1$ (prior to its extension) are a valid choice for a pair of tines achieving margin in $F$, and therefore $\reach_F(t_2)\leq\mu_x(y).$ We now have $\mu_x(y)\geq\reach_F(t_2)>\reach_{F'}(t_2)=\mu_x(y0)$.
+  % Because reach is always an integer, the value of $\mu_x(y0)$ must be less than or equal to $\mu_x(y)-1$, as desired. \qedhere
+  % %\end{description}
+
+
+  % % \end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%-------------------------- Relative margin upper bound via contradiction ------------
+
+\begin{proposition}\label{prop:muxy0-upperbound}
+  Let $x, y$ be arbitrary Boolean strings, $|y| \geq 1$, and $w = xy0$. 
+  Then $\mu_x(y0) \leq 0$ if $\rho(xy) > \mu_x(y) = 0$, and 
+  $\mu_x(y0) \leq \mu_x(y) - 1$ otherwise.
+\end{proposition}
+Recall that $\mu_x(F^\prime) \geq \mu_x(y0)$ by Proposition~\ref{prop:muxy0-lowerbound-adv}. 
+Combining this with Proposition~\ref{prop:muxy0-upperbound} above, we conclude 
+that $\mu_x(F^\prime) = \mu_x(y0)$ and, in addition, that 
+the fork $F^\prime$ actually achieves the maximum reach and 
+the maximum relative margin 
+for the characteristic string $xy0$. 
+It remains to prove Proposition~\ref{prop:muxy0-upperbound}.
+
+\begin{proof}[Proof of Proposition~\ref{prop:muxy0-upperbound}]
+  Suppose $F'\vdash xy0$ is a closed fork such that 
+  $\rho(xy0)=\rho(F')$ and $\mu_x(y0)=\mu_x(F')$. 
+  Let $t_\rho, t_x \in F'$ to be a pair of tines disjoint over $y$ in $F'$ such that $\reach_{F'}(t_\rho)=\rho(F')$ and $\reach_{F'}(t_x)=\mu_x(F')=\mu_x(y0)$. 
+  Let $F\vdash xy$ be the unique closed fork such that $F\fprefix F'$.  
+  Note that while $F'$ is an extension of $F$, 
+  it is not necessarily a conservative extension.
+
+  \paragraph{Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.} 
+    We wish to show that $\mu_x(y0) \leq 0$.
+    Suppose (toward a contradiction) that $\mu_x(y0) > 0$. 
+    Then neither $t_\rho$ or $t_x$ is a conservative extension because, as we proved in Claim ~\ref{claim:ex}, conservative extensions have reach exactly 0. This means that $t_\rho$ and $t_x$ existed in $F$, and had strictly greater reach in $F$ than they do presently in $F'$ (by Claim ~\ref{claim:nex}). 
+    Because $t_\rho$ and $t_x$ 
+    % have been implicitly 
+    are 
+    disjoint over $y0$, they must also be disjoint over $y$; therefore the $\mu_x(F)$ must be at least $\min\{\reach_F(t_\rho),\reach_F(t_x)\}$. 
+    Following this line of reasoning, we have 
+    $0 
+    = \mu_x(y) 
+    \geq \min_{i \in \{1,2\}}\{\reach_F(t_i)\}
+    > \min_{i \in \{1,2\}}\{\reach_{F'}(t_i)\}
+    = \mu_x(F') = \mu_x(y0) > 0
+    $, a contradiction, as desired.
+
+  \paragraph{Case 2: $\rho(xy)=0$.}
+    We wish to show that $\mu_x(y0) \leq \mu_x(y) - 1$
+    or, equivalently, that $\mu_x(y0) < \mu_x(y)$. 
+    First, we claim that $t_\rho$ must arise from an extension. 
+    Suppose, toward a contradiction, that $t_\rho$ is not an extension, 
+    i.e., $t_\rho \in F$. 
+    The fact that $t_\rho$ achieves the maximum reach in $F'$ 
+    implies that 
+    $t_\rho$ has non-negative reach 
+    since the longest honest tine always achieves reach 0. 
+    Furthermore, 
+    Claim ~\ref{claim:nex} states that 
+    all tines other than the extended tine see their reach decrease. 
+    Therefore, $t_\rho \in F$ must have had a strictly positive reach. 
+    But this contradicts the central assumption of the case, i.e., 
+    that $\rho(xy)=0$. 
+    Therefore, we conclude that $t_\rho \in F', t_\rho \not \in F$, and, 
+    since $F'$ differs from $F$ by a single extension, 
+    $t_x \in F$.
+
+    Let $s \in F$ be the tine-prefix of $t_\rho \in F'$ so that 
+    $t_\rho$ is an extension of $s$. 
+    Since $\reach_{F'}(t_\rho) = \rho(xy0) = 0$ by~\eqref{eq:rho-recursive}, 
+    $\reach_F(s)$ must be at least 0. 
+    Additionally, since $\rho(xy)=0$, $\reach_F(s) \leq 0$. 
+    Together, these statements tell us that $\reach_F(s)=0$. 
+    Restricting our view to $F$, we see that 
+    $s$ and $t_x$ are disjoint over $y$ and 
+    so it must be true that 
+    $\min\{\reach_F(s),\reach_F(t_x)\} \leq \mu_x(y)$. 
+    Because $\reach_F(s)=0$ and $\reach_F(t_x) \leq \rho(xy)=0$, we can simplify that statement to $\reach_F(t_x) \leq \mu_x(y)$. 
+    Finally, since $t_x \in F$, 
+    Claim ~\ref{claim:nex} tells us that 
+    $\reach_{F'}(t_x) < \reach_F(t_x)$. 
+    Taken together, these two inequalities show that 
+    $\mu_x(y0) = \reach_{F'}(t_x) < \reach_F(t_x) \leq \mu_x(y)$. 
+
+
+  \paragraph{Case 3: $\rho(xy)>0,\mu_x(y)\neq0$.}
+    We wish to show that $\mu_x(y0) \leq \mu_x(y) - 1$ 
+    or, equivalently, that $\mu_x(y0) < \mu_x(y)$. 
+    Note that by~\ref{eq:rho-recursive}, 
+    $\rho(xy0) = \rho(xy) - 1 \geq 0$.
+    We will break this case into two sub-cases. 
+    \begin{description}[font=\normalfont\itshape\space]
+      \item[If both $t_\rho, t_x \in F$.] 
+      Then  $t_\rho, t_x \in F$ and, consequently, 
+      $\min\{\reach_F(t_\rho),\reach_F(t_x)\} \leq \mu_x(y)$ since $t_\rho$ and $t_x$ must be disjoint over $y$. 
+      Furthermore, by Claim~\ref{claim:nex}, 
+      $\reach_{F'}(t_i)<\reach_F(t_i)$ for $i\in\{1,2\}$. 
+      Therefore, 
+      $\mu_x(y0) 
+      = \reach_{F'}(t_x) 
+      = \min\{\reach_{F'}(t_\rho),\reach_{F'}(t_x)\} 
+      < \min\{\reach_{F}(t_\rho),\reach_{F}(t_x)\} 
+      \leq\mu_x(y)$, as desired. 
+
+      \item[If either $t_\rho \not \in F$ or $t_x \not \in F$.]
+      It must be true that $\reach_{F'}(t_x)\leq 0$, because either $t_x$ is the extension (and therefore has reach exactly 0) or $t_\rho$ is the extension and we have $\reach_{F'}(t_x)=\mu_x(y0)\leq\rho(xy0)=\reach_{F'}(t_\rho)=0$. Recall that we have assumed $\mu_x(y)\neq0$. If $\mu_x(y)>0,$ we are done: certainly $\mu_x(y0)\leq0<\mu_x(y)$. If, however, $\mu_x(y)<0$, there is more work to do. 
+      In this case, we claim that $t_x \in F$, i.e., $t_x$ did not arise from an extension. 
+      To see why, consider the following: if $t_x$ arose from extension, then there must be some $s \in F$ 
+      so that $s \Prefix t_x$ and $\reach_F(s) \geq 0$. Additionally, by our claim about non-extended tines, we see that 
+      $\reach_F(t_\rho)>\reach_{F'}(t_\rho) = \rho(xy0) \geq 0$. 
+      Therefore, 
+      $\mu_x(y) \geq \min\{\reach_F(t_\rho), \reach_F(s)\} \geq 0$, 
+      contradicting our assumption that $\mu_x(y) < 0$. 
+      Thus $t_x \in F$. 
+
+      The only remaining scenario is the one in which 
+      $\mu_x(y)<0$ and $t_\rho$ arises from an extension 
+      of some tine $s \in F, \reach_F(s) \geq 0$. 
+      In this scenario, $t_x$ cannot have been the extension 
+      (since there is only one). 
+      By Claim~\ref{claim:nex}, 
+      $\reach_F(t_x) > \reach_{F'}(t_x)$. 
+      Using a now-familiar line of reasoning, note that 
+      the two tines
+      $t_x$ and $s$ are disjoint over $y$ 
+      and, therefore, 
+      $\mu_x(y) \geq \min\{\reach_F(s), \reach_F(t_x)\}$. 
+      Since, 
+      $\mu_x(y) < 0$ by assumption and $\reach_F(s) \geq 0$, 
+      it follows that 
+      $\mu_x(y) \geq \reach_F(t_x) > \reach_{F'}(t_x)=\mu_x(y0)$, as desired. \qedhere
+    \end{description}
+\end{proof}
+
+
+This completes the proof of Lemma~\ref{lem:relative-margin}. 
+\hfill $\qed$
+
+
+
+% In fact, by maximizing relative margin, she can play the $(\Distribution,T;s,k)$-settlement game optimally (i.e., win whenever there exists a winning configuration for the given challenge characteristic string). For the settlement game to be winnable, there must exist some $\hat{y}$, a prefix of $y$, so that $|\hat{y}| \geq k + 1$ and $\mu_x(\hat{y}) \geq 0$. Recall from Fact~\ref{fact:margin-balance} that for a characteristic string $xy$, there is an $x$-balanced fork $F \vdash xy$ if and only if $\mu_x(y) \geq 0$.  Because in each slot, our adversary builds a fork that achieves the maximum value of relative margin for all possible decompositions, then at slot $|x\hat{y}|$ she will have built a fork $F\vdash x\hat{y}$ such that $\mu_x(F)\geq 0$. As we argued in the proof of Fact\ref{fact:margin-balance}, the definition of relative margin tells us that $F$ has two tines $t_\rho$ and $t_2$ with nonnegative reach that diverge prior to the start of $\hat{y}$. Consequently, she is able to append $\gap(t_i)$ adversarial vertices from our reserve to each $t_i$ so that they become maximum length, thus winning the $(\Distribution,T;s,k)$-settlement game.
+
+
+% In the next section, we present a stronger strategy 
+% for building a fork $F \Fork w$ which 
+% achieves $\mu_x(F) = \mu_x(y)$ \emph{simultaneously for all 
+% decompositions} $w = xy$. 
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

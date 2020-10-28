@@ -1,0 +1,280 @@
+We rely on the elementary framework of forks and margin
+from~\citet{KRDO17}. We restate and briefly discuss the pertinent
+definitions below. With these basic notions behind us, we then define
+a new ``relative'' notion of margin, which will allow us to
+significantly improve the efficacy of these tools for reasoning about
+settlement times.
+%In particular, these tools will allow us to reason
+%about the possibility that an adversary can produce two alternate
+%histories of the blockchain that diverge prior to a particular block.
+
+Recall that for a given execution of the protocol, we record the
+result of the leader election process via a \emph{characteristic
+  string} $w \in \{0,1\}^T$, defined such that $w_i = 0$ when a unique
+and honest party is assigned to slot $i$ and $w_i = 1$ otherwise.
+A vertex of a fork is said to be \emph{honest}
+  if it is labeled with an index $i$ such that $w_i=0$.
+
+\begin{definition}[Tines, length, and height]
+  Let $F \vdash w$ be a fork for a characteristic string.  A
+  \emph{tine} of $F$ is a directed path starting from the root. For
+  any tine $t$ we define its \emph{length} to be the number of edges
+  in the path, and for any vertex $v$ we define its \emph{depth} to be
+  the length of the unique tine that ends at $v$. 
+  If a tine $t_1$ is a strict prefix of another tine $t_2$, we write $t_1 \Prefix t_2$. 
+  Similarly, if $t_1$ is a non-strict prefix of $t_2$, we write $t_1 \PrefixEq t_2$.
+  The longest common prefix of two tines $t_1, t_2$ is denoted by $t_1 \Intersect t_2$. 
+  That is, $\ell(t_1 \Intersect t_2) = \max\{\ell(u) \SuchThat \text{$u \PrefixEq t_1$ and $u \PrefixEq t_2$} \}$. 
+  The \emph{height} of
+  a fork (as usual for a tree) is the length of the longest tine,
+  denoted $\height(F)$. 
+\end{definition}
+
+\begin{definition}[The $\sim_x$ relations]
+  For two tines $t_1$ and $t_2$ of a fork $F$, we write $t_1 \sim t_2$
+  when $t_1$ and $t_2$ share an edge; otherwise we write
+  $t_1 \nsim t_2$. We generalize this equivalence relation to reflect
+  whether tines share an edge over a particular suffix of $w$: for
+  $w = xy$ we define $t_1 \sim_x t_2$ if $t_1$ and $t_2$ share an edge
+  that terminates at some node labeled with an index in $y$;
+  otherwise, we write $t_1 \nsim_x t_2$ (observe that in this case the
+  paths share no vertex labeled by a slot associated with $y$).  We
+  sometimes call such pairs of tines \emph{disjoint} (or, if
+  $t_1 \nsim_x t_2$ for a string $w = xy$, \emph{disjoint over
+    $y$}). Note that $\sim$ and $\sim_\varepsilon$ are the same
+  relation.
+\end{definition}
+
+%Informally, $t_1\sim_x t_2$ indicates that when we restrict our view of history to only blocks \emph{after}
+%the prefix $x$, $t_1$ and $t_2$ share an edge (and thus agree on at least one block after that point).
+
+The basic structure we use to use to reason about settlement times is
+that of a ``balanced fork.''
+
+\begin{definition}[Balanced fork; cf.\ ``flat'' in \cite{KRDO17}]\label{def:balanced-fork} A
+  fork $F$ is \emph{balanced} if it contains a pair of tines $t_1$ and
+  $t_2$ for which $t_1\nsim t_2$ and
+  $\length(t_1)=\length(t_2)=\height(F)$. We define a relative notion
+  of balance as follows: a fork $F \vdash xy$ is \emph{$x$-balanced}
+  if it contains a pair of tines $t_1$ and $t_2$ for which
+  $t_1 \not\sim_x t_2$ and $\length(t_1) = \length(t_2) = \height(F)$.
+\end{definition}
+
+Thus, balanced forks contain two completely disjoint, maximum-length
+tines, while $x$-balanced forks contain two maximum-length tines that
+may share edges in $x$ but must be disjoint over the rest of the
+string. 
+See Figures~\ref{fig:balanced} and~\ref{fig:x-balanced} 
+for examples of balanced forks.
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[>=stealth', auto, semithick,
+    honest/.style={circle,draw=black,thick,text=black,double,font=\small},
+   malicious/.style={fill=gray!10,circle,draw=black,thick,text=black,font=\small}]
+    \node at (0,-2) {$w =$};
+  \node at (1,-2) {$0$}; \node[honest] at (1,-.7) (b1) {$1$};
+  \node at (2,-2) {$1$}; \node[malicious] at (2,.7) (a1) {$2$};
+  \node at (3,-2) {$0$}; \node[honest] at (3,.7) (a2) {$3$};
+  \node at (4,-2) {$1$}; \node[malicious] at (4,-.7) (b2) {$4$};
+  \node at (5,-2) {$0$}; \node[honest] at (5,-.7) (b3) {$5$};
+  \node at (6,-2) {$1$}; \node[malicious] at (6,.7) (a3) {$6$};
+    \node[honest] at (-1,0) (base) {$0$};
+  \draw[thick,->] (base) to[bend left=10] (a1);
+      \draw[thick,->] (a1) -- (a2);
+      \draw[thick,->] (a2) -- (a3);
+  \draw[thick,->] (base) to[bend right=10] (b1);
+      \draw[thick,->] (b1) -- (b2);
+      \draw[thick,->] (b2) -- (b3);
+    \end{tikzpicture} 
+  \caption{A balanced fork}
+  \label{fig:balanced}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[>=stealth', auto, semithick,
+    honest/.style={circle,draw=black,thick,text=black,double,font=\small},
+   malicious/.style={fill=gray!10,circle,draw=black,thick,text=black,font=\small}]
+    \node at (0,-2) {$w =$};
+  \node at (1,-2) {$0$}; \node[honest] at (1,0) (ab1) {$1$};
+  \node at (2,-2) {$0$}; \node[honest] at (2,0) (ab2) {$2$};
+  \node at (3,-2) {$0$}; \node[honest] at (3,.7) (a3) {$3$};
+  \node at (4,-2) {$1$}; \node[malicious] at (4,-.7) (b3) {$4$};
+  \node at (5,-2) {$0$}; \node[honest] at (5,-.7) (b4) {$5$};
+  \node at (6,-2) {$1$}; \node[malicious] at (6,.7) (a4) {$6$};
+    \node[honest] at (-1,0) (base) {$0$};
+  \draw[thick,->] (base) -- (ab1);
+  \draw[thick,->] (ab1) -- (ab2);
+  \draw[thick,->] (ab2) to[bend left=10] (a3);
+    \draw[thick,->] (a3) -- (a4);
+  \draw[thick,->] (ab2) to[bend right=10] (b3);
+    \draw[thick,->] (b3) -- (b4);
+    \end{tikzpicture} 
+  \caption{An $x$-balanced fork, where $x=00$}
+  \label{fig:x-balanced}
+\end{figure}
+
+
+\paragraph{Balanced forks and settlement time.}
+A fundamental question arising in typical blockchain settings is how
+to determine \emph{settlement time}, the delay after which the
+contents of a particular block of a blockchain can be considered
+stable. The existence of a balanced fork is a precise indicator for
+``settlement violations'' in this sense. Specifically, consider a
+characteristic string $xy$ and a transaction appearing in a block
+associated with the first slot of $y$ (that is, slot $|x| + 1$). One
+clear violation of settlement at this point of the execution is the
+existence of two chains---each of maximum length---which diverge
+\emph{prior to $y$}; in particular, this indicates that there is an
+$x$-balanced fork $F$ for $xy$. Let us record this observation below.
+
+\begin{observation}\label{obs:settlement-balanced-fork}
+  Let $s, k \in \NN$ be given and 
+  let $w$ be a characteristic string. 
+  Slot $s$ is not $k$-settled for the characteristic string $w$ 
+  if 
+  there exist a decomposition $w = xyz$, 
+  where $|x| = s - 1$ and $|y| \geq k+1$, 
+  and an $x$-balanced fork for $xy$. 
+\end{observation}
+
+In fact, every $\kSlotCP$ violation produces a balanced fork as well;
+see Theorem~\ref{thm:cp-fork} in Section~\ref{sec:cp-forks}.  In
+particular, to provide a rigorous $k$-slot settlement
+guarantee---which is to say that the transaction can be considered
+settled once $k$ slots have gone by---it suffices to show that with
+overwhelming probability in choice of the characteristic string
+determined by the leader election process (of a full execution of the
+protocol), no such forks are possible. Specifically, if the protocol
+runs for a total of $T$ time steps yielding the characteristics string
+$w = xy$ (where $w \in \{0,1\}^T$ and the transaction of interest
+appears in slot $|x| + 1$ as above) then it suffices to ensure that
+there is no $x$-balanced fork for $x\hat{y}$, where $\hat{y}$ is an
+arbitrary prefix of $y$ of length at least $k + 1$; see
+Corollary~\ref{cor:main} in Section~\ref{sec:estimates}.  Note that
+for systems adopting the longest chain rule, this condition must
+necessarily involve the \emph{entire future dynamics} of the
+blockchain. We remark that our analysis below will in fact let us take
+$T = \infty$.
+
+\begin{definition}[Closed fork]
+A fork $F$ is \emph{closed} if every leaf is honest. For convenience, we say the trivial fork is closed.
+\end{definition}
+
+Closed forks have two nice properties that make them especially useful in reasoning about the view of honest parties.
+First, a closed fork must have a unique longest tine (since honest parties are aware of all previous honest blocks, and honest
+parties observe the longest chain rule). Second, recalling our description of the
+settlement game, closed forks intuitively capture decision points for the adversary.
+The adversary can potentially show many tines to many honest parties, but once an honest node has been placed on top of 
+a tine, any adversarial blocks beneath it are part of the public record and are visible to all honest parties. For these
+reasons, we will often find it easier to reason about closed forks than arbitrary forks. % (without loss of generality).
+
+The next few definitions are the start of a general toolkit for reasoning about an adversary's capacity to build highly diverging paths in forks, based on the underlying characteristic string.
+%current state of a fork.
+
+%%%%Reach and margin
+\begin{definition}[Gap, reserve, and reach]\label{def:gap-reserve-reach}
+For a closed fork $F \vdash w$ and its unique longest tine $\hat{t}$, we define the \emph{gap} of a tine $t$ to be $\gap(t)=\length(\hat{t})-\length(t)$.
+Furthermore, we define the \emph{reserve} of $t$, denoted $\reserve(t)$, to be the number of adversarial indices in $w$ that appear after the terminating vertex of $t$. More precisely, if $v$ is the last vertex of $t$, then
+\[
+  \reserve(t)=|\{\ i \mid w_i=1 \ and \ i > \ell(v)\}|\,.
+  \]
+These quantities together define the \emph{reach} of a tine: $
+\reach(t)=\reserve(t)-\gap(t)$.
+\end{definition}
+
+The notion of reach can be intuitively understood as a measurement of
+the resources available to our adversary in the settlement
+game. Reserve tracks the number of slots in which the adversary has
+the right to issue new blocks.  When reserve exceeds gap (or
+equivalently, when reach is nonnegative), such a tine could be
+extended---using a sequence of dishonest blocks---until it is as long
+as the longest tine. Such a tine could be offered to an honest player
+who would prefer it over, e.g., the current longest tine in the
+fork. In contrast, a tine with negative reach is too far behind to be
+directly useful to the adversary at that time.
+
+\begin{definition}[Maximum reach]
+For a closed fork $F\vdash w$, we define $\rho(F)$ to be the largest reach attained by any tine of $F$, i.e., 
+\[
+\rho(F)=\underset{t}\max \ \reach(t)\,.
+\]
+Note that $\rho(F)$ is never negative (as the longest tine of any fork always has reach at least 0). We overload this notation to denote the maximum reach over all forks for a given characteristic string: 
+\[
+\rho(w)=\underset{\substack{F\vdash w\\\text{$F$ closed}}}\max\big[\underset{t}\max \ \reach(t)\big]\,.
+\]
+\end{definition}
+
+\begin{definition}[Margin]\label{def:margin}
+The \emph{margin} of a fork $F\vdash w$, denoted $\mu(F)$, is defined as 
+\begin{equation}\label{eq:margin-absolute}
+\mu(F)=\underset{t_1\nsim t_2}\max \bigl(\min\{\reach(t_1),\reach(t_2)\}\bigr)\,,
+\end{equation}
+where this maximum is extended over all pairs of disjoint tines of
+$F$; thus margin reflects the ``second best'' reach obtained over all
+disjoint tines. In order to study splits in the chain over particular portions of a
+string, we generalize this to define a ``relative'' notion of margin:
+If $w = xy$ for two strings $x$ and $y$ and, as above, $F \vdash w$,
+we define
+\[
+  \mu_x(F)=\underset{t_1\nsim_x t_2}\max \bigl(\min\{\reach(t_1),\reach(t_2)\}\bigr)\,.
+\]
+Note that $\mu_\varepsilon(F) = \mu(F)$.
+
+For convenience, we once again overload this notation to denote the
+margin of a string. $\mu(w)$ refers to the maximum value of $\mu(F)$
+over all possible closed forks $F$ for a characteristic string $w$:
+\[
+\mu(w)=\underset{\substack{F\vdash w,\\ \text{$F$ closed}}}\max \, \mu(F)\,.
+\]
+Likewise, if $w = xy$ for two strings $x$ and $y$ we define
+\[
+\mu_x(y)=\underset{\substack{F\vdash w,\\ \text{$F$ closed}}} \max \, \mu_x(F)\,.
+\]
+%(Cf.~\cite{KRDO17}, which defined and studied the ``absolute'' version
+%$\mu(\cdot)$ of this quantity of~\eqref{eq:margin-absolute}.)
+\end{definition}
+Note that, at least informally, ``second-best'' tines are of natural
+interest to an adversary intent on the construction of an $x$-balanced fork, 
+which involves two (partially disjoint) long tines.
+
+
+\paragraph{Balanced forks and relative margin.}
+\citet{KRDO17} showed that a balanced fork can be constructed for a
+given characteristic string $w$ if and only if there exists some
+closed $F\vdash w$ such that $\mu(F)\geq 0$.  We record a relative
+version of this theorem below, which will ultimately allow us to
+extend the analysis of \cite{KRDO17} to more general class of
+disagreement and settlement failures.
+
+\begin{fact}\label{fact:margin-balance}
+  Let $xy \in \{0,1\}^n$ be a characteristic string. Then there is an
+  $x$-balanced fork $F \vdash xy$ if and only if $\mu_x(y) \geq 0$.
+\end{fact}
+
+\begin{proof}
+  The proof is immediate from the definitions. We sketch the details for completeness.
+  
+  Suppose $F$ is an $x$-balanced fork for $xy$. Then $F$ must contain a pair of tines $t_1$ and $t_2$ for which
+  $t_1 \not\sim_x t_2$ and $\length(t_1) = \length(t_2) = \height(F)$. We observe that (1) $\gap(t_i)=0$ for both $t_1$ and $t_2$, and (2) reserve is always a nonnegative quantity. Together with the definition of $\reach$, these two facts immediately imply $\reach(t_i) \geq 0$. Because $t_1$ and $t_2$ are edge-disjoint over $y$ and $\min\{\reach(t_1),\reach(t_2)\}\geq0,$ we conclude that $\mu_x(y)\geq 0$, as desired. 
+
+  Suppose $\mu_x(y)\geq 0$. Then there is some closed fork $F$ for $xy$ such that $\mu_x(F)\geq0$. By the definition of
+   relative margin, we know that $F$ has two tines $t_1$, $t_2$ such that $t_1\nsim_x t_2$ and 
+  $\reach(t_i)\geq0$. Recall that we define reach by $\reach(t)=\reserve(t)-\gap(t)$, and so in this case 
+ it follows that $\reserve(t_i) - \gap(t_i)\geq0$. Thus, an $x$-balanced fork $F'\vdash xy$ can be constructed from $F$ by 
+ appending a path of $\gap(t_i)$ adversarial vertices to each $t_i$.
+\end{proof}
+
+As indicated above, we can define the ``forkability'' of a
+characteristic string in terms of its margin.
+\begin{definition}[Forkable strings]\label{def:forkable}
+  A charactersitic string $w$ is \emph{forkable} if its margin is non-negative, i.e., $\mu(w) \geq 0$.
+  Equivalently, $w$ is forkable if there is a balanced fork for $w$.
+\end{definition}
+Although this definition is not necessary for our presentation, it
+reflects the terminology of existing literature.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

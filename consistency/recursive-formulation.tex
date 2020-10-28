@@ -1,0 +1,97 @@
+A significant finding of~\citet{KRDO17} is that the margin of a
+characteristic string $\mu(w)$---the maximum value of a quantity taken
+over a (typically) exponentially-large family of forks---can be given
+a simple, mutually recursive formulation with the associated quantity
+of reach $\rho(w)$. Specifically, they prove the following lemma.
+
+%%% original lemma
+\begin{lemma}[{\cite[Lemma~4.19]{KRDO17}}]\label{lem:margin} 
+  $\rho(\varepsilon) = 0$ 
+  where $\varepsilon$ is the empty string, and, for all nonempty strings $w\in\{0,1\}^*$,
+  \begin{equation}
+    \rho(w1) = \rho(w)+1\,, \qquad\text{and}\qquad
+    \rho(w0) = \begin{cases} 0 & \text{if $\rho(w) = 0$,}\\
+      \rho(w)-1 & \text{otherwise.}
+    \end{cases}
+		\label{eq:rho-recursive}
+  \end{equation}
+  Furthermore, margin satisfies the mutually recursive relationship
+  $\mu(\varepsilon) = 0$ and for all $w \in \{0,1\}^*$,
+  \begin{equation}
+    \mu(w1) = \mu(w)+1\,,\qquad\text{and}\qquad
+    \mu(w0) = \begin{cases}
+      0 & \text{if $\rho(w)>\mu(w)=0$,} \\
+%      \mu(w)-1 & \text{if $\rho(w)=0$,} \\
+      \mu(w)-1 & \text{otherwise.}
+    \end{cases}
+		\label{eq:mu-recursive}
+  \end{equation}
+  Additionally, there exists a closed fork $F\vdash w$ such that
+  $\rho(F)=\rho(w)$ and $\mu(F)=\mu(w)$.
+  %(It is convenient to separate the case $\rho(w) = 0$ from the other case which also yields $\mu(w) - 1$ in the proof, so we reflect that in the statement of the theorem.)
+\end{lemma}
+
+We prove an analogous recursive statement for relative margin, recorded below.
+
+\begin{lemma}[Relative margin]\label{lem:relative-margin}
+  Given a fixed string $x\in\{0,1\}\text{\emph{*}}$,
+  $\mu_x(\varepsilon) =\rho(x)$ 
+  where $\varepsilon$ is the empty string, and, for all nonempty strings $w=xy\in\{0,1\}\text{\emph{*}},$
+  \begin{equation}
+    \mu_x(y1)= \mu_x(y)+1\,,\qquad\text{and}\qquad
+    \mu_x(y0)= \begin{cases}
+      0 & \text{if } \rho(xy) > \mu_x(y)=0\,, \\
+%      \mu_x(y)-1 &  \text{if } \rho(xy)=0\,, \\
+      \mu_x(y)-1 & \text{otherwise.}
+    \end{cases}
+		\label{eq:mu-relative-recursive}
+  \end{equation}
+  Additionally, there exists a closed fork $F\vdash xy$ such that
+  $\rho(F)=\rho(xy)$ and $\mu_x(F)=\mu_x(y)$.
+  %(It is convenient to
+  %separate the case $\rho(w) = 0$ from the other case which also
+  %yields $\mu(w) - 1$ in the proof, so we reflect that in the
+  %statement of the lemma.)
+\end{lemma}
+
+We delay the proof of Lemma~\ref{lem:relative-margin} to
+Section~\ref{sec:margin-proof}, preferring to immediately focus on the
+application to settlement times in Section~\ref{sec:estimates}.
+
+\paragraph{Discussion.} The proof of Lemma~\ref{lem:relative-margin}
+shares many technical similarities with the proof of
+Lemma~\ref{lem:margin} given by~\citet{KRDO17}. However, there is an
+important respect in which the proofs differ. Each of the proofs
+requires the definition of a particular adversary (which, in effect,
+constructs a fork achieving the worst case reach and margin guaranteed
+by the lemma). The adversary constructed by~\cite{KRDO17} can create a
+balanced fork for $w$ whenever $\mu(w) \geq 0$ (i.e., $w$ is
+``forkable''). However, the adversary only focuses on the problem of
+producing disjoint tines over the \emph{entire string} $w$ (consistent
+with the definition of $\mu(\cdot)$). The ``optimal online adversary,''
+developed in Section~\ref{sec:canonical-forks},
+% developed during the proof of Lemma~\ref{lem:relative-margin},
+%, in
+%contrast,
+uses a more sophisticated rule for extending chains (tines) of the
+fork. 
+Notably, this adversary can \emph{simultaneously maximize relative margin
+  over all prefixes of the string}. 
+
+% This adversary is a purist: if $w$ is not forkable, he gives up. As an
+% illuminating example, consider the characteristic string
+% $w=0^n0^k1^k0^k$, for $n\gg k$. The purist adversary will produce a
+% single tine containing only the honest nodes, but we can imagine that
+% a different adversary could notice that it is possible to build a fork
+% with divergence of $2k$, and act differently than the purist
+% adversary.
+%
+% Here, we develop and optimal online adversary
+% that makes decisions with the goal of maximizing divergence.
+% Crucially, if $w$ is forkable, we want our new adversary to still successfully fork $w$.
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
