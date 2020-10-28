@@ -1,0 +1,1200 @@
+
+
+\newcommand{\NumSets}{n}
+\newcommand{\NumSync}{m}
+\newcommand{\SecParam}{\kappa}
+\newcommand{\EmptyList}{\varepsilon}
+\newcommand{\GrindingPower}{g}
+\newcommand{\GrindingMax}{\gamma}
+\newcommand{\GrindingSet}{X^*}
+% \newcommand{\Block}{\mathsf{block}}
+
+
+% \paragraph{Notation for the rest of the paper.}
+% We use $\ZeroString$ to denote the all-zero string and 
+We use $\emptyset$ to denote an empty set and 
+$\varepsilon$ to denote both an empty list and an empty string. 
+In addition, we extend the binary exclusive-or operator $\oplus$ for sets, as follows: 
+For two sets $A,B \subset \{0,1\}^\kappa$ and a string $\eta \in \{0,1\}^\kappa$, 
+we write
+$\eta \oplus A = \{\eta \oplus a \SuchThat a \in A\}$ and
+$A \oplus B = \{a \oplus b \SuchThat a \in A, b \in B\}$. 
+Naturally, $\eta \oplus \ZeroString = \eta$ and $\eta \oplus \emptyset = \eta$.
+
+
+
+% \subsection{An instantiation\texorpdfstring{: the $(\ell,n)$-game}{}}
+
+% Here, we instantiate two specific XOR target games and 
+% prove bound on thier grinding powers. 
+% These bounds, when applied to the min-entropy lemma (Lemma~\ref{lemma:xor-game-minentropy}), 
+% acts as the foundation upon which we build our bias-resistant randomness beacon in Section~\ref{sec:beacon}.
+% % We present and analyze several other XOR target games in the appendix. 
+
+
+
+\renewcommand{\SS}[1]{P_{#1}, \ldots, P_{\ell}} % legacy, actually use sets P instead of S
+\newcommand{\PP}[1]{P_{\ell+{#1}}, \ldots, P_{\ell + n}}
+\newcommand{\HatPP}[2]{\hat{P}_{#1}, \ldots, \hat{P}_{#2}}
+\newcommand{\PrimePP}[2]{P^\prime_{#1}, \ldots, P^\prime_{#2}}
+\newcommand{\Sfull}{ P_1, \ldots, P_\ell}
+\newcommand{\Pfull}{ P_{\ell+1}, \ldots, P_{\ell+n}}
+\newcommand{\BB}[1]{b_{{#1}}, \ldots, b_{n}}
+\newcommand{\WithEmpty}[1]{{#1} \Union \{ \ZeroString \}}
+\newcommand{\WithLookahead}[1]{{#1} \Union \{ x \}}
+
+
+
+\begin{definition}[Explicit XOR target games]
+    \label{def:xor-game-explicit}
+    \label{def:xor-game-lookahead}
+    Let $\ell, n, \kappa \in \NN, b \in [0, 1], \eta_0 \in \{0, 1\}^\kappa, T \subset \{0,1\}^\kappa$. 
+    $T$ is called the \emph{target set} and 
+    $\eta_0$ is called the \emph{initial value}. 
+    % when $\eta_0$ is uniform in $\{0,1\}^\kappa$, 
+    % we call this game an \emph{XOR target game with a uniform initial value}.
+    Let 
+    $\star$ be a special symbol and let 
+    % $\mathcal{P} = (P_1, \ldots, P_{\ell + n})$ 
+    $P_1, \ldots, P_\ell \subset \{0, 1\}^\kappa$ and 
+    $P_{\ell + 1}, \ldots, P_{\ell + n} \subset \{0,1\}^\kappa \Union \{\star\}$.  
+    The sets $P_i, i \in [\ell + n]$ are 
+    called the \emph{option sets}. 
+    For $i \in [\ell + n]$, 
+    % % \begin{enumerate*}[label=(\textit{\roman*})]
+    % \InlineCases{
+    %     \item {\color{red} $|P_i| \geq 1$} and 
+    %     \item if $\star \not \in P_i$ then $0^\kappa \in P_i$.
+    % }
+    \begin{equation}\label{eq:zero-option}
+        \text{if $\star \not \in P_i$ then $0^\kappa \in P_i$}\,.
+    \end{equation}
+    (Hence $|P_i| \geq 1$.)
+    % \end{enumerate*}    
+    % The $(\ell, n)$-game
+    The \emph{explicit XOR target game}
+    \[
+        G = G_{\kappa}(\eta_0, T\,;\, \Sfull \,;\, \Pfull)
+        \,
+    \]
+    is 
+    % recursively 
+    defined 
+    % specializes the XOR target game in Definition~\ref{def:xor-game-generic} 
+    as follows. 
+    Before the game begins, the player $\Adversary$ gets to see the option sets. 
+    \begin{description}[font=\normalfont\itshape\space]
+        \item[If $n = 0$.]
+        % If $n = 0$, 
+        The player selects $s_i \in P_i$ for each $i \in [\ell]$. 
+        The \emph{output} of the game is 
+        $\eta \defeq \eta_0 \oplus s_1 \oplus \cdots \oplus s_\ell$. 
+        The player wins if and only if 
+        $\eta \in T$. 
+
+
+        % Now, suppose $n \geq 1$. 
+        \item[If $n \geq 1$.]
+        If $\star \in P_{\ell + 1}$ then the $\star$ 
+        is substituted (by the environment) 
+        with a uniformly random string $x \in \{0, 1\}^\kappa$. 
+        % othewise, $P_{\ell + 1}$ remains unchanged. 
+        In any case, the player selects some $s \in P_1$ ($s$ may depend on $x$) and 
+        the game proceeds inductively 
+        % in the next round 
+        as the \emph{reduced game} 
+        % $
+        %     G^\prime_s \defeq 
+        %     G_{\kappa}(
+        %         \eta_0 \oplus s, T\,;\, 
+        %         \SS{2}, P_{\ell+1}  \,;\, 
+        %         \PP{2} 
+        % $.
+        \[    
+        G' = 
+        \begin{dcases}
+            G^\prime_{s,x} \defeq
+            G_{\kappa}(
+                \eta_0 \oplus s, T\,;\, 
+                \SS{2}, (P_{\ell+1} \setminus \{\star\}) \Union \{x\}  \,;\, 
+                \PP{2} 
+            )\,,&\quad\text{if $\star \in P_{\ell + 1}$}\,,
+            \\        
+            G^\prime_{s} \defeq
+            G_{\kappa}(
+                \eta_0 \oplus s, T\,;\, 
+                \SS{2}, P_{\ell+1} \,;\, 
+                \PP{2} 
+            )\,,
+            &\quad\text{otherwise}\,,
+        \end{dcases}
+        \]
+        The output
+        of the game $G$ 
+        is defined as the output of the reduced game. 
+        The player wins the game $G$ if and only if he wins the reduced game $G'$. 
+        % $(\eta_0 \oplus P_1 \oplus \cdots \oplus P_\ell) \Intersect T \neq \emptyset$.
+    \end{description}
+\end{definition}
+
+Due to the stochastic nature of the game, 
+the player may or may not win the explicit game. 
+We can define 
+$\alpha(G) \defeq \Pr[\text{the player wins the XOR target game}]$
+as follows.
+If $n = 0$, define
+\begin{align*}
+    \alpha(G) &\defeq 
+    \begin{dcases}
+        1\,, & \quad\text{if}\quad (\eta_0 \oplus P_1 \oplus \cdots \oplus P_\ell) \Intersect T \neq \emptyset 
+        \, , \\
+        0\,, & \quad\text{otherwise}
+        \, .
+    \end{dcases}
+\end{align*}
+Otherwise, i.e., if $n \geq 1$, 
+define 
+\begin{align}\label{eq:winning-prob}
+    \alpha(G) &\defeq 
+    \begin{dcases}
+        \Exp_{x}\, 
+            \max_{s \in P_1 }\, 
+            \alpha\left(
+                G^\prime_{s, x}
+                % \eta_0 \oplus s, T \,;
+                % \, P_2, \ldots, P_\ell, (P_{\ell + 1} \setminus \{\star\}) \Union \{x\} \,;\, P_{\ell+2}, \ldots P_{\ell+n}
+                \right) 
+        \,, &\quad\text{if $\star \in P_{\ell + 1}$ }\,,
+        \\
+        \max_{s \in P_1 }\, 
+        \alpha\left(
+            G^\prime_s
+            % \eta_0 \oplus s, T \,;
+            % \, P_2, \ldots, P_\ell, P_{\ell+1} \,;\, P_{\ell+2}, \ldots P_{\ell+n}
+            \right)
+        \,, &\quad\text{otherwise} \,.
+    \end{dcases}
+\end{align}
+
+
+Anticipating our applications, 
+we are interested in XOR target games where the initial value $\eta_0$ is uniformly random. 
+\begin{definition}[Uniform XOR target games]
+    \label{def:xor-game-uniform}
+    An explicit XOR target game $G(\eta_0,T\,;\, \Sfull \,;\, \Pfull)$ 
+    is called 
+    an \emph{uniform XOR target game}
+    \[
+        U(T\,;\, \Sfull \,;\, \Pfull)
+    \]
+    if $\eta_0$ is uniformly random in $\{0,1\}^\kappa$. 
+    The winning probability of the uniform game is defined as 
+    \[
+        \alpha(U) = \alpha(T\,;\, \Sfull \,;\, \Pfull) 
+        \defeq \Exp_{\eta_0} \alpha(G)\,.
+    \]
+\end{definition}
+
+
+\paragraph{Grinding power.}
+Let $G = G(\eta_0,T\,;\, \Sfull \,;\, \Pfull)$ be an explicit game. 
+The \emph{grinding set} of $\Adversary$ is defined as the random variable 
+\[
+    X_\Adversary(G) 
+    % = X_\Adversary(\eta_0\,;\, \Sfull \,;\, \Pfull) 
+    \defeq 
+        \begin{dcases}
+            P_1 \Union \cdots \Union P_\ell, &\quad\text{if $n = 0$}\,, \\
+            \BigUnion_{s \in P_1} X_\Adversary(G^\prime_s)\, &\quad\text{otherwise}
+        \end{dcases}        
+\] 
+where $G^\prime$ is the reduced game associated with $G$. 
+In other words, 
+for a fixed $\eta_0$ and fixed random coin-flips in $G$,
+$X_\Adversary(G)$ is the set of all possible outputs $G$. 
+The grinding set $X_\Adversary(U)$ of a uniform game $U$ is defined analogously.
+
+\begin{definition}[Grinding power]
+    \label{def:xor-game-grinding-power} 
+    The \emph{grinding power} $g(G)$ of an explicit game $G$ 
+    is the supremum
+    of $|X_\Adversary(G)|$; 
+    the supremum is taken over all strategies $\Adversary$.
+    Likewise, the grinding power of a uniform game is 
+    $g(U) \defeq \sup_\Adversary |X_\Adversary(U)|$. 
+    When $U$ is clear from the context, we write $g = g(U)$.
+\end{definition}
+In a uniform game $U$, the 
+a random initial string induces 
+a random grinding set $X$ of size at most $g(U)$. 
+The probability that this set contains a string in $T$ 
+is at most $|T| |X|/2^\kappa$. 
+Thus, $\alpha(U) \leq g(U) |T|/2^\kappa$. 
+
+
+Let $X_\Adversary$ be the grinding set of some strategy $\Adversary$ 
+playing a uniform game $U$. 
+(Recall that $X_\Adversary$ is a random variable.)
+% Let $g = g(U)$.
+Consider the random variable $I_\Adversary \in \{0,1\}^\kappa$ 
+with the probability mass function $p(x) \defeq \Pr[x \in X_\Adversary]$. 
+How large is the min-entropy of $I_\Adversary$? 
+
+
+\begin{lemma}\label{lemma:xor-game-minentropy}
+The min-entropy of $I_\Adversary$ is at least 
+$
+    \kappa - \log_2\,g(U)
+    % \,.
+$.
+\end{lemma}
+\begin{proof}
+Observe that 
+$
+    p(x) 
+    = {|X_\Adversary|/2^\kappa} 
+    \leq {\GrindingPower/2^\kappa}
+$ 
+since the elements in $|X_\Adversary|$ are uniformly random 
+and $|X_\Adversary| \leq \GrindingPower$ by definition.
+It follows that 
+$
+    H_\infty(I_\Adversary) 
+    = \min_x (-\log_2 p(x)) 
+    \geq -\log_2 (\GrindingPower/2^\kappa) 
+    = \kappa - \log_2(\GrindingPower)
+    % \,.
+$.
+\end{proof}
+It follows that the min-entropy of $I_\Adversary$ will be large  
+if the grinding power $g(U)$ is small. 
+% How large is $g(U)$? 
+It is not hard to see that $g(U)$ is at most 
+$\left(\prod_{i=1}^{\ell} |P_i|\right)
+\left(\prod_{i=1}^{n} (1 + |P_{\ell + i}|) \right)$. 
+% Can we do better? The answer is yes.
+The theorem below obtains a tighter bound on $g(U)$.
+
+\newcommand{\OneIf}[1]{\mathbf{1}_{#1}}
+\newcommand{\PiNotEmpty}[1][i]{\OneIf{P_{#1} \neq \emptyset}}
+\newcommand{\PiHasRandom}[1][i]{\OneIf{\star \in P_{#1}}}
+\begin{theorem}[Grinding power in a uniform game]
+    \label{thm:xor-game-lookahead}
+  Let $U = U(T; \Sfull; \Pfull )$ be a uniform game. 
+  Define $r_1, \ldots, r_{\ell + n} \in \{0,1\}$ as 
+  $r_i = 1$ if and only if $\star \in P_i$.
+  % Define the indicators $r_i= \Indicator_{\star \in P_i}, i \in [\ell + n]$.
+  Then $\alpha(U) \leq g \cdot|T|/2^\kappa$ where
+    \begin{align}\label{eq:xor-game-lookahead-gp}
+    g  
+    &= 
+    % \quad \prod_{i=1}^{\ell + n} (|P_i| - r_i) 
+    % \quad+\quad    \sum_{k=1}^\ell r_k \cdot
+    %     \left(  \prod_{i=k}^{\ell+k-1}     
+    %                                             |P_{i}|      \right)   
+    %     \left(  \prod_{i=\ell+k+1}^{\ell+n}     
+    %                                             \left(|P_i| - r_i \right)
+    %                                                                 \right)
+    %      \nonumber \\
+    % &\quad +    \sum_{k=\ell+1}^n r_k\cdot
+    %     \left(  \prod_{i=k}^{\ell+ k -1}        
+    %                                             |P_i|         \right)
+    %     \left(  \prod_{i=\ell+k+1}^{\ell + n}   
+    %                                             \left(|P_i| - r_i \right)
+    %                                                                 \right)
+    \prod_{i=1}^{\ell + n} (|P_i| - r_i) 
+    +\sum_{k=1}^n r_k \cdot
+        \left(  \prod_{i=k}^{\ell+k-1}     
+                                                |P_{i}|      \right)   
+        \left(  \prod_{i=\ell+k+1}^{\ell+n}     
+                                                \left(|P_i| - r_i \right)
+                                                                    \right)
+    \,,
+  \end{align}
+  with the convention that 
+  the $k$-th term in the first sum is zero if $k > \NumSets$, and
+  the second sum is empty if $\NumSets \leq \ell$.
+  % Here, $\OneIf{\mathsf{cond}}$ is $1$ if the condition $\mathsf{cond}$ is true, 
+  % and zero otherwise.
+\end{theorem}
+% We defer a proof for the moment. 
+% A central goal of this paper is to derive a threshold $\gamma$, 
+% as a function of relevant parameters, 
+% so that $\Pr[g \geq \gamma]$ falls below a given failure probability.
+% The following fact shows how this can be achieved via 
+% the moments of $g$.
+
+
+
+% \subsection{Grinding power determines the winning probability}
+
+
+\subsection{Proof of Theorem~\ref{thm:xor-game-lookahead}}
+
+% \begin{proof}[Proof of Theorem~\ref{thm:xor-game-lookahead}]
+
+    \newcommand{\Bfull}{b_1, \ldots, b_n}
+    \newcommand{\Bless}{b_2, \ldots, b_n}
+
+    % Consider a uniform game $U = U(T;\Sfull\,;\, \Pfull )$. 
+    % Our goal is to upper bound $\alpha(U)$. 
+
+    For the sake of notational clarity, define 
+    \[
+        \hat{P}_{\ell + i} \defeq  
+        \begin{dcases}
+            (P_{\ell + i} \setminus \{\star\}) \Union \{x_i\}\,
+                &\quad\text{if $\star \in P_{\ell + i}$}\,,
+            \\
+            P_{\ell + i} \,,
+                &\quad\text{otherwise}\,,
+        \end{dcases}
+    \]
+    where $x_i$ is the lookahead string associated with the option set $P_{\ell + i}, i \in [n]$. 
+    Note that $|\hat{P}_i| = |P_i|$.
+    % Finally, define $r_i \in \{0,1\}, i \in [\ell + n]$, $r_i = 1$ if and only if $\star \in P_i$.
+
+    Fix a random initial string $\eta_0$ 
+    and consider the explicit game $G \defeq G(\eta_0, T;\Sfull\,;\, \Pfull )$ 
+    associated with $U = U(T;\Sfull\,;\, \Pfull)$. 
+    Define
+    \begin{align*}
+        \Lambda(G) = \Lambda(U) 
+            &= \Lambda(T ; \Sfull\,;\, \Pfull) 
+            \defeq \{ \eta_0 \Given \alpha(G) = 1\}\,,
+        \\
+        \lambda(G) = \lambda(U) 
+            &= \lambda(T; \Sfull\,;\, \Pfull) 
+            \defeq \Pr_{\text{$\eta_0$ uniform}}[\eta_0 \in \Lambda(G)] 
+            = \frac{|\Lambda(G)|}{2^\kappa}\,,
+            % \text{and}
+        \\
+        \mu(G) = \mu(U)
+            &= \mu(T; \Sfull\,;\, \Pfull) 
+            \defeq \max_{\eta_0 \not\in \Lambda(G)}\, \alpha(G)\,.
+    \end{align*}
+    % Let $Q_i = \WithEmpty{P_i}$ if $P_i \neq \emptyset$ and $Q_i = \{r_i\}$ otherwise where 
+    % $r_i$ is a uniformly random string in $\{0,1\}^\kappa$.     
+    % \paragraph{\emph{Good} initial strings.}
+    Note that $\Lambda$ and $\lambda$ are completely determined by 
+    the option sets and the target set 
+    while $\mu$ depends on the random lookahead strings.
+    
+    We can think of $\lambda(G)$ as 
+    the probability of a certain win in the game $G$ 
+    where the uncertainty comes only from the randomness in $\eta_0$. 
+    The win is \emph{certain} since the player can win 
+    without ever relying on the $\star$ symbols in his option sets 
+    (i.e., the random lookahead strings produced by them).
+    If $\eta_0 \in \Lambda(G)$,
+    we say that \emph{$\eta_0$ is a good initial string} 
+    and in this case, $\alpha(G) = 1$. 
+    Let us record this fact.    
+    \begin{equation}\label{eq:eta-good}
+        \text{If $\eta_0$ is good, the player has 
+        a winning sequence of choices 
+        $s_i \in P_i \setminus \{\star\}, i \in [\ell + n]$.}
+    \end{equation}
+
+    If $\eta_0$ is not good, however, 
+    the winning probability $\alpha(G)$ is at most $\mu(G)$ by definition. 
+    By the law of total probability, 
+    \begin{align}\label{eq:alpha-lambda-mu-lookahead}
+        \alpha(U) 
+        = \Exp_{\eta_0} \alpha(G \Given \text{initial string $\eta_0$}) 
+        = \lambda(U)\cdot 1 + (1 - \lambda(U)) \cdot \mu(U) 
+        \leq \lambda(U) + \mu(U)\,.
+    \end{align}
+    Hence, to upper bound $\alpha(U)$, 
+    we need only to establish upper bounds on $\lambda(U)$ and $\mu(U)$. 
+    We do so via a recursive relation describing $\mu(U)$ and $\lambda(U)$ 
+    in terms of the options sets. 
+    We need to consider two mutually-exclusive cases; namely, 
+    whether $\eta_0$ is good for $G$.
+
+
+    \paragraph{Case: $\eta_0 \in \Lambda(U)$.}
+    % First, let us condition on the event that $\eta_0 \in \Lambda(G)$. 
+    In this case, 
+    there must be some $s \in P_1$ such that 
+    $(\eta_0 \oplus s) \in \Lambda(T; P_1, \ldots, P_{\ell+1}\,; \PP{2})$.
+    Since there are $|P_1|$ choices for $s \in P_1$, 
+    we can write
+    \[
+        \Lambda(T; \Sfull; \Pfull) \,\subset\, 
+        % P_1 \oplus \Lambda(T; \SS{2}, \WithLookahead{P_{\ell+1}}; \PP{2}\,;\, b^\prime)
+        P_1 \oplus \Lambda(T; \SS{2}, P_{\ell + 1} \setminus \{\star\}; \PP{2})
+        \,,
+    \]
+    where we drop any $\star \in P_{\ell + 1}$ due to~\eqref{eq:eta-good}. 
+    Consequently, 
+    \[
+        \lambda(T; \Sfull; \Pfull) 
+        \leq |P_1| \cdot \lambda(T;\, \SS{2}, P_{\ell + 1} \setminus \{\star\}\,;\, \PP{2})
+        \,.
+    \]
+    The base case of the above recursion would be
+    $
+        \lambda(T; \Sfull;\, \EmptyList; \EmptyList) = 
+            \prod_{i=1}^\ell |P_i| 
+    $ 
+    where we use $\EmptyList$ to denote an empty list. 
+    Note that the set $P_{\ell + i}$ 
+    yields $|P_{\ell + i}| - r_{\ell + i}$ choices.
+    By unrolling the recursive expression for $\lambda$, we conclude that
+    \begin{equation}\label{eq:lambda-expr-lookahead}
+        \lambda(T; \Sfull; \Pfull) 
+        \leq 
+            \left( \prod_{i=1}^\ell |P_i| \right) 
+            \left( \prod_{i=\ell + 1}^n (|P_i| - r_i)\right)
+            \frac{|T|}{2^\kappa}
+            \,.
+    \end{equation}
+    % The factor $(1 + |P_i|)$ above indicates that the player has 
+    % one additional option (namely, the all-zero string $\ZeroString$) 
+    % when choosing from the option set $P_{i}$ for $i \in [\ell + 1, \ell + n]$.
+    % The factors $(1 - b_j), j \in [n]$ makes the product vanish unless $b_1 = b_2 = \cdots = b_n = 1$. 
+    % This is consistent with 
+    % (i.) the desired situation that all lookahead strings must be $\ZeroString$, and 
+    % (ii.) the rule for lookahead string which states $x = \ZeroString$ if and only if $b_1 = 0$ 
+    % (cf. Definition~\ref{def:xor-game-lookahead}).
+
+    \paragraph{Case: $\eta_0 \not \in \Lambda(U)$.}
+    % We are conditioning on the event that $\eta_0 \not \in \Lambda(G)$. 
+    The player is now in a bad situation since 
+    no choice $s \in P_1$ leads to a \emph{certain win}.
+    Depending on $P_{\ell+1}$, 
+    there are two alternative situations for him.    
+   
+    If $\star \not \in P_{\ell + 1}$, 
+    the strings $\eta_0 \oplus s, s \in P_1$ 
+    cannot be good for the reduced game  
+    \[
+        \hat{G}_s \defeq G(\eta_0 \oplus s, T; P_2, \ldots, P_{\ell + 1}; \PP{2})
+        \,. 
+    \]
+    Here, we write $P_{\ell + 1}$ instead of $\hat{P}_{\ell + 1}$ 
+    to emphasize that $\star \not \in P_{\ell + 1}$. 
+    To see why, notice that if $\eta_0 \oplus s \in \Lambda(\hat{G}_s)$, 
+    then $\eta_0 \in \Lambda(U)$, a contradiction. 
+    Define 
+    \[
+        \mu_1 \defeq \mu(T; P_2, \ldots, P_\ell, P_{\ell + 1}; \PP{2}) = \max_{s \in P_1} \mu(\hat{G}_s)
+        \,.
+    \] 
+    Thus $\mu(U) = \mu_1$.
+
+
+    If $\star \in P_{\ell + 1}$, 
+    the player gets to see a random lookahead string $x$ 
+    before choosing an $s \in P_1$. 
+    Let
+    \[
+        G^\prime \defeq G(\eta_0 \oplus x, T;\,\SS{1}; \PP{2})
+        \quad\text{and}\quad
+        U^\prime \defeq U(T;\,\SS{1}; \PP{2})
+        \,.
+    \]
+    The choice of $s$ 
+    can be associated with two mutually-disjoint events. 
+    In the first event, 
+    the random string $\eta_0 \oplus x \in \Lambda(G^\prime)$. 
+    In this event, 
+    an optimal player will select $s = s^\prime$ in game $G$ 
+    where $s^\prime \in P_1$ is his choice in the game $G^\prime$. 
+    Since he is free to choose $x$ in a future round in $G$, 
+    this strategy yields a certain win in $G$.
+    On the other hand, 
+    suppose $\eta_0 \oplus x \not \in \Lambda(G^\prime)$. 
+    Then no matter which $s \in P_1$ he selects in $G$, 
+    his winning probability is at most 
+    \[
+        \mu^\prime \defeq \mu(T; \SS{2}, \hat{P}_{\ell + 1}; \PP{2})
+        \,. 
+    \]
+    All told, if $\star \in P_{\ell + 1}$, 
+    the winning probability is 
+    \[
+        \mu_2 \defeq \lambda(G^\prime)\cdot 1 + (1 - \lambda(G^\prime) \mu^\prime 
+        \leq \lambda(G^\prime) + \mu^\prime
+        \,.
+    \] 
+    
+    Using ~\eqref{eq:winning-prob}, we have 
+    % Recalling~\eqref{eq:winning-prob} and~\eqref{eq:winning-prob-uniform}, 
+    % we can write
+    \begin{align}
+        \mu(U)
+        &= \mu(T; \Sfull; \Pfull) \nonumber \\
+        &= \begin{dcases}
+            \mu(T\,;\,P_2, \ldots, P_{\ell+1} \,;\, \PP{2})\,,
+                &\quad\text{if $\star \not \in P_{\ell + 1}$}\,,
+                \\
+            \lambda(T\,;\,\SS{1}\,;\, \PP{2}) 
+            + \mu(T\,;\,\SS{2}, \hat{P}_{\ell + 1} \,;\, \PP{2})\,,
+                &\quad\text{otherwise}
+            \,,
+        \end{dcases} \nonumber \\
+        &\leq 
+            \lambda(T\,;\,\SS{1}\,;\, \PP{2}) 
+            + \mu(T\,;\,\SS{2}, \hat{P}_{\ell + 1} \,;\, \PP{2})
+            \label{eq:mu-U}
+    \end{align}
+    since $$
+    \mu(T\,;\,P_2, \ldots, P_{\ell+1} \,;\, \PP{2}) 
+    \leq 
+    \mu(T\,;\,\SS{2}, \hat{P}_{\ell + 1} \,;\, \PP{2})
+    \,.
+    $$
+    Since there is no randomness in an empty list of option sets, 
+    we have the base case 
+    $\mu(T; \Sfull; \EmptyList; \EmptyList) = 0$.
+    % $
+    %     \mu(U) = \max (\mu_1, \mu_2) 
+    %     \leq \mu_2 
+    %     \leq \lambda(G^\prime) + \mu^\prime
+    % $ 
+    % since $\mu^\prime \geq \mu_1$.
+    % Thus we have a recursive expression of $\mu(U)$: 
+    By expanding the above recursive expression~\eqref{eq:mu-U}, we get 
+    \begin{align*}
+        &\mu(T; \Sfull; \Pfull) \nonumber\\
+        &\qquad\leq    
+            \sum_{k=1}^\ell r_k\cdot \lambda(T\,;\,\SS{k}, \HatPP{\ell+1}{\ell+k-1} \,;\, \PP{k+1} )
+                \;+
+                \nonumber\\
+                &\qquad\quad 
+            \sum_{k=\ell + 1}^{\ell + n} r_k\cdot  \lambda(T\,;\,\HatPP{k}{\ell+k-1}\,;\, \PP{k+1})
+        \\
+        &\qquad =
+            \sum_{k=1}^\ell r_k\cdot
+                \left(  \prod_{i=k}^{\ell}     
+                                                        |P_{i}|      \right)   
+                \left(  \prod_{i=\ell + 1}^{\ell+k-1}     
+                                                        |\hat{P}_{i}|      \right)   
+                \left(  \prod_{i=\ell+k+1}^{\ell+n}     
+                                                        (|P_i| - r_i)
+                                                                            \right)
+                % \quad
+                + 
+                % \nonumber \\
+        % &\qquad\quad    
+        \sum_{k=\ell+1}^n r_k\cdot
+                \left(  \prod_{i=k}^{\ell+ k - 1}        
+                                                        |P_i|         \right)
+                \left(  \prod_{i=\ell+k+1}^{\ell + n}   
+                                                        (|P_i| - r_i)
+                                                                            \right)
+        % \nonumber \\
+        % &\qquad =
+        %     \sum_{k=1}^\ell r_k\cdot
+        %         \left(  \prod_{i=k}^{\ell+k-1}     
+        %                                                 |P_{i}|      \right)   
+        %         \left(  \prod_{i=\ell+k+1}^{\ell+n}     
+        %                                                 (|P_i| - r_i)
+        %                                                                     \right)
+        %         \quad+ \nonumber \\
+        % &\qquad\quad    \sum_{k=\ell+1}^n r_k\cdot
+        %         \left(  \prod_{i=k}^{\ell+ k - 1}        
+        %                                                 |P_i|         \right)
+        %         \left(  \prod_{i=\ell+k+1}^{\ell + n}   
+        %                                                 (|P_i| - r_i)
+        %                                                                     \right)
+        % \,.
+    \end{align*}
+    using~\eqref{eq:lambda-expr-lookahead}. 
+    (Note that the list $P_a, \ldots, P_b$ is empty if $a > b$.) 
+    Since $|\hat{P}_i| = |P_i|$, this simplifies to 
+    \begin{align}\label{eq:mu-expr-lookahead}
+        \mu(T; \Sfull; \Pfull)
+        &=
+            \sum_{k=1}^n r_k\cdot
+                \left(  \prod_{i=k}^{\ell+k-1}     
+                                                        |P_{i}|      \right)   
+                \left(  \prod_{i=\ell+k+1}^{\ell+n}     
+                                                        (|P_i| - r_i)
+                                                                            \right)
+        \,.
+    \end{align}
+    By convention, 
+    the $k$-th term in the first sum is zero if $k \geq n + 1$ and
+    the second sum is empty if $n \leq \ell$. 
+    The expression in~\eqref{eq:xor-game-lookahead-gp} follows by 
+    using the upper bounds~\eqref{eq:lambda-expr-lookahead} and~\eqref{eq:mu-expr-lookahead}
+    in the expression for $\alpha(G)$ in~\eqref{eq:alpha-lambda-mu-lookahead}.
+    \hfill$\qed$
+% \end{proof}
+
+
+
+
+% \subsection{An XOR target game with a limited foreknowledge}
+%     In the XOR target games described so far, the player knows 
+%     which option sets contain a $\star$. 
+%     But was that necessary for the bound in Theorem~\ref{thm:xor-game-lookahead}?
+%     Suppose we chanage the game so that now, 
+%     the sets $P_{\ell + i}, i \in [n]$ may contain a $\star$ 
+%     but it will be invisible to the player. 
+%     If $P_{\ell + 1}$ contains a $\star$, 
+%     the environment will reveal a random lookahead string $x$; 
+%     otherwise, he will be told that there is no lookahead string. 
+%     Next, he will select an $s \in P_1$ and the game will proceed as usual. 
+%     What is his winning probability in a uniform game with these rules? 
+
+%     The expression for $\lambda(U)$ would stay the same since 
+%     it did not rely on the random lookahead strings. 
+%     When $\eta_0 \not \in \Lambda(U)$ \emph{and} 
+%     $\star \not \in P_{\ell + 1}$, 
+%     the expression $\mu(U) = \mu_1$ still holds 
+%     since the player has a complete information about $P_{\ell + 1}$. 
+%     When $\eta_0 \not \in \Lambda(U)$ \emph{and} 
+%     $\star \in P_{\ell + 1}$, 
+%     the reasoning is identical in the above proof for two observations. 
+%     First, checking whether $\eta_0 \oplus x$ is good for the game $G^\prime$ 
+%     does not require any foreknowledge of the $\star$s 
+%     since $\Lambda(G^\prime)$ is agnostic of the $\star$s in the option set.
+%     Second, once $x$ is revealed, 
+%     it is available for use in the description of $\mu(G^\prime)$. 
+%     Therefore, the foreknowledge about the $\star$ was not necessary after all.
+
+%     Next, consider what happens if we modify the options sets $P_i$ as follows. 
+%     For $i \in [\ell + n]$, define 
+%     \[
+%         P^\prime_{i} \defeq
+%         \begin{cases}
+%             P_{i}\,,
+%                 &\quad\text{if $i \leq \ell$ or $P_{i}$ contains $\star$}\,, \\
+%             P_{i} \Union \{\star\}\,,
+%                 &\quad\text{otherwise}\,.
+%         \end{cases}
+%     \]
+%     Thus $|P^\prime_i| \geq |P_i|$. 
+%     For a fixed random $\eta_0$, let 
+%     $G = G(\eta_0, T; P_1, \ldots, P_\ell; P_{\ell + 1}, \ldots, P_{\ell + n})$ and 
+%     $G^\prime = G(\eta_0, T; P^\prime_1, \ldots, P^\prime_\ell; P^\prime_{\ell + 1}, \ldots, P^\prime_{\ell + n})$. 
+%     Assume that when $P_i$ contains a $\star$, 
+%     the $\star$ is converted to the same random lookahead string $x$ in both games.
+%     How does $\alpha(G)$ compare to $\alpha(G^\prime)$? 
+%     First, observe that if $\eta_0$ is good for $G$, it is good for $G^\prime$ as well.
+%     In addition, an optimal player $\Adversary^\prime$ playing $G^\prime$ will have, at all times, 
+%     at least as many winning moves as an optimal player $\Adversary$ for $G$. 
+%     Thus $\alpha(U) \leq \alpha(U^\prime)$.
+
+
+
+
+
+
+
+
+
+
+\subsection{Option sets of any size\texorpdfstring{; the $(\ell, n, \Distribution)$-game}{}}
+    Next, let us consider a uniform XOR target game where we stipulate that 
+    the \emph{size} of the option sets are i.i.d. random variables, 
+    at least one of the option sets $\Pfull$ contain nothing but a $\star$, 
+    and a large number of non-empty option sets contain a $\star$. 
+
+    \begin{definition}[$(\ell, n, \Distribution)$-game]
+        \label{def:adaptive-game}
+        Let $\ell, n\in \NN$. 
+        Let $\Distribution$ be an arbitrary distribution on non-negative integers. 
+        Let $S$ be a random variable with distribution $\Distribution$.
+        Let $U = U(T; \Sfull; \Pfull )$ be a uniform XOR target game where 
+        the size of each option set is an independent copy of $1 + S$. 
+        Then $U$ is an \emph{$(\ell, n, \Distribution)$-game}.
+    \end{definition}
+
+    \begin{lemma}
+        % [Moment bound for the grinding power in the $(\ell, n, \Distribution)$-game]
+        % \label{lemma:xor-game-lookahead-moment} 
+        \label{lemma:adaptive-moment}
+        % Let $m \in [n]$.
+        % Let $U$ be an $(\ell, n, \Distribution)$-game where 
+        % $
+        %     |\{ i \SuchThat 
+        %     % {\color{red}P_{\ell + i} \neq \emptyset} \text{ and } 
+        %     \star \not \in P_{\ell + i} \}| 
+        %     \leq m
+        %     % \,.
+        % $.
+        Let $S$ be a non-negative integer random variable with distribution $\Distribution$ 
+        and let $\lambda$ be a positive real such that 
+        \begin{equation}\label{eq:lambda-S-requirement}
+            \Pr[S \geq 1]\,\Exp (1 + S)^\lambda \leq 1  
+            \,.
+        \end{equation}
+        Let $U$ be an $(\ell, n, \Distribution)$-game.
+        Let $g$ be the grinding power of $U$. 
+        Let $A$ be the event that 
+        at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$; 
+        {\color{red}condition on $A$.}
+        Then 
+        $$
+            \Exp[g^\lambda \mid A] \leq 
+                % % \left(n t^{n + \ell - 1}\right)^\lambda
+                % n^\lambda
+                % \left(\Exp (1 + S)^\lambda\right)^{\ell + m}                 
+                % n^{1 + \lambda}
+                % \left(\Exp (1 + S)^\lambda\right)^{\ell}        
+                \frac{n^{1 + \lambda} \left(\Exp (1 + S)^\lambda\right)^{\ell}}{1 + \Pr[S \geq 1]}            
+                \,.
+        $$
+    \end{lemma}
+
+    \begin{proof}
+        Since $U$ is an $(\ell, n, \Distribution)$-game, 
+        the size of each option set in $U$ is an independent copy of $1 + S$.
+        % Let $C_i, i \in [n]$ be the event $P_{\ell + i} = \{\star \}$. 
+        Let us define 
+        $$\beta \defeq \Pr[P_{\ell + 1} = \{\star \}]
+        \quad\text{and}\quad
+        H \defeq \max \{i : i \in [n], P_{\ell + i} = \{\star \}\}
+        \,.
+        $$
+        Thus $\beta = \Pr[S = 0]$. 
+        Note that $H$ is well-defined since we have conditioned on $A$. 
+        Since the option sets are independent, 
+        it follows that 
+        $\Pr[H = h] = \beta (1 - \beta)^{n - h}$ for $h \in [n]$. 
+        Define the random variables $r_i \in \{0,1\}, i \in [\ell + n]$ 
+        as $r_i = 1$ if and only if $\star \in P_i$. 
+        % By assumption, at most $m$ of the $r_i$s are zero.
+
+
+        Let $h \in [n]$ and 
+        let $A_h$ denote the event that $H = h$, i.e., 
+        $P_{\ell + h} = \{\star\}$ and $P_{\ell + h + i} \neq \{\star\}, i \geq 1$; 
+        this means $|P_{\ell +h}| = r_{\ell + h} = 1$. 
+        Condition on $A_h$. 
+        % (Since we have already conditioned on $A$, it follows that $H \in [n]$.)        
+        Examining~\eqref{eq:xor-game-lookahead-gp}, 
+        the leading product 
+        % $\prod_{i=1}^{\ell + n} (|P_i| - r_{\ell +i})$     
+        as well as the additive terms corresponding to $k \in [h - 1]$ vanish. 
+        Therefore, conditioned on $A_h$, the grinding power is
+        \begin{align}
+            g_h 
+            &= \sum_{k=h}^{n }
+               r_k \, 
+               \left(\prod_{i=k}^{\ell+k-1}|P_i| \right) 
+               \left(\prod_{i=\ell+k+1}^{\ell+n} (|P_i| - r_i) \right) \nonumber \\
+            &= (1 + S)^\ell\,
+               \sum_{k=h}^{n }
+               r_k\,  
+               \left(\prod_{i=\ell+k+1}^{\ell+n} (1 + S - r_i) \right) \label{eq:ell-n-d-game-bound-gh}\\
+            % &\leq (1 + S)^\ell\,
+            %    \sum_{k=h}^{n}
+            %    r_k\,
+            %    (1 + S)^{m} 
+            %    S^{n - k - m} 
+            % \leq (1 + S)^{\ell + m}\,
+            %    (n - h + 1)
+            %    S^{n - 1 - m} 
+            &\leq (1 + S)^\ell \cdot
+               (n - h + 1)
+               (1 + S)^{n - h} 
+            \leq n (1 + S)^{\ell + n - h}
+            % \,
+        \end{align}
+        using 
+        % the definition of $m$ and 
+        the fact that each $|P_i|$ is an independent copy of $S$. 
+        (Note that we have used the trivial upper bound $r_k \leq 1$ for $k > \ell + h$  
+        although a more refined analysis could take 
+        the cases $r_k = 0$ into account.)
+
+        It follows that
+        $
+            \Exp [g_h^\lambda \mid A_h]
+            \leq 
+                n^\lambda\, 
+                \left(\Exp (1 + S)^\lambda\right)^{\ell + n - h} 
+        $ 
+        since 
+        % $h \geq 1$ and, by assumption, $\Exp S^\lambda \leq 1$ 
+        % and 
+        the quantities $|P_{i}|$ in the game $U$ are independent. 
+        Since $\Pr[A] = 1 - (1 - \beta)^n$, we have 
+        \begin{align*}
+            \Exp [g^\lambda \mid A]
+                &=
+                \sum_{h = 1}^n \Pr[A_h \mid A] 
+                    \Exp [g_h^\lambda \mid A_h] 
+                =
+                \sum_{h = 1}^n 
+                    \frac{\beta (1 - \beta)^{n-h}}{1 - (1 - \beta)^n}\,
+                    \Exp [g_h^\lambda \mid A_h] \\
+                &\leq 
+                    \frac{\beta n^\lambda
+                    \left(\Exp (1 + S)^\lambda\right)^{\ell}}{1 - (1 - \beta)^n}                     
+                    \sum_{h=1}^n 
+                    \left( (1 - \beta) \Exp (1 + S)^\lambda \right)^{n-h}
+                \,.
+        \end{align*}
+        However, 
+        since $\Pr[S \geq 1] = 1 - \Pr[S = 0] = 1 - \beta$, 
+        $(1 - \beta) \Exp (1 + S)^\lambda$ is at most $1$ by assumption. 
+        Moreover, for any fixed $\beta \in (0,1)$, 
+        the function $\beta/(1 - (1 - \beta)^n)$ decreases as $n$ increases; 
+        it follows that 
+        $\beta/(1 - (1 - \beta)^n) \leq \beta/(1 - (1 - \beta)^2) = 1/(2 - \beta)$. 
+        Therefore, 
+        \begin{align*}
+            \Exp [g^\lambda \mid A]
+            &\leq 
+            \frac{n^{1 + \lambda}}{2 - \beta}
+            \left(\Exp (1 + S)^\lambda\right)^{\ell}
+            = 
+            \frac{n^{1 + \lambda} \left(\Exp (1 + S)^\lambda\right)^{\ell}}{1 + \Pr[S \geq 1]}            
+            % \leq 
+            % n^{1 + \lambda}
+            % \left(\Exp (1 + S)^\lambda\right)^{\ell}
+            \,.
+        \end{align*}
+
+    \end{proof}
+
+%
+    % We remark that 
+    % if the assumption $|P_i| = 1 + S$ 
+    % is substituted with 
+    % $|P_i| = 1 + t S$ for some real $t \geq 1$ 
+    % then 
+    % the right-hand side above blows up by a factor of $t^{n + \ell - 1}$.
+
+
+    % \begin{proposition}\label{prop:poisson-moment}
+    %     Let $\alpha \in (0, 1/2)$ and 
+    %     let $S \sim \Poisson(\alpha)$. 
+    %     Let 
+    %     \begin{equation}\label{eq:lambda-star-poisson}
+    %         \lambda = \begin{cases}
+    %             2 &\quad\text{if\quad $\alpha \in (0, 0.47]$, }\\
+    %             1.875 &\quad\text{if\quad $\alpha \in (0.47, 0.5)$.}
+    %         \end{cases}
+    %     \end{equation}
+    %     Then 
+    %     \begin{equation}\label{eq:moment-one-plus-poisson}
+    %         \Exp (1 + S)^\lambda \leq \begin{cases}
+    %             1 + 3.5 \alpha &\quad\text{if\quad $\alpha \in (0, 0.47]$, }\\
+    %             0.82 + 3.42 \alpha &\quad\text{if\quad $\alpha \in (0.47, 0.5)$.}
+    %         \end{cases}        
+    %     \end{equation}
+    %     In particular, $$\Pr[S \geq 1] \cdot \Exp (1 + S)^\lambda \leq 1\,.$$
+    % \end{proposition}
+    % \begin{proof}
+    %     Since $S$ is a Poisson random variable with mean $\alpha$, 
+    %     $\Pr[S = 0] = e^{-\alpha}$ and hence $\Pr[S \geq 1] = 1 - e^{-\alpha}$. 
+    %     In addition, it is a known fact that $\Exp S^2 = \alpha(1 + \alpha)$.
+    %     Thus $\Exp (1+S)^2 = 1 + 2 \alpha + \alpha(1 + \alpha) = 1 + 3\alpha + \alpha^2 \leq 1 + 7\alpha/2$ 
+    %     as $\alpha < 1/2$. 
+    %     Let $m(\alpha) = 1 + 7\alpha/2$ and $n(\alpha) = 1/(1 - e^{-\alpha})$.
+    %     Let $\alpha^*$ be the solution to the equation $m(\alpha) = n(\alpha)$. 
+    %     Note that $m$ and $n$ are monotone increasing and decreasing in $\alpha$, respectively. 
+    %     In addition, $1 = m(0) < n(0) = \infty$ and $11/4 = m(1/2) > n(1/2) = 2.5415$. 
+    %     Hence there is a single $\alpha \in (0, 1/2)$ so that $m(\alpha) = n(\alpha)$. 
+    %     It suffices to check that $m(0.47) = 2.645 < n(0.47) \approx 2.667$. 
+    %     Hence for all $\alpha \in (0, 0.47], m(\alpha) < n(\alpha)$ or, 
+    %     equivalently, $\Pr[S \geq 1]\, \Exp(1+S)^2 \leq 1$.
+
+    %     Now suppose $\alpha \in (0.47, 1/2)$ and $\lambda \in (1, 2)$. 
+    %     Define $f_\lambda(\alpha) = \Exp (1 + S)^\lambda = \sum_{k \geq 0} T_k$, where 
+    %     \begin{align*}
+    %         T_k &= (1 + k)^\lambda \cdot e^{-\alpha} \alpha^k/k!
+    %         \,.
+    %     \end{align*} 
+    %     Notice that $f_\lambda(\alpha)$ is convex and increasing in both $\alpha$ and $\lambda$. 
+    %     (In particular, $T_k$  is convex and increasing since 
+    %     the map $\alpha \mapsto \alpha^k$ is convex and increasing for positive $k$, 
+    %     and the map $c \mapsto c^\lambda$ is convex and increasing for $\lambda \geq 1$ and $c \geq 1$.)
+
+    %     Define $r_k = T_{k+1}/T_k$ so that 
+    %     $$
+    %         r_k = \frac{\alpha}{1+k} \left(\frac{2 + k}{1 + k}\right)^\lambda
+    %         \,.
+    %     $$ 
+    %     For a fixed $\alpha$ and $\lambda$, observe that 
+    %     $$\frac{r_k}{r_{k+1}} 
+    %     = \frac{2 + k}{1 + k} \left(\frac{(2 + k)^2}{(1+k)(3 + k)} \right)^\lambda
+    %     = \frac{2 + k}{1 + k} \left(\frac{4 + 4k + k^2}{3 + 4k + k^2} \right)^\lambda
+    %     > 1
+    %     \,.
+    %     $$
+    %     Therefore, $r_k > r_{k+i}$ for all $i = 1, 2, \ldots$\ .
+    %     It follows that for any $K \in \NN$, 
+    %     $$
+    %         F_\lambda(\alpha, \lambda; K) 
+    %         \triangleq \sum_{k = 0}^{K-1} T_k + \frac{T_K}{1 - r_K} 
+    %         \geq f_\lambda(\alpha)
+    %     $$
+    %     and, in addition, that $F_\lambda(0.5, \lambda; K) \geq f_\lambda(\alpha)$ for any $\alpha \in (0.47, 1/2)$.
+    %     % Since the terms in the sum-expression of $f_\lamnda(\alpha)$ decays quickly (in $k$), 
+    %     % it suffices to take $K = 3$. 
+    %     Furthermore, since $f_\lambda(\alpha)$ is convex and increasing in $\alpha$,  
+    %     the straight line segment $L(\alpha)$ connecting the points 
+    %     $$
+    %     a(\lambda) = \left(0.47, F_\lambda(0.47; K) \right)
+    %     \quad\text{and}\quad
+    %     b(\lambda) = \left(0.5, F_\lambda(0.5; K) \right)
+    %     $$ is an upper bound on $F_\lambda(\alpha; K)$. 
+
+        
+    %     For a given $K$, one can optimize for $\lambda$ that minimizes the gap $n(0.5) - F(0.5, \lambda; K)$. 
+    %     However, we take a more relaxed approach and simply observe that 
+    %     using $\lambda = 15/8$ is good enough. 
+    %     In particular, 
+    %     using $K = 3$ and $\lambda = 15/8 = 2.875$, we can directly calculate 
+    %     $$
+    %     F_\lambda(0.47, 1.875; 3) = 2.42118
+    %     \quad\text{and}\quad
+    %     F_\lambda(0.5; 1.875) = 2.52358 < n(0.5)
+    %     $$
+    %     where, recall, that $n(\alpha) = 1/(1 - e^{-\alpha})$. 
+    %     Thus the line segment joining the points $a(1.875)$ and $b(1.875)$ 
+    %     is given by 
+    %     $$L(\alpha) 
+    %     = a(1.875) + (b(1.875) - a(1.875))\cdot (\alpha - 0.47)
+    %     = 2.43 + 3.42 (\alpha - 0.47)
+    %     = 0.82 + 3.42 \alpha.
+    %     $$
+    %     It suffices to check that $L(0.47) > F_\lambda(0.47, 1.875; 3)$ and 
+    %     $L(0.5) > F_\lambda(0.5, 1.875; 3)$.
+    % \end{proof}
+%
+
+
+    \begin{definition}[$(\ell, n, \alpha)$-game]\label{def:xor-game-poisson}
+        Let $\ell, n, m \in \NN, \alpha \in (0, 1/2)$ and 
+        $\sigma \in \RR^m$ so that $\sigma_i \in (0, 1)$ and $\sum_{i=1}^m \sigma_i = \alpha$. 
+        Let $X_1, \ldots, X_m \in \{0,1\}$ be independent Bernoulli random variables with 
+        $\Pr[X_i = 1] = \sigma_i$. 
+        Define $S = \sum_{i = 1}^m X_i$ 
+        and let $\Distribution$ be the distribution of $S$.
+        Then an $(\ell, n, \Distribution)$-game is called an 
+        \emph{$(\ell, n, \alpha)$-game}.
+    \end{definition}
+
+
+    \begin{theorem}\label{thm:xor-game-private-election}
+        Let $\ell, n \in \NN, n \geq 2$ and $\alpha \in (0, 1/2)$. 
+        Let
+        \begin{equation}\label{eq:lambda-star-poisson}
+            \lambda = \begin{cases}
+                2 & \quad\text{if $\alpha \leq 0.41$\,,}\\
+                \frac{2 \ln(1/\alpha)}{\ln(1+3\alpha+\alpha^2)} &\quad\text{otherwise\,.}
+            \end{cases}
+        \end{equation}
+        Let $U$ be an $(\ell, n, \alpha)$-game with grinding power $g$. 
+        Let $A$ be the event that 
+        at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$; 
+        condition on $A$. 
+        Then 
+        $$
+            \Exp[g^\lambda \mid A] 
+            \leq \frac{n^{1 + \lambda} }{1+\alpha} 
+            \cdot \begin{cases}
+                (1 + 3 \alpha + \alpha^2)^{\ell} &\quad\text{if $\alpha \leq 0.41$\,,} \\
+                (1/\alpha)^\ell &\quad\text{otherwise\,.}
+            \end{cases}
+            \,.
+        $$
+        % \begin{align*}
+        %     \Exp[g^2 \mid A] &\leq n^3 \cdot 
+        %         (1 + 3 \alpha + \alpha^2)^\ell 
+        %         &\qquad\text{if\quad $\alpha \in (0, 0.41]$, }\\
+        %     \Exp[g^{1.37} \mid A] &\leq n^{2.37} \cdot 
+        %         (1 + 3 \alpha + \alpha^2)^{0.685 \ell }
+        %         &\qquad\text{if\quad $\alpha \in (0.41, 0.5)$}
+        %         \,.
+        % \end{align*}
+    \end{theorem}
+    We postpone a proof for the moment.
+
+
+
+    \begin{lemma}\label{lemma:xor-game-poisson-gamma}
+        Let $\EpsP \in (0, 1), \alpha \in (0, 1/2), \ell, n \in \NN$ and $n \geq \ell$. 
+        Let $\lambda$ be defined in~\eqref{eq:lambda-star-poisson}.
+        Let 
+        \begin{equation}
+            \label{eq:xor-poisson-tail-gamma}
+            % \gamma = (1 + 3 \alpha + \alpha^2)^{\ell/2} \cdot \begin{dcases}            
+            %     n^{1.50} \EpsP^{-0.50} \,,&\quad\text{if}\quad\alpha \in (0, 0.41]\,, \\
+            %     n^{1.73} \EpsP^{-0.73} \,,  &\quad\text{if}\quad\alpha \in (0.41, 0.50)\,.
+            % \end{dcases}
+            \gamma = \left(\frac{n^{1 + \lambda} }{ (1+\alpha) \EpsP} \right)^{1/\lambda}
+                \cdot \begin{cases}
+                    (1 + 3 \alpha + \alpha^2)^{\ell/\lambda} &\quad\text{if $\alpha \leq 0.41$\,,} \\
+                    (1/\alpha)^{\ell/\lambda} &\quad\text{otherwise\,.}
+                \end{cases}
+        \end{equation}
+        % and $\beta = 5/(12 - 14 \alpha)$.
+        Let $g$ be the grinding power in an $(\ell, n, \alpha)$-game. 
+        Then $\Pr[g \geq \gamma] \leq \alpha^n + \EpsP$.
+    \end{lemma}
+    \begin{proof}
+        Let $g$ be the grinding power of an $(\ell, n, \alpha)$-game $U$.
+        Let $A$ be the event that 
+        at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$. 
+        Recall the random variable $S$ from Definition~\ref{def:xor-game-poisson}. 
+        Recall that in the proof of Theorem~\ref{thm:xor-game-private-election}, 
+        we established that $\Pr[S \geq 1] \leq \alpha$. 
+        It follows that $\Pr[\overline{A}] = (\Pr[S \geq 1])^n \leq \alpha^n$. 
+        Thus, for any non-negative real $\gamma$, 
+        we have 
+        $
+        \Pr[g \geq \gamma] 
+        \leq 1 \cdot \Pr[\overline{A}] + \Pr[g \geq \gamma \mid A] \cdot 1
+        = \alpha^n + \Pr[g \geq \gamma \mid A]
+        $. 
+        The rest of the proof focuses on finding a $\gamma$ so that 
+        for a given $\EpsP$, 
+        $\Pr[g \geq \gamma \mid A]$ is at most $\EpsP$. 
+
+        The bound in~\eqref{eq:xor-poisson-tail-gamma} follows from 
+        Theorem~\ref{thm:xor-game-private-election} and the following fact.
+
+        \begin{fact}\label{fact:grinding-max}
+            Let $\GrindingPower$ be an arbitrary non-negative random variable, 
+            $\EpsP \in (0, 1)$ and 
+            $\GrindingMax, \lambda$ be arbitrary positive reals. 
+            If $
+            % \begin{equation}\label{eq:grinding-max}
+                \GrindingMax \geq \left( \Exp[g^\lambda]/\EpsP \right)^{1/\lambda}
+            % \end{equation}
+            $
+            then $\Pr[\GrindingPower \geq \GrindingMax] \leq \EpsP$.    
+        \end{fact}
+        \begin{proof}
+            We can use Markov's inequality to write 
+            $
+            % \begin{equation}\label{eq:grinding-markov}
+                \Pr[\GrindingPower \geq \GrindingMax] \leq \Exp[\GrindingPower^\lambda]/\GrindingMax^\lambda
+            $.
+            % \end{equation}
+            If we require $\Pr[\GrindingPower \geq \GrindingMax] \leq \EpsP$, 
+            it suffices to require 
+            $\Exp[\GrindingPower^\lambda]/\GrindingMax^\lambda \leq \EpsP$, or
+            $\GrindingMax^\lambda \geq \Exp[\GrindingPower^\lambda]/\EpsP$. 
+            Taking the $\lambda$th root gives the lower bound on $\gamma$.
+        \end{proof}
+        This completes the proof of Lemma~\ref{lemma:xor-game-poisson-gamma}.
+    \end{proof}
+
+
+    \paragraph{Proof of Theorem~\ref{thm:xor-game-private-election}.}
+    % \begin{proof}
+        % First, note that 
+        % $\ln(\Pr[S \geq 0]) 
+        % = \ln\left(\prod_{i = 1}^m (1 - \sigma_i) \right) 
+        % = \sum_{i = 1}^m \ln (1 - \sigma_i)$. 
+        % Since the function $x \mapsto \ln(1 -x)$ is concave and super-additive for $x \in (0, 1)$, 
+        % it follows that $\ln(\Pr[S \geq 0]) \geq \ln (1 - \sum_i \sigma_i) = \ln (1 - \alpha)$. 
+        % Since logarithm is a monotone function, $\Pr[S \geq 0] \geq 1 - \alpha$ and, 
+        % consequently, $$\Pr[S \geq 1] \leq \alpha\,.$$
+        Recall the definition of an $(\ell, n, \alpha)$-game from Definition~\ref{def:xor-game-poisson}
+        and 
+        the random variable $S$ therein. 
+        By Markov's inequality,
+        $$
+            \Pr[S \geq 1] \leq \frac{\Exp S}{1} = \alpha \,.
+        $$
+
+        \paragraph{Case: $\alpha \in (0, 0.41]$.}
+        Let $X'_i \in \{0,1\}, i \in [m]$ be i.i.d. Bernoulli random variables 
+        with $\Pr[X'_i] = \alpha/m$. 
+        Define $S' = \sum_{i=1}^m X'_i$ 
+        so that $S'\sim \Binomial(m, \alpha/m)$. 
+        Fact~\ref{fact:second-moment-equal-unequal-stake} states that 
+        $\Exp S^2 \leq \Exp {S'}^2 \leq \alpha + \alpha^2$. 
+        Since $\Exp S = \alpha$, it follows that 
+        $$
+        \Exp (1 + S)^2 
+        \leq 1 + 2 \Exp S + \Exp S^2
+        \leq 1 + 3 \alpha + \alpha^2
+        \,.
+        $$
+        Since $\alpha < 1/2$, the quantity 
+        $\Pr[S \geq 1] \cdot \Exp (1 + S)^2$ is at most $\alpha\cdot (1 + 3.5 \alpha)$. 
+        This quantity is convex and increasing in $\alpha$. 
+        The unique solution to the quadratic equation $3.5 \alpha^2 + \alpha - 1 = 0$ 
+        for $\alpha \in (0, 1/2)$ 
+        is $\alpha = (-1 + \sqrt{1 + 14})/7 = 0.4104$. 
+        Therefore, for any $\alpha \leq 0.41$, 
+        the random variable $S$ satisfies~\eqref{eq:lambda-S-requirement} 
+        with $\lambda = 2$.
+        By Lemma~\ref{lemma:adaptive-moment}, we conclude that 
+        $\Exp[g^2 \mid A] \leq n^3 (1 + 3 \alpha + \alpha^2)^\ell$ 
+        for $\alpha \in (0, 0.41]$.
+        
+        \paragraph{Case: $\alpha \in (0.41, 0.5)$.}
+        In this case, we use Holder's inequality for any $\lambda \in (1,2)$ 
+        and observe that 
+        $$
+            \Exp (1+S)^\lambda 
+            \leq \left( \Exp (1+S)^2 \right)^{\lambda/2} 
+            = (1 + 3\alpha +\alpha^2)^{\lambda/2}
+            \,.
+        $$
+        Recalling~\eqref{eq:lambda-S-requirement}, 
+        we want to find the maximal $\lambda \in (1, 2)$ 
+        which satisfies $\alpha(1 + 3\alpha +\alpha^2)^{\lambda/2} \leq 1$ or, 
+        equivalently, setting $\lambda$ as in~\eqref{eq:lambda-star-poisson}. 
+        Note that this implies $\Exp (1+S)^\lambda \leq 1 + 3\alpha +\alpha^2)^{\lambda/2} \leq 1/\alpha$.
+        The claim follows from applying Lemma~\ref{lemma:adaptive-moment} 
+        with $\lambda$ from~\eqref{eq:lambda-star-poisson}. 
+        % Since the quantity at the right-hand side increases monotonically in $\alpha$, 
+        % it suffices to use $\alpha = 1/2$; that is, 
+        % $$
+        %     \lambda 
+        %     \leq \frac{2 \log_2(1/\alpha)}{\log_2(1 + 3\alpha +\alpha^2)}
+        %     \leq \frac{2}{\log_2(1 + 3/2 + 1/4)}
+        %     < 1.37
+        %     \,.
+        % $$
+
+        % Let $\lambda \in (1, 2)$ and $\alpha \in (0.41, 0.5)$. 
+        % Define 
+        % $$f(\lambda) = \Exp (1 + S)^\lambda
+        % \quad \text{and} \quad
+        % h(\lambda) = \Exp (1 + S')^\lambda
+        % $$
+        % and note that since $S, S'$ are non-negative, 
+        % both $f$ and $h$ are convex combinations of 
+        % convex and increasing functions in $\lambda$; 
+        % hence both $f(\lambda), h(\lambda)$ are convex and increasing in $\lambda$. 
+        % Moreover, $f(1) = h(1) = \alpha$ and $f(2) \leq h(2) = \alpha + \alpha^2$. 
+        % It follows that $f(\lambda) \leq h(\lambda)$ for $\lambda \in (1, 2]$ or, 
+        % equivalently, $\Exp (1 + S)^\lambda \leq \Exp (1 + S')^\lambda$.
+
+        % It is a known fact (and easy to check) that $\Binomial(m, \alpha/m) \DominatedBy \Poisson(\alpha)$. 
+        % Let $P \sim \Poisson(\alpha)$ and note that $S' \sim \Binomial(m, \alpha/m)$. 
+        % Hence $$\Exp (1 + S)^\lambda \leq \Exp (1 + P)^\lambda\,.$$ 
+    \hfill\qed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

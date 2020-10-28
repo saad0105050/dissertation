@@ -1,0 +1,60 @@
+
+\paragraph{Randomness beacons.}
+The concept of the randomness beacon was introduced by \citet{rabin-beacon} in his seminal paper 
+``Transaction Protection by Beacons'' although in that paper, the beacon was in the hand of a trusted party.
+In the same year, 
+% This paper came in the same year as the ``Coin Flipping by Telephone'' paper by 
+\citet{blum-coin-flipping} showed how to do ``coin flipping by telephone,'' i.e., 
+how two parties can agree on a shared random string by sending messages over a network. 
+Randomness beacons have evolved quite a bit since then. 
+Some beacons are stand-alone and many, as we mentioned before, exist inside other protocols. 
+Some are based on publicly-verifiable secret sharing (PVSS) schemes [SCRAPE, Hydrand, Ouroboros, RandHerd], 
+threshold signature schemes [Cachin-Shoup, DFinity],  
+Verifiable Random Functions (VRF) [Ouroboros Praos, Snow White, Algorand], 
+or cryptographic hash functions [PoW]. 
+Compared to other constructions, the VRF- and hash-based ones are simpler to describe and has 
+more efficient computation/verification schemes. 
+
+
+\paragraph{Grinding attack and the $q$-bounded security model.}
+Consider a proof-of-stake (PoS) blockchain protocol. 
+In every period, designated players (called \emph{leaders}) in a PoS protocol 
+are supposed to contribute a random nonce to compute the beacon value for the next period. 
+The nonce is typically a verifiable output from a random oracle.
+Unlike the proof-of-work (PoW) model, however, no direct cost is associated with querying the random oracle in the PoS model. 
+No one is stopping a malicious player from trying different nonces over and over again 
+---as if grinding the crank in a coffee machine---and finally submitting the one nonce he likes. 
+This is the so called \emph{grinding attack}, where the goal of the malicious player is to 
+non-negligibly increase the probability that a leader of his choice is elected in the next period. 
+
+\paragraph{Ethereum's VDF beacon.} 
+The blockchain Ehtereum plans to implement a randomness beacon using Verifiable Delay Functions (VDF) 
+(cf. the blog post \cite{ethereum-vdf-beacon}). 
+The beacon outputs are the epoch-nonces $r_i$ for $i = 1, 2, \ldots$. 
+Every block in $\Epoch_i$ contains a block-nonce. 
+Let $\eta$ be the exclusive-OR of all block-nonces from $\Epoch_i$.
+The beacon output corresponding to this epoch is $r_i = D(\eta)$ 
+where $D$ is a function which guarantees a minimum computation time. 
+Here, it is assumed that the adversary would take at least one epoch to perform a single evaluation 
+of $D$ whereas it would take at most $A$ epochs for an ordinary player. 
+In addition, it is assumed that at at (or after) $\Epoch_{i + A}$, some player 
+would altruistically announce the evaluation $r_i = D(\eta)$ along with a proof for easy verification. 
+Every honest slot leader in $\Epoch_{i + A}$ is supposed to 
+include this announcement in his block. 
+The epoch-randomness for the $\Epoch_k$ is set as $r_{k - N}$ where $N$ is a protocol parameter.
+
+A desirable feature of this beacon is that it is unbiasable 
+since in $\Epoch_i$, 
+by the time the adversary evaluates a single $D(\eta)$ (i.e., one epoch), 
+the future epoch-nonce $r_i$ is already settled. 
+This beacon is ungrindable (in our parlance, the  grinding power is just one.) 
+On the other hand, 
+(i.) it makes a computational assumption on the adversary, 
+e.g., how fast can he compute some function. 
+At present, the community thinks $A = 10$ is a safe choice, 
+but it would lead to using a stake distribution that is at least 
+$10$ epochs old. 
+In contrast, we make no computational assumption on the adversary 
+at the expense of allowing a bounded amount of grinding. 
+(ii.) The output from $\Epoch_i$ is available only after $A$ additional epochs. 
+In contrast, the $i$th output of our beacon is available right after epoch $\Epoch_i$.

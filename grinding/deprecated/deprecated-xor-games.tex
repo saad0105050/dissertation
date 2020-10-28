@@ -1,0 +1,809 @@
+
+
+\newcommand{\Paragraph}[1]{\\ \\ \noindent\textbf{{#1}}\ }
+% \section{Grinding Power in XOR Target Games in a Special Case}
+
+Observe that the quantity $\GrindingPower$ in the XOR target games depend only on the 
+\emph{cardinality} of the sets involved. 
+In addition, large sets imply a large grinding power for the player. 
+A natural way to curb the grinding power is to generate these sets from a stochastic 
+process which assigns a small probability to large sets. 
+In this section, we consider stochastic processes that select these cardinalities independently 
+from a geometric distribution. 
+
+A geometric distribution with 
+success parameter $1-\alpha$, where $\alpha \in (0, 1/2)$, is defined as follows.
+In a sequence $1, 2, \ldots$ of independent Bernoulli trials, 
+each with a success probability $1 - \alpha$, 
+let the random variable $X \in \{1, 2, \ldots\}$ be the index of the first success.
+We write $X \sim \GeomAlpha$ and the associated probability mass function is
+$\Pr[X = k]\, = \alpha^{k-1}(1-\alpha)$ for $k = 1, 2, \ldots$. 
+
+
+The exact description of the process is given below.
+
+\begin{claim}[Nonce-sets with geometrically-distributed size]\label{claim:set-size-geometric}
+Let $n, \kappa \in \NN$, $\alpha \in (0, 1/2)$ and 
+let $C = \{c_1, \ldots, c_n\} \subset \{0,1\}^\kappa$ be a set of uniformly random strings. 
+Let $A \subset \{1, 2, \ldots, |C|\}$ be an arbitrary set with $|A|/|C| = \alpha$. 
+If $h = \min \{c_i \SuchThat i \not \in A\}$ and 
+$X = |\{i \SuchThat c_i \leq h\}|$, 
+then $X$ has the geometric distribution $\GeomAlpha$.
+\end{claim}
+\begin{proof}
+\newcommand{\Rank}{\mathrm{rank}}
+\newcommand{\Index}{\mathrm{index}}
+Let $r_i$ be the rank of the element $c_i$ in $C$ in the lexicographic order and 
+define $\Index(r) = i$ if and only if $\Rank(c_i) = r$.
+It follows that $X = \Rank(h)$.
+For every rank $r = 1, 2, \ldots, |C|$, define $Z_r = 1$ if $\Index(r) \in A$ and 
+define $Z_r = 0$ otherwise.
+Since elements in $C$ are independent and uniform, for every $r$ it follows that 
+$Z_1, \ldots, Z_{|C|}$ are independent with $\Pr[Z_r = 1] = \alpha$. 
+Specifically, $\Rank(h) = \min \{r \SuchThat Z_r = 0\} \sim \GeomAlpha$.
+\end{proof}
+
+
+The central goal of this section is to provide bounds on the bad probability 
+in an epoch-by-epoch composition of XOR target games 
+where the cardinality of each set is an independent copy 
+of the random variable $Y = X - 1$ where $X \sim \GeomAlpha$. 
+Observe that $Y$ can be zero, which means sets in the XOR target game are allowed to be empty.
+In this section, XOR target games always have this property 
+although we would not mention it explicitly. 
+We start with recording some moment bounds for $X$.
+
+\subsection{Moment bounds for the geometric distribution}
+Recall that the polylogarithm function of order $\lambda$ is defined as
+\begin{align}\label{eq:polylog}
+    \Li_{\lambda}(\alpha) &\defeq \sum_{k=1}^\infty{ \frac{\alpha^k}{k^\lambda}}
+\qquad \text{for}\quad \alpha, \lambda \in \RR
+\end{align}
+Polylogarithm functions of non-positive integer orders can be found using the recursive rule 
+\[
+\Li_1(\alpha) = -\log(1-\alpha)
+\, , \qquad \text{and} \qquad
+\dfrac{\partial}{\partial \alpha}{\Li_{\lambda}(\alpha)} = \frac{\Li_{\lambda-1}(\alpha)}{\alpha}
+\, ,\quad \lambda \in 0, 1, 2, 3, \cdots
+\, .
+\] 
+This allows us to compute
+\begin{align}\label{eq:polylog-1-2}
+    \Li_{-1}(\alpha) = \frac{\alpha}{(1-\alpha)^2}\, , \qquad \text{and} \qquad 
+    \Li_{-2}(\alpha) = \frac{\alpha (1+\alpha)}{(1-\alpha)^3} 
+    \, .
+\end{align}
+% The polylogarithm function lets us succintly express the moments of the random variable $X$. 
+For any real $\lambda > 0$, we can express the moments of $X$ in terms of polylogarithm functions, as follows:
+\begin{align}\label{eq:geom-moment}
+\Exp[X^\lambda]
+= \sum_{x=1}^\infty{  x^\lambda (1-\alpha) \alpha^{x-1} } 
+= \frac{1-\alpha}{\alpha} \sum_{x=1}^\infty{ \frac{\alpha^{x}}{x^{-\lambda} } } 
+= \frac{1-\alpha}{\alpha}\Li_{-\lambda}(\alpha)
+\end{align}
+It is also easy to check that 
+\begin{align}\label{eq:geom-moment-x-minus-one}
+\Exp[(X-1)^\lambda]
+&= \alpha\,\Exp[X^\lambda]
+\end{align}
+The above formulae directly gives us the first and second moments of $X$, namely
+\begin{align}\label{eq:geom-moments-1-2}
+\Exp [X] = \frac{1}{1-\alpha}
+\, , \quad 
+\Exp[X^2] 
+%= \frac{\alpha}{(1-\alpha)^2} + \frac{1}{(1-\alpha)^2}
+= \frac{1 + \alpha}{(1-\alpha)^2} 
+\, \quad \text{and}\quad
+\Var[X] = \frac{\alpha}{(1-\alpha)^2}
+\, .
+\end{align}
+However, for applications in this paper, we will need upper bounds on 
+the fractional moments of $X$. 
+
+\begin{proposition}[Fractional moment bound]\label{prop:geom-moment-bound}
+For any real $\lambda \geq 1, \alpha \in (0, 1/2)$, and $X \sim \GeomAlpha$,
+\begin{equation}\label{eq:geom-moment-bound}
+    \Exp[X^\lambda] \leq \frac{\Gamma(1+\lambda)}{(1-\alpha)^\lambda} 
+    \, ,
+\end{equation}
+and an equality is achieved with $\lambda = 1$ and $\alpha = 1/2$.
+\end{proposition}
+When $\lambda \in (1,2]$, we have the upper bound $\lambda = 1 + (\lambda - 1) \leq e^{\lambda - 1}$. 
+Moreover, we can use simple linear upper bounds to the convex Gamma function and 
+derive two useful approximations:
+\begin{align}
+    \Exp[X^\lambda] 
+    &\leq \frac{\lambda}{(1-\alpha)^\lambda} \leq \frac{e^{\lambda-1}}{(1-\alpha)^\lambda}
+        \,,\qquad\text{for}\quad 1 \leq \lambda \leq 2
+        \label{eq:geom-moment-bound-approx-1}
+        \,, \\
+    \Exp[X^\lambda] 
+    &\leq
+        \frac{1+2\lambda}{3(1-\alpha)^\lambda}\,, \qquad\text{for}\quad 1 \leq \lambda \leq 3/2
+        \label{eq:geom-moment-bound-approx-2}
+        \,.
+\end{align}
+
+A critical fact is that although $\Exp[X^\lambda]$ is larger than $1$ for all $\lambda \geq 1$, 
+$\Exp[(X-1)^\lambda]$ is in fact less than $1$ for \emph{some} $\lambda \in (1, 2]$. 
+Since any positive power of the latter moment is at most one, it will greatly simplify our analysis. 
+Let us define
+\begin{align}\label{eq:lambda-star}
+ \lambda^*(\alpha) &= \begin{cases}
+    2\,, & \text{for}\quad 0 < \alpha \leq 1/4 \, ,\\
+    3/2\,, & \text{for}\quad 1/4 < \alpha \leq 1/3 \, ,\\
+    % (1-\log \alpha)/(1 - \log(1-\alpha)\,)\,, & \text{for}\quad 1/4 \leq \alpha < 1/2 \, .
+    (2/5)(6 - 7 \alpha)\,, & \text{for}\quad 1/3 < \alpha < 1/2 \, .
+\end{cases}
+\end{align}
+
+On the other hand, for any $c > 1$, let us define
+\begin{align}\label{eq:lambda-star-c}
+    \lambda^*_c(\alpha) &= \begin{cases}
+    2\,, & \text{for}\quad 0 < \alpha \leq 1/4 \, ,\\
+    3/2\,, & \text{for}\quad 1/4 < \alpha \leq 1/3 \, ,\\
+    \frac{b + \ln(3/2\alpha) + \ln(1-1/c)}{a-\ln(1-\alpha)}
+        \,, &\text{for}\quad 1/3 < \alpha < \frac{c-1}{2c-1}\,, \quad\text{where}
+    \end{cases}\\
+        a&= 1 - 2\left( \ln(3/2)-\ln(1+1/2\sqrt{e}) \right)\,,\quad\text{and} \nonumber \\
+        b&=1-3\ln(3/2)+2\ln(1+1/2\sqrt{e}) \nonumber \,.
+\end{align}
+The above $a,b$ above satisfies
+\begin{align}\label{eq:lambda-a-b-upperbound}
+    1 + 2e^{x-1} \leq 2 e^{a x - b}
+    \qquad\text{for}\quad x \in (1, 3/2)
+    \, .
+\end{align}
+
+\begin{proposition}[Moment convergence]\label{prop:li-convergence}
+The geometric random variable $X \sim \GeomAlpha$ satisfies
+\begin{equation}\label{eq:li-convergence}
+    \Exp[(X-1)^\lambda] 
+    = \alpha \Exp[X^\lambda]
+    % =(1-\alpha) \Li_{-\lambda}(\alpha) 
+    < \begin{cases}
+        5/9\,, &\quad\text{if}\quad 0 < \alpha \leq 1/4\,,\\
+        5/6\,, &\quad\text{if}\quad 1/4 < \alpha \leq 1/3\,,\\
+        1\,, &\quad\text{if}\quad 1/3 < \alpha \leq 1/2\,.
+    \end{cases}
+\end{equation}
+for any $\lambda$ satisfying $1 < \lambda \leq \lambda^*(\alpha)$.
+Moreover, 
+\[
+    \alpha \Exp[X^\lambda] < c\,, 
+\]
+where $c$ is an absolute positive constant greater than one, 
+if $1/3 < \alpha < (c-1)/(2c-1)$ and $1 < \lambda \leq \lambda_c^*(\alpha)$.
+% Specifically, if $\alpha < 1/2 - \theta$ for some $\theta \in (0, 1/6)$ then
+% \begin{align}
+%     \Exp[(X-1)^\lambda] \leq (1 - 2\theta)/6\cdot 2^\lambda (1 + 2\theta)^{-\lambda}(1+2\lambda)
+%     \,,
+% \end{align}
+% which is at most $13/14$ if $\alpha \leq 0.49$.
+\end{proposition}
+We defer the proof of Propositions~\ref{prop:geom-moment-bound} and~\ref{prop:li-convergence} till Section~\ref{sec:geom-moment-bound-proof}.
+
+% \begin{corollary}[Moment bound for a single slice]\label{coro:geom-moment-slice}
+% Let $X \sim \GeomAlpha$ for $\alpha \in (0, 1/2)$. 
+% If $\lambda^* = \lambda^*(\alpha)$ from Proposition~\ref{prop:li-convergence} then
+% \begin{align}\label{eq:geom-moment-slice}
+%     \Exp[X^{\lambda^*}] &< \frac{1}{\alpha}
+%     \, .
+% \end{align}
+% Specifically, for any $\lambda \in (1,2]$,
+% \begin{align}\label{eq:geom-moment-slice-absolute}
+%     \Exp[X^{\lambda}] 
+%     < \begin{cases}
+%          32/9\, , & \text{for}\quad 0 < \alpha < 1/4\, , \\
+%          4\, ,    & \text{for}\quad 1/4 \leq \alpha < 1/2\, .
+%       \end{cases}
+% \end{align}
+% We also have
+% \begin{align}\label{eq:scaled-polylog}
+%     (1-\alpha) \Li_{-\lambda}(\alpha) 
+%     < \begin{cases}
+%          8/9\, ,   & \text{for}\quad 0 < \alpha < 1/4\, , \\
+%          1\, ,      & \text{for}\quad 1/4 \leq \alpha < 1/2\, .
+%       \end{cases}
+% \end{align}
+% \end{corollary}
+% \begin{proof}
+% Equation~\ref{eq:geom-moment-slice} is obtained by
+% dividing the both sides of the statement of the proposition by $\alpha$.
+
+% Since the derivative of $\Exp[X^\lambda]$ w.r.t. $\lambda$ is positive for $\lambda > 1$, 
+% $\Exp[X^\lambda] \leq \Exp[X^{\lambda^*}]$.
+% When $\alpha < 1/4$, we have $\lambda \leq \lambda^* = 2$ and 
+% Equation \eqref{eq:geom-moment-bound-relaxed} gives us the bound $2/(1- 1/4)^2 = 32/9$.
+% On the other hand, if $\alpha \geq 1/4$, we have $\Exp[X^\lambda] \leq \Exp[X^{\lambda^*}] < 1/\alpha \leq 4$.
+
+% Since \eqref{eq:geom-moment} implies $(1-\alpha) \Li_{-\lambda}(\alpha) = \alpha \Exp[X^\lambda]$, 
+% the two cases of \eqref{eq:scaled-polylog} are obtained by using 
+% $\alpha < 1/4$ in \eqref{eq:geom-moment-slice}, and $\alpha \geq 1/4, \lambda^* \leq 2$ in \eqref{eq:geom-moment-slice}.
+% \end{proof}
+
+%=================================================================
+
+
+
+
+
+% \begin{claim}
+% $\Exp[g^{\lambda^*}] \alpha^{-k}$ where $\lambda^* = \lambda^*(\alpha)$ is defined in~\ref{eq:lambda-star}.
+% \end{claim}
+% \begin{proof}
+% In Game 1, we have $g = \prod_{i=1}^\EpochLength{X}$ so that 
+% \[
+%     \Exp[g^\lambda] 
+%     = \Exp (\prod_{i=1}^\EpochLength{X} )^\lambda 
+%     = \Exp[X^\lambda]^\EpochLength 
+% \]
+% thanks to the independence of the slices.
+% Next, using Corollary~\ref{coro:geom-moment-slice}, we conclude that 
+% \[
+%     \Exp[g^{\lambda^*}] \leq \left(\frac{1}{\alpha}\right)^K
+%     \, .
+% \]
+% \end{proof}
+
+\subsection{Moment bounds for the XOR target games}
+
+\begin{lemma}[Moment bound for the basic XOR target game]\label{lemma:xor-game-basic-moment}
+Let $g$ be the grinding power in the basic XOR target game as described in this section.
+Let $\lambda = \lambda_c^*(\alpha)$ from \eqref{eq:lambda-star-c} for some large positive constant $c$. 
+\begin{align}
+    \Exp[g^\lambda]
+    &\leq \begin{cases}
+        9(1-\alpha)/4\,, & \quad\text{if}\quad \alpha \leq 1/4\,, \\
+        6(1-\alpha)\,, & \quad\text{if}\quad 1/4 < \alpha \leq 1/3\,, \\
+        O(1)\,, & \quad\text{if}\quad 1/3 < \alpha < 1/2\,.
+    \end{cases}
+\end{align}
+% In addition, the constant in the last expression is at most $14$ if $\alpha \leq 0.49$.
+\end{lemma}
+
+
+\begin{lemma}[Moment bound for the $\ell$-block XOR target game]\label{lemma:xor-game-block-moment-bound}
+Let $\alpha \in (0, 1/2)$ and $\lambda = \lambda^*(\alpha)$ from~\eqref{eq:lambda-star}. 
+Let $X \sim \GeomAlpha$ and $Y = X - 1$.
+% Let $\EpsP < 0$ be arbitrary. 
+Consider the $\ell$-block XOR target game $G(T; S_1, \ldots, S_n)$ 
+with a uniform initial value where each $|S_i|$ is an independent copy of $Y$. 
+Let $g$ be the grinding power of this game. 
+If at least one of the sets $S_1, \ldots, S_n$ is empty then
+\[
+    \Exp[g^{\lambda}] \leq \begin{cases}
+        \dfrac{\left(\Exp[X^\lambda]\right)^\ell}{1 - \alpha \Exp[X^\lambda]}
+            \,, &\quad\text{if}\quad \alpha \leq 1/3\,, \\
+        (n/\ell)\,\left(\Exp[X^\lambda]\right)^\ell
+            \,, &\quad\text{if}\quad 1/3 < \alpha < 1/2\,.
+    \end{cases}
+\]
+% Moreover, $\Pr[g > \GrindingMax] \leq \EpsP$ where 
+% \begin{align*}
+%     \GrindingMax(\alpha) &\leq \begin{cases}
+%         \left( 9/2 \right)^{1/2}/(1-\alpha)\cdot \EpsP^{-1/2}
+%         \,,&\quad\text{if\quad $\alpha < 1/4$}\,, \\
+%         9^{2/3}/(1-\alpha)\cdot \EpsP^{-2/3}
+%         \,,&\quad\text{if\quad $1/4 < \alpha \leq 1/3$}\,, \\
+%         \dfrac{\left( (n/\ell) (29 - 28\alpha)/15\right)^{5/(12 - 14\alpha)}}{1-\alpha}\cdot \EpsP^{-5/(12 - 14\alpha)}
+%         \,,&\quad\text{if\quad $1/4 < \alpha < 1/2$}\,.
+%     \end{cases}
+% \end{align*}
+
+\end{lemma}
+
+
+\begin{lemma}[Moment bound for the $\ell$-lookahead XOR target game]\label{lemma:xor-game-lookahead-moment}
+Let $\alpha \in (0, 1/2)$ and $\lambda = \lambda^*(\alpha)$ from~\eqref{eq:lambda-star}. 
+Let $X \sim \GeomAlpha$ and $Y = X - 1$.
+Consider the $\ell$-block XOR target game $G(T\,;\, S_1, \ldots, S_\ell\,;\, P_1, \ldots, P_n)$ 
+with a uniform initial value where 
+% additionally consider independent and identically distributed random variables $Y_1, \ldots, Y_{\NumSets + \BlockLength}$ 
+each $|S_i|$ and $|P_j|$ 
+is an independent copy of $Y$ for $i \in [\ell], j \in [n]$.
+If at least one of the sets $P_1, \ldots, P_n$ is empty then 
+\[
+    \Exp[g^\lambda] \leq 
+        % (2n)^{1+\lambda} 
+        (2n)^{\lambda} 
+        \left(\Exp X^\lambda \right)^{\min(n, \ell)}
+    \,.
+\]
+\end{lemma}
+
+\subsection{Proofs for the moment bounds}
+\subsubsection*{Proof of Lemma~\ref{lemma:xor-game-basic-moment}}
+\begin{proof}
+We have a random variable $g = \prod_{i=1}^t x_i$ where $t$ is geometrically distributed with rate $\alpha$, $P(t) = (1-\alpha)\alpha^t$, and each $x_i$ is geometrically distributed with rate $\alpha$ but conditioned on $x_i \ge 1$, so $Q(x_i) = (1-\alpha) \alpha^{x_i-1}$.
+
+Let us fix $t$. Then since the $x_i$ are independent, for any $\lambda$ we have
+\[
+    \Exp[g^\lambda \mid t] 
+    = \Exp[x^\lambda]^t 
+    = \left( \frac{1-\alpha}{\alpha} \,\Li_{-\lambda}(\alpha) \right)^t
+\]
+where $\Li$ is the polylogarithm function defined in \eqref{eq:polylog}.
+Summing this over all $t$ gives
+\begin{equation}
+\label{eq:sumovert}
+\Exp[g^\lambda] = \sum_{t} P(t) \Exp[g^\lambda \mid t] 
+%\le b^{-\lambda} (1-\alpha) \sum_{t=0}^\infty \left( \frac{\alpha \Gamma(\lambda+1)}{(1-\alpha)^\lambda} \right)^{\!t} 
+\le (1-\alpha) \sum_{t=0}^\infty \big( (1-\alpha) \,\Li_{-\lambda}(\alpha) \big)^{t} 
+= (1-\alpha)\,\sum_{t=0}^\infty r_\lambda(\alpha)^{t} 
+\, ,
+\end{equation}
+where we define $r_\lambda(\alpha) \defeq (1-\alpha) \,\Li_{-\lambda}(\alpha)$.
+By Proposition~\ref{prop:li-convergence}, $r_\lambda(\alpha) = \alpha \Exp[X^\lambda] < 1$ 
+and the geometric sum in~\eqref{eq:sumovert} converges to $1/(1-r_\lambda(\alpha) )$. 
+Specifically, if $\alpha < 1/4$ the sum is at most $1/(1-5/9) = 9/4$, 
+if $\alpha \in (1/4, 1/3]$ the sum is at most $1/(1-5/6) = 6$, and finally, 
+the sum is at most $c$ if $1/3 < \alpha < (c-1)/(2c-1)$.
+
+
+% \par\noindent
+% \textbf{Remark. }
+% If the reader finds the polylogarithm function unfamiliar, the moments of the geometric distribution can be bounded in terms of the Gamma function as follows. For integer $\lambda$ we have
+% \[
+% \Exp[x^\lambda] \le \Exp[x(x+1)(x+2)\cdots(x+\lambda-1)] = \frac{\lambda!}{(1-\alpha)^\lambda} \, .
+% \]
+% There is a nice probabilistic interpretation of this\ldots 
+% For noninteger $\lambda$ the rising product becomes the Pochhammer symbol and $\lambda!$ becomes the Gamma function,
+% \[
+% \Exp[x^\lambda] \le \frac{\Gamma(\lambda+1)}{(1-\alpha)^\lambda} \, .
+% \]
+
+\end{proof}
+
+\subsubsection*{Proof of Lemma~\ref{lemma:xor-game-block-moment-bound}}
+\begin{proof}
+Let $m = n/\ell$ be an integer.
+Let $|S_i| = Y_i$ where $Y_i$ is an independent copy of $Y = X - 1$ and $X \sim \GeomAlpha$. 
+Using the terminology of Theorem~\ref{thm:xor-game-block}, 
+the expression of the grinding power in~\eqref{eq:xor-game-block-gp} simplifies as
+\[
+    \GrindingPower(h) = \prod_{j=1}^\ell{X} \cdot \prod_{t=m-h+2}^m(Y \Given Y \geq 1)^\ell = X^\ell X^{(h-1)\ell}
+\]
+due to independence.
+Since $\Pr[|S_i| = 0] = 1-\alpha$, it follows that 
+$\Pr[h] \leq (1 - \alpha^\ell)\alpha^{(h-1)\ell} \leq \alpha^{(h-1)\ell}$.
+Then for $\lambda = \lambda^*$ from~\ref{eq:lambda-star}, we have
+\begin{align*}
+    \Exp[g^\lambda]
+    &= \sum_{b = 1}^{m} {\Pr[h] \, 
+        \Exp \left[ g(h)^\lambda \Given h\right]} 
+    \leq  \sum_{h = 1}^{m} {  \alpha^{(h-1)\ell} \cdot \Exp \left(X^\ell X^{(h-1)\ell} \right)^\lambda } \\
+    &\leq  \sum_{h = 1}^{m} {  \alpha^{(h-1)\ell} \cdot \left(\Exp[X^\lambda]\right)^\ell \left( \Exp[X^\lambda] \right)^{(h-1)\ell} } 
+    = \left(\Exp[X^\lambda]\right)^\ell \sum_{h = 1}^{m} { \left(\alpha \Exp[X^\lambda]\right)^{(h-1)\ell} } \,,\\
+    % &\leq \left(\Exp[X^\lambda]\right)^\ell \min\left( m, \frac{1}{1 - \left(\alpha \Exp[X^\lambda]\right)^\ell } \right) 
+    % \leq \left(\Exp[X^\lambda]\right)^\ell \min\left( m, \frac{1}{1 - \alpha \Exp[X^\lambda]} \right) 
+\end{align*}
+where we have used the independence of $|S_1|, \ldots, |S_n|$. 
+Observe that the sum converges since $\alpha \Exp[X^\lambda] < 1$ by~\eqref{eq:li-convergence}. 
+Since $1/(1-x^\ell) \leq 1/(1-x)$ for $0< x < 1$ and $\ell \geq 1$, 
+we get the following bounds via~\eqref{eq:li-convergence}:
+When $\alpha \leq 1/4, \alpha \Exp[X^\lambda] \leq 5/9$ and consequently, 
+$\Exp[g^\lambda] \leq \Exp[X^\lambda]^\ell \cdot 1/(1-5/9) = (9/4) \Exp[X^\lambda]^\ell$. 
+Similarly, when $1/4 < \alpha \leq 1/3, \alpha \Exp[X^\lambda] \leq 5/6$ and consequently,
+$\Exp[g^\lambda] \leq 6 \Exp[X^\lambda]$. 
+When $1/3 < \alpha < 1/2$, $1/(1-\alpha \Exp[X^\lambda])$ grows quickly as $\alpha \rightarrow 1/2$. 
+In this case, therefore, we use the upper bound $\Exp[g^\lambda] \leq m\, \Exp[X^\lambda]$.
+\end{proof}
+
+\subsubsection*{Proof of Lemma~\ref{lemma:xor-game-lookahead-moment}}
+\begin{proof}
+Setting $h = \max\{i \in [n] \SuchThat |P_i| = 0\}$, 
+consider the expression of the grinding power in~\ref{eq:xor-game-lookahead-gp}. 
+Since $|P_h| = 0$ and $|P_i| \geq 0$ for all $i \geq h+1$, it follows that 
+the grinding power conditioned on a specific $h$ is
+$g_h = A_h + B_h$, where
+\begin{align*}
+    A_h &= \sum_{k=h}^n 
+        \left(\prod_{i=1}^{k-1}(1 + |P_i|)\right) \cdot  
+        \prod_{i=k}^\ell |S_i| \cdot 
+        \prod_{i=k+1}^\NumSets |P_i| \,,
+         \nonumber \\
+    B_h &= \sum_{k=h}^n 
+        \left(\prod_{i=k - \ell}^{k-1}(1 + |P_i|)\right) \cdot
+        \prod_{i=k+1}^\NumSets |P_i|
+    \,.
+\end{align*}
+In addition, $A_h$ vanishes if $h \geq \ell$ and $B_h$ vanishes if $n \leq \ell$. 
+Since $|S_i|, |P_i|$ are independent copies of the random variable $Y$, the expressions above can be written as
+\[
+    A_h = \sum_{k=h}^n 
+        X^{k-1} Y^{\ell - k + 1} Y^{n - k} 
+        = \sum_{k=h}^n X^{k-1} Y^{n + \ell - 2k + 1}
+        \,,\qquad
+    B_h = \sum_{k=h}^n 
+        X^\ell Y^{n - k}
+    \,.
+\]
+Let $H$ denote the index $h \in [n]$ so that $|P_h| = 0$ and $|P_i| \geq 1$ for all $h < i \leq n$. 
+Then $\Pr[H = h]\, = (1-\alpha) \alpha^{n-h}$ since $\Pr[Y = 0] = 1 - \alpha$. 
+Now we have all the ingredients to bound $\Exp g^\lambda$ where $\lambda = \lambda^*$ from~\eqref{eq:lambda-star}. 
+
+\paragraph{Case: $n \leq \ell$.}
+In this case, $g_h = A_h$. 
+In addition, since $X > Y \geq 0$, it follows that $Y^{a+b} X^c \leq Y^a X^{b+c}$ 
+for any non-negative $a,b,c$, it follows that
+\[
+    A_h = \sum_{k=h}^n Y^{n+\ell-2k+1} X^{k-1} \leq (n - h + 1)\, Y^{\ell - n + 1} X^{n-1}\,,
+\]
+and
+\begin{align*}
+    \Exp g^\lambda 
+        &= \sum_{h=1}^n \Pr[H = h] \Exp A_h^\lambda \\
+        &\leq \sum_{h=1}^n (1-\alpha) \alpha^{n-h} (n - h + 1)^\lambda \Exp \left(Y^{\ell - n + 1} X^{n-1}\right)^\lambda \\
+        &\leq  (1-\alpha)  \left(\Exp Y^\lambda\right)^{\ell - n + 1} \left(\Exp X^\lambda \right)^{n-1} 
+            \sum_{h=1}^n \alpha^{n-h} (n - h + 1)^\lambda \\
+        &\leq  (1-\alpha)  \left(\Exp X^\lambda \right)^{n-1} 
+            \frac{n^\lambda}{1-\alpha} \\
+        &= n^\lambda \left(\Exp X^\lambda \right)^{n-1} \,.
+\end{align*}
+Here, we have used the independence of the numbers $|S_i|, |P_j|$ for $i \in [\ell], j \in [n]$ 
+and the fact that $\Exp Y^\lambda < 1$ by~\eqref{eq:li-convergence}.
+
+\paragraph{Case: $\ell < n$.} 
+We consider two sub-cases: $h \leq \ell$ and $h \geq \ell + 1$.
+In the former case,
+\begin{align*}
+    g_h = A_h + B_h 
+    &= \sum_{k=h}^\ell Y^{n+\ell - 2k + 1}X^{k-1} + \sum_{k=h}^n Y^{n-k} X^\ell    \\
+    &\leq (\ell - h + 1)\, Y^{n-\ell+1} X^{\ell - 1} + (n-h+1)\, Y^{n-h} X^\ell \\
+    &\leq 2 (n - h + 1)\, Y^{n-h + 1} X^\ell\,,
+\end{align*}
+using $h \leq \ell$. 
+Hence
+\begin{align*}
+    % \Pr[h \leq \ell]\cdot \Exp [g^\lambda \Given h \leq \ell]
+    %     &= 
+        \sum_{h = 1}^\ell \Pr[H = h] \Exp g_h^\lambda 
+        &\leq \sum_{h=1}^\ell 
+            (1-\alpha)\alpha^{n-h}\cdot 
+            2^\lambda 
+            (n-h+1)^\lambda 
+            \Exp\left( Y^{n-h+1} X^\ell \right)^\lambda \\
+        &= 2^\lambda (1-\alpha) \sum_{h=1}^\ell 
+            \alpha^{n-h} 
+            (n-h+1)^\lambda 
+            \left(\Exp Y^\lambda \right)^{n-h+1} 
+            \left(\Exp X^\lambda\right)^\ell \\
+        &= 2^\lambda (1-\alpha) \left(\Exp X^\lambda\right)^\ell \sum_{h=1}^\ell \alpha^{n-h}\cdot (n-h+1)^\lambda \\
+        &\leq 2^\lambda (1-\alpha) \left(\Exp X^\lambda\right)^\ell \frac{n^\lambda}{1-\alpha} \\
+        &= (2n)^\lambda \left(\Exp X^\lambda\right)^\ell
+        \,.
+\end{align*}
+
+In the other sub-case, that is, when $\ell < h \leq n$, 
+\[
+    g_h = B_h = \sum_{k = h}^n Y^{n-k} X^\ell \leq (n - h + 1) Y^{n-h} X^\ell \,,
+\]
+which implies
+\begin{align*}
+    % \Pr[h \geq \ell + 1]\cdot \Exp [g^\lambda \Given h \geq \ell+1]
+    %     &= 
+        \sum_{h = \ell + 1}^n \Pr[H = h] \Exp g_h^\lambda 
+        &\leq \sum_{h=\ell+1}^n 
+            (1-\alpha)\alpha^{n-h}\cdot 
+            (n-h+1)^\lambda 
+            \Exp\left( Y^{n-h} X^\ell \right)^\lambda \\
+        &= (1-\alpha) \left(\Exp X^\lambda\right)^\ell \sum_{h=\ell+1}^n 
+            \alpha^{n-h} 
+            (n-h+1)^\lambda 
+            \left(\Exp Y^\lambda \right)^{n-h} \\
+        &\leq (1-\alpha) \left(\Exp X^\lambda\right)^\ell 
+            % (n - \ell)
+            \frac{(n-\ell)^\lambda}{1-\alpha} \\
+        % &= (n - \ell)^{1+\lambda} \left(\Exp X^\lambda\right)^\ell 
+        &= (n - \ell)^{\lambda} \left(\Exp X^\lambda\right)^\ell 
+        \,.
+\end{align*}
+Combining these two sub-cases for the case $\ell + 1 \leq n$, we have
+\begin{align*}
+    \Exp g^\lambda 
+        &= \sum_{h = 1}^\ell \Pr[H = h] \Exp\left[g_h^\lambda \Given h \leq \ell \right] 
+            + \sum_{h = \ell + 1}^n \Pr[H = h] \Exp\left[g_h^\lambda \Given \ell+1 \leq h \right] \\
+        &\leq (2n)^\lambda \left(\Exp X^\lambda\right)^\ell +
+            (n - \ell)^{\lambda} \left(\Exp X^\lambda\right)^\ell \\
+        &\leq (2^{\lambda} + 1) n^\lambda \left(\Exp X^\lambda\right)^\ell \\
+        &\leq (2n)^{\lambda} \left(\Exp X^\lambda\right)^\ell
+        \,.
+\end{align*}
+The bound in the claim follows by comparing the bounds from the two cases above. 
+\end{proof}
+
+
+
+\subsection{Composition of XOR target games}
+
+\begin{theorem}[Composing basic XOR target games]\label{thm:basic-xor-game-geometric}
+Fix $\EpsP < 0$.  
+Let $\alpha \in (0, 1/2)$, $c > 1$ any large positive constant, 
+and $\lambda = \lambda_c^*(\alpha)$ from~\eqref{eq:lambda-star-c}. 
+Consider the basic XOR target game $G(T; S_1, \ldots, S_n)$ 
+with uniform initial value where $|S_i|$ are i.i.d. random variables with distribution $\GeomAlpha$. 
+The grinding power $g$ of this game satisfies $\Pr[g > \gamma] \leq \EpsP$, where
+\[
+\gamma = 
+    \begin{cases}
+        O(1)\cdot \EpsP^{-1/2}\, , 
+            & \text{for}\quad 0 < \alpha \leq 1/4, \\
+        O(1)\cdot \EpsP^{-2/3}\, , 
+            & \text{for}\quad 1/4 < \alpha \leq 1/3, \\
+        O(1)\cdot \EpsP^{ - 1/\lambda_c^*}\, ,
+            &\text{for}\quad 1/4 < \alpha < 1/2 - (c-1)/(2c-1)\, .
+    \end{cases}
+\]
+Let $B$ be the bad event in an $L$-epoch composition of this game (cf. Lemma~\ref{lemma:composition}). 
+Then
+\[
+\Pr[B] \leq 
+    \begin{cases}
+        O(1)\cdot L\, \EpsP^{1/2}\, , 
+            & \text{for}\quad 0 < \alpha \leq 1/4, \\
+        O(1)\cdot L\, \EpsP^{1/3}\, , 
+            & \text{for}\quad 1/4 < \alpha \leq 1/3, \\
+        O(1)\cdot L\, \EpsP^{ 1 - 1/\lambda_c^* }\, ,
+            &\text{for}\quad 1/4 < \alpha < 1/2 - (c-1)/(2c-1)\, . 
+    \end{cases}
+\]
+\end{theorem}
+\begin{proof}
+The expression of $\gamma$ follows directly from Fact~\ref{fact:grinding-max} and Lemma~\ref{lemma:xor-game-basic-moment}, 
+and observing that $1- \alpha < 1$.
+The rest follows from \eqref{eq:delta-composition-generic}.
+\end{proof}
+
+\begin{corollary}[Grinding power bound in the basic XOR target game]
+In the context of Lemma~\ref{lemma:xor-game-block-moment-bound}, $\Pr[g > \GrindingMax] \leq \EpsP$ where 
+\begin{align*}
+    \GrindingMax(\alpha) &\leq \begin{cases}
+        \left( 9/2 \right)^{1/2}/(1-\alpha)\cdot \EpsP^{-1/2}
+        \,,&\quad\text{if\quad $\alpha < 1/4$}\,, \\
+        9^{2/3}/(1-\alpha)\cdot \EpsP^{-2/3}
+        \,,&\quad\text{if\quad $1/4 < \alpha \leq 1/3$}\,, \\
+        \dfrac{\left( (n/\ell) (29 - 28\alpha)/15\right)^{5/(12 - 14\alpha)}}{1-\alpha}\cdot \EpsP^{-5/(12 - 14\alpha)}
+        \,,&\quad\text{if\quad $1/4 < \alpha < 1/2$}\,.
+    \end{cases}
+\end{align*}
+\end{corollary}
+\begin{proof}
+By substituting these expressions for $\Exp[g^\lambda]$ in Fact~\ref{fact:grinding-max}, we get 
+\begin{align*}
+    \GrindingMax(\alpha) &\leq \begin{cases}
+        \left( 9\lambda/4 \right)^{1/\lambda}/(1-\alpha)^\ell\cdot \EpsP^{-1/\lambda}
+        \,,&\quad\text{if\quad $\alpha < 1/4$}\,, \\
+        (6\lambda)^{1/\lambda}/(1-\alpha)^\ell\cdot \EpsP^{-1/\lambda}
+        \,,&\quad\text{if\quad $1/4 < \alpha \leq 1/3$}\,, \\
+        \dfrac{m^{1/\lambda}\, \left( (1 + 2\lambda)/3\right)^{\ell/\lambda}}{(1-\alpha)^\ell}\cdot \EpsP^{-1/\lambda}
+        \,,&\quad\text{if\quad $1/4 < \alpha < 1/2$}\,.
+    \end{cases}
+\end{align*}
+The expression of $\GrindingMax$ in the claim follows from using $\lambda = \lambda^*$ from~\eqref{eq:lambda-star}. 
+Specifically, in the first case, we use $\lambda = 1/2$ and $\Exp[X^\lambda] \leq \lambda/(1-\alpha)^\lambda$ using~\eqref{eq:geom-moment-bound-approx-1}. 
+The second case is similar except for $\lambda = 3/2$. 
+In the third case, we use the bound~\eqref{eq:geom-moment-bound-approx-2}, i.e., 
+$\Exp[X^\lambda] \leq (1+2\lambda)/3(1-\alpha)^\lambda$ with $\lambda = 12/5 - 14\alpha/5$. 
+\end{proof}
+
+\begin{theorem}[Composing $\ell$-block XOR target games]\label{thm:xor-game-block-composition-prob}
+In the context of the $\ell$-block XOR target game in Lemma~\ref{lemma:xor-game-block-moment-bound}, 
+suppose $0 < \alpha \leq 1/2 - \theta$ for a small positive constant $\theta$ at most $1/6$.
+Let $k = \ln(1/\EpsP), m = n/\ell$, and 
+suppose $\ell$ and $n$ satisfy 
+\[
+    \ell \leq 4k/9 - 2\,, \qquad 
+    n \geq \lceil k/\ln(2) \rceil \,, \qquad
+    \theta > (\ell + \ln m)/2k
+    \,.
+\] 
+In an $L$-epoch composition of this game, 
+the bad probability is at most $3 L \EpsP^{\delta}$, for $\delta \in (0, 1)$, 
+where
+\[
+    \delta \geq \begin{cases}
+        1/2 - \dfrac{1}{k}\left( \ell  \ln(1/(1- \alpha)) - \ln(3/\sqrt{2}) \right)
+            \,, & \quad \text{if}\quad \alpha \leq 1/4\,, \\[1em]
+        1/3 - \dfrac{1}{k}\left(\ell \ln(1/(1- \alpha)) - \ln(3) \right)
+            \,, & \quad \text{if}\quad 1/4 < \alpha \leq 1/3\,, \\[1em]
+        1 - \dfrac{1}{k}\left( \ell \ln(1/(1-\alpha)) + 
+            \dfrac{5}{2}\cdot \dfrac{k + \ln m - 2\ell/3}{6-7\alpha} 
+            + 2\ell/3 \right)
+            \,, & \quad\text{if}\quad 
+            % 1/3 < \alpha <  \frac{1}{2} - \frac{5}{14}\cdot \frac{\ell \ln 2 + \ln m}{k - \ell(2/3 + \ln 2)}
+            1/3 < \alpha \leq 1/2 - \theta
+            \,.
+    \end{cases}
+\]
+\end{theorem}
+\begin{proof}
+We consider the cases $\alpha \leq 1/4, \alpha \in (1/4, 1/3]$, and $\alpha > 1/3$ separately.
+
+\paragraph{Case: $1/3 < \alpha < 1/2$.}
+By~\eqref{eq:delta-composition-generic}, $\delta$ is 
+\begin{align*}
+    \delta
+    &= 1 - \frac{1}{\lambda}\left(1 + \frac{1}{k} \ln \Exp g^\lambda \right) \\
+    &= 1 - \frac{1}{\lambda}\left(1 + \frac{1}{k} \ln \left( m (\Exp X^\lambda)^\ell\right) \right) \\
+    &= 1 - \frac{1}{\lambda} - \frac{\ln m}{k \lambda} - \frac{\ell}{k \lambda} \ln (\Exp X^\lambda)
+    \,.
+\end{align*}
+Since each term in the above expression is positive (in particular, $\Exp X^\lambda > 1$), 
+it easily follows that $\delta < 1$. 
+On the other hand, 
+\[
+    \ln (\Exp X^\lambda) \leq \ln \frac{1+2\lambda}{3(1-\alpha)^\lambda} = \ln ((1+2\lambda)/3) - \lambda \ln(1-\alpha)
+    \,.
+\]
+Note that $\ln((1+2 \lambda)/3) = \ln(1+ 2(\lambda-1)/3) \leq 2(\lambda - 1)/3$ for $\lambda \in (1, 3/2]$. 
+In addition, since $\alpha < 1/2$, $-\ln(1-\alpha)$ is at most $\ln 2$. 
+This implies 
+$
+    \ln (\Exp X^\lambda) \leq 2(\lambda-1)/3 + \lambda \ln(2)
+$, which gives
+\begin{align*}
+    \delta 
+    &\geq 
+        1 
+        - \frac{1}{\lambda} 
+        - \frac{\ln m}{k \lambda} 
+        - \frac{\ell}{k \lambda} \left( 2(\lambda-1)/3 + \lambda \ln(2) \right) \\
+   &=   1 
+        - \frac{1}{\lambda} 
+        - \frac{\ln m}{k \lambda} 
+        - \frac{2\ell}{3k} +\frac{2\ell}{3 k\lambda} - \frac{\ell \ln(2)}{k} \\
+   &=   \left(1 
+        - \frac{1}{\lambda} 
+        - \frac{2\ell}{3k} \right)
+        - \frac{\ln m}{k \lambda} 
+        +\frac{2\ell}{3 k\lambda} 
+        \\
+        \, .
+\end{align*}
+The requirement $\delta > 0$ is implied by
+\begin{align*}
+    &\frac{1}{\lambda} + 
+    \frac{1}{k\lambda} \ln m + 
+    \frac{\ell}{k\lambda} 2(\lambda - 1)/3 + 
+    \frac{\ell}{k} \ln2 
+    < 1 \\
+    \text{or},\quad& k + \ln m + 2\ell(\lambda - 1)/3 + \lambda \ell \ln 2 < k\lambda \\
+    \text{or},\quad& k - 2\ell/3 + \ln m < \lambda( k -2\ell/3 - \ell \ln 2) \\
+    \text{or},\quad&\underbrace{k - 2\ell/3 + \ln m}_{A} < (2/5)(6 - 7 \alpha) \underbrace{ ( k -2\ell/3 - \ell \ln 2) }_{B}\\
+    \text{or},\quad&6 - 7 \alpha > 5A/2B\\
+    \text{or},\quad& \alpha < 6/7 - 5A/14B\,,
+\end{align*}
+which, upon simplification, becomes
+\[
+    \alpha < \frac{1}{2} -\frac{5}{14}\cdot \frac{\ell \ln 2 + \ln m}{k - \ell(2/3 + \ln 2)}
+    \,.
+\]
+We want
+\begin{align*}
+    &\frac{5}{14}\cdot \frac{\ell \ln 2 + \ln m}{k - \ell(2/3 + \ln 2)} < \theta \\
+    \text{or,}\quad& \ell \left( (5 \ln 2)/14\theta + 2/3 + \ln 2\right) + (5 \ln m)/14\theta < k 
+    \,,
+\end{align*}
+which is implied by requiring
+\begin{align*}
+    &\ell \left( 1/4\theta + 3/2 \right) + (\ln m)/2\theta < k \\
+    \text{or,}\quad&\ln m < 2k\theta - \ell(1/2 + 3\theta)
+    \,,
+\end{align*}
+which, in turn, is implied by requiring $\ln m < 2k\theta - \ell$ since $\theta < 1/6$. 
+This expression is equivalent to requiring $\theta > (\ell + \ln m)/2k$.
+
+\paragraph{Case: $\alpha \leq 1/4$.}
+In this case, 
+\[
+    \Exp g^\lambda 
+    = \frac{\left(\Exp[X^\lambda] \right)^\ell}{1 - \alpha \Exp[X^\lambda]} 
+    \leq \frac{\lambda^\ell/(1 - \alpha)^{\lambda \ell}}{1 - 5/9}
+    = (9/4) \cdot 2^\ell/(1-\alpha)^{2\ell}
+    \,,
+\]
+using~\eqref{eq:geom-moment-bound-approx-1} and $\lambda = 2$. 
+Thus
+\begin{align*}
+    \delta
+    &= 1 - \frac{1}{\lambda}\left(1 + \frac{1}{k} \ln \Exp g^\lambda \right) \\
+    &\geq 1 - \frac{1}{2}\left(1 + \frac{1}{k} \ln \left( (9/4)  2^\ell/(1-\alpha)^{2\ell} \right) \right) \\
+    &= \frac{1}{2} - \frac{1}{2k} \left(\ln(9/4) + \ell \left( \ln 2 - 2 \ln(1-\alpha) \right) \right) \\
+    % &= \frac{1}{2} - \frac{\ln(9/4)}{2k} - \frac{\ell}{2k}\left( \ln 2 - 2 \ln(1-\alpha) \right) \\
+    &= \frac{1}{2} - \frac{1}{k} \left(\ln(3/2) + \ell \left( \ln \sqrt{2} - \ln(1-\alpha) \right) \right)\\
+    &= \frac{1}{2} - \frac{1}{k} \left(\ln(3/2) + \ell \ln \left(  \sqrt{2}/(1-\alpha) \right) \right)
+    \,.
+\end{align*}
+% $\Pr[B]$ is at most 
+% \[
+%     3 L (9 \lambda/4)^{\ell/\lambda}/(1-\alpha)^\ell \cdot \EpsP^{1-1/\lambda}
+%     \,
+% \]
+% which, using $\lambda = 2$, simplifies to 
+% \begin{align*}
+%     3 L (9/2)^{1/2}/(1-\alpha)^\ell \cdot \EpsP^{1/2}
+%     = 3 L \EpsP^{1/2 - \left( \ell  \ln(1/(1- \alpha)) - \ln(3/\sqrt{2}) \right)/k}
+%     \,.
+% \end{align*}
+It is easy to see that $\delta$ is always less than one.
+The requirement that $\delta$ must be positive is 
+implied by the (sufficient) condition $\ell \leq 3k/4 -1$.
+
+\paragraph{Case: $1/4 < \alpha \leq 1/3$.}
+In this case, 
+\begin{align*}
+    \ln \Exp g^\lambda 
+    &= \ln \frac{\left(\Exp[X^\lambda] \right)^\ell}{1 - \alpha \Exp[X^\lambda]} \\
+    &\leq \ln \frac{\lambda^\ell/(1 - \alpha)^{\lambda \ell}}{1 - 5/6}
+    = \ln 6 + \ell \ln(3/2) - (3 \ell/2) \ln(1-\alpha) \\
+    &\leq \ln 6 +  \ell \ln \left( (3/2)/(2/3)^{(3/2)} \right)
+    = \ln 6 + (5\ell/2) \ln(3/2)
+    \,,
+\end{align*}
+since $\lambda = 3/2$ and $\alpha \leq 1/3$.
+Using ~\eqref{eq:delta-composition-generic}, let
+\begin{align*}
+    \delta^*
+    &= 1 - \frac{1}{\lambda}\left(1 + \frac{1}{k} \ln \Exp g^\lambda \right) \\
+    &\geq 1 - \frac{2}{3}\left(1 + \frac{1}{k} \left(\ln 6 + (5\ell/2) \ln(3/2) \right) \right) \\
+    &\geq \frac{1}{3} - \frac{2}{3k} \left( \ln 6 + (5\ell/2)\ln(3/2) \right)
+\end{align*}
+As before, it is easy to see that this expression is always less than one. 
+We require that it should also be positive, which is implied by requiring
+\begin{align*}
+    &1/3 >\frac{2}{3k} \left( \ln 6 + (5\ell/2)\ln(3/2) \right) \\
+    \text{or,}\quad& k > 2\ln 6 + 5\ell\ln(3/2) \\
+    \text{or,}\quad& \ell < \frac{k - 2\ln 6}{ 5\ln(3/2)}\,
+\end{align*}
+which, in turn, is implied by requiring $\ell < 4k/9 - 2$.
+
+The condition $n > k/\ln(2)$ follows from the assumption (in Lemma~\ref{lemma:composition}) that 
+the bad event ``each of the sets $S_1, \ldots, S_{n}$ is non-empty''
+occurs with probability at most $\EpsP$. 
+This is implied by the condition $\alpha^n \leq \EpsP$, or $n \geq k/\ln(1/\alpha) > k/\ln(2)$ since $\alpha < 1/2$. 
+\end{proof}
+
+
+
+\subsection{A refinement of Proposition~\ref{prop:li-convergence}}
+
+We record a refinement of Proposition~\ref{prop:li-convergence} below.
+
+\begin{proposition}\label{prop:li-convergence-absolute}
+% The random variables $X \in \NN, X \sim \GeomAlpha$ and $Y = X-1$ satisfy
+Let $c > 1$ and $\alpha \in \big(1/3, (c-1)/(2c-1) \big)$. 
+A random variable $Y \sim \GeomAlphaHat$ satisfies
+\begin{equation}\label{eq:li-convergence-absolute}
+    % \alpha \Exp[X^\lambda]
+    \Exp[Y^\lambda] 
+    < c
+    % \,,    
+\end{equation}
+where $\lambda \in \big(1, \lambda^*_c(\alpha)\big]$ 
+and 
+\begin{align}\label{eq:lambda-star-c}
+    \lambda^*_c(\alpha) &= \begin{cases}
+    \lambda^*(\alpha)\,, &\text{for } 0 < \alpha \leq 1/3\,,\\
+    % 2\,, & \text{for}\quad 0 < \alpha \leq 1/4 \, ,\\
+    % 3/2\,, & \text{for}\quad 1/4 < \alpha \leq 1/3 \, ,\\
+    \frac{b + \ln(3/2\alpha) + \ln(1-1/c)}{a-\ln(1-\alpha)}
+        \,, &\text{for}\quad 1/3 < \alpha < \frac{c-1}{2c-1}\,,
+         % \quad\text{where}
+    \end{cases}\\
+        a&= 1 - 2\left( \ln(3/2)-\ln(1+1/2\sqrt{e}) \right)\,,\quad\text{and} \nonumber \\
+        b&=1-3\ln(3/2)+2\ln(1+1/2\sqrt{e}) \nonumber \,.
+\end{align}
+% Specifically, if $\alpha < 1/2 - \theta$ for some $\theta \in (0, 1/6)$ then
+% \begin{align}
+%     \Exp[(X-1)^\lambda] \leq (1 - 2\theta)/6\cdot 2^\lambda (1 + 2\theta)^{-\lambda}(1+2\lambda)
+%     \,,
+% \end{align}
+% which is at most $13/14$ if $\alpha \leq 0.49$.
+\end{proposition}
+We remark that the quantities $a,b$ defined in Proposition~\ref{prop:li-convergence} satisfy
+\begin{align}\label{eq:lambda-a-b-upperbound}
+    1 + 2e^{x-1} \leq 2 e^{a x - b}
+    \qquad\text{for}\quad x \in (1, 3/2)
+    \, .
+\end{align}

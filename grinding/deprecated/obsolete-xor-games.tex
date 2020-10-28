@@ -1,0 +1,578 @@
+
+\section{Superceded material}
+
+
+\subsection{The Basic XOR target game}\label{sec:generic-xor-game}
+
+
+Our analysis of grinding power reduces to an analysis of the following
+$\NumSets$-round one-player \emph{XOR target game}. 
+The game is determined by four parameters: 
+a dimension $\kappa \in \NN$, 
+an ``initial'' value $\eta_0 \in \{0,1\}^\kappa$, 
+a ``target'' subset $T \subset \{0,1\}^\kappa$, 
+and a sequence of ``selection'' sets $\mathcal{S} = (S_1, \ldots, S_\NumSets)$, where each
+$S_i \subset \{0,1\}^\kappa$. 
+Informally, the game $G = G_\kappa = (\eta_0, T;  \mathcal{S})$ is
+inductively defined as follows:
+\begin{itemize}
+\item If $\NumSets = |\mathcal{S}| = 0$, the player wins if and only if $\eta_0 \in T$.
+\item Otherwise, the player is
+  presented with a uniformly random value $r \in \{0,1\}^\kappa$ and must
+  select an element $s \in S_1 \Union \{r\}$. The game is then
+  begun anew with the initial value $\eta_0 \oplus s$ and the remaining
+  selection sets $S_2, \ldots, S_\NumSets$. (That is, the player
+  commences play of the game
+  $G' = (\eta_0 \oplus s, T; \mathcal{S}_{-1})$.)
+\end{itemize}
+When it is clear from the context, we drop the parameter $\kappa$ from the notation of $G$.
+
+More formally, we may associate with a game $G = G_\kappa = (\eta_0, T;  \mathcal{S})$ 
+the quantity $\alpha(G)$, inductively defined so that
+\begin{align*}
+  \alpha(\eta_0, T;  \EmptyList) &= \begin{cases} 1 & \text{if $\eta_0 \in T$,}\\
+    0 & \text{otherwise, and}
+  \end{cases}\\
+  \alpha(\eta_0, T;  \mathcal{S}) &= \Exp_r\left[
+        \max_{s \in \{r\} \Union S_1} 
+            \alpha(\eta \oplus s, T;  \mathcal{S}_{-1})
+    \right]\,.  
+\end{align*}
+The quantity $\alpha(G)$ corresponds to the probability of success of
+the informal game above under optimal play. It is convenient to
+similarly consider a version of these games where the initial value
+$\eta_0$ is selected uniformly at random. In this case, the game is
+determined by $\kappa$, $T$, and the sequence of selection sets $\mathcal{S}$;
+we then overload our notation, writing $G = (T;  \mathcal{S})$ and defining
+\[
+  \alpha(G) = \Exp_{\eta}[\alpha(\eta, T; \mathcal{S})]
+\]
+We also define the random variable $X_\Adversary$ as the set of strings 
+that are tested for membership in the target set 
+by a player $\Adversary$ playing the game with an uniform initial string.
+It will be clear from context whether we are considering games with
+predetermined or uniform initial values.
+
+\begin{theorem}\label{thm:xor-game-basic}
+  Let $G = (T;  \mathcal{S})$ be an XOR
+  game with uniform initial value and let $\NumSets = |\mathcal{S}|$. Then
+  \begin{equation}\label{eq:basic-XOR-bound}
+    \alpha(T;  \mathcal{S}) \leq \frac{|T|}{2^\kappa}\, \GrindingPower\,,
+    \qquad\text{where}\qquad
+    \GrindingPower = 1 + \sum_{t=1}^{\NumSets}
+      \prod_{i = t}^{\NumSets} |S_i|
+  \end{equation}
+  with the convention that $\GrindingPower = 1$ when $\NumSets = 0$.
+  The quantity $\GrindingPower$ is an upper bound on $|X_\Adversary|$ and it is independent of $T$.
+\end{theorem}
+
+\begin{proof}
+  For a game $G = (T;  \mathcal{S})$ with a uniform initial value $\eta_0$, define
+  \begin{align*}
+    \Lambda(G) &= \Lambda(T; \mathcal{S}) = \{ \eta_0 \in \{0,1\}^\kappa \Given \alpha(\eta_0, T; \mathcal{S}) = 1\}\,,\\
+    \lambda(G) & = \lambda(T; \mathcal{S}) = \Pr_{\eta_0}[\eta_0 \in \Lambda] = \frac{|\Lambda|}{2^\kappa}\,,\quad\text{and}\\
+    \mu(G) &= \mu(T; \mathcal{S}) = \max_{\eta_0 \not\in \Lambda} \alpha(\eta_0, T;  \mathcal{S})\,.
+  \end{align*}
+  Thus $\lambda(T; \mathcal{S})$ is the probability that $\eta_0$
+  is a ``sure success'' for the player (given $T$ and $\mathcal{S}$); in particular, he 
+  does not need to use/see the random strings $r_i, i \in [\NumSets]$ presented in the game. 
+  If $\eta_0$ is not a sure success, however, 
+  it may still be possible for the player to ``steer'' it to the set $\Lambda$ using 
+  the random strings; this probability is $\mu(T; \mathcal{S})$. 
+  In addition, observe that $\alpha(G \Given \eta_0 \in \Lambda)$ is in fact $\lambda(G)$ 
+  and that $\alpha(G \Given \eta_0 \not \in \Lambda)$ is at most $\mu(G)$.
+  
+  
+  The initial string $\eta_0$ either belongs to the set $\Lambda$ or lies outside it. 
+  Conditioned on the former event, which happens with probability $\lambda(G)$, $\alpha(G)$ equals $1$. 
+  In the complementary event, however, 
+  $\alpha(G)$ is just $\mu(G)$.
+  Therefore, 
+  \[
+    \alpha(G) \leq \lambda(G)\cdot 1 + (1 - \lambda(G)) \cdot \mu(G) \leq \lambda(G) + \mu(G)\,,
+  \]
+  so it suffices to establish appropriate upper bounds on the two
+  quantities $\lambda(G)$ and $\mu(G)$. 
+%   These quantities satisfy a simple
+%   inductive relationship that directly yields the
+%   bound~\eqref{eq:basic-XOR-bound}. First, note that if $\NumSets = 0$, so
+%   that $\mathcal{S} = \epsilon$, then
+%   \[
+%     \lambda(T;  \epsilon) = |T|/2^\kappa \qquad\text{and}\qquad \mu(T;  \epsilon) = 0\,.
+%   \]
+%   In general, we will establish the inductive relations
+%   \begin{align*}
+%     \lambda(T;  \mathcal{S}) &\leq |S_1| \cdot \lambda(T; \mathcal{S}_{-1})\,,\quad\text{and}\\
+%     \mu(T;  \mathcal{S}) &\leq \mu(T;  \mathcal{S}_{-1}) + \lambda(T; \mathcal{S}_{-1})\,.
+%   \end{align*}
+  
+  Our immediate goal is to establish a recursive relation describing $\mu$ and $\lambda$ in terms of 
+  the length of the list $\mathcal{S}$. 
+  For the sake of clarity, let us write $\lambda_t \triangleq \lambda(T; \mathcal{S}[\NumSets - t + 1:\NumSets])$
+  for $t \in [\NumSets]$. Analogously, let us write $\mu_t$. 
+  We designate the special cases $\lambda_0 = \lambda(T; \EmptyList)$ and $\mu_0 = \mu(T; \EmptyList)$.
+  We start off by observing that if $\NumSets = 0$, so that $\mathcal{S} = \EmptyList$, then
+  \[
+    \lambda_0 = |T|/2^\kappa \qquad\text{and}\qquad \mu_0 = 0\,.
+  \]
+  For a fixed $T$ and $\mathcal{S}$, 
+  let $\Lambda_t \triangleq \mathcal{S}[\NumSets - t + 1:\NumSets] \oplus T$ for $n \in [\NumSets]$, and 
+  we use the convention that $\Lambda_0 = T$.
+  Note that $\Lambda_\NumSets = \Lambda(G)$ and in addition, that 
+  $|\Lambda_t| \leq |S_{\NumSets - t + 1}| \cdot |\Lambda_{t-1}|$ for $t \in [\NumSets]$. 
+  Since $\eta_0$ is uniform, so is $\eta_0 + s$ for any $s \in S_1$.
+  This implies $\Pr[\eta_0 \in \Lambda_\NumSets] \leq |S_1|\, \Pr[(\eta_0 + s) \in \Lambda_{\NumSets - 1}]$, 
+  which gives us the recursive relation 
+  \[
+    \lambda_\NumSets \leq |S_1| \cdot \lambda_{\NumSets-1}
+    \,.
+  \]
+  By ``unrolling'' the inductive expression for $\lambda_\NumSets$, 
+  we get 
+  \[
+  \lambda_t 
+  = \lambda_0 \, \prod_{i=0}^{t-1}{|S_{\NumSets - i}|} 
+%   = \lambda_0 \, \prod_{i = \NumSets - t + 1}^{\NumSets}{|S_{i}|}
+  \qquad\text{for $t \in [\NumSets]$}
+  \, .
+  \] 
+  
+
+  Conditioning on the event that $\eta_0 \not \in \Lambda_\NumSets$, 
+  \begin{align*}
+    \mu_\NumSets
+    &= \alpha(G \Given \eta_0 \not \in \Lambda_\NumSets) \\
+    &= \Exp_r\, \max_{s \in S_1 \Union\{r\} } \alpha(\eta_0 + s, T; \mathcal{S}_{-1} \Given \eta_0 \not \in \Lambda_\NumSets) \\
+    &= \Pr[(\eta_0 + r) \in \Lambda_{\NumSets-1}] \cdot 1 +
+    \Pr[(\eta_0 + r) \not \in \Lambda_{\NumSets - 1}] \cdot \max_{s \in S_1 } \alpha(\eta_0 + s, T; \mathcal{S}_{-1} \Given \eta_0 \not \in \Lambda_\NumSets) \\
+    &= \lambda_{\NumSets - 1} \cdot 1 + (1 - \lambda_{\NumSets - 1}) \cdot \mu_{\NumSets - 1}\\
+    &\leq \lambda_{\NumSets - 1} + \mu_{\NumSets - 1}
+    \, .
+  \end{align*}
+  By unrolling this recursive relation,
+  we have $\mu_1 = \lambda_0 + \mu_0 = \lambda_0$, $\mu_2 = \lambda_1 + \lambda_0$ 
+  and in general, $\mu_\NumSets = \sum_{i=0}^{\NumSets-1}{\lambda_i}$. 
+  This means, 
+  \begin{align*}
+    \alpha(G) &\leq \mu_\NumSets + \lambda_\NumSets 
+    \leq \sum_{t=0}^\NumSets{ \lambda_t } 
+    = \lambda_0 \left( 1 + \sum_{t=1}^\NumSets{ \prod_{i=0}^{t-1}{|S_{\NumSets - i}|} } \right) 
+    % &= \lambda_0 \left( 1 + \sum_{t=1}^\NumSets{ \prod_{i=t}^{n}{|S_{i}|} } \right) 
+    \,.
+  \end{align*}
+ The bound in the claim follows by reversing the indexing in the sum and using $\lambda_0 = |T|/2^\kappa$.
+\end{proof}
+\begin{remark}
+Let $H = \{i \in [\NumSets] \SuchThat |S_i| = 0 \}$ and suppose $|H| > 0$.
+Let $h \triangleq \max(H)$.
+If $\NumSets \geq 1$, the expression in Theorem~\ref{thm:xor-game-basic} reduces to 
+\[
+    \alpha(G) \leq |T|/{2^{\kappa}} \cdot \sum_{t=h+1}^\NumSets \prod_{i=t}^{\NumSets}{|S_{i}|}
+    \,.
+\]
+\end{remark}
+
+
+%==========================================================
+\subsection{The $\BlockLength$-block XOR target game}\label{sec:xor-game-block}
+We are given a list of sets $\mathcal{S}$ of length $\NumSets$ and an integer $\BlockLength$ 
+assuming $\BlockLength$ divides $\NumSets$, let $\NumSync = \NumSets/\BlockLength$.
+We define the $\NumSync$-round \emph{$\BlockLength$-block XOR target game}
+\[
+    G = G_{\kappa, \BlockLength}(\eta_0, T; \mathcal{S})
+\]
+as follows where $\eta_0$ is the initial string and $T$ is the target set. 
+The game maintains the invariant 
+that $|\mathcal{S}|$ is either $0$ or a multiple of $\BlockLength$. 
+\begin{itemize}
+    \item If $| \mathcal{S} | = 0$, the player wins if and only if $\eta_0 \in T$.
+    \item Otherwise, if $|\mathcal{S}| = \BlockLength$, 
+    the player wins if and only if $\left( \eta_0 \oplus S_1 \oplus \cdots \oplus S_\BlockLength \right) \Intersect T \neq \emptyset$.
+    \item Otherwise, the player is presented with 
+    $\BlockLength$ uniformly random strings $r_i \in \{0,1\}^\kappa$ for $i \in [\BlockLength]$
+    and he must select $\BlockLength$ strings 
+    $s_i \in S_i \Union \{r_i\}$ for each $i = 1, 2, \cdots, \BlockLength$.
+    Finally, the game begins anew as 
+    \[
+        G(\eta, T; \mathcal{S}_{-\BlockLength} )
+    \]
+    where $\eta = \eta_0 \oplus s_1 \oplus \cdots \oplus s_\BlockLength$.
+\end{itemize}
+As before, we define a quantity $\alpha(G)$ associated with this game as follows. 
+% Let $\mathcal{S} \triangleq (F_1 \Union \{r_1\}, \cdots, F_\BlockLength \Union \{r_\BlockLength\})$.
+If $|\mathcal{S}| = 0$, define
+\begin{align*}
+    \alpha(G) &= 
+    \begin{cases}
+        1\,, & \quad\text{if}\quad \eta_0 \in T\, , \\
+        0\,, & \quad\text{otherwise}\, .
+    \end{cases}
+    % \,, \qquad\text{if $|\mathcal{F}| = 0$}
+    % \,,
+    % \\
+\end{align*}
+Otherwise, i.e., if $|\mathcal{S}| > 0$, define
+\begin{align*}
+    \alpha(G)&=
+    \Exp_{\substack{r_1, \cdots, r_\BlockLength \\ r_i \leftarrow_\$ \{0,1\}^\kappa}} \left[ 
+        \max_{\substack{s_i \in S_i \Union \{r_i\} \\ i \in [\BlockLength]} } 
+        \alpha\left((\eta_0 \oplus s_1 \oplus \cdots s_\BlockLength), T; \mathcal{S}_{-\BlockLength} \right) 
+    \right]
+    % \,, \qquad\text{otherwise}
+    \,.
+\end{align*}
+As before, we are interested in the situation where 
+$\eta_0$ is uniform in $\{0, 1\}^\kappa$. 
+In that case, we overload the notation $G$ and write
+$G = G(T;\mathcal{S})$ and similarly, write
+\[
+    \alpha(T;\mathcal{S}) = \Exp_{\eta_0 }\, \alpha(\eta_0, T;\mathcal{S})
+    \,.
+\]
+We also define the random variable $X_\Adversary$ as the set of strings 
+that are tested for membership in the target set 
+by a player $\Adversary$ playing the game with an uniform initial string.
+
+
+% For the theorem below, we define the notation $\mathcal{S}[t;\BlockLength]$ as follows. 
+% Given a list $\mathcal{S}$ of length $\NumSets$ and assuming $\BlockLength$ divides $\NumSets$, 
+% let $\mathcal{S}[t; \BlockLength]$ denote the $t$-th block of $\mathcal{S}$, 
+% with block-size $\BlockLength$, for $t \in [\NumSets/\BlockLength]$, i.e., 
+% \[
+%     \mathcal{S}[t; \BlockLength] 
+%     = \mathcal{S}[(t-1)\BlockLength +1\, : \, t \BlockLength] 
+%     = (S_{(\NumSets/\BlockLength - t)\BlockLength +1}, \ldots, S_{(\NumSets/\BlockLength - t + 1) \BlockLength} )
+%     \,.
+% \]
+\begin{theorem}\label{thm:xor-game-block}
+  Let $G = (T; \mathcal{S})$ be an $\BlockLength$-block XOR
+  game with uniform initial value. Let $\NumSets = |\mathcal{S}|$.
+  Then
+% \frac{|T|}{2^\kappa}\,\underbrace{\sum_{t=1}^{\NumSets}
+    %   \prod_{i = t}^{\NumSets} |S_i|}_{(\dagger)}  
+  
+  \begin{align*}%\label{eq:XOR-bound-block}
+    \alpha(T; \mathcal{S}) \leq \frac{|T|}{2^\kappa}\, \GrindingPower\,,
+    \qquad\text{where}\qquad
+    \GrindingPower =
+        \prod_{i=1}^{\NumSets} |S_i| \cdot
+            \sum_{t=1}^{\NumSets/\BlockLength}\,
+                % \prod_{S \in \mathcal{S}[t; \BlockLength]} (|S| + 1)
+                \prod_{j=1}^{\BlockLength} \left(|S_{ (t-1) \BlockLength + j}| + 1 \right)
+  \end{align*}
+  with the convention that $\GrindingPower = 1$ when $|\mathcal{S}| = 0$.
+  The quantity $\GrindingPower$ is an upper bound on $|X_\Adversary|$ and it is independent of $T$. 
+  Moreover, if at least one of the sets $S_1, \ldots, S_n$ is empty, 
+  \begin{align}\label{eq:xor-game-block-gp}
+      \GrindingPower &= 
+        \prod_{j=\NumSets-h\BlockLength +1}^{\NumSets - h \BlockLength + \BlockLength}{(|S_j| + 1)} \cdot
+        \prod_{i = \NumSets - h \BlockLength + \BlockLength + 1}^{\NumSets} |S_i|
+        \,,
+  \end{align}
+  where $h = \min_{i \in [n]}\{\lceil (n - i + 1)/ \ell \rceil \SuchThat |S_i| = 0\}$.
+\end{theorem}
+\begin{proof}
+Let $\NumSync = \NumSets/\BlockLength$ and 
+consider a round $t$ of the game where $t = m, (m-1), \ldots, 1$. 
+For a fixed $t$, define 
+\[
+    p = (\NumSync - t)\BlockLength +1\,, 
+    \qquad \text{and}\qquad 
+    q = (\NumSync - t + 1)\BlockLength
+    \,.
+\]
+Fix $T$ and $\mathcal{S}$, and consider the Cartesian product 
+\[
+    P_t = \left(S_{p} \Union \{r_1\}\right) \times \cdots \times 
+    \left(S_{q}  \Union \{r_\BlockLength\}\right)
+    \,,
+\] 
+where $S_i \in \mathcal{S}[(t-1)\BlockLength +1\, : \, t \BlockLength]$ for $p \leq i \leq q$ and the 
+random strings $r_1, \ldots, r_\BlockLength$ were presented at round $t$ of the game.
+For the exposition below, let $a_t$ denote the total number of tuples in $P_t$, 
+$b_t$ denote the number of tuples with no random component, 
+and $c_t$ denote the number of tuples with at least one random component. 
+It is easy to see that 
+\begin{align}\label{eq:a-b-c-tuplecount}
+    a_t = \prod_{i=p}^q (|S_i| + 1)\,,\qquad 
+    b_t = \prod_{i=p}^q {|S_i|}\,,\qquad\text{and}\qquad
+    c_t = a_t - b_t
+    \,.
+\end{align}
+Define 
+\[
+    \Lambda_t \triangleq 
+    T \oplus \left( 
+        S_{p} \oplus 
+        S_{p + 1} \oplus 
+        \cdots \oplus 
+        S_{\NumSets} \right)
+        \,.
+\]
+Thus $\Lambda_\NumSync = \Lambda(G)$ and we use the convention that $\Lambda_0 = T$. 
+Now it is easy to see that $|\Lambda_t| \leq b_t \cdot |\Lambda_{t-1}|$. 
+Next, let us define $\lambda_t \triangleq \lambda(T; \mathcal{S}_{-t \BlockLength})$. 
+Define $\mu_t$ in a similar way. 
+As before, if $\NumSets = 0$, so that $\mathcal{S} = \EmptyList$, then
+\[
+    \lambda_0 = \lambda(T; \EmptyList)=|T|/2^\kappa 
+    \qquad\text{and}\qquad 
+    \mu_0 = \mu(T; \EmptyList) = 0
+    \,.
+\]
+
+
+% the game proceeds in rounds $t = 1, 2, \cdots, \NumSets/\BlockLength$.
+The proof follows the same rationale as the proof of Theorem~\ref{thm:xor-game-basic} 
+and yields a similar recursive relation for $\lambda$ and $\mu$. 
+Specifically, the current game will proceed in rounds $1, \ldots, \NumSync$ whereas the previous game 
+used to proceed in rounds $1, \ldots, \NumSets$.
+For $\lambda_\NumSync$ in our case, the player has $b_\NumSync$ non-random choices 
+which has the same semantics as the $|S_1|$ factor in the previous game. 
+Similarly, for $\mu_\NumSync$ in our case, the player has $c_\NumSync$ random choices 
+(which can potentially steer $\eta_0$ into the set $\Lambda_{\NumSync - 1}$) along with some 
+non-random choices, each giving him (by definition) at most $\mu_{\NumSets - 1}$ success probability.
+(Previously, there was only one random choice, $r$.)
+Concretely, by proceeding as we did in the previous game, we get
+\begin{align*}    
+    \lambda_\NumSync
+    &\leq 
+        b_\NumSync \cdot 
+        \lambda_{\NumSync - 1}
+    \,, \\
+    \mu_\NumSync
+    &\leq 
+        c_\NumSync \cdot \lambda_{\NumSync - 1} + \mu_{\NumSync - 1} 
+    \,,
+\end{align*}
+with the base cases $\lambda_0 = |T|/2^\kappa$ and $\mu_0 = 0$. 
+The factor $c_\NumSync$ above represents a union bound over all random choices.
+By unrolling as before, this becomes 
+\[
+    \lambda_\NumSync \leq \lambda_0\,\prod_{t=1}^\NumSync b_t\,,\qquad 
+    \mu_\NumSync \leq \sum_{t=1}^{\NumSync}c_t \lambda_{t-1}
+    \,.
+\]
+Writing $\alpha(G)$ as $\alpha_m$,
+\begin{align}
+\alpha_m
+&\leq \lambda_m + \mu_m 
+= \lambda_0 \prod_{t=1}^\NumSync b_t + \lambda_0 \sum_{t=1}^\NumSync c_t\, \prod_{u = 1}^{t - 1}b_u \label{eq:gp-block-xor-general}\\
+&\leq \lambda_0 \prod_{t=1}^\NumSync b_t + \lambda_0 \prod_{u = 1}^{\NumSync - 1} b_u \,\sum_{t=1}^\NumSync c_t 
+= \lambda_0 \prod_{t=1}^\NumSync b_t + \lambda_0 \prod_{u = 1}^{\NumSync - 1} b_u \,\sum_{t=1}^\NumSync (a_t - b_t) \nonumber \\
+&\leq \lambda_0 \prod_{u = 1}^{\NumSync} b_u \,\sum_{t=1}^{\NumSync-1} a_t 
+= \frac{|T|}{2^\kappa}\cdot \prod_{i = 1}^{\NumSets} |S_i| \cdot \sum_{t=1}^{\NumSync-1} \prod_{S \in \mathcal{S}_t} (|S| + 1)
+\nonumber \,.
+\end{align}
+
+For the ``moreover'' part, condition on the event that there exists some $i \in [n]$ so that $|S_i| = 0$. 
+This starts off a cascade of events: since $b_h = 0$, we have $\lambda_t = 0, \mu_t = \mu_h$ for $t \geq h$, 
+and $\mu_h = c_h \lambda_{h-1}$. 
+Thus the expression in~\eqref{eq:gp-block-xor-general} simplifies as
+\begin{align*}
+    \alpha_\NumSync 
+    &\leq \mu_h \leq c_h \lambda_{h-1} = \lambda_0\, c_h\, \prod_{t = 1}^{h - 1}b_t 
+    = \frac{|T|}{2^\kappa}\cdot 
+        \prod_{j=\NumSets-h\BlockLength +1}^{\NumSets - h \BlockLength + \BlockLength}{(|S_j| + 1)} \cdot
+        \prod_{i = \NumSets - h \BlockLength + \BlockLength + 1}^{\NumSets} |S_i|
+\end{align*}
+by using the upper bound $c_h \leq a_h$ and using~\eqref{eq:a-b-c-tuplecount}.
+% Since $\Pr[|S_i| = 0] = 1-\alpha$, it follows that $\Pr[H = b] \leq (1 - \alpha^\ell)\alpha^{(m - b)\ell} $
+
+
+\end{proof}
+
+
+\subsection{Proof of Theorem~\ref{thm:xor-game-lookahead}}
+In what follows, we will be using the script notation $\mathcal{S}$ to denote 
+an \emph{ordered list of sets} $\mathcal{S} = (S_1, S_2, \ldots)$. 
+$\EmptyList$ denotes an empty list. 
+For any list $\mathcal{S}$ and positive integers $a, b$ satisfying $1 \leq a \leq b \leq |\mathcal{S}|$, 
+we denote a segment of $\mathcal{S}$ using the notation 
+$\mathcal{S}[a:b] = (S_a, S_{a+1}, \ldots, S_b)$. 
+In particular, $\mathcal{S}[a,a] = S_a$ and $\mathcal{S}[a,b] = \EmptyList$ for improper indices $a,b$.
+We use a negative subscript $\mathcal{S}_{-t}$ as a shorthand for the segment $\mathcal{S}[t+1 : |\mathcal{S}|]$.
+In particular, $\mathcal{S}_{-1} = (S_2, \ldots, S_{|\mathcal{S}|})$, $\mathcal{S}_0 = \mathcal{S}$, and 
+$\mathcal{S}_{|\mathcal{S}|} = \EmptyList$.
+We also extend the binary operator $\oplus$ for strings, sets, and lists of sets. 
+Specifically, for two sets $A,B \subset \{0,1\}^\kappa$, a string $\eta \in \{0,1\}^\kappa$, 
+and a list $\mathcal{S} = (S_1, S_2, \ldots)$, we write
+$\eta \oplus A = \{\eta \oplus a \SuchThat a \in A\}$, 
+$A \oplus B = \{a \oplus b \SuchThat a \in A, b \in B\}$, 
+$\eta \oplus \mathcal{S} = \eta \oplus S_1 \oplus \cdots \oplus S_{|\mathcal{S}|}$, and so on.
+
+
+
+
+\begin{proof}
+\renewcommand{\S}{\mathcal{S}}
+\renewcommand{\P}{\mathcal{P}}
+\renewcommand{\SS}[1]{S_{#1}, \ldots, S_{\BlockLength}}
+\renewcommand{\PP}[1]{P_{#1}, \ldots, P_{\NumSets}}
+\renewcommand{\HatPP}[2]{\hat{P}_{#1}, \ldots, \hat{P}_{#2}}
+\renewcommand{\Sfull}{ S_1, \ldots, S_\BlockLength}
+\renewcommand{\Pfull}{ P_1, \ldots, P_\NumSets}
+
+For a game $G = (T; \Sfull; \Pfull )$ with a uniform initial value $\eta_0$, define
+\begin{align*}
+    \Lambda(G) &= \Lambda(T ; \Sfull; \Pfull) = \{ \eta_0 \in \{0,1\}^\kappa \Given \alpha(\eta_0, T; \Sfull; \Pfull) = 1\}\,,\\
+    \lambda(G) & = \lambda(T; \Sfull; \Pfull) = \Pr_{\eta_0}[\eta_0 \in \Lambda] = \frac{|\Lambda|}{2^\kappa}\,,\quad\text{and}\\
+    \mu(G) &= \mu(T; \Sfull; \Pfull) = \max_{\eta_0 \not\in \Lambda} \alpha(\eta_0, T;  \Sfull; \Pfull)\,.
+\end{align*}
+Thus $\lambda(T; \Sfull; \Pfull)$ is the probability that $\eta_0$
+is a ``good initial string'' for the player in that
+\[
+    \eta_0 \oplus 
+    (s_1 \oplus \cdots \oplus s_\BlockLength) 
+    (p_1 \oplus \cdots \oplus p_\NumSets)
+    \in T
+    \,,
+\]
+where $s_i \in S_i$ and $p_i \in P_i$.
+A good initial string guarantees success for the player because
+he does not need to use or see the random strings $r_i, i \in [\NumSets]$ presented during the game. 
+If $\eta_0$ is not a good string, however, 
+it may still be possible for the player to ``steer'' it to the set $\Lambda$ by utilizing 
+the random strings in a future step; by definition, 
+his chance of success with this $\eta_0$ is at most $\mu(G)$. 
+% In other words, $\alpha(G \Given \eta_0 \in \Lambda)$ is in fact $\lambda(G)$ 
+% and $\alpha(G \Given \eta_0 \not \in \Lambda)$ is at most $\mu(G)$.
+
+
+% The initial string $\eta_0$ either belongs to the set $\Lambda$ or lies outside it. 
+Conditioned on the event that $\eta_0 \in \Lambda(G)$, 
+which happens with probability $\lambda(G)$, 
+$\alpha(G)$ equals $1$ by definition. 
+In the complementary event $\eta_0 \not \in \Lambda(G)$, however, 
+$\alpha(G)$ is at most $\mu(G)$ by definition.
+Therefore, 
+\begin{align}\label{eq:alpha-lambda-mu-lookahead}
+    \alpha(G) \leq \lambda(G)\cdot 1 + (1 - \lambda(G)) \cdot \mu(G) \leq \lambda(G) + \mu(G)\,,
+\end{align}
+so it suffices to establish appropriate upper bounds on the two
+quantities $\lambda(G)$ and $\mu(G)$. 
+
+
+Our immediate goal is to establish a recursive relation describing $\mu(G)$ and $\lambda(G)$ in terms of 
+the the lists $\Sfull$ and $\Pfull$. 
+First, let us condition on the event that $\eta_0 \in \Lambda(G)$. 
+There must be some $s \in S_1$ such that $(\eta_0 + s) \in \Lambda(T; \SS{2}, P_1; \PP{2})$.
+% \[
+%     \eta_0 \oplus s \oplus
+%     (S_2 \oplus \cdots \oplus S_\BlockLength) 
+%     \oplus s \oplus 
+%     (P_1 \oplus \cdots \oplus P_\NumSets)
+%     \Intersect T \neq \emptyset
+%     \,.
+% \]
+% The optimal player always selects this $s$. 
+Since there $|S_1|$ choices for $s$, we deduce that
+\[
+    \Lambda(T; \Sfull; \Pfull) \,\subset\, S_1 \oplus \Lambda(T; \SS{2}, P_1; \PP{2})
+    \,,
+\]
+or equivalently, the recursive definition
+\[
+    \lambda(T; \Sfull; \Pfull) \leq |S_1| \cdot \lambda(T;\, \SS{2}, P_1\,;\, \PP{2})
+\]
+with the base case 
+\[
+    \lambda(T; \Sfull;\, \EmptyList) = \prod_{i=1}^\BlockLength |S_i|
+    \,.
+\]
+By unrolling the recursion of $\lambda$ above, we conclude that
+\begin{equation}\label{eq:lambda-expr-lookahead}
+    \lambda(T; \Sfull; \Pfull) 
+    \leq \prod_{i=1}^\BlockLength |S_i| \cdot 
+        \prod_{i=1}^{\NumSets}|P_i| \cdot 
+        \frac{|T|}{2^\kappa}
+        \,.
+\end{equation}
+
+
+Conditioning on the event that $\eta_0 \not \in \Lambda(G)$, 
+we observe that the player can in fact be lucky. 
+Specifically, after seeing the random string $r$, 
+an optimal player can check if the uniform string $\eta_0 + r$ 
+is a good initial string for the game $G^\prime = G(\eta_0 \oplus r\,;\, T;\,\SS{1}; \PP{2})$. 
+If so, (i.) he selects the same $s \in S_1$ in the current game as well as in $G^\prime$, 
+and (ii.) in future---when he would be committing to some $s^\prime \in P_1 \Union \{r\}$---he selects $r$. 
+% (This is possible since the XOR operation is symmetric in its arguments.)
+In this lucky event, his success probability is at most $\lambda(T;\SS{1}; \PP{2})$. 
+Barring this lucky event, however, it does not matter which $s \in S_1$ the player chooses: 
+his success probability, by definition, is at most $\mu(T;\,\SS{2}, P_1 \Union \{r\}\,;\, \PP{2})$.
+In addition, the probability of this unlucky event is at most one. 
+Therefore, using the law of total probability, 
+\begin{align}\label{eq:mu-expr-lookahead}
+    \mu(T; \Sfull; \Pfull)
+    &\leq \lambda(T\,;\,\SS{1}\,;\, \PP{2})\cdot 1 \nonumber\\
+    &\qquad +\,1\cdot \mu(T\,;\,\SS{2}, P_1 \Union \{r\}\,;\, \PP{2}) \nonumber\\
+    &=      \sum_{k=1}^\BlockLength \lambda(T\,;\,\HatPP{1}{k-1}, \SS{k}\,;\, \PP{k+1}) \nonumber \\
+    &\quad +  \sum_{k=\BlockLength + 1}^\NumSets \lambda(T\,;\,\HatPP{k-\BlockLength}{k-1}\,;\, \PP{k+1})
+\, ,
+\end{align}
+with the convention that any list $S_a, \ldots, S_b$ with $a > b$ is an empty list 
+and $\hat{P_i} = P_i \Union \{r_i\}$ where $r_i$ is the random string associated with $P_i$. 
+To arrive at the expression above, 
+we observed that when $\NumSets = 0$, we have $\mu(T; \Sfull; \EmptyList) = 0$ 
+since in that case, there is no way the player can win this game. 
+
+The claim in Theorem~\ref{thm:xor-game-lookahead} follows by 
+using the upper bounds~\eqref{eq:lambda-expr-lookahead} and ~\eqref{eq:mu-expr-lookahead}
+in the expression for $\alpha(G)$ in~\eqref{eq:alpha-lambda-mu-lookahead}.
+
+
+% \begin{align*}
+%     A
+%     &= \sum_{k=1}^\BlockLength \lambda(T\,;\,\HatPP{1}{k-1}, \SS{k}\,;\, \PP{k+1}) \\
+%     &= \sum_{k=1}^\BlockLength \prod_{i=k+1}^\NumSets |P_i| \cdot \left(\prod_{i=1}^{k-1}(1 + |P_i|)\right) \cdot \prod_{i=k}^\BlockLength |S_i| \cdot \frac{|T|}{2^\kappa}\\
+%     &\leq \ell \cdot \prod_{i=1}^\NumSets |P_i| \cdot \left(\prod_{i=1}^{\BlockLength-1}(1 + |P_i|)\right) \cdot \prod_{i=1}^\BlockLength |S_i| \cdot \frac{|T|}{2^\kappa}
+%     \,,\quad\text{and}\\
+%     B 
+%     &= \sum_{k=\BlockLength + 1}^\NumSets \lambda(T\,;\,\,;\,\HatPP{k-\BlockLength}{k-1}\,;\, \PP{k+1}) \\
+%     &= \sum_{k=\BlockLength+1}^\NumSets \prod_{i=k+1}^\NumSets |P_i| \cdot \left(\prod_{i=k - \BlockLength + 1}^{k}(1 + |P_i|)\right) \cdot \frac{|T|}{2^\kappa}\\
+%     &\leq (\NumSets - \BlockLength)\cdot \prod_{i=1}^\NumSets |P_i| \cdot \max_{k \geq \BlockLength + 1} \prod_{i = k - \BlockLength + 1}^{k}(1 + |P_i|) \cdot \frac{|T|}{2^\kappa}
+%     \,.
+% \end{align*}
+\end{proof}
+
+
+% The expressions of the factor $\GrindingPower$ in the XOR target games described above 
+% depends only on the \emph{cardinality} of the sets 
+% involved. 
+% Thus it makes sense to consider the special case when the size of these sets
+% are independent and identically distributed which gives a simplified expression 
+% for $\GrindingPower$.
+
+
+
+
+% \subsection{Grinding power in an XOR target game}
+% An upper bound on $\GrindingPower$---the cardinality of the set $X_\Adversary$---would provide 
+% a lower bound on $H_\infty(X_\Adversary)$. 
+% We call this quantity the ``grinding power'' of $\Adversary$.
+
+% \begin{definition}[Grinding set and grinding power in the XOR target games]\label{def:grinding-power-xor}
+% Suppose a player $\Adversary$ plays an XOR target game with an uniform initial string.
+% Let the random variable $X_\Adversary$ be the set of strings 
+% which could be tested by $\Adversary$ for membership in the target set. 
+% $X_\Adversary$ is called the \emph{grinding set} of $\Adversary$, 
+% and its cardinality $\GrindingPower \defeq |X_\Adversary|$ is called the \emph{grinding power} of $\Adversary$.
+% \end{definition}
+
+% A central goal of this paper is to give tight upper bounds for the grinding power 
+% in different settings of interest.
+
+% We define the ``grinding power'' of the player in the first XOR target game 
+% $G_\kappa(\eta_0, T; \mathcal{S})$ as
+% \[
+%     g = g(\mathcal{S}) = \prod_{i=1}^{|\mathcal{S}|} (|S_i| + 1)
+%     \,.
+% \]
+% Similarly, we define the grinding power of the player in the $\BlockLength$-block XOR target game 
+% $G_{\kappa, \BlockLength}(\eta_0, T; \mathcal{S})$ as
+% \[
+%     g = g(\mathcal{S}) = \max_{t \in [\NumSync]} \prod_{i=1}^{|\mathcal{S}|} (|S_i| + 1)
+%     \,.
+% \]
+

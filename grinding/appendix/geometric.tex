@@ -1,0 +1,625 @@
+
+\subsection{Option sets of geometrically-decaying size; the \texorpdfstring{$(\ell, n, \alpha)$-}{}geometric game}
+
+
+Let us define the geometric distribution.
+\begin{definition}[Geometric distributions $\GeomAlpha$ and $\GeomAlphaHat$]\label{def:geometric-dist}
+    Let $\alpha \in (0, 1/2)$. 
+    Define $\GeomAlpha$ as the distribution on positive integers $k$ 
+    satisfying $\Pr_{\GeomAlpha}[k] = \alpha^{k-1}(1 - \alpha)$. 
+    Define $\GeomAlphaHat$ as the distribution on non-negative integers $k$ 
+    satisfying $\Pr_{\GeomAlphaHat}[k] = \alpha^k(1 - \alpha)$. 
+\end{definition}
+Let $X \sim \GeomAlpha$ and 
+% $Y = X - 1$ 
+$Y \sim \GeomAlphaHat$. 
+% It is easy to see that 
+% $\Pr[X = k]\, = \alpha^{k-1}(1-\alpha)$ for $k = 1, 2, \ldots$
+% and 
+% $\Pr[Y = j]\, = \alpha^{j}(1-\alpha)$ for $j = 0, 1, 2, \ldots$\,. 
+Semantically, given an ordered list of independent and identical Bernoulli trials, 
+$X$ counts \emph{the number of trials to get the first success}
+while $Y$ counts \emph{the number of failures before the first success}.
+
+For any real $\lambda > 0$, we can express the moments of $X$ in terms of polylogarithm functions, as follows:
+\begin{align}\label{eq:geom-moment}
+    \Exp[X^\lambda]
+    = \sum_{x=1}^\infty{  x^\lambda (1-\alpha) \alpha^{x-1} } 
+    = \frac{1-\alpha}{\alpha} \sum_{x=1}^\infty{ \frac{\alpha^{x}}{x^{-\lambda} } } 
+    = \frac{1-\alpha}{\alpha}\Li_{-\lambda}(\alpha)
+\end{align}
+where $\Li_{\lambda}$ is the polylogarithm function of order $\lambda$. It is defined as
+\begin{align}\label{eq:polylog}
+    \Li_{\lambda}(\alpha) &\defeq \sum_{k=1}^\infty{ \frac{\alpha^k}{k^\lambda}}
+    \qquad \text{for}\quad \alpha, \lambda \in \RR
+    \,.
+\end{align}
+Polylogarithm functions of non-positive integer orders can be found using the recursive rule 
+\[
+    \Li_1(\alpha) = -\log(1-\alpha)
+    \, , \qquad \text{and} \qquad
+    \dfrac{\partial}{\partial \alpha}{\Li_{\lambda}(\alpha)} = \frac{\Li_{\lambda-1}(\alpha)}{\alpha}
+    \, ,\quad \lambda \in 0, 1, 2, 3, \cdots
+    \, .
+\] 
+This allows us to compute
+\begin{align}\label{eq:polylog-1-2}
+    \Li_{-1}(\alpha) = \frac{\alpha}{(1-\alpha)^2}\, , \qquad \text{and} \qquad 
+    \Li_{-2}(\alpha) = \frac{\alpha (1+\alpha)}{(1-\alpha)^3} 
+    \, .
+\end{align}
+% The polylogarithm function lets us succintly express the moments of the random variable $X$. 
+Recall from~\eqref{eq:geom-moment} that 
+for any real $\lambda > 0$, 
+$\Exp[X^\lambda] = \frac{1-\alpha}{\alpha}\Li_{-\lambda}(\alpha)$
+\,. 
+% It is also easy to check that 
+% \begin{equation}\label{eq:geom-moment-x-minus-one}
+%     \Exp Y^\lambda = \Exp[(X-1)^\lambda] = \alpha\,\Exp[X^\lambda]
+% \end{equation}
+It follows that 
+\begin{align}\label{eq:geom-moments-1-2}
+    \Exp [X] = \frac{1}{1-\alpha}
+    \, , \quad 
+    \Exp[X^2] 
+    %= \frac{\alpha}{(1-\alpha)^2} + \frac{1}{(1-\alpha)^2}
+    = \frac{1 + \alpha}{(1-\alpha)^2} 
+    \, \quad \text{and}\quad
+    \Var[X] = \frac{\alpha}{(1-\alpha)^2}
+    \, .
+\end{align}
+It is also easy to check that 
+\begin{equation}\label{eq:geom-moment-x-minus-one}
+    \Exp Y^\lambda = \Exp[(X-1)^\lambda] = \alpha\,\Exp[X^\lambda]
+    \,.
+\end{equation}
+
+\begin{proposition}\label{prop:li-convergence}
+    Let $\alpha \in (0, 1/2), X \sim \GeomAlpha$, and $Y \sim \GeomAlphaHat$. 
+    Define 
+    \begin{equation}\label{eq:lambda-star}
+        \lambda^*(\alpha) = \begin{cases}
+            2 & \quad\text{if $0 < \alpha \leq 1/3$}\,,\\
+            1 + (1- \alpha)(1 - 2 \alpha)/2 \alpha^2&\quad\text{if $1/3 < \alpha < 1/2$.}
+        \end{cases}
+    \end{equation}
+    Then for any $\lambda \in (1, \lambda^*(\alpha)]$, 
+    \begin{equation}\label{eq:geom-moment-converge}
+        \Exp[X^\lambda] \leq \begin{dcases}
+            (1+\alpha)/(1 - \alpha)^2 & \text{if $0 \leq \alpha \leq 1/3$}\,,\\
+            1/\alpha&\text{if $1/3 < \alpha < 1/2$.}
+        \end{dcases}
+    \end{equation}
+    In particular, $\Exp[Y^\lambda] = \alpha \Exp[X^{\lambda}] \leq 1$.
+\end{proposition}
+\begin{proof}
+    Since $\Exp[Y^\lambda] = \alpha \Exp[X^\lambda]$ from~\eqref{eq:geom-moment-x-minus-one}, 
+    we focus on bounding the latter quantity. 
+
+    Note that the function $f_\lambda(\alpha) = \Exp[X^\lambda] = (1 - \alpha) \Li_{\lambda}(\alpha)$ 
+    increases monotonically in both $\lambda$ and $\alpha$. 
+    %     We claim that the derivative of $f$ is positive with respect to both $\lambda$ and $\alpha$ in the given parameter range. 
+    %     Specifically, it is easy to check that 
+    %     $\partial f_\lambda(\alpha)/\partial \lambda = \partial \Li_{-\lambda}(\alpha)/\partial \lambda > 0$, 
+    %     which implies $f_1(\alpha) < f_\lambda(\alpha) \leq f_2(\alpha)$. 
+    %     Next, we can check that for $\alpha < 1/2$, the derivative $\partial f_\lambda(\alpha)/\partial \alpha$ is
+    %     \[
+    %         (1-\alpha) \Li_{-(\lambda+1)}(\alpha)/\alpha - \Li_{-\lambda}(\alpha) 
+    %         > (1-\alpha) \Li_{-(1+1)}(\alpha)/\alpha - \Li_{-2}(\alpha) 
+    %         = \Li_{-2}(\alpha)(1/\alpha - 2) 
+    %         > 0
+    %         \, .
+    %     \]
+    Furthermore, since $\Li_{\lambda}(\alpha)$ is convex in $\lambda$, 
+    so is $f_\lambda(\alpha)$ as well.
+
+    If $\alpha \in (0, 1/3]$ 
+    then for any $\lambda \in (1, 2]$, 
+    we have 
+    $$
+    \alpha f_\lambda(\alpha) 
+    \leq \alpha f_2(\alpha) 
+    \leq \alpha f_2(1/3) 
+    \leq (1/3) \cdot (4/3)/(4/9) 
+    = 1
+    \,.
+    $$ 
+    The first part in~\eqref{eq:geom-moment-converge} 
+    follows since $f_2(\alpha) = \Exp[X^2] = (1+\alpha)/(1 - \alpha)^2$. 
+
+    Recall that $f_\lambda(\alpha)$ is convex in $\lambda$. 
+    As a consequence, the straight line between the points 
+    $(1, f_1(\alpha))$ and $(2, f_2(\alpha))$, given by 
+    $$
+        h_\lambda(\alpha) 
+        = \frac{1}{1-\alpha}\left( 1 + \frac{2 \alpha (\lambda - 1)}{1-\alpha}\right)
+        \,,
+    $$
+    is an upper bound for $f_\lambda(\alpha)$ 
+    for $\lambda \in (1, 2]$. 
+    For any given $\alpha \in (0, 1/2)$, 
+    the solution to the equation $h_\lambda(\alpha) = 1/\alpha$ 
+    is $\lambda^* = 1 + (1- \alpha)(1 - 2 \alpha)/2 \alpha^2$. 
+    Moreover, $\lambda^* \leq 2$ if and only if $\alpha \geq 1/3$.
+    It follows that for any $\lambda \in (1, \lambda^*]$ 
+    and any $\alpha \in (1/3, 1/2)$, 
+    $$
+        \alpha f_\lambda(\alpha)
+        \leq \alpha f_{\lambda^*}(\alpha)
+        \leq \alpha h_{\lambda^*}(\alpha)
+        =  \alpha \cdot (1/\alpha)
+        = 1
+        \,.
+    $$
+\end{proof}
+
+Recall the XOR target game from Definition~\ref{def:adaptive-game} 
+and the geometric distribution $\GeomAlphaHat$ from Definition~\ref{def:geometric-dist}.
+\begin{definition}[$(\ell, n, \alpha)$-geometric game]
+    \label{def:geometric-game}
+    Let $\ell, n\in \NN$. 
+    The $(\ell, n, \GeomAlphaHat)$-game 
+    is called an \emph{$(\ell, n, \alpha)$-geometric game}. 
+\end{definition}
+% Before we can specialize Lemma~\ref{lemma:adaptive-moment} for an $(\ell, n, \alpha)$-geometric game, 
+% we need upper bounds on the moments of $X$ and $Y$.
+
+\begin{lemma}\label{lemma:xor-game-geometric-gamma}
+    Let $\EpsP \in (0, 1), \alpha \in (0, 1/2), \ell, n \in \NN$ and $n \geq \ell$. 
+    Let $g$ be the grinding power in an $(\ell, n, \alpha)$-geometric game.     
+    Then $\Pr[g \geq \gamma] \leq \alpha^n + \EpsP$ where
+    \begin{equation}
+        \label{eq:xor-geom-tail-gamma}
+        \gamma = \begin{dcases}            
+            n^2 \EpsP^{-1/2}\cdot 
+                \left( \sqrt{1+\alpha}/(1 - \alpha)\right)^\ell\,,
+            &\quad\text{if}\quad\alpha \in (0, 1/3]\,, \\
+            n^2 \EpsP^{-1/\left(2 - \frac{3 \alpha - 1}{2\alpha^2} \right) } \cdot 
+                % 6^\ell\,,
+                \left(1/\alpha\right)^{\ell/\left(2 - \frac{3 \alpha - 1}{2\alpha^2} \right)}\,,
+            &\quad\text{if}\quad\alpha \in (1/3, 1/2)\,.
+        \end{dcases}
+    \end{equation}
+    % and $\beta = 5/(12 - 14 \alpha)$.
+\end{lemma}
+% Note that the base of the exponent in the last two cases 
+% are at most $1.28$ and $6$, respectively.
+
+\begin{proof}
+    Let $g$ be the grinding power of an $(\ell, n, \alpha)$-geometric game $U$.
+    Let $A$ be the event that 
+    at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$. 
+    Let $S \sim \GeomAlphaHat$. 
+    Note that $\Pr[S = 0] = 1 - \alpha$ and hence $\Pr[S \geq 1] = \alpha$. 
+    Consequently, $\Pr[\overline{A}] = \alpha^n$. 
+    Thus, for any non-negative real $\gamma$, 
+    we have $\Pr[g \geq \gamma] \leq \alpha^n + \Pr[g \geq \gamma \mid A]$. 
+    The rest of the proof focuses on finding a $\gamma$ so that 
+    for a given $\EpsP$, 
+    $\Pr[g \geq \gamma \mid A]$ is at most $\EpsP$.
+
+    By Markov's inequality, 
+    $\Pr[g \geq \gamma \mid A]$ is at most $(\Exp [g^\lambda \mid A])/\gamma^\lambda$.
+    We would like to find a $\gamma$ such that 
+    $(\Exp [g^\lambda \mid A])/\gamma^\lambda$ is at most $\EpsP$. 
+    Equivalently, we want 
+    \begin{equation}\label{eq:gamma-lowerbound}
+        \gamma \geq 
+        \left( \Exp[g^\lambda \mid A]\,(1/\EpsP) \right)^{1/\lambda}
+        \,.         
+    \end{equation}
+
+    Let $\lambda \in (1, \lambda^*(\alpha)]$ 
+    where $\lambda^*$ is defined in~\eqref{eq:lambda-star}. 
+    Write $X = 1 + S$ 
+    so that $X \sim \GeomAlpha$. 
+    Using~\eqref{eq:geom-moment-x-minus-one} and Proposition~\ref{prop:li-convergence}, 
+    check that $\Pr[S \geq 1] \Exp (1 + S)^\lambda = \alpha \Exp X^\lambda = \Exp Y^\lambda \leq 1$; 
+    hence 
+    the condition~\eqref{eq:lambda-S-requirement} 
+    in Lemma~\ref{lemma:adaptive-moment} is satisfied. 
+    Therefore, 
+    $
+           \Exp[g^\lambda \mid A] \leq 
+            n^{1+\lambda} 
+            \left(\Exp X^\lambda\right)^{\ell}
+    $,
+    and, consequently,~\eqref{eq:gamma-lowerbound} gives 
+    \begin{equation}\label{eq:geom-gamma-X}
+        \gamma 
+        \geq n^2 \,
+            \left(\Exp X^\lambda\right)^{\ell/\lambda} \EpsP^{-1/\lambda}
+        % =  n (5/\EpsP)^{1/\lambda} \left( \Exp\,[X^\lambda] \right)^{1/\lambda}
+        % \,,        
+    \end{equation}  
+    where $\lambda \in (1, \lambda^*)$. 
+    Since we are free to choose $\lambda$, 
+    we will pick an admissible $\lambda$ which 
+    allows us to take as small a $\gamma$ as possible; 
+    hence we set $\lambda = \lambda^*$. 
+    The bound in~\eqref{eq:xor-geom-tail-gamma} is obtained by 
+    using the upper bound~\eqref{eq:geom-moment-converge} in~\eqref{eq:geom-gamma-X}
+    and noting that for $\alpha > 1/3$, 
+    $$
+        1/\lambda = (1 + (1- \alpha)(1 - 2 \alpha)/2 \alpha^2)^{-1} 
+        = \frac{1}{2 - (3\alpha - 1)/2\alpha^2}
+        \,.
+    $$   
+\end{proof}
+
+
+\subsection{Coin-flipping}
+\begin{proposition}\label{prop:coin-tossing-security-private-geom}
+    Let $\alpha \in (0, 1/2)$ and $d, k, T, \tau \in \NN$ 
+    so that $d$ divides both $k$ and $T$. 
+    Let $n = (T - k)/d$ and $\ell = k/d$. 
+    Suppose that the coin-flipping protocol $\Pi = \CoinTossingPrivate$ 
+    uses an $(2^{-\tau}, k)$-secure ledger protocol $\Blockchain$.
+    % Let $\gamma$ be defined in~\eqref{eq:xor-geom-tail-gamma}.
+    Then $\Pi$ is 
+    $(\alpha^n + 2^{-\tau + 1}, \rho)$-secure 
+    where
+   \begin{equation}
+      \label{eq:minentropy-loss-geom}
+      \rho = 2 \log_2 n + \begin{dcases}
+       \frac{\tau}{2} +
+          \ell \cdot \log_2\frac{\sqrt{1+\alpha}}{1 - \alpha}              
+           &\quad\text{if}\quad\alpha \in (0, 1/3]\,, \\
+          \frac{\tau + \ell \cdot \log_2 (1/\alpha)}{2 - (3\alpha - 1)/2\alpha^2}
+           &\quad\text{if}\quad\alpha \in (1/3, 1/2)\,.
+       \end{dcases}
+   \end{equation}
+\end{proposition}
+\begin{proof}
+    Let $A$ be the set of adversarial players. 
+    Let $S = \sum_{u \in A}X_u$ 
+    where $X \sim \GeomAlpha, X_u \in \{0,1\}, \Pr[X_u = 1] = \sigma_u$, and 
+    $\sum_{u \in A} \sigma_u = \alpha$. 
+    Then the size of an option set is at most $1 + S$. 
+    Let $\Z_\alpha$ be the distribution of $Z_\alpha$. 
+    Recall the geometric distributions $\GeomAlpha$ and $\GeomAlphaHat$ 
+    from Definition~\ref{def:geometric-dist}.
+    We present the proof in Appendix~\ref{app:poisson}. 
+    \begin{lemma}\label{lemma:geom-dominates-poisson}
+       Let $\alpha \in (0, 1/2)$. 
+       Then $S \DominatedBy Y$ where $Y \sim \GeomAlphaHat$. 
+    \end{lemma} 
+    \eqref{eq:minentropy-loss-geom} follows by taking 
+    logarithm at both sides of~\eqref{eq:xor-geom-tail-gamma}.
+    % It follows that 
+    % $1 + Z_\alpha \DominatedBy \GeomAlpha$.
+\end{proof}
+
+\begin{corollary}\label{coro:beacon-geometric}
+    Let $\tau > 0$ and $\alpha \in (0, 1/2)$ be two reals. 
+     % and $\EpsP = 2^{-\tau}$. 
+    Let $d, k, T \in \NN$ 
+    so that $d$ divides both $k$ and $T$ and, 
+    writing $n = (T - k)/d$ and $\ell = k/d$, 
+    satisfy $\alpha^n \leq 2^{-\tau}$.
+    Suppose that the coin-flipping protocol $\Pi = \CoinTossingPrivate$ 
+    uses a $(2^{-\tau}, k)$-secure ledger protocol $\Blockchain$.
+    An $(L, \Pi)$-composition is 
+    $\left(3 L n^2 \epsilon, \rho\right)$-secure, where 
+  \begin{align}
+    \label{eq:beacon-geometric}
+    \epsilon &= 
+    \begin{dcases}            
+        2^{-\tau/2}\cdot 
+            \left( \frac{\sqrt{e}}{1 - \alpha} \right)^\ell 
+            &\quad\text{if}\quad\alpha \in (0, 1/4]\,, \\
+        2^{-\tau/3}\cdot 
+            \left( \frac{0.85}{1-\alpha} \right)^\ell
+            &\quad\text{if}\quad\alpha \in (1/4, 1/3]\,, \\
+        2^{-\tau(1 - 5/2(6 - 7\alpha) )} \cdot 
+            \left( \frac{1.67 + 2.66 \alpha}{1-\alpha} \right)^\ell
+            &\quad\text{if}\quad\alpha \in (1/3, 1/2)\,,
+    \end{dcases}
+    \\
+        \rho &= 2 \log_2 n + \tau + \log_2(1/\epsilon)
+        \,.
+  \end{align}  
+    % $
+    %   eps 
+    %   % = \EpsP 2^\rho
+    %   % = 2^{\rho - \tau}
+    %   = 3 L 2^{- \tau(1 - 1/a) + \ell + \log_2 n + 1}
+    %   % \,.
+    % $ and 
+    % $\rho = \ell + \log_2 n + \tau/a + 1$.
+\end{corollary}
+\begin{proof}
+    Suppose $\Pi$ is $(p, \rho)$-secure. 
+    Since the ledger protocol $\Blockchain$ is $(2^{-\tau}, k)$-secure, 
+    Lemma~\ref{prop:coin-tossing-security-private} states that 
+    $\rho$ is given by~\eqref{eq:minentropy-loss-geom} 
+    where we use $\EpsP = 2^{-\tau}$. 
+    It also states that 
+    $p = \alpha^n + 2 \cdot 2^{-\tau} \leq 3 \cdot 2^{-\tau}$ 
+    since $\alpha^n \leq 2^{-\tau}$. 
+    Next, Lemma~\ref{lemma:composition} states that 
+    an $(L, \Pi)$-composition must be $(2^\rho p L, \rho)$-secure.
+    Note that $2^\rho p L = 3 L 2^{\rho - \tau}$; 
+    this equals $3 L n^2 \epsilon$ where $\epsilon$ is given in~\eqref{eq:beacon-geometric}. 
+    On the other hand, this also means 
+    $n^2 \epsilon = 2^{\rho - \tau}$; 
+    this gives the expression for $\rho$ in~\eqref{eq:beacon-geometric}.
+\end{proof}
+
+
+
+\subsection{Fractional moments of the geometric distribution}
+When $\lambda$ is a positive integer, it is known that 
+$\Exp[X^\lambda] \leq \lambda!/(1-\alpha)^\lambda$. 
+However, 
+for our application, 
+we will need to use fractional moments of $X$. 
+Note that the bound below applies only to $\alpha \in (0, 1/2)$ 
+while the inequality above applies to $\alpha \in (0,1)$.
+
+\begin{proposition}\label{prop:geom-moment-bound}
+    For any real $\lambda \geq 1, \alpha \in (0, 1/2)$, and $X \sim \GeomAlpha$,
+    \begin{equation}\label{eq:geom-moment-bound}
+        \Exp[X^\lambda] \leq \frac{\Gamma(1+\lambda)}{(1-\alpha)^\lambda} 
+        \, ,
+    \end{equation}
+    and an equality is achieved with $\lambda = 1$ and $\alpha = 1/2$.
+\end{proposition}
+% \subsection{Proof of Proposition~\ref{prop:geom-moment-bound}}\label{sec:geom-moment-bound-proof}
+\begin{proof}
+    \noindent
+    \textbf{Case: $\lambda$ is an integer.} (This special case has a short proof which we record here for completeness. 
+    Note, however, that this case is subsumed by the following cases.)
+
+    For any real $a > 0$ and $\alpha \in (0, 1)$ such that $\alpha e^a < 1$, 
+    the moment generating function of $X$ is 
+    \begin{align}\label{eq:geom-mgf}
+    M_X(a)
+    &= \Exp[e^{a X}] 
+    = \sum_{\lambda=0}^\infty{\frac{a^\lambda \Exp[X^\lambda]}{\lambda!}} \nonumber \\
+    &= \frac{1-\alpha}{\alpha} \sum_{k \geq 1} \alpha^k \sum_{\lambda \geq 0} \frac{a^\lambda k^\lambda }{\lambda!}
+    = \frac{1-\alpha}{\alpha}  \sum_{k \geq 1} (\alpha e^a)^k
+    = \frac{1-\alpha}{\alpha} (1 - \frac{1}{1-\alpha e^a})
+    = \frac{(1-\alpha) e^a}{1-\alpha e^a}
+    \, .
+    \end{align}
+
+    We can differentiate the moment generating function $M_X(a)$ from \eqref{eq:geom-mgf} to the order $\lambda$ 
+    and utilize the fact $\alpha < 1/2$ to get
+    \begin{align*}
+        \frac{d^\lambda}{d a^\lambda}M_X(a)
+        &= \frac{(1-\alpha)e^a}{(1-\alpha e^a)^{\lambda+1}} \sum_{k=0}^{\lambda-1}{\Eulerian{t}{k}
+        \alpha^k}
+        \leq \frac{(1-\alpha)e^a}{(1-\alpha e^a)^{\lambda+1}} \cdot \frac{\lambda!}{2} \cdot \frac{1}{1-\alpha}
+        \leq \frac{e^a \lambda!}{(1-\alpha e^a)^{\lambda}} 
+    \end{align*}
+    where $\Eulerian{\lambda}{k}$ are the Eulerian numbers satisfying $\Eulerian{\lambda}{k} \leq \lambda!/2$ for any $0 \leq k \leq \lambda-1$. 
+    It follows that
+    \begin{align}
+        \Exp[X^\lambda]
+        &=\frac{d^\lambda}{d a^\lambda}M_X(a)\bigg\vert_{a=0}
+        = \frac{1}{(1-\alpha )^{\lambda}} \sum_{k=0}^{\lambda-1}{\Eulerian{t}{k}\alpha^k} \label{eq:geom-moment-int-exact}\\
+        &\leq \frac{\lambda!}{(1-\alpha)^{\lambda}} \label{eq:mgf-geom-derivative}
+        \,.
+    \end{align}
+
+    \noindent
+    \textbf{Case: $\lambda \geq 2$ is a real.} The proof for a real $\lambda$ builds on the analytic properties of $\Gamma(1+\lambda)$ and $\Li_{-\lambda}(\alpha)$. 
+    Let us focus on the functions
+    \begin{align}
+        f_\alpha(\lambda) &\defeq \frac{(1-\alpha)^{\lambda+1} }{\alpha} \Li_{-\lambda}(\alpha)
+        \qquad\text{and} \\
+        f(\lambda) &\defeq f_{1/2}(\lambda) = 2^{-\lambda} \Li_{-\lambda}(1/2)
+        \label{eq:f-lambda}
+        \, .
+    \end{align}
+    We claim that $f_\alpha(\lambda) \leq f(\lambda)$ for a fixed $\lambda$. 
+    Specifically, observe that $f_\alpha(\lambda)$ is a product of 
+    $1/\alpha, (1-\alpha)^{1+\lambda}$, and $\Li_{-\lambda}(\alpha)$; since 
+    each of these functions is convex in $\alpha$, so is $f_\alpha(\lambda)$. 
+    Moreover, since $f_0(\lambda) < f_{1/2}(\lambda)$, we conclude that $f_{\alpha}(\lambda) \leq f(\lambda)$. 
+    Thus the claim is equivalent to showing $f(\lambda) \leq \Gamma(1+\lambda)$ for the specified regime of $\lambda$.
+
+    Suppose $\lambda \in [a, a+1]$ for an integer $a \geq 2$. 
+    Let $g(\lambda)$ be the first-order approximation of $\Gamma(1+\lambda)$ around $\lambda = a$. 
+    Since the derivatives $\Gamma^{(n)}(1+\lambda)$ are positive for every $n \geq 0$, $g(1+\lambda)$ is a lower bound for $\Gamma(1+\lambda)$. 
+    Recall that $\Gamma^\prime(1+\lambda) = \Gamma(1+\lambda) \Psi(1+\lambda)$ where $\Psi$ is the Digamma function defined as $\Psi(s) \defeq \Gamma^\prime(s)/\Gamma(s)$. 
+    Since $\Psi(1+\lambda) > \log(1/2+\lambda)$ (cf. (3) in \cite{diamond2016bounds}), it follows that 
+    \[
+        \Gamma(1+\lambda) 
+        > g(\lambda; a) 
+        \defeq \Gamma(1+a) + (\lambda - a) \Gamma(1+a) \log(1/2 + a)
+        \, .
+    \]
+    On the other hand, the straight-line segment $\phi(\lambda)$ determined by the points $(a, f(a))$ and $(a+1, f(a+1))$ 
+    serves as an upper bound on the convex function $f(\lambda)$ in the interval $[a, a+1]$. 
+    This line is 
+    \[
+        \phi(\lambda; a) \defeq f(a) + (\lambda - a) ( f(a+1) - f(a) )
+        \, .
+    \] 
+    Observe that the line $\phi(\lambda; a)$ stays below the line $g(\lambda; a)$ 
+    for $\lambda \in [a, a+1], a = 2, 3, 4, \cdots$ since we can use
+    \eqref{eq:geom-moment} and \eqref{eq:mgf-geom-derivative} to show that
+    \[
+        \phi(a;a) = f(a) 
+        = 2^{-a} \Li_{-a}(1/2)  
+        \leq 2^{-a} \cdot \frac{1/2}{1-1/2} \frac{a!}{(1-1/2)^a} 
+        = a!
+        = \Gamma(1+a) = g(a; a)
+        \, .
+    \]
+    This proves the claim for every real $\lambda \geq 2$.
+
+    \noindent
+    \textbf{Case: $\lambda \in [1, 2]$ is a real.}
+    Here, as before, we seek to show that $f(\lambda) \leq \Gamma(1+\lambda)$ for $\lambda \in [1,2]$. 
+    The straight-line bounds from the previous case does not work in this case 
+    because $g(\lambda; 1) < f(\lambda; 1)$ for $\lambda \in [1, 2]$. 
+    Our argument, instead, relies on the following expression of the negative-order Polylogarithms 
+    in term of the Gamma function (cf. (13.1) in \cite{wood1992polylog}):
+    \begin{align}\label{eq:wood-polylog}
+        \Li_{-\lambda}(\alpha) &= \Gamma(1+\lambda) \sum_{k = -\infty}^\infty{ (- \log(\alpha) + 2 \pi k i)^{1+\lambda}}
+        \, , \qquad \lambda > 0
+        \, .
+    \end{align}
+    Using $\alpha = 1/2$ in \eqref{eq:wood-polylog} and further simplification, we can write \eqref{eq:f-lambda} as
+    \begin{align}\label{eq:f-lambda-T}
+        f(\lambda) &= 2^{-\lambda}\Gamma(1+\lambda) \left( T_0(\lambda) + T(\lambda) \right)
+        \, ,
+    \end{align}
+    where
+    \begin{align*}
+        T(\lambda) &= \sum_{k \geq 1}{T_k(\lambda)}\, , \\
+        T_k(\lambda) &\defeq z_k^{-(1+\lambda)} + (z_k^*)^{-(1+\lambda)}\, , \qquad \text{and} \\
+        z_k &\defeq \log(2) + 2\pi k i\, , \qquad z_k \in \CC \\
+        T_0(\lambda) &= \frac{1}{(\log(2)^{1+\lambda}}
+        \, .
+    \end{align*}
+    Our plan is to show that $T(\lambda) < 0$ for $\lambda \in [1,2]$ 
+    since it would imply that
+    \begin{align*}
+        f(\lambda) 
+        &\leq 2^{-\lambda} T_0(\lambda) \Gamma(1+\lambda)
+        = \frac{2^{-\lambda} \Gamma(1+\lambda)}{ (\log(2))^{1+\lambda} }  
+        = \frac{\Gamma(1+\lambda)}{(\log(4))^\lambda \log(2)} 
+        \leq \frac{\Gamma(1+\lambda)}{\log(8)}
+        < \Gamma(1+\lambda)
+    \end{align*}
+    using $\lambda \geq 1$.
+
+    It remains to show that $T(\lambda) < 0$ for $\lambda \in [1,2]$. 
+    First, observe that we can explicitly compute $T(\lambda)$ for $\lambda = 1,2$ using \eqref{eq:f-lambda-T}. 
+    In particular, we can use \eqref{eq:polylog-1-2} to compute 
+    $\Li_{-1}(1/2) = (1/2) / (1/4) = 2$, and
+    $\Li_{-2}(1/2) = (1/2)(3/2)/(1/8) = 6$, and further 
+    using \eqref{eq:f-lambda-T}, we get
+    \begin{align*}
+    T(1) 
+    &= \frac{f(1)}{2^{-1}\Gamma(1+1)} - T_0(1) 
+    = \frac{\Li_{-1}(1/2)}{1} - \frac{1}{(\log(2))^2} 
+    = 2 - \frac{1}{(\log(2))^2} \approx -0.08
+    \, , \\
+    T(2) 
+    &= \frac{f(2)}{2^{-2}\Gamma(1+2)} - T_0(2) 
+    = \frac{\Li_{-2}(1/2)}{2} - \frac{1}{(\log(2))^3} 
+    = 3 - \frac{1}{(\log(2))^3}
+    \approx -3.0027
+    \, ,
+    \end{align*}
+    and in particular, $T(1) < T(2) < 0$. 
+    Thus to show that $T(\lambda) < 0$ for $\lambda \in [1,2]$, it suffices to show that 
+    $\partial T_k(\lambda)/\partial \lambda$ is strictly positive for every $k \geq 1$. 
+    The rest of the proof is devoted to this task.
+
+
+    Let $r_k \defeq \vert z_k \vert = \sqrt{\ln(2)^2 + (2 \pi k)^2}$ and 
+    $\theta_k \defeq \arg{z_k} = \arctan(2 \pi k/\log(2) )$. 
+    Then $z_k = r_k e^{i \theta_k}, z_k^* = r_k e^{-i \theta_k}, 1/z_k = e^{-i \theta_k}/r_k$, 
+    and $1/z_k^* = e^{i \theta_k}/r_k$. 
+    Thus
+    \begin{align}\label{eq:derivative-Tk}
+        \frac{\partial}{\partial \lambda}T_k(\lambda)
+        &= \frac{\partial}{\partial \lambda}\left[ 
+        \left(\frac{1}{z_k} \right)^{1+\lambda} + 
+        \left(\frac{1}{z_k^*}\right)^{1+\lambda}  \right] \nonumber \\
+        &= \left(\frac{1}{z_k} \right)^{1+\lambda}\ln \frac{1}{z_k} + 
+        \left(\frac{1}{z_k^*}\right)^{1+\lambda} \ln \frac{1}{z_k^*} \nonumber \\
+        &=\left( \frac{1}{r_k}\right)^{1+\lambda}\left( 
+            e^{-i \theta_k(1+\lambda)} \ln \frac{e^{-i \theta_k}}{r_k} +
+            e^{i \theta_k(1+\lambda)} \ln \frac{e^{i \theta_k}}{r_k}
+        \right) \nonumber \\
+        &= -2 \left( \frac{1}{r_k}\right)^{1+\lambda}\left( 
+            \ln(r_k) \cos(\theta_k(1+\lambda)) + \theta_k \sin (\theta_k(1+\lambda))
+        \right) 
+        \, .
+    \end{align}
+    Since $r_k \geq r_1 = \log(2) > 0$ and $\theta_k \in [0, 2\pi)$, 
+    the signs of the trigonometric terms decide the sign 
+    of the right-hand side above. 
+    We claim that
+    \begin{align}\label{eq:trig-sign}
+        \ln(r_k) \cos(\theta_k(1+\lambda)) + \theta_k  \sin (\theta_k(1+\lambda))  < 0
+    \end{align}
+    which, in turn, implies that the right-hand side of
+    \eqref{eq:derivative-Tk} is strictly positive, as desired. 
+    Recall that 
+    \begin{align*}
+        \arctan(x) &= \begin{cases}
+        \pi/2 - \arctan(1/x)\, , & x > 1\, , \\
+        x - \frac{x^3}{3} + \frac{x^5}{5} - \cdots < x\, , & \vert x \vert < 1
+        \, .
+        \end{cases}
+    \end{align*}
+    Define $\beta_k \defeq 2 \pi k/\log(2)$. 
+    Since $\beta_k > 0$ for all $k \geq 1$, we have
+    \begin{align*}
+        \theta_k &= \arctan(\beta_k) = \frac{\pi}{2} - \arctan(1/\beta_k) \in \left[ \pi/2 - 1/\beta_k, \pi/2 \right]
+        \, ,
+    \end{align*}
+    and consequently, since $\lambda \in [1,2]$,
+    \begin{align*}
+        &\theta_k(1+\lambda) \in \left[ \pi - 2/\beta_k, 3\pi/2 \right]
+        \, .
+    \end{align*}
+    If we have $ \theta_k(1+\lambda) \in (\pi,  3 \pi/2)$
+    then both $\sin(\theta_k(1+\lambda)) $ and $\cos(\theta_k(1+\lambda))$ are strictly negative, 
+    satisfying \eqref{eq:trig-sign}.
+    Otherwise, if $\theta_k(1+\lambda) \in \{\pi, 3\pi/2\}$, exactly one of these terms is strictly negative 
+    while the other one is zero;  \eqref{eq:trig-sign} is satisfied in this case as well.
+
+    The only remaining case is $\theta_k(1+\lambda) \in [\pi - 2/\beta_k, \pi)$ where $2/\beta_k = \ln(2)/\pi k < \pi/2$; 
+    in this case, the cosine term is negative but the sine term is positive.
+    Let $a(k, \lambda) \defeq \ln(r_k) \cos(\theta_k(1+\lambda))$ 
+    and $b(k, \lambda) \defeq \theta_k \sin(\theta_k(1+\lambda))$. 
+    If we can show that $\vert a(k, \lambda) \vert > \vert b(k, \lambda) \vert$, 
+    \eqref{eq:trig-sign} will be satisfied. 
+    With this in mind, observe that $k \geq 1$ implies 
+    $\log(r_k) = (1/2) \log(r_k^2) = (1/2) \log( (\log(2)^2 + 4 \pi^2 k^2) > 3/2$, 
+    and that $\theta_k \leq \pi/2$.
+    Using this, we calculate
+    \begin{align*}
+        | a(k, \lambda) | - | b(k, \lambda)| 
+        &> (3/2) |\cos(\pi - 2/\beta_k)| - (\pi/2) |\sin(\pi - 2/\beta_k)| 
+        = (3/2) \cos(2\beta_k) - (\pi/2)\sin(2\beta_k) \\
+        &> (3/2) \cos(\ln(2)/\pi) - (\pi/2)\sin(\ln(2)/\pi) \\
+        &> 1 
+    \end{align*}
+    by a direct evaluation, and~\eqref{eq:trig-sign} is satisfied, as desired.
+\end{proof}
+
+
+
+
+% \subsection{Sets whose size has a geometric distribution}
+% % \newcommand{\Lex}{\mathrm{lexicographic}}
+% How do we generate option sets with a geometrically-diminishing size? 
+% Here is a recipe.
+% Let $\kappa \in NN$ and $\alpha \in (0, 1)$. 
+% Let $A \subset \{0,1\}^\kappa$ be arbitrary with $|A| = \alpha 2^\kappa$. 
+% Let $C$ be a set of $n$ uniformly random elements of $\{0,1\}^\kappa$. 
+% % Let $\Lex(C) = \{c_1, \ldots, c_n\}$ be the lexicographic ordering of $C$. 
+% Let $h$ be the lexicographically smallest element in $C$ such that $h \not \in A$. 
+% Finally, let $D = \{c \in C \SuchThat c < h\} \Union \{h\}$. 
+
+% \begin{claim}\label{claim:set-size-geometric}
+%     % Let $n, \kappa \in \NN$, $\alpha \in (0, 1/2)$ and 
+%     % let $C = \{c_1, \ldots, c_n\} \subset \{0,1\}^\kappa$ be a set of uniformly random strings. 
+%     % Let $A \subset [n]$ be an arbitrary set with $|A|/n = \alpha$. 
+%     % If $h = \min \{c_i \SuchThat i \not \in A\}$ and 
+%     $|D| \sim \GeomAlpha$.
+% \end{claim}
+% \begin{proof}
+% \newcommand{\Rank}{\mathrm{rank}}
+% \newcommand{\Index}{\mathrm{index}}
+% Let $r_i$ be the rank of the element $c_i$ in $C$ in the lexicographic order and 
+% define $\Index(r) = i$ if and only if $\Rank(c_i) = r$.
+% It follows that $|D| = \Rank(h)$.
+% For every rank $r = 1, 2, \ldots, |C|$, define $Z_r = 1$ if $\Index(r) \in A$ and 
+% define $Z_r = 0$ otherwise.
+% Since elements in $C$ are independent and uniform, for every $r$ it follows that 
+% $Z_1, \ldots, Z_{|C|}$ are independent with $\Pr[Z_r = 1] = \Pr[c_{\Index(r)} \in A] = \alpha$. 
+% Specifically, $\Rank(h) = \min \{r \SuchThat Z_r = 0\}$. 
+% But this is the definition of a geometric random variable with success parameter $1 - \alpha$. 
+% Thus $|D| =  \Rank(h) \sim \GeomAlpha$.
+% \end{proof}

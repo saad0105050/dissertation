@@ -1,0 +1,102 @@
+
+In this section, we show how to use our beacon \emph{inside} an existing blockchain protocol. 
+We would see that this would endow the blockchain protocol with improved resilience against 
+grinding attacks.
+
+We note that both blockchain protocols are in the static stake model.
+
+
+\subsection{A blockchain beacon in the static corruption model}
+In this case, we may take the leader schedule to be public. 
+The corruption delay will be longer than the epoch length $R$; 
+in this way, by the time the adversary 
+gets a chance to corrupt a slot leader, 
+the epoch will pass and he will not be a legitimate slot leader anymore. 
+
+It is obvious that a beacon made by a composition of the coin-tossing protocol 
+with the one-speaks-every-$d$-slots schedule is a feasible choice. 
+It remains to study the relevant blockchain parameters.
+
+\begin{itemize}
+    \item (Blockchain protocol parameters.) 
+    Suppose we have a blockchain protocol where each block settles within $k$ slots 
+    except with probability $\EpsP$. 
+    Fix the adversarial stake ratio $\alpha \in (0, 1/2)$ and 
+    choose arbitrary values for the nonce-size $\kappa \in \NN$, 
+    lifetime (in epochs) $L \in \NN$. 
+    Set $\lambda = \log_2(1/\alpha)$ and choose 
+    % $\delta \in (0,1 - 1/\lambda)$
+    $\delta \in (0,1)$.
+    Set $q = \log_2(1/\EpsP)$, $n = q/\lambda$, 
+    $\ell = \lfloor q(1 - \delta - 1/\lambda) - (3 + \log_2n ) \rfloor$, and
+    $t = \lfloor k/\ell \rfloor$. 
+    % and $\ell = \lfloor k/t \rfloor$.
+    Thus the failure probability of the beacon is at most $L \EpsP^\delta$. 
+    Let us set the the blockchain protocol's epoch length 
+    $R = \ell t+(q/\lambda)t+k+k = 3k+qt/\lambda$. 
+
+    % \item (Public schedule of slot-leaders.) 
+    % At the outset of each epoch, 
+    % a roster $\mathcal{L} = \{v_1, \ldots, v_{R}\}$ of \emph{slot leaders} is published. 
+    % Specifically, for each $i \in [R]$, 
+    % a protocol participant $v_i$ is selected with probability proportional to his stake. 
+    % This player is designated to create the block at slot $i$. 
+
+    % \item (Public schedule of nonce-players.)
+    % At the outset of each epoch, 
+    % a roster $\mathcal{N} = \{u_1, \ldots, u_{n+\ell}\}$ of \emph{nonce players} is published. 
+    % Specifically, for each $i \in [n+\ell]$, 
+    % a protocol participant $u_i$ is selected with probability proportional to his stake. 
+    % This player is designated to contribute, at slot $(i - 1)t + 1$, 
+    % a uniformly random element $\eta_i \in \{0, 1\}^\kappa$.
+    
+    % \item (Nonce announcement.) 
+    % A nonce player at slot $i$ generates his nonce and announces it to the leaders of the slots $j \in [i+1, i+k-1]$.
+    
+    % \item (Nonce recording.) 
+    % At an honest slot $j$, let $Q$ be the set of nonces that 
+    % the slot-leader has received so far via the nonce-channel. 
+    % When he adds his block to some chain $\Chain$, he includes all the nonces in $Q$ except 
+    % (i.) those that are already present in $\Chain$ and 
+    % (ii.) those that were issued at slots $i \leq j - k$.
+\end{itemize}
+
+\begin{remark}
+Nonces in the first $k$ slots in an epoch serves as the initial lookahead region. 
+The last $k$ slots in an epoch act as a waiting period so that 
+the blocks from the previous $k$ slots (i.e., slots $R - 2k+1, \ldots, R-k$) 
+become part of the persistent view of all honest players via the CP axiom. 
+This will ensure that the last nonce, if heard by an honest recipient, 
+must be recorded in a persistent block. 
+In addition, note that $R$ is at most $4k$; 
+the nonce generation is completed within first $2k$ slots
+and the trailing $2k$ slots are used as the ``stabilizing region''
+\end{remark}
+
+\paragraph{Comparison with Ouroboros.}
+\textbf{To do}
+
+% Can a nonce be ever lost? The answer is no.
+
+% \begin{claim}[]
+% An announced nonce is never lost.
+% \end{claim}
+% \begin{proof}
+% Suppose the nonce for slot $j$ is lost. 
+% By the honest chain growth axiom, the chain held by an honest player at the end of the epoch 
+% must contain at least one honest block from the slots $j+1, \ldots, j+k$. 
+% However, by the broadcast axiom, this honest block must contain the nonce from slot $j$, 
+% contradicting our assumption.
+% \end{proof}
+
+
+\subsection{A blockchain beacon in the dynamic corruption model}
+In this setting, it is necessary to elect slot leaders (as well as nonce-players) in private. 
+It is obvious that a beacon made by a composition of the coin-tossing protocol 
+with the all-speaks-every-$d$-slots schedule is a feasible choice. 
+It remains to study the relevant blockchain parameters.
+
+\paragraph{Comparison with Praos.}
+
+
+

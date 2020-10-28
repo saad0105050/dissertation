@@ -1,0 +1,409 @@
+\documentclass{article}
+\def\lncs{0}
+\def\hideobsolete{1}
+
+\usepackage{etoolbox}
+\newtoggle{drawfigs}
+\togglefalse{drawfigs}
+% \toggletrue{drawfigs}
+
+
+\usepackage{fullpage, amsmath,amsthm,amssymb,graphicx,amsfonts}
+\usepackage{authblk}
+
+\usepackage{stix2}
+% \usepackage{libertine}
+
+
+
+% %\usepackage{thmtools}
+% \usepackage{mathtools}
+% %\usepackage{thmtools, thm-restate}
+
+% \newtheorem{theorem}{Theorem}
+% \newtheorem{claim}{Claim}
+% \newtheorem{proposition}{Proposition}
+% \newtheorem{lemma}{Lemma}
+% \newtheorem{corollary}{Corollary}
+% \newtheorem{bound}{Bound}
+
+% \theoremstyle{definition}
+% \newtheorem{definition}{Definition}
+% \newtheorem{axiom}{Axiom}
+
+% \theoremstyle{remark}
+% \newtheorem{fact}{Fact}
+% \newtheorem{remark}{Remark}
+
+\usepackage{amsthm,thmtools,mathtools}
+
+% \theoremstyle{plain}
+% \newtheorem{theorem}{Theorem}
+% \newtheorem{lemma}[theorem]{Lemma}
+\declaretheoremstyle[
+  notefont=\bfseries, 
+  bodyfont=\normalfont\itshape
+  %qed=$\diamond$
+]{mydef}
+\declaretheoremstyle[
+  bodyfont=\normalfont\itshape
+  % qed=$\diamond$
+]{mythm}
+
+
+\declaretheorem[style=mythm,numberwithin=section]{theorem}
+\declaretheorem[style=mythm,sibling=theorem]{lemma}
+\declaretheorem[style=mythm,sibling=theorem]{corollary}
+\declaretheorem[style=mythm,sibling=theorem]{problem}
+\declaretheorem[style=mythm,sibling=theorem]{claim}
+\declaretheorem[style=mythm,sibling=theorem]{proposition}
+\declaretheorem[style=mythm,sibling=theorem]{fact}
+\declaretheorem[style=mythm,name=Claim,numbered=no]{claim*}
+\declaretheorem[style=mythm,name=Fact,numbered=no]{fact*}
+
+\declaretheorem[style=mydef,sibling=theorem]{definition}
+\declaretheorem[style=definition,qed=$\diamond$]{axiom}
+\declaretheorem[style=remark,sibling=theorem]{example}
+\declaretheorem[style=remark,sibling=theorem]{remark}
+
+
+
+
+  
+
+%\declaretheorem{theorem}
+
+
+\usepackage{color}
+\usepackage{ifthen}
+
+\long\def\red#1\par{\par\bigskip{\color{red}#1}\par}
+\def\showauthnotes{0}
+
+\ifthenelse{\showauthnotes=1}
+{
+\newcommand{\authnote}[2]{{{[#1: #2]~}}}
+}
+{ \newcommand{\authnote}[2]{} }
+
+\newcommand{\aggelos}[1]{\authnote{\color{magenta}Aggelos}{#1}}
+
+
+\newcommand{\InlineCases}[1]{
+  \begin{enumerate*}[label=(\textit{\roman*})]
+    #1
+  \end{enumerate*}
+}
+
+\bibliographystyle{plainnat}
+
+% \usepackage{microtype}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{hyperref}
+\usepackage[notrig]{physics}
+\usepackage{caption,subcaption}
+\usepackage{tikz}
+\usetikzlibrary{automata,arrows,positioning,calc}
+\usepackage{pgfplots}
+\usepackage{subfiles}
+\usepackage[numbers,sectionbib]{natbib}
+\usepackage[inline]{enumitem}
+\usepackage{hhline}
+\usepackage{multirow}
+\usepackage{framed}
+\usepackage{blindtext}
+
+%=========== Commands inherited from the Settlement Time paper ==============
+\newcommand\gmargin{\mathbf{m}}
+\newcommand{\gf}[1]{\mathsf{#1}}
+\newcommand{\hdepth}{\mathbf{d}}
+\DeclareMathOperator{\length}{length}
+\DeclareMathOperator{\depth}{depth}
+\DeclareMathOperator{\height}{height}
+\DeclareMathOperator{\gap}{gap}
+\DeclareMathOperator{\reach}{reach}
+\DeclareMathOperator{\reserve}{reserve}
+\DeclareMathOperator{\Divergence}{div}
+\DeclareMathOperator{\tdivergence}{tdiv}
+\newcommand{\Slot}{\textsl{sl}}
+\newcommand{\fprefix}{\sqsubseteq}
+\newcommand{\Adversary}{\mathcal{A}}
+\newcommand{\Challenger}{\mathcal{C}}
+\newcommand{\Honest}{\mathcal{H}}
+\newcommand{\Distribution}{\mathcal{D}}
+\newcommand{\dominatedby}{\preceq}
+\newcommand{\StationaryRho}{\mathcal{R}_\infty}
+\newcommand{\DistRho}{\mathcal{R}}
+\newcommand{\Union}{\cup}
+\newcommand{\Intersect}{\cap}
+\newcommand{\BigUnion}{\bigcup}
+\newcommand{\BigIntersect}{\bigcap}
+\newcommand{\Poly}{\mathsf{poly}}
+
+%-------------------- Commands from the XOR Games -------------
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\CC}{\mathbb{C}}
+
+\newcommand{\EpsG}{\mathsf{\varepsilon_g}}
+\newcommand{\EpsA}{\mathsf{\varepsilon}_a}
+\newcommand{\EpsP}{\mathsf{\varepsilon}_p}
+\newcommand{\EpsTotal}{\mathsf{\varepsilon}_{total}}
+\newcommand{\gSlice}{\gamma}
+\newcommand{\Slice}{\mathsf{slice}}
+\newcommand{\Epoch}{\mathsf{epoch}}
+\newcommand{\Block}{\mathsf{block}}
+\newcommand{\Chain}{\mathcal{C}}
+\newcommand{\GameXor}{\mathcal{G}}
+\newcommand{\GameNoSynch}{\GameXor_\mathsf{nosynch}}
+\newcommand{\GameAllSynch}{\GameXor_\mathsf{allsynch}}
+\newcommand{\BlockLength}{\ell}
+\newcommand{\EpochLength}{k}
+\newcommand{\NumEpochs}{L}
+\newcommand{\NonceDim}{\kappa}
+\newcommand{\Binomial}{\mathsf{Bin}}
+\newcommand{\Poisson}{\mathsf{Poi}}
+\newcommand{\Bernoulli}{\mathsf{Ber}}
+\newcommand{\Geometric}{\mathsf{Geo}}
+\newcommand{\Beacon}{\mathsf{B}}
+\newcommand{\Protocol}{\mathsf{P}}
+
+
+\DeclareMathOperator*{\Exp}{\mathbb{E}}
+\DeclareMathOperator*{\Var}{\mathbf{Var}}
+\DeclareMathOperator{\wt}{wt}
+
+\pgfplotsset{compat=1.14}
+
+\DeclareRobustCommand{\Eulerian}{\genfrac<>{0pt}{}}
+\DeclareMathOperator{\Li}{Li}
+\newcommand{\Lifunc}{\Li_{-\lambda}(\alpha)}
+\newcommand{\Geom}{\mathcal{G}}
+\newcommand{\GeomAlpha}{\Geom_\alpha^+}
+\newcommand{\GeomOneMinusAlpha}{\Geom_{1 - \alpha}^+}
+% \newcommand{\GeomAlphaHat}{\hat{\Geometric}_\alpha}
+\newcommand{\GeomAlphaHat}{\Geom_\alpha}
+%\DeclareMathOperator{\Re}{Re}
+\newcommand{\defeq}{\triangleq}
+\newcommand{\Given}{\mid \,}
+\newcommand{\SuchThat}{:}
+\newcommand{\EmptyString}{\varepsilon}
+% \newcommand{\EmptyString}[1][\kappa]{0^{#1}}
+\newcommand{\ZeroString}[1][\kappa]{0^{#1}}
+\newcommand{\Z}{\mathcal{Z}}
+\newcommand{\DominatedBy}{\preceq}
+\newcommand{\MinEntropy}{H_\infty}
+\newcommand{\Indicator}{\mathbf{1}}
+
+
+\newcommand{\Player}{u}
+\newcommand{\Players}{\mathcal{U}}
+\newcommand{\Leaders}{\mathcal{L}}
+\newcommand{\NoncePlayers}{\mathcal{N}}
+\newcommand{\Endorser}{E}
+\newcommand{\Nonce}{\mathsf{nonce}}
+\newcommand{\BeaconProtocol}{\pi_{\mathsf{beacon}}}
+\newcommand{\ECQ}{\exists\mathrm{CQ}}
+\newcommand{\sECQ}[1][s]{{#1}\text{-}\ECQ}
+\newcommand{\CP}{\mathrm{CP}}
+\newcommand{\SlotCP}{\CP^{\mathsf{slot}}}
+\newcommand{\kSlotCP}[1][k]{{#1}\text{-}\SlotCP}
+\newcommand{\Prefix}{\prec}
+\newcommand{\PrefixEq}{\preceq}
+\newcommand{\Trim}[1]{^{\lceil {#1}}}
+\newcommand{\TrimSlot}[1]{\left[1:-{#1}\right]}
+\newcommand{\Hrule}{\noindent\rule{\textwidth}{1pt}}
+\newcommand{\RandOracle}{\mathsf{H}}
+\newcommand{\VRF}{\mathsf{VRF}}
+\newcommand{\pk}{\mathsf{pk}}
+\newcommand{\sk}{\mathsf{sk}}
+\newcommand{\Or}{\text{or,}\quad}
+\newcommand{\Blockchain}{\Pi_\mathsf{bc}}
+\newcommand{\A}{\mathtt{A}}
+\newcommand{\h}{\mathtt{h}}
+\newcommand{\Hheavy}{\h\text{-heavy}}
+\newcommand{\Aheavy}{\A\text{-heavy}}
+\newcommand{\Astar}{\mathtt{A\star}}
+
+
+
+
+
+
+
+%============== Title ================
+\title{%Rigorous
+  A Decentralized Randomness Beacon with Guaranteed Min-Entropy}
+
+\ifnum\lncs=1
+%  \titlerunning{Ouroboros Thoosa}
+\fi
+
+
+
+
+%============ Authors ================
+\ifnum\lncs=0
+  \author[1,4]{Aggelos Kiayias}
+  \author[2]{Cristopher Moore}
+  \author[3]{Saad Quader}
+  \author[3,4]{Alexander Russell}
+
+  \affil[1]{University of Edinburgh}
+  \affil[2]{Santa Fe Institute}
+  \affil[3]{University of Connecticut}
+  \affil[4]{IOHK}
+
+  \else
+
+%  \author{Authors blinded}
+% \author{Erica Blum \inst{1}  \and 
+%   Aggelos Kiayias \inst{2,5}   \and
+%   Cristopher Moore \inst{3}    \and
+%   Alexander Russell \inst{4,5} \and
+%   Saad Quader \inst{4} 
+% }
+
+% \institute{
+%   {University of Maryland, College Park}  \and
+%   {University of Edinburgh}               \and
+%   {Santa Fe Institute}                    \and
+%   {University of Connecticut}             \and
+%   {IOHK}
+% }
+
+\fi
+
+
+%==================== Begin document ================
+\begin{document}
+\maketitle
+
+\begin{abstract}
+%   We present Ouroboros Thoosa, a Proof-of-Stake (PoS) blockchain protocol with a public leader schedule in the synchronous setting. 
+%   It is provably secure against an adaptive adversary in the Universal Composability (UC) framework with Global Setup (GUC). 
+  A publicly-verifiable bias-resistant randomness beacon is a fundamental component in many distributed protocols.
+  In the first part of our paper, we analyze three schemes for such a beacon that are
+  bias-resistant with an overwhelming probability. 
+  The adversarial bias in our schemes---called the \emph{grinding power} of the adversary---is 
+  defined in a combinatorial sense and it is independent of his computational power. 
+  
+  Next, we argue that these schemes on top of any distributed protocol which achieves
+  \emph{eventual consensus} and \emph{liveness}. 
+  Since some provably-secure blockchain protocols satisfy these properties, our scheme can 
+  be a drop-in replacement for the randomness beacon in those protocols. 
+  This can be attractive for two reasons: 
+  (i.) Our scheme is conceptually simpler than some 
+  of the existing beacons (e.g., Ouroboros); and 
+  (ii.) The security guarantee of many existing protocols [e.g., Ouroboros, Praos, Genesis, GKL, PassShi, and Sleepy] 
+  hinge on the assumption 
+  that $q$, the number of hashing queries made by the adversary, is polynomial in the security parameter. 
+  Our analysis gives an upper bound on $q$ which allows one to choose suitable protocol parameters 
+  under which $q$ is indeed bounded by a polynomial in the security parameter.
+  
+\end{abstract}
+
+
+% To-Do:
+% \begin{enumerate}
+% \item Detail the model and connection to blockchain protocols. 
+% Consider the 2-player game. 
+% \item Introduce a computational method for computing the density. 
+% \item Applications: (i) Improving the Common Prefix bound on Ouroboros paper. 
+% (can we refine the analysis of the union bound)
+% (ii) Providing an exact lower bound on confirmation time for given a certain
+% risk level against a double spending attacker that has x amount of stake. 
+% \end{enumerate}
+
+% We then provide two rigorous estimates on the basic event of interest---that an adversary can produce a fork that covers a particular portion of a blockchain.
+
+\section{Introduction }
+\input{tex/intro.tex}
+
+\section{The security model}
+\label{sec:model}
+\input{tex/model.tex}
+
+% \section{Definitions}
+% \label{sec:definitions}
+% \input{tex/definitions.tex}
+
+% \pagebreak         
+\section{Coin-flipping in PoS blockchains with the longest-chain rule}
+\label{sec:grinding-praos}
+\input{tex/praos.tex}
+
+\section{XOR target games}
+\label{sec:xor-games}
+\input{tex/xor-games.tex}
+
+\section{Coin-flipping with a private leader election}
+\label{sec:coin-tossing}
+\input{tex/coin-tossing.tex}
+
+\section{Coin-flipping over multiple epochs}
+\label{sec:composing-xor-games}\label{sec:beacon}
+\input{tex/composing-xor-games.tex}
+
+% % \section{A randomness beacon via blockchain axioms}
+% % \label{sec:beacon}
+% \input{tex/beacon.tex}
+
+% % \section{New blockchain protocols using our beacon}
+% % \label{sec:new-blockchains}
+% \input{tex/new-blockchains.tex}
+
+
+
+\bibliography{bib/forks,bib/grinding,bib/abbrev0,bib/crypto_crossref}
+
+
+\appendix
+% \section{Blockchain protocols}
+% \label{app:blockchain}
+% \input{tex/appendix/blockchain-protocols.tex}
+
+\section{Fractional moment bounds for the geometric distribution}
+\label{app:geometric}
+\input{tex/appendix/geometric.tex}
+
+
+\section{Coin-flipping with public leader election}
+\label{app:bernoulli}
+\input{tex/appendix/coin-flipping-public.tex}
+
+
+\section{Poisson distribution is subgeometric}
+\label{app:poisson}
+\input{tex/appendix/poisson.tex}
+
+
+% \section{Omitted proofs for XOR games}
+% \label{app:xor-games-appendix}
+% \input{tex/appendix/xor-games.tex}
+
+\section{Omitted proofs for grinding in praos}
+\label{app:grinding-praos}
+\input{tex/appendix/grinding-praos.tex}
+
+
+
+% \section{XOR games under geometric distribution}
+% \label{app:xor-games-geometric}
+% \input{tex/xor-games-geometric.tex}
+
+
+
+% The figure+table appears in exact-probabilities.tex
+%\newpage
+%\section{Graphs and tables of exact probabilities}
+%\label{app:probabilities}
+%\input{exact-app.tex}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

@@ -1,0 +1,2848 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[    125515,       2840]
+NotebookOptionsPosition[    122533,       2788]
+NotebookOutlinePosition[    122884,       2803]
+CellTagsIndexPosition[    122841,       2800]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Clear", "[", "\"\<Global`*\>\"", "]"}], ";"}], "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"PrependTo", "[", 
+     RowBox[{
+      RowBox[{"CurrentValue", "[", 
+       RowBox[{"$FrontEndSession", ",", " ", "\"\<NotebookPath\>\""}], "]"}], 
+      ",", " ", 
+      RowBox[{"NotebookDirectory", "[", "]"}]}], "]"}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"NotebookEvaluate", "[", "\"\<RelativeMarginData.nb\>\"", "]"}], 
+    ";"}], "\n", "\n", 
+   RowBox[{
+    RowBox[{"AllNs", " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{
+      "10", ",", " ", "30", ",", " ", "40", ",", " ", "50", ",", " ", "70", 
+       ",", " ", "80", ",", " ", "100", ",", " ", "200", ",", " ", "300", ",",
+        " ", "400", ",", " ", "500"}], "}"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"Ns", " ", "=", " ", 
+     RowBox[{"Take", "[", 
+      RowBox[{"AllNs", ",", " ", "10"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"ValsArr", " ", "=", " ", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"Log", "[", "10", "]"}], " ", 
+        RowBox[{"(", 
+         RowBox[{"Symbol", "[", 
+          RowBox[{"\"\<Vals\>\"", " ", "<>", " ", 
+           RowBox[{"ToString", "[", "#", "]"}]}], "]"}], ")"}]}], " ", "&"}], 
+      " ", "/@", " ", "Ns"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"Eps", " ", "=", " ", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"1", " ", "-", " ", 
+         RowBox[{"2", " ", "#"}]}], ")"}], " ", "&"}], " ", "/@", " ", 
+      "Alpha"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"Convert", " ", "from", " ", "base"}], "-", 
+     RowBox[{"10", " ", "logarithm", " ", "to", " ", "base"}], "-", 
+     RowBox[{"e", " ", "logarithm"}]}], "*)"}], "\n", "\n", "\n", 
+   RowBox[{
+    RowBox[{"TrainFraction", " ", "=", " ", "0.70"}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"NumTrials", " ", "=", " ", "5"}], ";", " ", 
+    RowBox[{"(*", "20", "*)"}], "\n", 
+    RowBox[{"(*", 
+     RowBox[{
+      RowBox[{"DegreeIncrement", "=", 
+       RowBox[{"1", "/", "3"}]}], ";"}], "*)"}], "\n", 
+    RowBox[{"DegreeIncrements", " ", "=", " ", 
+     RowBox[{"{", "1", "}"}]}], ";", 
+    RowBox[{"(*", 
+     RowBox[{"1", ",", " ", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"1", "/", "2"}], "/", " ", "1"}], "/", "3"}]}], "*)"}], 
+    RowBox[{"(*", 
+     RowBox[{"must", " ", "be", " ", "descending"}], "*)"}], 
+    "\[IndentingNewLine]", 
+    RowBox[{"DegreeWindowSize", " ", "=", " ", "3"}], ";", 
+    RowBox[{"(*", "degrees", "*)"}], "\[IndentingNewLine]", 
+    RowBox[{"MaxStartDegree", " ", "=", " ", "6"}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"MinDegree", " ", "=", " ", "2"}], ";", 
+    RowBox[{"(*", 
+     RowBox[{
+     "No", " ", "point", " ", "trying", " ", "below", " ", "this", " ", 
+      "degree"}], "*)"}], 
+    RowBox[{"(*", 
+     RowBox[{
+      RowBox[{"MaxDegree", "=", "10"}], ";"}], "*)"}], "\[IndentingNewLine]", 
+    RowBox[{"MaxFitAttempts", " ", "=", " ", "20"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"FirstParamMustBePositive", " ", "=", " ", "True"}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GetPosition", "[", 
+      RowBox[{"list_", ",", " ", "item_"}], "]"}], " ", ":=", " ", 
+     RowBox[{"First", "@", 
+      RowBox[{"First", "@", 
+       RowBox[{"Position", "[", 
+        RowBox[{"list", ",", " ", "item"}], "]"}]}]}]}], ";"}], "\n", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"MaxStartDegree", "=", 
+      RowBox[{"MaxDegree", "-", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"MaxParams", "-", "1"}], ")"}], "*", "DegreeIncrement"}]}]}],
+      ";"}], "*)"}], "\n", 
+   RowBox[{
+    RowBox[{"MinDegreeIncrement", " ", "=", " ", 
+     RowBox[{"Min", "@", "DegreeIncrements"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"MinDegreeIncrementIndex", " ", "=", " ", 
+     RowBox[{"First", "@", 
+      RowBox[{"First", "@", 
+       RowBox[{"Position", "[", 
+        RowBox[{"DegreeIncrements", ",", " ", "MinDegreeIncrement"}], 
+        "]"}]}]}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"Print", "[", 
+     RowBox[{
+     "\"\<MinDegreeIncrementIndex: \>\"", ",", " ", "MinDegreeIncrementIndex",
+       ",", " ", "\"\< MinDegreeIncrement: \>\"", ",", " ", 
+      "MinDegreeIncrement"}], "]"}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"NumDegreeIncrements", " ", "=", " ", 
+     RowBox[{"Length", "@", "DegreeIncrements"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"NumNs", " ", "=", " ", 
+     RowBox[{"Length", "[", "Ns", "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"NumData", " ", "=", " ", 
+     RowBox[{"Length", "[", "Eps", "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"MaxParams", "[", "degIncIndex_", "]"}], " ", ":=", " ", 
+     RowBox[{"1", " ", "+", " ", 
+      RowBox[{"DegreeWindowSize", "/", 
+       RowBox[{"DegreeIncrements", "[", 
+        RowBox[{"[", "degIncIndex", "]"}], "]"}]}]}]}], ";"}], "\n", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"MaxParams", "=", 
+      RowBox[{"1", "+", 
+       RowBox[{"Floor", "[", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"MaxDegree", "-", "MinDegree"}], ")"}], "/", 
+         "DegreeIncrement"}], "]"}]}]}], ";"}], "*)"}], "\n", "\n", "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"StartDegrees", "[", "degIncIndex_", "]"}], " ", ":=", " ", 
+     RowBox[{"Range", "[", 
+      RowBox[{"MinDegree", ",", " ", "MaxStartDegree", ",", " ", 
+       RowBox[{"DegreeIncrements", "[", 
+        RowBox[{"[", "degIncIndex", "]"}], "]"}]}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"StartDegreeToIndex", "[", 
+      RowBox[{"deg_", ",", " ", "degIncIndex_"}], "]"}], ":=", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Position", "[", 
+        RowBox[{
+         RowBox[{"StartDegrees", "[", "degIncIndex", "]"}], ",", " ", "deg"}],
+         "]"}], " ", "//", " ", "First"}], " ", "//", " ", "First"}]}], ";"}],
+    "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"NumStartDegrees", "[", "degIncIndex_", "]"}], " ", ":=", " ", 
+     RowBox[{"Length", "@", 
+      RowBox[{"StartDegrees", "[", "degIncIndex", "]"}]}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"MaxStartDegreesPerDegreeIncrement", " ", "=", " ", 
+     RowBox[{"NumStartDegrees", "[", "MinDegreeIncrementIndex", "]"}]}], 
+    ";"}], "\n", 
+   RowBox[{
+    RowBox[{"params", " ", "=", " ", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"Symbol", "[", 
+         RowBox[{"\"\<var\>\"", " ", "<>", " ", 
+          RowBox[{"ToString", "[", "#", "]"}]}], "]"}], ")"}], " ", "&"}], 
+      " ", "/@", " ", 
+      RowBox[{"Range", "[", 
+       RowBox[{"1", ",", " ", 
+        RowBox[{"MaxParams", "[", "MinDegreeIncrementIndex", "]"}]}], 
+       "]"}]}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Params", "[", "degIncIndex_", "]"}], " ", ":=", " ", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"Symbol", "[", 
+         RowBox[{"\"\<var\>\"", " ", "<>", " ", 
+          RowBox[{"ToString", "[", "#", "]"}]}], "]"}], ")"}], " ", "&"}], 
+      " ", "/@", " ", 
+      RowBox[{"Range", "[", 
+       RowBox[{"1", ",", " ", 
+        RowBox[{"MaxParams", "[", "degIncIndex", "]"}]}], "]"}]}]}], ";"}], 
+   "\n", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"Print", "[", 
+      RowBox[{
+      "\"\<MaxParams: \>\"", ",", "MaxParams", ",", "\"\< Degrees: \>\"", ",",
+        "Degrees", ",", "\"\< StartDegrees: \>\"", ",", "StartDegrees", ",", 
+       "\"\< Params: \>\"", ",", "params"}], "]"}], ";"}], "*)"}], "\n", 
+   RowBox[{
+    RowBox[{"TestFraction", " ", "=", " ", 
+     RowBox[{"1", " ", "-", " ", "TrainFraction"}]}], ";"}], "\n", "\n", "\n",
+    "\n", "\n", "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"IndexOfN", "[", "N_", "]"}], " ", ":=", " ", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"MemberQ", "[", 
+        RowBox[{"Ns", ",", " ", "N"}], "]"}], ",", " ", 
+       RowBox[{"First", "@", 
+        RowBox[{"First", "@", 
+         RowBox[{"Position", "[", 
+          RowBox[{"Ns", ",", " ", "N"}], "]"}]}]}], ",", " ", "0"}], "]"}]}], 
+    ";"}], "\n", 
+   RowBox[{
+    RowBox[{"Data", " ", "=", " ", 
+     RowBox[{"ConstantArray", "[", 
+      RowBox[{
+       RowBox[{"{", "}"}], ",", " ", 
+       RowBox[{"{", 
+        RowBox[{"NumNs", ",", " ", "2"}], "}"}]}], "]"}]}], ";", 
+    RowBox[{"(*", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"{", "}"}], ")"}], "&"}], "/@", "Ns"}], ";"}], "*)"}], 
+    RowBox[{"TrainData", " ", "=", " ", 
+     RowBox[{"ConstantArray", "[", 
+      RowBox[{
+       RowBox[{"{", "}"}], ",", " ", 
+       RowBox[{"{", 
+        RowBox[{"NumTrials", ",", " ", "NumNs", ",", " ", "2"}], "}"}]}], 
+      "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"TestData", " ", "=", " ", 
+     RowBox[{"ConstantArray", "[", 
+      RowBox[{
+       RowBox[{"{", "}"}], ",", " ", 
+       RowBox[{"{", 
+        RowBox[{"NumTrials", ",", " ", "NumNs", ",", " ", "2"}], "}"}]}], 
+      "]"}]}], ";"}], "\n", "\n", 
+   RowBox[{
+    RowBox[{"TrainingSampleSize", " ", "=", " ", 
+     RowBox[{"Floor", "[", 
+      RowBox[{"NumData", "*", "TrainFraction"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"TrainIndex", " ", "=", " ", 
+     RowBox[{"ConstantArray", "[", 
+      RowBox[{
+       RowBox[{"{", "}"}], ",", " ", 
+       RowBox[{"{", 
+        RowBox[{
+        "NumTrials", ",", " ", "NumNs", ",", " ", "TrainingSampleSize"}], 
+        "}"}]}], "]"}]}], ";"}], "\n", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"TrainIndex", "=", 
+      RowBox[{"Sort", "@", 
+       RowBox[{"RandomSample", "[", 
+        RowBox[{
+         RowBox[{"Range", "[", 
+          RowBox[{"1", ",", "NumData"}], "]"}], ",", 
+         RowBox[{"Floor", "[", 
+          RowBox[{"NumData", "*", "TrainFraction"}], "]"}]}], "]"}]}]}], 
+     ";"}], "*)"}], "\n", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"TrainIndex", "=", 
+      RowBox[{"Range", "[", 
+       RowBox[{"1", ",", 
+        RowBox[{"Floor", "[", 
+         RowBox[{"NumData", "*", "TrainFraction"}], "]"}]}], "]"}]}], ";", 
+     RowBox[{"Print", "[", "\"\<Using non-random sample\>\"", "]"}], ";"}], 
+    "*)"}], "\n", 
+   RowBox[{
+    RowBox[{"TrainEps", " ", "=", " ", 
+     RowBox[{"ConstantArray", "[", 
+      RowBox[{"0", ",", " ", 
+       RowBox[{"{", 
+        RowBox[{
+        "NumTrials", ",", " ", "NumNs", ",", " ", "TrainingSampleSize"}], 
+        "}"}]}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"TestEps", " ", "=", " ", 
+     RowBox[{"ConstantArray", "[", 
+      RowBox[{"0", ",", " ", 
+       RowBox[{"{", 
+        RowBox[{"NumTrials", ",", " ", "NumNs", ",", " ", 
+         RowBox[{"NumData", " ", "-", " ", "TrainingSampleSize"}]}], "}"}]}], 
+      "]"}]}], ";"}], "\n", "\n", 
+   RowBox[{
+    RowBox[{"Errors", " ", "=", " ", 
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{"train", " ", "->", " ", 
+        RowBox[{"{", "}"}]}], ",", " ", 
+       RowBox[{"test", " ", "->", " ", 
+        RowBox[{"{", "}"}]}]}], "|>"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"MeanErrors", " ", "=", " ", 
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{"train", " ", "->", " ", 
+        RowBox[{"{", "}"}]}], ",", " ", 
+       RowBox[{"test", " ", "->", " ", 
+        RowBox[{"{", "}"}]}]}], "|>"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"LoadData", "[", "]"}], ":=", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", "N", "}"}], ",", " ", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"For", "[", 
+         RowBox[{
+          RowBox[{"N", " ", "=", " ", "1"}], ",", " ", 
+          RowBox[{"N", " ", "<=", " ", "NumNs"}], ",", " ", 
+          RowBox[{"N", "++"}], ",", " ", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Data", "[", 
+             RowBox[{"[", "N", "]"}], "]"}], " ", "=", " ", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"Eps", "[", 
+                  RowBox[{"[", "#", "]"}], "]"}], ",", " ", 
+                 RowBox[{"ValsArr", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"N", ",", " ", "#"}], "]"}], "]"}]}], "}"}], ")"}],
+               " ", "&"}], " ", "/@", " ", 
+             RowBox[{"Range", "[", 
+              RowBox[{"1", ",", " ", "NumData"}], "]"}]}]}], ";"}]}], 
+         "\[IndentingNewLine]", "]"}], ";"}]}], "\[IndentingNewLine]", 
+      "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"LoadData", "[", "]"}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Prepare", "[", 
+     RowBox[{"trial_", ",", " ", "N_"}], "]"}], ":=", 
+    RowBox[{"Block", "[", 
+     RowBox[{
+      RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"TrainIndex", "[", 
+         RowBox[{"[", 
+          RowBox[{"trial", ",", " ", "N"}], "]"}], "]"}], " ", "=", " ", 
+        RowBox[{"Sort", "@", 
+         RowBox[{"RandomSample", "[", 
+          RowBox[{
+           RowBox[{"Range", "[", 
+            RowBox[{"1", ",", " ", "NumData"}], "]"}], ",", " ", 
+           "TrainingSampleSize"}], "]"}]}]}], ";", "       ", 
+       RowBox[{
+        RowBox[{"TrainEps", "[", 
+         RowBox[{"[", 
+          RowBox[{"trial", ",", " ", "N"}], "]"}], "]"}], " ", "=", " ", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"Eps", "[", 
+            RowBox[{"[", "#", "]"}], "]"}], ")"}], " ", "&"}], " ", "/@", " ", 
+         RowBox[{"TrainIndex", "[", 
+          RowBox[{"[", 
+           RowBox[{"trial", ",", " ", "N"}], "]"}], "]"}]}]}], ";", "       ",
+        "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"TestEps", "[", 
+         RowBox[{"[", 
+          RowBox[{"trial", ",", " ", "N"}], "]"}], "]"}], " ", "=", " ", 
+        RowBox[{"Complement", "[", 
+         RowBox[{"Eps", ",", " ", 
+          RowBox[{"TrainEps", "[", 
+           RowBox[{"[", 
+            RowBox[{"trial", ",", " ", "N"}], "]"}], "]"}]}], "]"}]}], ";", 
+       "  ", 
+       RowBox[{
+        RowBox[{"TrainData", "[", 
+         RowBox[{"[", 
+          RowBox[{"trial", ",", " ", "N"}], "]"}], "]"}], " ", "=", " ", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"Data", "[", 
+            RowBox[{"[", 
+             RowBox[{"N", ",", " ", "#"}], "]"}], "]"}], ")"}], " ", "&"}], 
+         " ", "/@", " ", 
+         RowBox[{"TrainIndex", "[", 
+          RowBox[{"[", 
+           RowBox[{"trial", ",", " ", "N"}], "]"}], "]"}]}]}], ";", "       ", 
+       RowBox[{
+        RowBox[{"TestData", "[", 
+         RowBox[{"[", 
+          RowBox[{"trial", ",", " ", "N"}], "]"}], "]"}], " ", "=", " ", 
+        RowBox[{"Complement", "[", 
+         RowBox[{
+          RowBox[{"Data", "[", 
+           RowBox[{"[", "N", "]"}], "]"}], ",", " ", 
+          RowBox[{"TrainData", "[", 
+           RowBox[{"[", 
+            RowBox[{"trial", ",", " ", "N"}], "]"}], "]"}]}], "]"}]}], 
+       ";"}]}], "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Prepare", "[", "]"}], " ", ":=", " ", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"N", ",", " ", "trial"}], "}"}], ",", " ", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"For", "[", 
+         RowBox[{
+          RowBox[{"N", " ", "=", " ", "1"}], ",", " ", 
+          RowBox[{"N", " ", "<=", " ", "NumNs"}], ",", " ", 
+          RowBox[{"N", "++"}], ",", " ", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"For", "[", 
+            RowBox[{
+             RowBox[{"trial", " ", "=", " ", "1"}], ",", " ", 
+             RowBox[{"trial", " ", "<=", " ", "NumTrials"}], ",", " ", 
+             RowBox[{"trial", "++"}], ",", " ", "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{"Prepare", "[", 
+               RowBox[{"trial", ",", " ", "N"}], "]"}], ";"}]}], 
+            "\[IndentingNewLine]", "       ", 
+            RowBox[{"(*", 
+             RowBox[{
+              RowBox[{"Print", "[", 
+               RowBox[{"\"\<i = \>\"", ",", "i"}], "]"}], ";", "\n", 
+              "       ", 
+              RowBox[{"Print", "[", 
+               RowBox[{"\"\<TrainData: \>\"", ",", 
+                RowBox[{"TrainData", "[", 
+                 RowBox[{"[", "i", "]"}], "]"}]}], "]"}], ";", "\n", 
+              "       ", 
+              RowBox[{"Print", "[", 
+               RowBox[{"\"\<TestData: \>\"", ",", 
+                RowBox[{"TestData", "[", 
+                 RowBox[{"[", "i", "]"}], "]"}]}], "]"}], ";"}], "*)"}], 
+            "\[IndentingNewLine]", "]"}], ";"}]}], "]"}], ";"}]}], "]"}]}], 
+    ";"}], "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Model", "[", 
+      RowBox[{"N_", ",", " ", "startDegreeIndex_", ",", " ", "degIncIndex_"}],
+       "]"}], " ", ":=", " ", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+        "i", ",", " ", "maxParams", ",", " ", "startDegree", ",", " ", 
+         "degreeIncrement"}], "}"}], ",", " ", 
+       RowBox[{
+        RowBox[{"degreeIncrement", " ", "=", " ", 
+         RowBox[{"DegreeIncrements", "[", 
+          RowBox[{"[", "degIncIndex", "]"}], "]"}]}], ";", "\n", "   ", 
+        RowBox[{"startDegree", " ", "=", " ", 
+         RowBox[{
+          RowBox[{"StartDegrees", "[", "degIncIndex", "]"}], "[", 
+          RowBox[{"[", "startDegreeIndex", "]"}], "]"}]}], ";", "\n", "   ", 
+        RowBox[{"maxParams", " ", "=", " ", 
+         RowBox[{"MaxParams", "[", "degIncIndex", "]"}]}], ";", "\n", "   ", 
+        RowBox[{
+         RowBox[{"-", "N"}], " ", 
+         RowBox[{"Sum", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"params", "[", 
+             RowBox[{"[", "i", "]"}], "]"}], " ", 
+            RowBox[{"eps", "^", 
+             RowBox[{"(", 
+              RowBox[{"startDegree", " ", "+", " ", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{"i", " ", "-", " ", "1"}], ")"}], "*", 
+                "degreeIncrement"}]}], ")"}]}]}], ",", " ", 
+           RowBox[{"{", 
+            RowBox[{
+            "i", ",", " ", "1", ",", " ", "maxParams", ",", " ", "1"}], 
+            "}"}]}], "]"}]}]}]}], "]"}]}], ";"}], "\n", "\n", "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"ReplaceEps", "[", 
+      RowBox[{"expression_", ",", " ", "with_"}], "]"}], " ", ":=", " ", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", "eps", "}"}], ",", " ", 
+       RowBox[{"expression", " ", "/.", " ", 
+        RowBox[{"{", 
+         RowBox[{"eps", " ", "->", " ", "with"}], "}"}]}]}], "]"}]}], ";"}], 
+   "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"EvaluateFit", "[", 
+      RowBox[{"model_", ",", " ", "fit_", ",", " ", "EpsArr_"}], "]"}], " ", ":=",
+      " ", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"eps", ",", " ", "temp"}], "}"}], ",", " ", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Evaluate", "[", 
+          RowBox[{"ReplaceEps", "[", 
+           RowBox[{
+            RowBox[{"model", " ", "/.", " ", "fit"}], ",", " ", "#"}], "]"}], 
+          "]"}], " ", "&"}], " ", "/@", " ", "EpsArr"}]}], "]"}]}], ";"}], 
+   "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Error", "[", 
+      RowBox[{
+      "model_", ",", " ", "fit_", ",", " ", "orig_", ",", " ", "EpsArr_"}], 
+      "]"}], " ", ":=", " ", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+        "sum", ",", " ", "residualSumOfSquares", ",", " ", "numData", ",", 
+         " ", "fittedValues", ",", " ", "localVar", ",", " ", "origValues"}], 
+        "}"}], ",", " ", 
+       RowBox[{
+        RowBox[{"numData", " ", "=", " ", 
+         RowBox[{"Length", "[", "orig", "]"}]}], ";", 
+        RowBox[{"origValues", " ", "=", " ", 
+         RowBox[{"orig", "[", 
+          RowBox[{"[", 
+           RowBox[{"All", ",", " ", "2"}], "]"}], "]"}]}], ";", 
+        RowBox[{"fittedValues", " ", "=", " ", 
+         RowBox[{"EvaluateFit", "[", 
+          RowBox[{"model", ",", " ", "fit", ",", " ", "EpsArr"}], "]"}]}], 
+        ";", 
+        RowBox[{"residualSumOfSquares", " ", "=", " ", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"origValues", "[", 
+               RowBox[{"[", "#", "]"}], "]"}], " ", "-", " ", 
+              RowBox[{"fittedValues", "[", 
+               RowBox[{"[", "#", "]"}], "]"}]}], ")"}], "^", "2"}], " ", 
+           "&"}], " ", "/@", " ", 
+          RowBox[{"Range", "[", 
+           RowBox[{"1", ",", " ", "numData"}], "]"}]}]}], ";", "\n", "   ", 
+        RowBox[{"(*", 
+         RowBox[{
+          RowBox[{"Print", "[", 
+           RowBox[{
+           "\"\<origValues: \>\"", ",", "origValues", ",", 
+            "\"\<\\nFitted Values: \>\"", ",", "fittedValues", ",", 
+            "\"\<\\nPointError: \>\"", ",", "pointError", ",", 
+            "\"\<\\n=========\>\""}], "]"}], ";"}], "*)"}], 
+        RowBox[{"Sqrt", "[", 
+         RowBox[{
+          RowBox[{"Total", "[", "residualSumOfSquares", "]"}], "/", 
+          "numData"}], "]"}]}]}], "\[IndentingNewLine]", "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"RsquaredGoodnessOfFit", "[", 
+      RowBox[{
+      "model_", ",", " ", "fit_", ",", " ", "orig_", ",", " ", "EpsArr_"}], 
+      "]"}], ":=", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+        "numData", ",", " ", "origValues", ",", " ", "fittedValues", ",", " ",
+          "mean", ",", " ", "residualSumOfSquares", ",", 
+         "totalSumOfSquares"}], "}"}], ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"numData", " ", "=", " ", 
+         RowBox[{"Length", "[", "orig", "]"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"origValues", " ", "=", " ", 
+         RowBox[{"orig", "[", 
+          RowBox[{"[", 
+           RowBox[{"All", ",", " ", "2"}], "]"}], "]"}]}], ";", 
+        RowBox[{"fittedValues", " ", "=", " ", 
+         RowBox[{"EvaluateFit", "[", 
+          RowBox[{"model", ",", " ", "fit", ",", " ", "EpsArr"}], "]"}]}], 
+        ";", 
+        RowBox[{"mean", "=", 
+         RowBox[{
+          RowBox[{"Total", "[", "origValues", "]"}], "/", "numData"}]}], ";", 
+        RowBox[{"residualSumOfSquares", " ", "=", " ", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"origValues", "[", 
+                 RowBox[{"[", "#", "]"}], "]"}], " ", "-", " ", 
+                RowBox[{"fittedValues", "[", 
+                 RowBox[{"[", "#", "]"}], "]"}]}], ")"}], "^", "2"}], " ", 
+             "&"}], " ", "/@", " ", 
+            RowBox[{"Range", "[", 
+             RowBox[{"1", ",", " ", "numData"}], "]"}]}], ")"}], "//", 
+          "Total"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"totalSumOfSquares", " ", "=", " ", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"origValues", "[", 
+                 RowBox[{"[", "#", "]"}], "]"}], " ", "-", " ", "mean"}], 
+               ")"}], "^", "2"}], " ", "&"}], " ", "/@", " ", 
+            RowBox[{"Range", "[", 
+             RowBox[{"1", ",", " ", "numData"}], "]"}]}], ")"}], "//", 
+          "Total"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"1", " ", "-", " ", 
+         RowBox[{"residualSumOfSquares", "/", "totalSumOfSquares"}]}]}]}], 
+      "\[IndentingNewLine]", "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Fits", " ", "=", " ", 
+     RowBox[{"Array", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"{", "}"}], ")"}], " ", "&"}], ",", " ", 
+       RowBox[{"{", 
+        RowBox[{
+        "NumDegreeIncrements", ",", " ", "MaxStartDegreesPerDegreeIncrement", 
+         ",", " ", "NumNs", ",", " ", "NumTrials"}], "}"}]}], "]"}]}], ";"}], 
+   "\n", "\n", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"TrainAndTestErrors", "[", "]"}], " ", ":=", " ", 
+      RowBox[{"Block", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+         "N", ",", " ", "list", ",", " ", "trainData", ",", " ", "testData", 
+          ",", " ", "nparams", ",", " ", "model", ",", " ", "fit", ",", " ", 
+          "trial", ",", " ", "trainError", ",", " ", "testError", ",", " ", 
+          "temp", ",", " ", "deltaDegree", ",", " ", "startDegree", ",", " ", 
+          "n", ",", " ", "startDegreeIndex", ",", " ", "degreeIncrement", ",",
+           " ", "degInc", ",", " ", "meanTrainError", ",", " ", 
+          "meanTestError", ",", " ", "numUnused", ",", "constraints"}], "}"}],
+         ",", " ", 
+        RowBox[{
+         RowBox[{"trainError", " ", "=", " ", 
+          RowBox[{"ConstantArray", "[", 
+           RowBox[{"0", ",", " ", 
+            RowBox[{"{", 
+             RowBox[{
+             "NumDegreeIncrements", ",", " ", 
+              "MaxStartDegreesPerDegreeIncrement", ",", " ", "NumNs"}], 
+             "}"}]}], "]"}]}], ";", "\n", "   ", 
+         RowBox[{"testError", " ", "=", " ", 
+          RowBox[{"ConstantArray", "[", 
+           RowBox[{"0", ",", " ", 
+            RowBox[{"{", 
+             RowBox[{
+             "NumDegreeIncrements", ",", " ", 
+              "MaxStartDegreesPerDegreeIncrement", ",", " ", "NumNs"}], 
+             "}"}]}], "]"}]}], ";", "\n", "   ", 
+         RowBox[{"meanTrainError", " ", "=", " ", 
+          RowBox[{"ConstantArray", "[", 
+           RowBox[{"0", ",", " ", 
+            RowBox[{"{", 
+             RowBox[{
+             "NumDegreeIncrements", ",", " ", 
+              "MaxStartDegreesPerDegreeIncrement"}], "}"}]}], "]"}]}], ";", 
+         "\n", "   ", 
+         RowBox[{"meanTestError", " ", "=", " ", 
+          RowBox[{"ConstantArray", "[", 
+           RowBox[{"0", ",", " ", 
+            RowBox[{"{", 
+             RowBox[{
+             "NumDegreeIncrements", ",", " ", 
+              "MaxStartDegreesPerDegreeIncrement"}], "}"}]}], "]"}]}], ";", 
+         "\n", "   ", 
+         RowBox[{"For", "[", 
+          RowBox[{
+           RowBox[{"degInc", " ", "=", " ", "1"}], ",", " ", 
+           RowBox[{"degInc", " ", "<=", " ", "NumDegreeIncrements"}], ",", 
+           " ", 
+           RowBox[{"degInc", "++"}], ",", " ", 
+           RowBox[{
+            RowBox[{"degreeIncrement", " ", "=", " ", 
+             RowBox[{"DegreeIncrements", "[", 
+              RowBox[{"[", "degInc", "]"}], "]"}]}], ";", "\n", "    ", 
+            RowBox[{"For", "[", 
+             RowBox[{
+              RowBox[{"startDegreeIndex", " ", "=", " ", "1"}], ",", " ", 
+              RowBox[{"startDegreeIndex", " ", "<=", " ", 
+               RowBox[{"NumStartDegrees", "[", "degInc", "]"}]}], ",", " ", 
+              RowBox[{"startDegreeIndex", "++"}], ",", 
+              RowBox[{"(*", 
+               RowBox[{
+               "One", " ", "delta", " ", "for", " ", "each", " ", 
+                "startDegree"}], "*)"}], 
+              RowBox[{
+               RowBox[{"startDegree", " ", "=", " ", 
+                RowBox[{"MinDegree", " ", "+", " ", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{"startDegreeIndex", " ", "-", " ", "1"}], ")"}], 
+                  "*", "degreeIncrement"}]}]}], ";", "\n", "     ", 
+               RowBox[{"For", "[", 
+                RowBox[{
+                 RowBox[{"n", " ", "=", " ", "1"}], ",", " ", 
+                 RowBox[{"n", " ", "<=", " ", "NumNs"}], ",", " ", 
+                 RowBox[{"n", "++"}], ",", " ", 
+                 RowBox[{
+                  RowBox[{"N", " ", "=", " ", 
+                   RowBox[{"Ns", "[", 
+                    RowBox[{"[", "n", "]"}], "]"}]}], ";", "\n", "      ", 
+                  RowBox[{"model", " ", "=", " ", 
+                   RowBox[{"Model", "[", 
+                    RowBox[{
+                    "N", ",", " ", "startDegreeIndex", ",", " ", "degInc"}], 
+                    "]"}]}], ";", "\n", "      ", 
+                  RowBox[{"For", "[", 
+                   RowBox[{
+                    RowBox[{"trial", " ", "=", " ", "1"}], ",", " ", 
+                    RowBox[{"trial", " ", "<=", " ", "NumTrials"}], ",", " ", 
+                    RowBox[{"trial", "++"}], ",", " ", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"trainData", " ", "=", " ", 
+                    RowBox[{"TrainData", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], ";", 
+                    RowBox[{"testData", " ", "=", " ", 
+                    RowBox[{"TestData", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], ";", 
+                    RowBox[{"constraints", "=", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"First", "[", 
+                    RowBox[{"Params", "[", "degInc", "]"}], "]"}], " ", ">", 
+                    " ", "0"}], "}"}]}], ";", 
+                    RowBox[{"fit", " ", "=", " ", 
+                    RowBox[{"FindFit", "[", 
+                    RowBox[{"trainData", ",", " ", "model", ",", " ", 
+                    RowBox[{"Params", "[", "degInc", "]"}], ",", " ", "eps"}],
+                     "]"}]}], ";", 
+                    RowBox[{"(*", 
+                    RowBox[{
+                    RowBox[{"Print", "[", 
+                    RowBox[{"\"\<Fit: \>\"", ",", " ", "fit"}], "]"}], ";"}], 
+                    "*)"}], "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"Fits", "[", 
+                    RowBox[{"[", 
+                    RowBox[{
+                    "degInc", ",", " ", "startDegreeIndex", ",", " ", "n", 
+                    ",", " ", "trial"}], "]"}], "]"}], " ", "=", " ", "fit"}],
+                     ";", 
+                    RowBox[{"temp", " ", "=", " ", 
+                    RowBox[{"Error", "[", 
+                    RowBox[{
+                    "model", ",", " ", "fit", ",", " ", "trainData", ",", " ", 
+                    RowBox[{"TrainEps", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], "]"}]}],
+                     ";", 
+                    RowBox[{"(*", 
+                    RowBox[{
+                    RowBox[{"Print", "[", 
+                    RowBox[{"\"\<Error: \>\"", ",", 
+                    RowBox[{"trainError", "[", 
+                    RowBox[{"[", "index", "]"}], "]"}]}], "]"}], ";"}], 
+                    "*)"}], 
+                    RowBox[{
+                    RowBox[{"trainError", "[", 
+                    RowBox[{"[", 
+                    RowBox[{
+                    "degInc", ",", " ", "startDegreeIndex", ",", " ", "n"}], 
+                    "]"}], "]"}], " ", "+=", " ", "temp"}], ";", "  ", 
+                    RowBox[{
+                    RowBox[{"testError", "[", 
+                    RowBox[{"[", 
+                    RowBox[{
+                    "degInc", ",", " ", "startDegreeIndex", ",", " ", "n"}], 
+                    "]"}], "]"}], " ", "+=", " ", 
+                    RowBox[{"Error", "[", 
+                    RowBox[{
+                    "model", ",", " ", "fit", ",", " ", "testData", ",", " ", 
+                    RowBox[{"TestEps", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], 
+                    "]"}]}]}]}], "\[IndentingNewLine]", "]"}], ";", 
+                  "\[IndentingNewLine]", 
+                  RowBox[{"(*", 
+                   RowBox[{"Mean", " ", "over", " ", "all", " ", "trials"}], 
+                   "*)"}], "\[IndentingNewLine]", 
+                  RowBox[{
+                   RowBox[{"trainError", "[", 
+                    RowBox[{"[", 
+                    RowBox[{
+                    "degInc", ",", " ", "startDegreeIndex", ",", " ", "n"}], 
+                    "]"}], "]"}], " ", "/=", " ", "NumTrials"}], ";", 
+                  RowBox[{
+                   RowBox[{"testError", "[", 
+                    RowBox[{"[", 
+                    RowBox[{
+                    "degInc", ",", " ", "startDegreeIndex", ",", " ", "n"}], 
+                    "]"}], "]"}], " ", "/=", " ", "NumTrials"}], ";"}]}], 
+                "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{"Mean", " ", "over", " ", "all", " ", "datasets"}], 
+                "*)"}], "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{"meanTrainError", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"degInc", ",", " ", "startDegreeIndex"}], "]"}], 
+                 "]"}], " ", "=", " ", 
+                RowBox[{"Mean", "@", 
+                 RowBox[{"trainError", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"degInc", ",", " ", "startDegreeIndex"}], "]"}], 
+                  "]"}]}]}], ";", "     ", 
+               RowBox[{
+                RowBox[{"meanTestError", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"degInc", ",", " ", "startDegreeIndex"}], "]"}], 
+                 "]"}], " ", "=", " ", 
+                RowBox[{"Mean", "@", 
+                 RowBox[{"testError", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"degInc", ",", " ", "startDegreeIndex"}], "]"}], 
+                  "]"}]}]}], ";"}]}], "\[IndentingNewLine]", "]"}], ";", "\n",
+             "    ", 
+            RowBox[{"(*", 
+             RowBox[{"Delete", " ", "the", " ", "unused", " ", "cells"}], 
+             "*)"}], 
+            RowBox[{"numUnused", " ", "=", " ", 
+             RowBox[{
+             "MaxStartDegreesPerDegreeIncrement", " ", "-", " ", 
+              "startDegreeIndex", " ", "+", " ", "1"}]}], ";", "\n", "    ", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"numUnused", " ", ">=", " ", "1"}], ",", " ", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"meanTrainError", "[", 
+                 RowBox[{"[", "degInc", "]"}], "]"}], " ", "=", " ", 
+                RowBox[{"Drop", "[", 
+                 RowBox[{
+                  RowBox[{"meanTrainError", "[", 
+                   RowBox[{"[", "degInc", "]"}], "]"}], ",", " ", 
+                  RowBox[{"-", "numUnused"}]}], "]"}]}], ";", "\n", "     ", 
+               RowBox[{
+                RowBox[{"meanTestError", "[", 
+                 RowBox[{"[", "degInc", "]"}], "]"}], " ", "=", " ", 
+                RowBox[{"Drop", "[", 
+                 RowBox[{
+                  RowBox[{"meanTestError", "[", 
+                   RowBox[{"[", "degInc", "]"}], "]"}], ",", " ", 
+                  RowBox[{"-", "numUnused"}]}], "]"}]}], ";"}]}], "]"}], 
+            ";"}]}], "]"}], ";", "\n", "   ", 
+         RowBox[{"Errors", " ", "=", " ", 
+          RowBox[{"<|", 
+           RowBox[{
+            RowBox[{"train", " ", "->", " ", "trainError"}], ",", " ", 
+            RowBox[{"test", " ", "->", " ", "testError"}]}], "|>"}]}], ";", 
+         "\n", "   ", 
+         RowBox[{"MeanErrors", " ", "=", " ", 
+          RowBox[{"<|", 
+           RowBox[{
+            RowBox[{"train", " ", "->", " ", "meanTrainError"}], ",", " ", 
+            RowBox[{"test", " ", "->", " ", "meanTestError"}]}], "|>"}]}], 
+         ";"}]}], "\[IndentingNewLine]", "]"}]}], ";"}], "*)"}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"TrainAndTestErrorsSkeleton", "[", "]"}], " ", ":=", " ", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+        "N", ",", " ", "list", ",", " ", "trainData", ",", " ", "testData", 
+         ",", " ", "nparams", ",", " ", "model", ",", " ", "fit", ",", " ", 
+         "trial", ",", " ", "trainError", ",", " ", "testError", ",", " ", 
+         "temp", ",", " ", "deltaDegree", ",", " ", "startDegree", ",", " ", 
+         "n", ",", " ", "startDegreeIndex", ",", " ", "degreeIncrement", ",", 
+         " ", "degInc", ",", " ", "meanTrainError", ",", " ", "meanTestError",
+          ",", " ", "numUnused", ",", "constraints", ",", " ", 
+         "\[IndentingNewLine]", "err1", ",", " ", "err2", ",", " ", 
+         "firstParam", ",", " ", "numFitAttempts"}], "}"}], ",", " ", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"err1", " ", "=", " ", "0"}], ";", " ", 
+        RowBox[{"err2", " ", "=", " ", "0"}], ";", "\[IndentingNewLine]", 
+        RowBox[{"trainError", " ", "=", " ", 
+         RowBox[{"ConstantArray", "[", 
+          RowBox[{"0", ",", " ", 
+           RowBox[{"{", 
+            RowBox[{
+            "NumDegreeIncrements", ",", " ", 
+             "MaxStartDegreesPerDegreeIncrement", ",", " ", "NumNs"}], 
+            "}"}]}], "]"}]}], ";", "\n", "   ", 
+        RowBox[{"testError", " ", "=", " ", 
+         RowBox[{"ConstantArray", "[", 
+          RowBox[{"0", ",", " ", 
+           RowBox[{"{", 
+            RowBox[{
+            "NumDegreeIncrements", ",", " ", 
+             "MaxStartDegreesPerDegreeIncrement", ",", " ", "NumNs"}], 
+            "}"}]}], "]"}]}], ";", "\n", "   ", 
+        RowBox[{"meanTrainError", " ", "=", " ", 
+         RowBox[{"ConstantArray", "[", 
+          RowBox[{"0", ",", " ", 
+           RowBox[{"{", 
+            RowBox[{
+            "NumDegreeIncrements", ",", " ", 
+             "MaxStartDegreesPerDegreeIncrement"}], "}"}]}], "]"}]}], ";", 
+        "\n", "   ", 
+        RowBox[{"meanTestError", " ", "=", " ", 
+         RowBox[{"ConstantArray", "[", 
+          RowBox[{"0", ",", " ", 
+           RowBox[{"{", 
+            RowBox[{
+            "NumDegreeIncrements", ",", " ", 
+             "MaxStartDegreesPerDegreeIncrement"}], "}"}]}], "]"}]}], ";", 
+        "\n", "   ", 
+        RowBox[{"For", "[", 
+         RowBox[{
+          RowBox[{"degInc", " ", "=", " ", "1"}], ",", " ", 
+          RowBox[{"degInc", " ", "<=", " ", "NumDegreeIncrements"}], ",", " ", 
+          RowBox[{"degInc", "++"}], ",", " ", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"degreeIncrement", " ", "=", " ", 
+            RowBox[{"DegreeIncrements", "[", 
+             RowBox[{"[", "degInc", "]"}], "]"}]}], ";", "\n", "    ", 
+           RowBox[{"For", "[", 
+            RowBox[{
+             RowBox[{"startDegreeIndex", " ", "=", " ", "1"}], ",", " ", 
+             RowBox[{"startDegreeIndex", " ", "<=", " ", 
+              RowBox[{"NumStartDegrees", "[", "degInc", "]"}]}], ",", " ", 
+             RowBox[{"startDegreeIndex", "++"}], ",", 
+             RowBox[{"(*", 
+              RowBox[{
+              "One", " ", "delta", " ", "for", " ", "each", " ", 
+               "startDegree"}], "*)"}], 
+             RowBox[{
+              RowBox[{"startDegree", " ", "=", " ", 
+               RowBox[{"MinDegree", " ", "+", " ", 
+                RowBox[{
+                 RowBox[{"(", 
+                  RowBox[{"startDegreeIndex", " ", "-", " ", "1"}], ")"}], 
+                 "*", "degreeIncrement"}]}]}], ";", "\n", "     ", 
+              RowBox[{"For", "[", 
+               RowBox[{
+                RowBox[{"n", " ", "=", " ", "1"}], ",", " ", 
+                RowBox[{"n", " ", "<=", " ", "NumNs"}], ",", " ", 
+                RowBox[{"n", "++"}], ",", " ", 
+                RowBox[{
+                 RowBox[{"N", " ", "=", " ", 
+                  RowBox[{"Ns", "[", 
+                   RowBox[{"[", "n", "]"}], "]"}]}], ";", "\n", "      ", 
+                 RowBox[{"model", " ", "=", " ", 
+                  RowBox[{"Model", "[", 
+                   RowBox[{
+                   "N", ",", " ", "startDegreeIndex", ",", " ", "degInc"}], 
+                   "]"}]}], ";", "\n", "      ", 
+                 RowBox[{"For", "[", 
+                  RowBox[{
+                   RowBox[{"trial", " ", "=", " ", "1"}], ",", " ", 
+                   RowBox[{"trial", " ", "<=", " ", "NumTrials"}], ",", " ", 
+                   RowBox[{"trial", "++"}], ",", " ", "\[IndentingNewLine]", 
+                   RowBox[{
+                    RowBox[{"trainData", " ", "=", " ", 
+                    RowBox[{"TrainData", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], ";", 
+                    RowBox[{"testData", " ", "=", " ", 
+                    RowBox[{"TestData", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], ";", 
+                    RowBox[{"constraints", "=", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"First", "[", 
+                    RowBox[{"Params", "[", "degInc", "]"}], "]"}], " ", 
+                    "\[GreaterEqual]", "  ", "1"}], "}"}]}], ";", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{
+                    "numFitAttempts", " ", "=", " ", "MaxFitAttempts"}], ";", 
+                    "\[IndentingNewLine]", "\[IndentingNewLine]", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    "FirstParamMustBePositive", ",", "\[IndentingNewLine]", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"While", "[", 
+                    RowBox[{
+                    RowBox[{"numFitAttempts", " ", ">", " ", "0"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"fit", " ", "=", " ", 
+                    RowBox[{"FindFit", "[", 
+                    RowBox[{"trainData", ",", " ", 
+                    RowBox[{"{", 
+                    RowBox[{"model", ",", " ", 
+                    RowBox[{"{", "}"}]}], "}"}], ",", " ", 
+                    RowBox[{"Params", "[", "degInc", "]"}], ",", " ", "eps"}],
+                     "]"}]}], ";", "\[IndentingNewLine]", 
+                    RowBox[{"numFitAttempts", "--"}], ";", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"firstParam", " ", "=", " ", 
+                    RowBox[{
+                    RowBox[{"fit", " ", "//", " ", "First"}], " ", "//", 
+                    "Values"}]}], " ", ";", "\[IndentingNewLine]", 
+                    RowBox[{"(*", 
+                    RowBox[{
+                    RowBox[{"Print", "[", 
+                    RowBox[{
+                    "\"\<Fit attempt. FirstParam: \>\"", ",", " ", 
+                    "firstParam"}], "]"}], ";"}], "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{"firstParam", " ", ">", "0"}], ",", " ", 
+                    RowBox[{"Break", "[", "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"Prepare", "[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], ";", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"trainData", " ", "=", " ", 
+                    RowBox[{"TrainData", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], ";", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"testData", " ", "=", " ", 
+                    RowBox[{"TestData", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], ";"}]}],
+                     "\[IndentingNewLine]", "]"}], ";"}]}], 
+                    "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"If", "[", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"numFitAttempts", " ", "\[Equal]", " ", "0"}], 
+                    " ", "&&", " ", 
+                    RowBox[{"firstParam", " ", "<", " ", "0"}]}], ",", " ", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"Print", "[", 
+                    RowBox[{
+                    "\"\<First param negative. n: \>\"", ",", " ", "n", ",", 
+                    " ", "\"\< trial: \>\"", ",", " ", "trial", ",", " ", 
+                    "\"\< Aborting...\>\""}], "]"}], ";", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"Abort", "[", "]"}]}]}], "]"}], ";"}], " ", 
+                    "\[IndentingNewLine]", ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"fit", " ", "=", " ", 
+                    RowBox[{"FindFit", "[", 
+                    RowBox[{"trainData", ",", " ", 
+                    RowBox[{"{", 
+                    RowBox[{"model", ",", " ", 
+                    RowBox[{"{", "}"}]}], "}"}], ",", " ", 
+                    RowBox[{"Params", "[", "degInc", "]"}], ",", " ", "eps"}],
+                     "]"}]}], ";"}]}], "\[IndentingNewLine]", "]"}], ";", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"(*", 
+                    RowBox[{
+                    RowBox[{"Print", "[", 
+                    RowBox[{
+                    "\"\<Fit: \>\"", ",", " ", "fit", ",", " ", 
+                    "\[IndentingNewLine]", "\"\<\\n\\twith \>\"", ",", " ", 
+                    "\[IndentingNewLine]", "\"\< n: \>\"", ",", " ", "n", ",",
+                     " ", "\[IndentingNewLine]", "\"\< trial: \>\"", ",", " ",
+                     "trial", ",", "\[IndentingNewLine]", 
+                    "\"\< startDeg: \>\"", ",", " ", "startDegree", ",", " ", 
+                    "\[IndentingNewLine]", "\"\< degIncrement: \>\"", ",", 
+                    "  ", 
+                    RowBox[{"degreeIncrement", "+", "0.0"}], ",", 
+                    "\[IndentingNewLine]", "\"\< firstParam: \>\"", ",", " ", 
+                    "firstParam"}], "\[IndentingNewLine]", "]"}], ";"}], 
+                    "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"Fits", "[", 
+                    RowBox[{"[", 
+                    RowBox[{
+                    "degInc", ",", " ", "startDegreeIndex", ",", " ", "n", 
+                    ",", " ", "trial"}], "]"}], "]"}], " ", "=", " ", "fit"}],
+                     ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"(*", 
+                    RowBox[{
+                    RowBox[{"err1", " ", "=", " ", 
+                    RowBox[{"Error", "[", 
+                    RowBox[{
+                    "model", ",", " ", "fit", ",", " ", "trainData", ",", " ", 
+                    RowBox[{"TrainEps", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], "]"}]}],
+                     ";", "\[IndentingNewLine]", 
+                    RowBox[{"err2", " ", "=", " ", 
+                    RowBox[{"Error", "[", 
+                    RowBox[{
+                    "model", ",", " ", "fit", ",", " ", "testData", ",", " ", 
+                    RowBox[{"TestEps", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], "]"}]}],
+                     ";"}], "*)"}], "\[IndentingNewLine]", 
+                    RowBox[{"err1", " ", "=", " ", 
+                    RowBox[{"1", " ", "-", " ", 
+                    RowBox[{"RsquaredGoodnessOfFit", "[", 
+                    RowBox[{
+                    "model", ",", " ", "fit", ",", " ", "trainData", ",", " ", 
+                    RowBox[{"TrainEps", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], 
+                    "]"}]}]}], ";", "\[IndentingNewLine]", 
+                    RowBox[{"err2", " ", "=", " ", 
+                    RowBox[{"1", " ", "-", " ", 
+                    RowBox[{"RsquaredGoodnessOfFit", "[", 
+                    RowBox[{
+                    "model", ",", " ", "fit", ",", " ", "testData", ",", " ", 
+                    RowBox[{"TestEps", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], 
+                    "]"}]}]}], ";", "\[IndentingNewLine]", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"(*", 
+                    RowBox[{
+                    RowBox[{"Print", "[", 
+                    RowBox[{"\"\<Error: \>\"", ",", 
+                    RowBox[{"trainError", "[", 
+                    RowBox[{"[", "index", "]"}], "]"}]}], "]"}], ";"}], 
+                    "*)"}], "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"trainError", "[", 
+                    RowBox[{"[", 
+                    RowBox[{
+                    "degInc", ",", " ", "startDegreeIndex", ",", " ", "n"}], 
+                    "]"}], "]"}], " ", "+=", " ", "err1"}], ";", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"testError", "[", 
+                    RowBox[{"[", 
+                    RowBox[{
+                    "degInc", ",", " ", "startDegreeIndex", ",", " ", "n"}], 
+                    "]"}], "]"}], " ", "+=", " ", "err2"}], ";"}]}], 
+                  "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+                 RowBox[{"(*", 
+                  RowBox[{"Mean", " ", "over", " ", "all", " ", "trials"}], 
+                  "*)"}], "\[IndentingNewLine]", 
+                 RowBox[{
+                  RowBox[{"trainError", "[", 
+                   RowBox[{"[", 
+                    RowBox[{
+                    "degInc", ",", " ", "startDegreeIndex", ",", " ", "n"}], 
+                    "]"}], "]"}], " ", "/=", " ", "NumTrials"}], ";", 
+                 RowBox[{
+                  RowBox[{"testError", "[", 
+                   RowBox[{"[", 
+                    RowBox[{
+                    "degInc", ",", " ", "startDegreeIndex", ",", " ", "n"}], 
+                    "]"}], "]"}], " ", "/=", " ", "NumTrials"}], ";"}]}], 
+               "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+              RowBox[{"(*", 
+               RowBox[{"Mean", " ", "over", " ", "all", " ", "datasets"}], 
+               "*)"}], "\[IndentingNewLine]", 
+              RowBox[{
+               RowBox[{"meanTrainError", "[", 
+                RowBox[{"[", 
+                 RowBox[{"degInc", ",", " ", "startDegreeIndex"}], "]"}], 
+                "]"}], " ", "=", " ", 
+               RowBox[{"Mean", "@", 
+                RowBox[{"trainError", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"degInc", ",", " ", "startDegreeIndex"}], "]"}], 
+                 "]"}]}]}], ";", "     ", 
+              RowBox[{
+               RowBox[{"meanTestError", "[", 
+                RowBox[{"[", 
+                 RowBox[{"degInc", ",", " ", "startDegreeIndex"}], "]"}], 
+                "]"}], " ", "=", " ", 
+               RowBox[{"Mean", "@", 
+                RowBox[{"testError", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"degInc", ",", " ", "startDegreeIndex"}], "]"}], 
+                 "]"}]}]}], ";"}]}], "\[IndentingNewLine]", "]"}], ";", 
+           "\[IndentingNewLine]", 
+           RowBox[{"numUnused", " ", "=", " ", 
+            RowBox[{
+            "MaxStartDegreesPerDegreeIncrement", " ", "-", " ", 
+             "startDegreeIndex", " ", "+", " ", "1"}]}], ";", 
+           RowBox[{"(*", 
+            RowBox[{"Delete", " ", "the", " ", "unused", " ", "cells"}], 
+            "*)"}], "\[IndentingNewLine]", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"numUnused", " ", ">=", " ", "1"}], ",", " ", 
+             "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"meanTrainError", "[", 
+                RowBox[{"[", "degInc", "]"}], "]"}], " ", "=", " ", 
+               RowBox[{"Drop", "[", 
+                RowBox[{
+                 RowBox[{"meanTrainError", "[", 
+                  RowBox[{"[", "degInc", "]"}], "]"}], ",", " ", 
+                 RowBox[{"-", "numUnused"}]}], "]"}]}], ";", "   ", 
+              RowBox[{
+               RowBox[{"meanTestError", "[", 
+                RowBox[{"[", "degInc", "]"}], "]"}], " ", "=", " ", 
+               RowBox[{"Drop", "[", 
+                RowBox[{
+                 RowBox[{"meanTestError", "[", 
+                  RowBox[{"[", "degInc", "]"}], "]"}], ",", " ", 
+                 RowBox[{"-", "numUnused"}]}], "]"}]}], ";"}]}], 
+            "\[IndentingNewLine]", "]"}], ";"}]}], "\[IndentingNewLine]", 
+         "]"}], ";", "\n", "   ", 
+        RowBox[{"Errors", " ", "=", " ", 
+         RowBox[{"<|", 
+          RowBox[{
+           RowBox[{"train", " ", "->", " ", "trainError"}], ",", " ", 
+           RowBox[{"test", " ", "->", " ", "testError"}]}], "|>"}]}], ";", 
+        "\n", "   ", 
+        RowBox[{"MeanErrors", " ", "=", " ", 
+         RowBox[{"<|", 
+          RowBox[{
+           RowBox[{"train", " ", "->", " ", "meanTrainError"}], ",", " ", 
+           RowBox[{"test", " ", "->", " ", "meanTestError"}]}], "|>"}]}], 
+        ";"}]}], "\[IndentingNewLine]", "]"}]}], ";"}], "\n", "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{"Data", "[", 
+    RowBox[{"[", "4", "]"}], "]"}], "\n", 
+   RowBox[{"Manipulate", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"Show", "[", "\[IndentingNewLine]", 
+      RowBox[{"ListPlot", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"Data", "[", 
+          RowBox[{"[", "n", "]"}], "]"}], "}"}], ",", " ", 
+        RowBox[{"PlotStyle", " ", "->", " ", "Red"}]}], " ", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{",", 
+         RowBox[{"PlotRange", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{"Automatic", ",", " ", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"-", "600"}], ",", " ", "0"}], "}"}]}], "}"}]}]}], 
+        "*)"}], "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", "]"}], 
+     ",", "\[IndentingNewLine]", " ", 
+     RowBox[{"{", 
+      RowBox[{"n", ",", " ", "1", ",", " ", "NumNs", ",", " ", "1"}], "}"}]}],
+     "]"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"ListPlot", "[", 
+     RowBox[{"Data", ",", " ", 
+      RowBox[{"PlotStyle", " ", "->", " ", "Red"}], ",", " ", 
+      RowBox[{"PlotRange", " ", "->", " ", "Full"}]}], "]"}], "*)"}], 
+   "\n"}]}]], "Input",
+ CellChangeTimes->{{3.7482009008790717`*^9, 3.7482009008810716`*^9}, {
+   3.7482009427420716`*^9, 3.748201091003072*^9}, 3.7588426746103125`*^9, {
+   3.7588428568415337`*^9, 3.758842918981747*^9}, {3.7588429526651154`*^9, 
+   3.7588429685977087`*^9}, {3.758843335963441*^9, 3.758843356526497*^9}, {
+   3.7588434244162855`*^9, 3.758843446235467*^9}, {3.7588919955395565`*^9, 
+   3.758892246269001*^9}, {3.7588922877980013`*^9, 3.758892341896001*^9}, {
+   3.7588924281660013`*^9, 3.758892440021001*^9}, {3.7588925528840013`*^9, 
+   3.758892555771001*^9}, {3.758892801210001*^9, 3.758892975059001*^9}, {
+   3.758893077457001*^9, 3.7588930794070015`*^9}, {3.758893301280169*^9, 
+   3.7588933162686677`*^9}, {3.7588933547805185`*^9, 3.7588935133513737`*^9}, 
+   3.758893553889427*^9, {3.7588965401188164`*^9, 3.758896544186816*^9}, {
+   3.758896826193816*^9, 3.758896891773816*^9}, {3.758896978240816*^9, 
+   3.758896991601816*^9}, {3.7588970513418164`*^9, 3.75889729217146*^9}, {
+   3.7588973683240747`*^9, 3.758897402013443*^9}, {3.7588983708308125`*^9, 
+   3.7588983788218126`*^9}, {3.758898435450813*^9, 3.7588984355458126`*^9}, {
+   3.7588985069348125`*^9, 3.758898507693813*^9}, {3.758898540584813*^9, 
+   3.7588985419748125`*^9}, {3.758898575716813*^9, 3.758898578437813*^9}, {
+   3.7588986300528126`*^9, 3.758898663345813*^9}, {3.7588987110078125`*^9, 
+   3.7588987179488125`*^9}, {3.7588988860708127`*^9, 
+   3.7588988870768127`*^9}, {3.758898950950813*^9, 3.7588989546758127`*^9}, {
+   3.7588990174988127`*^9, 3.758899185128813*^9}, {3.7588992678856444`*^9, 
+   3.758899294945055*^9}, {3.7588993999910603`*^9, 3.758899401323327*^9}, {
+   3.758900071676595*^9, 3.758900191368563*^9}, {3.758900460519476*^9, 
+   3.758900464524876*^9}, {3.758903616700983*^9, 3.7589036216029825`*^9}, {
+   3.758903665730983*^9, 3.758903696193983*^9}, {3.7589046213395443`*^9, 
+   3.75890464100251*^9}, {3.758905255529957*^9, 3.75890530266967*^9}, {
+   3.75890575653119*^9, 3.7589057570461893`*^9}, {3.7589059011651897`*^9, 
+   3.7589059064301896`*^9}, {3.7589064423196383`*^9, 3.758906459548361*^9}, {
+   3.7589066428166857`*^9, 3.758906643852789*^9}, {3.7589067332307262`*^9, 
+   3.7589067374541483`*^9}, {3.758906786625065*^9, 3.758906822690671*^9}, {
+   3.7589068747568774`*^9, 3.758906877995201*^9}, {3.7589071597943783`*^9, 
+   3.7589071600794067`*^9}, {3.7589072180582037`*^9, 3.758907218127211*^9}, {
+   3.758907248371235*^9, 3.758907553208716*^9}, {3.758907650711465*^9, 
+   3.758907657149109*^9}, {3.7589076963510284`*^9, 3.758907696639057*^9}, {
+   3.758907732036597*^9, 3.758907827896182*^9}, {3.7589078656669583`*^9, 
+   3.758907926300021*^9}, {3.7589080453769274`*^9, 3.7589081876131496`*^9}, {
+   3.7589082259259806`*^9, 3.758908238110199*^9}, {3.7589083341528025`*^9, 
+   3.7589083554749346`*^9}, {3.7589084274241285`*^9, 3.758908461405526*^9}, {
+   3.758908499820368*^9, 3.758908499882374*^9}, {3.7589085646678514`*^9, 
+   3.758908565031888*^9}, {3.758908613482733*^9, 3.758908726239007*^9}, {
+   3.758908771089492*^9, 3.7589088733647184`*^9}, {3.758908915746956*^9, 
+   3.7589089365520363`*^9}, {3.7589089802104015`*^9, 
+   3.7589089806904497`*^9}, {3.758909145777957*^9, 3.7589091540137806`*^9}, {
+   3.758909192687647*^9, 3.758909241649543*^9}, {3.758909277231101*^9, 
+   3.758909284162794*^9}, {3.7589096583008957`*^9, 3.7589096788697815`*^9}, {
+   3.758909840181774*^9, 3.7589098500917745`*^9}, {3.758910391806774*^9, 
+   3.7589103919937744`*^9}, {3.7589105134327745`*^9, 
+   3.7589105162747746`*^9}, {3.7589107974327745`*^9, 
+   3.7589108071637745`*^9}, {3.7589109890767746`*^9, 3.758910989523774*^9}, {
+   3.758911177681774*^9, 3.7589112133317747`*^9}, {3.758911246884774*^9, 
+   3.758911247825774*^9}, {3.7589112894157743`*^9, 3.7589113263807745`*^9}, {
+   3.7589118028177743`*^9, 3.7589118047767744`*^9}, {3.7589118925587745`*^9, 
+   3.758911911497774*^9}},ExpressionUUID->"077330e0-69d6-4884-8287-\
+2f4c250644c3"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"MinDegreeIncrementIndex: \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" MinDegreeIncrement: \"\>", "\[InvisibleSpace]", 
+   "1"}],
+  SequenceForm["MinDegreeIncrementIndex: ", 1, " MinDegreeIncrement: ", 1],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.7589072196933675`*^9, {3.7589073001144085`*^9, 3.7589073217185693`*^9}, {
+   3.758907853262718*^9, 3.7589079305434456`*^9}, 3.7589082613995275`*^9, 
+   3.7589083679591827`*^9, {3.758908442820668*^9, 3.758908462631649*^9}, 
+   3.758908501183504*^9, 3.758908566321017*^9, {3.758908692426626*^9, 
+   3.7589087315335364`*^9}, {3.758908794733856*^9, 3.7589088414845304`*^9}, 
+   3.758908881822564*^9, {3.758908917379119*^9, 3.758908937983179*^9}, 
+   3.75890898299868*^9, 3.7589091252829075`*^9, {3.7589092596673446`*^9, 
+   3.7589092850798855`*^9}, {3.758909670892377*^9, 3.7589096891187315`*^9}, 
+   3.7589098545887747`*^9, 3.7589103931987743`*^9, 3.7589108322567744`*^9, 
+   3.7589109906337748`*^9, 3.7589111335717745`*^9, 3.7589112484807744`*^9, {
+   3.758911278516774*^9, 3.7589112903957744`*^9}, 3.7589113278157744`*^9, 
+   3.7589118064027743`*^9, {3.7589119009697742`*^9, 
+   3.758911915780774*^9}},ExpressionUUID->"0ce34233-bfd5-4caa-a6fa-\
+94cc985a6bc4"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"0.98`", ",", 
+     RowBox[{"-", "62.109143397794654`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.96`", ",", 
+     RowBox[{"-", "49.52359294998208`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.94`", ",", 
+     RowBox[{"-", "42.13411526323837`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.92`", ",", 
+     RowBox[{"-", "36.89975741361132`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.9`", ",", 
+     RowBox[{"-", "32.85785289733186`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.88`", ",", 
+     RowBox[{"-", "29.576444470601096`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.86`", ",", 
+     RowBox[{"-", "26.823732475364835`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.84`", ",", 
+     RowBox[{"-", "24.460647988077646`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.8200000000000001`", ",", 
+     RowBox[{"-", "22.397089928618705`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.8`", ",", 
+     RowBox[{"-", "20.571295590603974`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.78`", ",", 
+     RowBox[{"-", "18.939056834096085`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.76`", ",", 
+     RowBox[{"-", "17.467628329134428`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.74`", ",", 
+     RowBox[{"-", "16.13207149783853`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.72`", ",", 
+     RowBox[{"-", "14.912950777884397`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.7`", ",", 
+     RowBox[{"-", "13.794822658245575`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.6799999999999999`", ",", 
+     RowBox[{"-", "12.765210829215672`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.6599999999999999`", ",", 
+     RowBox[{"-", "11.813890901802829`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.6399999999999999`", ",", 
+     RowBox[{"-", "10.932378738184585`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.62`", ",", 
+     RowBox[{"-", "10.11355649240892`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.6`", ",", 
+     RowBox[{"-", "9.351394085694901`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.58`", ",", 
+     RowBox[{"-", "8.64073825291194`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.56`", ",", 
+     RowBox[{"-", "7.977150349982515`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.54`", ",", 
+     RowBox[{"-", "7.356779950318953`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.52`", ",", 
+     RowBox[{"-", "6.776265111366512`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.5`", ",", 
+     RowBox[{"-", "6.232652790193631`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.48`", ",", 
+     RowBox[{"-", "5.723334669593436`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.45999999999999996`", ",", 
+     RowBox[{"-", "5.245994903148553`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.43999999999999995`", ",", 
+     RowBox[{"-", "4.798567171305328`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.41999999999999993`", ",", 
+     RowBox[{"-", "4.379199077467624`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.4`", ",", 
+     RowBox[{"-", "3.9862223772754724`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.38`", ",", 
+     RowBox[{"-", "3.6181278765131704`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.36`", ",", 
+     RowBox[{"-", "3.2735440902901214`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.33999999999999997`", ",", 
+     RowBox[{"-", "2.951218948311494`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.31999999999999995`", ",", 
+     RowBox[{"-", "2.650003979733694`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.29999999999999993`", ",", 
+     RowBox[{"-", "2.3688405247782565`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.2799999999999999`", ",", 
+     RowBox[{"-", "2.106747609763147`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.26`", ",", 
+     RowBox[{"-", "1.8628111934455194`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.24`", ",", 
+     RowBox[{"-", "1.6361745494921969`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.21999999999999997`", ",", 
+     RowBox[{"-", "1.4260295981263833`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.19999999999999996`", ",", 
+     RowBox[{"-", "1.2316090401446913`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.17999999999999994`", ",", 
+     RowBox[{"-", "1.0521791823866564`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.15999999999999992`", ",", 
+     RowBox[{"-", "0.887033376350425`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.14`", ",", 
+     RowBox[{"-", "0.7354860224062366`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.12`", ",", 
+     RowBox[{"-", "0.5968671218501593`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.09999999999999998`", ",", 
+     RowBox[{"-", "0.47051738831791495`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.07999999999999996`", ",", 
+     RowBox[{"-", "0.3557839584856191`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.05999999999999994`", ",", 
+     RowBox[{"-", "0.2520167690258201`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.039999999999999925`", ",", 
+     RowBox[{"-", "0.1585656904716117`"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.020000000000000018`", ",", 
+     RowBox[{"-", "0.07477852695635837`"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.7589112905317745`*^9, 3.758911327952774*^9, 3.7589118064737744`*^9, {
+   3.758911901070774*^9, 
+   3.758911915832774*^9}},ExpressionUUID->"121ff5a5-9225-4fc1-a671-\
+ab57d83afb79"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`n$$ = 1, Typeset`show$$ = True, 
+    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{
+      Hold[$CellContext`n$$], 1, 10, 1}}, Typeset`size$$ = {
+    360., {103., 109.}}, Typeset`update$$ = 0, Typeset`initDone$$, 
+    Typeset`skipInitDone$$ = True, $CellContext`n$54170$$ = 0}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, "Variables" :> {$CellContext`n$$ = 1}, 
+      "ControllerVariables" :> {
+        Hold[$CellContext`n$$, $CellContext`n$54170$$, 0]}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, "Body" :> Show[
+        ListPlot[{
+          Part[$CellContext`Data, $CellContext`n$$]}, PlotStyle -> Red]], 
+      "Specifications" :> {{$CellContext`n$$, 1, 10, 1}}, "Options" :> {}, 
+      "DefaultOptions" :> {}],
+     ImageSizeCache->{411., {149., 156.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{
+  3.7589112905317745`*^9, 3.758911327952774*^9, 3.7589118064737744`*^9, {
+   3.758911901070774*^9, 
+   3.7589119159467745`*^9}},ExpressionUUID->"58875dfd-3918-42ed-835b-\
+0ee33fe3975a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"Prepare", "[", "]"}], ";", 
+    RowBox[{"TrainAndTestErrorsSkeleton", "[", "]"}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"Print", "[", 
+      RowBox[{"\"\<MeanErrors[test]: \>\"", ",", " ", 
+       RowBox[{"MeanErrors", "[", "test", "]"}]}], "]"}], ";", "\n", 
+     RowBox[{"Print", "[", 
+      RowBox[{"\"\<Minimizer: \>\"", ",", " ", 
+       RowBox[{"Minimizer", "[", 
+        RowBox[{"MeanErrors", "[", "test", "]"}], "]"}]}], "]"}], ";"}], 
+    "*)"}]}]}]], "Input",
+ CellChangeTimes->{{3.7482009008790717`*^9, 3.7482009008810716`*^9}, {
+   3.7482009427420716`*^9, 3.748201091003072*^9}, {3.7588426746103125`*^9, 
+   3.7588426816060123`*^9}, {3.7588427131411653`*^9, 3.758842740442895*^9}, 
+   3.758842776315482*^9, {3.758843463532197*^9, 3.758843467205564*^9}, 
+   3.7588435154043837`*^9, {3.7588930932890015`*^9, 3.758893102681001*^9}, {
+   3.7588965145188165`*^9, 3.758896518596816*^9}, {3.7588965862178164`*^9, 
+   3.758896588063816*^9}, 3.758896902497816*^9, {3.758898201745813*^9, 
+   3.7588982094328127`*^9}, 3.758898473378813*^9, {3.7588986106048126`*^9, 
+   3.7588986219558125`*^9}, {3.7588991049258127`*^9, 3.758899107678813*^9}, 
+   3.758900366700094*^9, 3.758900449150339*^9, 3.758901598550599*^9, {
+   3.7589099377277746`*^9, 3.7589099687657747`*^9}, {3.758910120549774*^9, 
+   3.7589101939777746`*^9}, {3.7589102874287744`*^9, 3.758910316457774*^9}, {
+   3.758910351136774*^9, 3.7589103756217747`*^9}, {3.7589104244927745`*^9, 
+   3.7589104467457743`*^9}, {3.7589105982107744`*^9, 
+   3.7589105990257745`*^9}, {3.7589108603077745`*^9, 
+   3.7589108621777744`*^9}, {3.7589108994747744`*^9, 3.758910972044774*^9}, {
+   3.7589110080597744`*^9, 3.758911011233774*^9}, {3.7589110448177743`*^9, 
+   3.7589110766777744`*^9}, {3.7589111161497746`*^9, 
+   3.7589111256427746`*^9}, {3.7589112295767746`*^9, 
+   3.7589112313567743`*^9}},ExpressionUUID->"444f353c-27e6-48d9-ae87-\
+09767cfdca86"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"First param negative. n: \"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\" trial: \"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\" Aborting...\"\>"}],
+  SequenceForm["First param negative. n: ", 3, " trial: ", 4, " Aborting..."],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.7589111269557743`*^9, 
+  3.7589111369067745`*^9}},ExpressionUUID->"2474f34d-491f-4de8-92b1-\
+c1b0759ea460"],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellChangeTimes->{{3.7589096943366876`*^9, 3.758909701312292*^9}, 
+   3.7589097601665187`*^9, {3.758909859417774*^9, 3.7589098668947744`*^9}, {
+   3.7589101287627745`*^9, 3.7589101775207744`*^9}, 3.758910269115774*^9, {
+   3.758910301226774*^9, 3.7589103176117744`*^9}, {3.7589103669487743`*^9, 
+   3.758910399450774*^9}, {3.7589104335107746`*^9, 3.7589104487367744`*^9}, 
+   3.7589105397967744`*^9, 3.7589106002087746`*^9, 3.7589107590617743`*^9, {
+   3.7589108404327745`*^9, 3.7589108658817744`*^9}, 3.7589109009067745`*^9, 
+   3.7589109411807747`*^9, {3.7589109752677746`*^9, 3.7589110125527744`*^9}, 
+   3.758911046221774*^9, 3.7589110774667745`*^9, {3.7589111179337745`*^9, 
+   3.7589111369097743`*^9}},ExpressionUUID->"0eaca0a4-74b9-4e82-88e3-\
+64cc189c1769"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\n", "\n", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"TestFit", "[", 
+      RowBox[{
+      "NN_", ",", " ", "startDegreeIndex_", ",", " ", "degreeIncrement_", ",",
+        " ", 
+       RowBox[{"trial_:", " ", "1"}], ",", " ", 
+       RowBox[{"epsPow_:", " ", "1"}]}], "]"}], " ", ":=", " ", 
+     RowBox[{"Block", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+        "model", ",", " ", "fit", ",", " ", "fitDirect", ",", " ", "n", ",", 
+         " ", "data", ",", " ", "trainData", ",", " ", "testData", ",", 
+         "fitted", ",", " ", "degIncIndex", ",", " ", "startDegree", ",", " ",
+          "startDegrees"}], "}"}], ",", " ", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"n", " ", "=", " ", 
+          RowBox[{"First", "@", 
+           RowBox[{"First", "@", 
+            RowBox[{"Position", "[", 
+             RowBox[{"Ns", ",", " ", "NN"}], "]"}]}]}]}], ";", 
+         RowBox[{"degIncIndex", " ", "=", " ", 
+          RowBox[{"First", "@", 
+           RowBox[{"First", "@", 
+            RowBox[{"Position", "[", 
+             RowBox[{"DegreeIncrements", ",", " ", "degreeIncrement"}], 
+             "]"}]}]}]}], ";", 
+         RowBox[{"data", " ", "=", " ", 
+          RowBox[{"Data", "[", 
+           RowBox[{"[", "n", "]"}], "]"}]}], ";", 
+         RowBox[{"startDegrees", " ", "=", " ", 
+          RowBox[{"StartDegrees", "[", "degIncIndex", "]"}]}], ";"}], 
+        RowBox[{"(*", 
+         RowBox[{
+          RowBox[{"startDegreeIndex", "=", 
+           RowBox[{"First", "@", 
+            RowBox[{"First", "@", 
+             RowBox[{"Position", "[", 
+              RowBox[{"startDegrees", ",", "startDegree"}], "]"}]}]}]}], 
+          ";"}], "*)"}], ";", 
+        RowBox[{"startDegree", " ", "=", " ", 
+         RowBox[{"startDegrees", "[", 
+          RowBox[{"[", "startDegreeIndex", "]"}], "]"}]}], ";", "  ", 
+        RowBox[{"Print", "[", 
+         RowBox[{
+         "\"\<n: \>\"", ",", " ", "n", ",", " ", "\"\< startDegrees: \>\"", 
+          ",", " ", "startDegrees", ",", " ", "\"\< startDegreeIndex: \>\"", 
+          ",", " ", "startDegreeIndex", ",", " ", "\"\< startDegree: \>\"", 
+          ",", " ", "startDegree", ",", " ", "\"\< degIncIndex: \>\"", ",", 
+          " ", "degIncIndex", ",", " ", "\"\< degreeIncrement: \>\"", ",", 
+          " ", "degreeIncrement"}], "]"}], ";", "   ", 
+        RowBox[{"model", " ", "=", " ", 
+         RowBox[{"Model", "[", 
+          RowBox[{
+          "NN", ",", " ", "startDegreeIndex", ",", " ", "degIncIndex"}], 
+          "]"}]}], ";", 
+        RowBox[{"trainData", " ", "=", " ", 
+         RowBox[{"TrainData", "[", 
+          RowBox[{"[", 
+           RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], ";", 
+        RowBox[{"testData", " ", "=", " ", 
+         RowBox[{"TestData", "[", 
+          RowBox[{"[", 
+           RowBox[{"trial", ",", " ", "n"}], "]"}], "]"}]}], ";", 
+        RowBox[{"(*", 
+         RowBox[{
+          RowBox[{"fitDirect", "=", 
+           RowBox[{"FindFit", "[", 
+            RowBox[{"trainData", ",", "model", ",", 
+             RowBox[{"Params", "[", "degIncIndex", "]"}], ",", "eps"}], 
+            "]"}]}], ";"}], "*)"}], "\[IndentingNewLine]", 
+        RowBox[{"fit", " ", "=", " ", 
+         RowBox[{"Fits", "[", 
+          RowBox[{"[", 
+           RowBox[{
+           "degIncIndex", ",", " ", "startDegreeIndex", ",", " ", "n", ",", 
+            " ", "trial"}], "]"}], "]"}]}], ";", 
+        RowBox[{"fitted", " ", "=", " ", 
+         RowBox[{"EvaluateFit", "[", 
+          RowBox[{"model", ",", " ", "fit", ",", " ", 
+           RowBox[{"TrainEps", "[", 
+            RowBox[{"[", 
+             RowBox[{"trial", ",", " ", "1"}], "]"}], "]"}]}], "]"}]}], ";", 
+        "  ", 
+        RowBox[{"(*", 
+         RowBox[{
+          RowBox[{"Print", "[", 
+           RowBox[{
+           "\"\<origData: \>\"", ",", "data", ",", 
+            "\"\<\\norigDataSecondColumn: \>\"", ",", 
+            RowBox[{"TrainData", "[", 
+             RowBox[{"[", 
+              RowBox[{"trial", ",", "n", ",", "All", ",", "2"}], "]"}], "]"}],
+             ",", "\"\<\\nmodel: \>\"", ",", "model", ",", "\"\<\\nfit: \>\"",
+             ",", "fit", ",", "\"\<\\nfitDirect: \>\"", ",", "fitDirect", 
+            ",", "\"\<\\nFitted Values: \>\"", ",", 
+            RowBox[{"EvaluateFit", "[", 
+             RowBox[{"model", ",", "fit", ",", 
+              RowBox[{"TrainEps", "[", 
+               RowBox[{"[", 
+                RowBox[{"trial", ",", "1"}], "]"}], "]"}]}], "]"}]}], "]"}], 
+          ";"}], "*)"}], 
+        RowBox[{"Print", "[", 
+         RowBox[{
+         "\"\<Model: \>\"", ",", " ", "model", ",", " ", "\"\< fit: \>\"", 
+          ",", " ", "fit", ",", " ", "\"\< testError: \>\"", ",", " ", 
+          RowBox[{
+           RowBox[{"MeanErrors", "[", "test", "]"}], "[", 
+           RowBox[{"[", 
+            RowBox[{"degIncIndex", ",", " ", "startDegreeIndex"}], "]"}], 
+           "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+        RowBox[{"Show", "[", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"ListPlot", "[", 
+           RowBox[{"testData", ",", " ", 
+            RowBox[{"PlotStyle", " ", "->", " ", "Red"}], ",", " ", 
+            RowBox[{"PlotRange", " ", "->", " ", "Full"}]}], "]"}], ",", " ", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Plot", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"Style", "[", 
+              RowBox[{
+               RowBox[{"ReplaceEps", "[", 
+                RowBox[{
+                 RowBox[{"model", " ", "/.", " ", "fit"}], " ", ",", " ", 
+                 "eps2"}], "]"}], ",", "Black"}], "]"}], "}"}], ",", " ", 
+            RowBox[{"{", 
+             RowBox[{"eps2", ",", " ", "0", ",", " ", "1"}], "}"}], ",", " ", 
+            RowBox[{"PlotRange", " ", "->", " ", "Full"}], ",", 
+            RowBox[{"AxesLabel", "\[Rule]", "Automatic"}]}], 
+           "\[IndentingNewLine]", 
+           RowBox[{"(*", 
+            RowBox[{
+             RowBox[{"PlotLabel", " ", "\[Rule]", 
+              RowBox[{"(", " ", 
+               RowBox[{"\"\<Model: \>\"", " ", "<>", " ", 
+                RowBox[{"ToString", "[", "model", "]"}]}], ")"}]}], ","}], 
+            "\[IndentingNewLine]", "*)"}], "\[IndentingNewLine]", "]"}], " ", 
+          RowBox[{"(*", 
+           RowBox[{",", 
+            RowBox[{"Plot", "[", 
+             RowBox[{
+              RowBox[{"Style", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"NN", "^", 
+                  RowBox[{"(", 
+                   RowBox[{"1", "/", "4"}], ")"}]}], " ", 
+                 RowBox[{"Log", "[", 
+                  RowBox[{"(", 
+                   RowBox[{"1", " ", "-", " ", "eps"}], ")"}], "]"}]}], ",", 
+                " ", "Red"}], "]"}], ",", " ", 
+              RowBox[{"{", 
+               RowBox[{"eps", ",", " ", "0", ",", " ", "1"}], "}"}], ",", " ", 
+              RowBox[{"PlotRange", " ", "->", " ", "Full"}]}], "]"}], ",", 
+            " ", 
+            RowBox[{"Plot", "[", 
+             RowBox[{
+              RowBox[{"Style", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"NN", "^", 
+                  RowBox[{"(", 
+                   RowBox[{"3", "/", "5"}], ")"}]}], " ", 
+                 RowBox[{"Log", "[", 
+                  RowBox[{"(", 
+                   RowBox[{"1", " ", "-", " ", 
+                    RowBox[{
+                    RowBox[{"(", "eps", ")"}], "^", "epsPow"}]}], ")"}], 
+                  "]"}]}], ",", " ", "Black"}], "]"}], ",", " ", 
+              RowBox[{"{", 
+               RowBox[{"eps", ",", " ", "0", ",", " ", "1"}], "}"}], ",", " ", 
+              RowBox[{"PlotRange", " ", "->", " ", "Full"}]}], "]"}]}], 
+           "*)"}], "\[IndentingNewLine]", ",", 
+          RowBox[{"PlotLabel", " ", "\[Rule]", 
+           RowBox[{"(", " ", 
+            RowBox[{"\"\<Model: \>\"", " ", "<>", " ", 
+             RowBox[{"ToString", "[", 
+              RowBox[{"model", ",", " ", "TraditionalForm"}], "]"}]}], 
+            ")"}]}]}], "]"}]}]}], "\[IndentingNewLine]", "]"}]}], ";"}], 
+   "\[IndentingNewLine]", "\n", "\n", 
+   RowBox[{"Manipulate", "[", 
+    RowBox[{
+     RowBox[{"TestFit", "[", 
+      RowBox[{
+      "NN", ",", " ", "startDegreeIndex", ",", " ", "degreeIncrement", ",", 
+       " ", "trial", ",", " ", "epsPow"}], "]"}], ",", " ", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"NN", ",", " ", "Ns"}], "}"}], ",", " ", 
+     RowBox[{"{", 
+      RowBox[{"trial", ",", " ", "1", ",", " ", "NumTrials", ",", " ", "1"}], 
+      "}"}], ",", " ", 
+     RowBox[{"{", 
+      RowBox[{"degreeIncrement", ",", " ", "DegreeIncrements"}], "}"}], ",", 
+     " ", 
+     RowBox[{"{", 
+      RowBox[{"startDegreeIndex", ",", " ", "1", ",", " ", 
+       RowBox[{"NumStartDegrees", "[", 
+        RowBox[{"GetPosition", "[", 
+         RowBox[{"DegreeIncrements", ",", " ", "degreeIncrement"}], "]"}], 
+        "]"}], ",", " ", "1"}], "}"}], ",", " ", 
+     RowBox[{"{", 
+      RowBox[{"epsPow", ",", " ", "1", ",", " ", "3"}], "}"}]}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.7482009008790717`*^9, 3.7482009008810716`*^9}, {
+   3.7482009427420716`*^9, 3.748201091003072*^9}, {3.7588426746103125`*^9, 
+   3.7588426816060123`*^9}, {3.7588427131411653`*^9, 3.758842740442895*^9}, 
+   3.758842776315482*^9, {3.758892615889001*^9, 3.7588926168480015`*^9}, 
+   3.7588935883358717`*^9, {3.758896168467063*^9, 3.7588962263958163`*^9}, {
+   3.758896300254816*^9, 3.7588963535318165`*^9}, {3.7588976717084103`*^9, 
+   3.758897707390978*^9}, {3.758897782466485*^9, 3.758897784962734*^9}, 
+   3.758897816936813*^9, {3.7588978664018126`*^9, 3.7588978748008127`*^9}, {
+   3.7588980377018127`*^9, 3.758898042051813*^9}, {3.7588995028136206`*^9, 
+   3.758899522708599*^9}, {3.758899582685701*^9, 3.758899619813413*^9}, {
+   3.758899692898721*^9, 3.7588997063050613`*^9}, {3.758899778964327*^9, 
+   3.7588997816925993`*^9}, {3.7588998156959996`*^9, 
+   3.7588998187563057`*^9}, {3.7589049303184385`*^9, 
+   3.758904985487955*^9}},ExpressionUUID->"f85117c6-3a08-4f2c-aa9e-\
+f80b90366132"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`degreeIncrement$$ = 
+    1, $CellContext`epsPow$$ = 1, $CellContext`NN$$ = 
+    10, $CellContext`startDegreeIndex$$ = 1, $CellContext`trial$$ = 1, 
+    Typeset`show$$ = True, Typeset`bookmarkList$$ = {}, 
+    Typeset`bookmarkMode$$ = "Menu", Typeset`animator$$, Typeset`animvar$$ = 
+    1, Typeset`name$$ = "\"untitled\"", Typeset`specs$$ = {{
+      Hold[$CellContext`NN$$], {10, 30}}, {
+      Hold[$CellContext`trial$$], 1, 2, 1}, {
+      Hold[$CellContext`degreeIncrement$$], {1}}, {
+      Hold[$CellContext`startDegreeIndex$$], 1, 
+      Dynamic[
+       $CellContext`NumStartDegrees[
+        $CellContext`GetPosition[$CellContext`DegreeIncrements, \
+$CellContext`degreeIncrement$$]]], 1}, {
+      Hold[$CellContext`epsPow$$], 1, 3}}, Typeset`size$$ = {
+    360., {112., 118.}}, Typeset`update$$ = 0, Typeset`initDone$$, 
+    Typeset`skipInitDone$$ = True, $CellContext`NN$20021$$ = 
+    False, $CellContext`trial$20022$$ = 
+    0, $CellContext`degreeIncrement$20023$$ = 
+    False, $CellContext`startDegreeIndex$20024$$ = 
+    0, $CellContext`epsPow$20025$$ = 0}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, 
+      "Variables" :> {$CellContext`degreeIncrement$$ = 
+        1, $CellContext`epsPow$$ = 1, $CellContext`NN$$ = 
+        10, $CellContext`startDegreeIndex$$ = 1, $CellContext`trial$$ = 1}, 
+      "ControllerVariables" :> {
+        Hold[$CellContext`NN$$, $CellContext`NN$20021$$, False], 
+        Hold[$CellContext`trial$$, $CellContext`trial$20022$$, 0], 
+        Hold[$CellContext`degreeIncrement$$, \
+$CellContext`degreeIncrement$20023$$, False], 
+        Hold[$CellContext`startDegreeIndex$$, \
+$CellContext`startDegreeIndex$20024$$, 0], 
+        Hold[$CellContext`epsPow$$, $CellContext`epsPow$20025$$, 0]}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, 
+      "Body" :> $CellContext`TestFit[$CellContext`NN$$, \
+$CellContext`startDegreeIndex$$, $CellContext`degreeIncrement$$, \
+$CellContext`trial$$, $CellContext`epsPow$$], 
+      "Specifications" :> {{$CellContext`NN$$, {10, 
+         30}}, {$CellContext`trial$$, 1, 2, 
+         1}, {$CellContext`degreeIncrement$$, {
+         1}}, {$CellContext`startDegreeIndex$$, 1, 
+         Dynamic[
+          $CellContext`NumStartDegrees[
+           $CellContext`GetPosition[$CellContext`DegreeIncrements, \
+$CellContext`degreeIncrement$$]]], 1}, {$CellContext`epsPow$$, 1, 3}}, 
+      "Options" :> {}, "DefaultOptions" :> {}],
+     ImageSizeCache->{411., {212., 219.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{3.7589085542428093`*^9, 
+  3.7589087452779107`*^9},ExpressionUUID->"ecdc38a9-b580-45f1-93db-\
+26e9af5aecf4"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"n: \"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\" startDegrees: \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "3", ",", "4", ",", "5", ",", "6"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" startDegreeIndex: \"\>", "\[InvisibleSpace]", 
+   "1", "\[InvisibleSpace]", "\<\" startDegree: \"\>", "\[InvisibleSpace]", 
+   "2", "\[InvisibleSpace]", "\<\" degIncIndex: \"\>", "\[InvisibleSpace]", 
+   "1", "\[InvisibleSpace]", "\<\" degreeIncrement: \"\>", 
+   "\[InvisibleSpace]", "1"}],
+  SequenceForm[
+  "n: ", 1, " startDegrees: ", {2, 3, 4, 5, 6}, " startDegreeIndex: ", 1, 
+   " startDegree: ", 2, " degIncIndex: ", 1, " degreeIncrement: ", 1],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.758908745494932*^9},ExpressionUUID->"629d7ce0-8aeb-4a99-9b94-\
+19e677c9e360"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Model: \"\>", "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{"-", "10"}], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       SuperscriptBox["eps", "2"], " ", "var1"}], "+", 
+      RowBox[{
+       SuperscriptBox["eps", "3"], " ", "var2"}], "+", 
+      RowBox[{
+       SuperscriptBox["eps", "4"], " ", "var3"}], "+", 
+      RowBox[{
+       SuperscriptBox["eps", "5"], " ", "var4"}]}], ")"}]}], 
+   "\[InvisibleSpace]", "\<\" fit: \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"var1", "\[Rule]", "0.5443384313794788`"}], ",", 
+     RowBox[{"var2", "\[Rule]", "3.1706133642554915`"}], ",", 
+     RowBox[{"var3", "\[Rule]", 
+      RowBox[{"-", "8.45745298647281`"}]}], ",", 
+     RowBox[{"var4", "\[Rule]", "6.0920132874022395`"}]}], "}"}], 
+   "\[InvisibleSpace]", "\<\" testError: \"\>", "\[InvisibleSpace]", 
+   "0.02579875226748718`"}],
+  SequenceForm[
+  "Model: ", (-10) ($CellContext`eps^2 $CellContext`var1 + $CellContext`eps^3 \
+$CellContext`var2 + $CellContext`eps^4 $CellContext`var3 + $CellContext`eps^5 \
+$CellContext`var4), 
+   " fit: ", {$CellContext`var1 -> 0.5443384313794788, $CellContext`var2 -> 
+    3.1706133642554915`, $CellContext`var3 -> -8.45745298647281, \
+$CellContext`var4 -> 6.0920132874022395`}, " testError: ", 
+   0.02579875226748718],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.758908745509934*^9},ExpressionUUID->"3f6e9723-48d5-4158-975c-\
+af75686b0266"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ErrorPlot", "[", 
+    RowBox[{
+    "model_", ",", " ", "fit_", ",", " ", "data_", ",", " ", "epsArr_"}], 
+    "]"}], " ", ":=", " ", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", 
+     RowBox[{"(*", 
+      RowBox[{
+       RowBox[{"Print", "[", 
+        RowBox[{"\"\<Model: \>\"", ",", "model"}], "]"}], ";", "\n", "   ", 
+       RowBox[{"Print", "[", 
+        RowBox[{"\"\<fit: \>\"", ",", "fit"}], "]"}], ";", "\n", "   ", 
+       RowBox[{"Print", "[", 
+        RowBox[{"\"\<data: \>\"", ",", "data"}], "]"}], ";", "\n", "   ", 
+       RowBox[{"Print", "[", 
+        RowBox[{"\"\<epsArr: \>\"", ",", "epsArr"}], "]"}], ";"}], "*)"}], 
+     RowBox[{"Error", "[", 
+      RowBox[{
+      "model", ",", " ", "fit", ",", " ", "data", ",", " ", "epsArr"}], 
+      "]"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Ranks", "[", "list_", "]"}], " ", ":=", " ", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "n", ",", " ", "sorted", ",", " ", "numCoeffs", ",", " ", "degrees"}], 
+      "}"}], ",", " ", 
+     RowBox[{
+      RowBox[{"n", " ", "=", " ", 
+       RowBox[{"Length", "@", "list"}]}], ";", "\n", "   ", 
+      RowBox[{"sorted", " ", "=", " ", 
+       RowBox[{"Sort", "[", "list", "]"}]}], ";", "\n", "   ", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"First", "@", 
+          RowBox[{"First", "@", 
+           RowBox[{"Position", "[", 
+            RowBox[{"sorted", ",", " ", 
+             RowBox[{"list", "[", 
+              RowBox[{"[", "#", "]"}], "]"}]}], "]"}]}]}], ")"}], " ", "&"}], 
+       " ", "/@", " ", 
+       RowBox[{"Range", "[", 
+        RowBox[{"1", ",", " ", "n"}], "]"}]}]}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"Minimizer", "[", "table_", "]"}], " ", ":=", " ", 
+    RowBox[{"Block", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+       "min", ",", " ", "minIndex", ",", " ", "startDegree", ",", " ", 
+        "rowMins", ",", " ", "rowContainingMin", ",", " ", "colContainingMin",
+         ",", " ", "degreeIncrement", ",", " ", "startDegreeIndex", ",", " ", 
+        "degreeIncrementIndex"}], "}"}], ",", " ", 
+      RowBox[{
+       RowBox[{"rowMins", " ", "=", " ", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Min", "[", 
+           RowBox[{"Drop", "[", 
+            RowBox[{"#", ",", " ", "0"}], "]"}], "]"}], " ", "&"}], " ", "/@",
+          " ", "table"}]}], ";", 
+       RowBox[{"(*", 
+        RowBox[{
+        "one", " ", "entry", " ", "for", " ", "each", " ", 
+         "degreeIncrement"}], "*)"}], 
+       RowBox[{"min", " ", "=", " ", 
+        RowBox[{"Min", "@", "rowMins"}]}], ";", "\n", "   ", 
+       RowBox[{"rowContainingMin", " ", "=", " ", 
+        RowBox[{"First", "@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"Position", "[", 
+           RowBox[{"rowMins", ",", " ", "min"}], "]"}]}]}]}], ";", 
+       RowBox[{"(*", 
+        RowBox[{"degree", " ", "increment", " ", "index"}], "*)"}], 
+       RowBox[{"degreeIncrementIndex", " ", "=", " ", "rowContainingMin"}], 
+       ";", "\n", "   ", 
+       RowBox[{"colContainingMin", " ", "=", " ", 
+        RowBox[{"First", "@", 
+         RowBox[{"Flatten", "@", 
+          RowBox[{"Position", "[", 
+           RowBox[{
+            RowBox[{"table", "[", 
+             RowBox[{"[", "degreeIncrementIndex", "]"}], "]"}], ",", " ", 
+            "min"}], "]"}]}]}]}], ";", 
+       RowBox[{"(*", 
+        RowBox[{"start", " ", "degree", " ", "index"}], "*)"}], 
+       RowBox[{"startDegreeIndex", " ", "=", " ", "colContainingMin"}], ";", 
+       "\n", "   ", 
+       RowBox[{"Print", "[", 
+        RowBox[{
+        "\"\<rowMins: \>\"", ",", " ", "rowMins", ",", " ", "\"\< min: \>\"", 
+         ",", " ", "min", ",", " ", "\"\< degreeIncrementIndex: \>\"", ",", 
+         " ", "degreeIncrementIndex", ",", " ", "\"\< startDegreeIndex: \>\"",
+          ",", " ", "startDegreeIndex"}], "]"}], ";", "\n", "   ", 
+       RowBox[{"degreeIncrement", " ", "=", " ", 
+        RowBox[{"DegreeIncrements", "[", 
+         RowBox[{"[", "degreeIncrementIndex", "]"}], "]"}]}], ";", "\n", 
+       "   ", 
+       RowBox[{"Print", "[", 
+        RowBox[{
+        "\"\<degreeIncrement: \>\"", ",", " ", "degreeIncrement", ",", " ", 
+         "\"\< StartDegrees[degreeIncrement]: \>\"", ",", " ", 
+         RowBox[{"StartDegrees", "[", "degreeIncrementIndex", "]"}]}], "]"}], 
+       ";", "\n", "   ", 
+       RowBox[{"startDegree", " ", "=", " ", 
+        RowBox[{
+         RowBox[{"StartDegrees", "[", "degreeIncrementIndex", "]"}], "[", 
+         RowBox[{"[", "startDegreeIndex", "]"}], "]"}]}], ";", "\n", "   ", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{"Print", "[", 
+          RowBox[{"\"\<Minimizer degree: \>\"", ",", "degree"}], "]"}], ";"}],
+         "*)"}], 
+       RowBox[{"{", 
+        RowBox[{"startDegree", ",", " ", "degreeIncrement"}], "}"}]}]}], 
+     "\[IndentingNewLine]", "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ActuallyPlotErrors", "[", 
+    RowBox[{
+    "bestDegree_", ",", " ", "bestDegreeIncrement_", ",", " ", "trainList_", 
+     ",", " ", "testList_"}], "]"}], ":=", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"Manipulate", "[", 
+      RowBox[{
+       RowBox[{"Module", "[", 
+        RowBox[{
+         RowBox[{"{", "bestDegreeIndex", "}"}], ",", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"Print", "[", 
+           RowBox[{"\"\<Inside manipulate. StartDegrees: \>\"", ",", " ", 
+            RowBox[{"StartDegrees", "[", "degIncIndex", "]"}], ",", " ", 
+            "\"\< bestDegree: \>\"", ",", " ", 
+            RowBox[{"bestDegree", "+", "1", " ", "-", " ", "1"}]}], "]"}], 
+          ";", "\[IndentingNewLine]", 
+          RowBox[{"bestDegreeIndex", "=", 
+           RowBox[{"GetPosition", "[", "\[IndentingNewLine]", 
+            RowBox[{
+             RowBox[{"StartDegrees", "[", 
+              RowBox[{"GetPosition", "[", 
+               RowBox[{"DegreeIncrements", ",", " ", "bestDegreeIncrement"}], 
+               "]"}], "]"}], ",", "\[IndentingNewLine]", " ", "bestDegree"}], 
+            "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"Labeled", "[", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"DiscretePlot", "[", 
+             RowBox[{
+              RowBox[{"{", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Min", "@", 
+                   RowBox[{"trainList", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"degIncIndex", ",", "startDegreeIndex"}], "]"}], 
+                    "]"}]}], ",", " ", "Blue"}], "]"}], ",", " ", 
+                "\[IndentingNewLine]", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Min", "@", 
+                   RowBox[{"testList", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"degIncIndex", ",", "startDegreeIndex"}], "]"}], 
+                    "]"}]}], ",", " ", "Red"}], "]"}], ",", " ", 
+                RowBox[{"Style", "[", 
+                 RowBox[{
+                  RowBox[{"Min", "@", 
+                   RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"trainList", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"degIncIndex", ",", "startDegreeIndex"}], "]"}], 
+                    "]"}], " ", "+", " ", 
+                    RowBox[{"testList", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"degIncIndex", ",", "startDegreeIndex"}], "]"}], 
+                    "]"}]}], ")"}]}], ",", " ", "Orange"}], "]"}], ",", " ", 
+                "\[IndentingNewLine]", 
+                RowBox[{"Style", "[", 
+                 RowBox[{"0", ",", " ", "Gray"}], "]"}]}], 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", "}"}], ",", " ", 
+              "\[IndentingNewLine]", 
+              RowBox[{"(*", 
+               RowBox[{"{", 
+                RowBox[{
+                "startDegree", ",", " ", "MinDegree", ",", " ", 
+                 "MaxStartDegree", ",", " ", "MinDegreeIncrement"}], "}"}], 
+               "*)"}], "\[IndentingNewLine]", 
+              RowBox[{"{", 
+               RowBox[{"startDegreeIndex", ",", " ", 
+                RowBox[{"NumStartDegrees", " ", "[", "degIncIndex", "]"}]}], 
+               "}"}], "\[IndentingNewLine]", ",", " ", 
+              RowBox[{"Joined", " ", "->", " ", "True"}], ",", " ", 
+              RowBox[{"Filling", " ", "->", " ", "None"}], ",", " ", 
+              "\[IndentingNewLine]", 
+              RowBox[{"(*", 
+               RowBox[{
+                RowBox[{"AxesLabel", "\[Rule]", 
+                 RowBox[{"{", 
+                  RowBox[{"Automatic", ",", " ", 
+                   RowBox[{"StartDegrees", "[", "degIncIndex", "]"}]}], 
+                  "}"}]}], ","}], "*)"}], "\[IndentingNewLine]", 
+              RowBox[{"Epilog", " ", "->", " ", 
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"PointSize", "@", ".02"}], ",", " ", 
+                 RowBox[{"Style", "[", 
+                  RowBox[{
+                   RowBox[{"Point", "[", 
+                    RowBox[{"{", 
+                    RowBox[{"bestDegreeIndex", ",", " ", "0"}], "}"}], "]"}], 
+                   ",", " ", "Red"}], "]"}]}], "}"}]}], ",", " ", 
+              "\[IndentingNewLine]", 
+              RowBox[{"PlotMarkers", " ", "->", " ", 
+               RowBox[{"{", 
+                RowBox[{"None", ",", " ", "Medium"}], "}"}]}], ",", " ", 
+              RowBox[{"PlotStyle", " ", "->", " ", 
+               RowBox[{"{", 
+                RowBox[{"PointSize", " ", "->", " ", "6"}], "}"}]}], ",", " ", 
+              RowBox[{"PlotLegends", " ", "->", " ", 
+               RowBox[{"{", 
+                RowBox[{
+                "\"\<Training error\>\"", ",", " ", "\"\<Test error\>\"", ",",
+                  " ", "\"\<Total error\>\""}], "}"}]}], ",", " ", 
+              RowBox[{"PlotLabel", " ", "->", " ", 
+               RowBox[{
+               "\"\<Model Error vs. Model Complexity\\nTest error minimizer \
+in Red\>\"", " ", "<>", " ", "\[IndentingNewLine]", "\"\<\\nStart Degs: \>\"",
+                 " ", "<>", 
+                RowBox[{"ToString", "[", 
+                 RowBox[{
+                  RowBox[{"StartDegrees", "[", "degIncIndex", "]"}], "//", 
+                  "N"}], "]"}], "<>", "\[IndentingNewLine]", 
+                "\"\<\\n(Best model: \>\"", " ", "<>", " ", "\n", 
+                "\"\<Start degree index: \>\"", " ", "<>", " ", 
+                RowBox[{"ToString", "[", "bestDegreeIndex", "]"}], " ", "<>", 
+                " ", "\"\< Degree increment: \>\"", " ", "<>", " ", 
+                RowBox[{"ToString", "[", 
+                 RowBox[{"N", "@", "bestDegreeIncrement"}], "]"}], " ", "<>", 
+                " ", "\"\<, Number of terms: \>\"", " ", "<>", " ", 
+                RowBox[{"ToString", "[", "MaxParams", "]"}], " ", "<>", " ", 
+                "\"\<)\>\""}]}]}], "]"}], ",", " ", "\[IndentingNewLine]", 
+            RowBox[{"{", 
+             RowBox[{
+             "\"\<Model Complexity (starting degree)\>\"", ",", " ", 
+              "\"\<Avg. test error\\n across all N\>\""}], "}"}], ",", " ", 
+            RowBox[{"{", 
+             RowBox[{"Bottom", ",", " ", "Left"}], "}"}], ",", " ", 
+            RowBox[{"RotateLabel", " ", "->", " ", "True"}]}], 
+           "\[IndentingNewLine]", "]"}]}]}], "]"}], "\[IndentingNewLine]", 
+       RowBox[{"(*", "\[IndentingNewLine]", 
+        RowBox[{"Labeled", "[", 
+         RowBox[{
+          RowBox[{"DiscretePlot", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"Style", "[", 
+               RowBox[{
+                RowBox[{"Min", "@", 
+                 RowBox[{"trainList", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"StartDegreeToIndex", "[", 
+                    RowBox[{"degIncIndex", ",", "startDegree"}], "]"}], "]"}],
+                   "]"}]}], ",", " ", "Blue"}], "]"}], ",", " ", 
+              RowBox[{"Style", "[", 
+               RowBox[{
+                RowBox[{"Min", "@", 
+                 RowBox[{"testList", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"StartDegreeToIndex", "[", 
+                    RowBox[{"degIncIndex", ",", "startDegree"}], "]"}], "]"}],
+                   "]"}]}], ",", " ", "Red"}], "]"}], ",", " ", 
+              RowBox[{"Style", "[", 
+               RowBox[{
+                RowBox[{"Min", "@", 
+                 RowBox[{"(", 
+                  RowBox[{
+                   RowBox[{"trainList", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"StartDegreeToIndex", "[", 
+                    RowBox[{"degIncIndex", ",", "startDegree"}], "]"}], "]"}],
+                     "]"}], " ", "+", " ", 
+                   RowBox[{"testList", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"StartDegreeToIndex", "[", 
+                    RowBox[{"degIncIndex", ",", "startDegree"}], "]"}], "]"}],
+                     "]"}]}], ")"}]}], ",", " ", "Orange"}], "]"}], ",", " ", 
+              RowBox[{"Style", "[", 
+               RowBox[{"0", ",", " ", "Gray"}], "]"}]}], 
+             "\[IndentingNewLine]", "}"}], ",", " ", "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{"{", 
+              RowBox[{
+              "startDegree", ",", " ", "MinDegree", ",", " ", 
+               "MaxStartDegree", ",", " ", "MinDegreeIncrement"}], "}"}], 
+             "*)"}], "\[IndentingNewLine]", 
+            RowBox[{"{", 
+             RowBox[{
+             "startDegree", ",", " ", "MinDegree", ",", " ", "MaxStartDegree",
+               ",", " ", "MinDegreeIncrement"}], "}"}], "\[IndentingNewLine]",
+             ",", " ", 
+            RowBox[{"Joined", " ", "->", " ", "True"}], ",", " ", 
+            RowBox[{"Filling", " ", "->", " ", "None"}], ",", " ", 
+            RowBox[{"Epilog", " ", "->", " ", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"PointSize", "@", ".02"}], ",", " ", 
+               RowBox[{"Style", "[", 
+                RowBox[{
+                 RowBox[{"Point", "[", 
+                  RowBox[{"{", 
+                   RowBox[{"bestDegree", ",", " ", "0"}], "}"}], "]"}], ",", 
+                 " ", "Red"}], "]"}]}], "}"}]}], ",", " ", 
+            RowBox[{"PlotMarkers", " ", "->", " ", 
+             RowBox[{"{", 
+              RowBox[{"None", ",", " ", "Medium"}], "}"}]}], ",", " ", 
+            RowBox[{"PlotStyle", " ", "->", " ", 
+             RowBox[{"{", 
+              RowBox[{"PointSize", " ", "->", " ", "6"}], "}"}]}], ",", " ", 
+            RowBox[{"PlotLegends", " ", "->", " ", 
+             RowBox[{"{", 
+              RowBox[{
+              "\"\<Training error\>\"", ",", " ", "\"\<Test error\>\"", ",", 
+               " ", "\"\<Total error\>\""}], "}"}]}], ",", " ", 
+            RowBox[{"PlotLabel", " ", "->", " ", 
+             RowBox[{
+             "\"\<Model Error vs. Model Complexity\\nTest error minimizer in \
+Red\>\"", " ", "<>", " ", "\"\<\\n(Best model: Start degree: \>\"", " ", "<>",
+               " ", 
+              RowBox[{"ToString", "[", "bestDegree", "]"}], " ", "<>", " ", 
+              "\"\< Degree increment: \>\"", " ", "<>", " ", 
+              RowBox[{"ToString", "[", 
+               RowBox[{"N", "@", "bestDegreeIncrement"}], "]"}], " ", "<>", 
+              " ", "\"\<, Number of terms: \>\"", " ", "<>", " ", 
+              RowBox[{"ToString", "[", "MaxParams", "]"}], " ", "<>", " ", 
+              "\"\<)\>\""}]}]}], "]"}], ",", " ", 
+          RowBox[{"{", 
+           RowBox[{
+           "\"\<Model Complexity (starting degree)\>\"", ",", " ", 
+            "\"\<Avg. test error\\n across all N\>\""}], "}"}], ",", " ", 
+          RowBox[{"{", 
+           RowBox[{"Bottom", ",", " ", "Left"}], "}"}], ",", " ", 
+          RowBox[{"RotateLabel", " ", "->", " ", "True"}]}], 
+         "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", 
+        "\[IndentingNewLine]", "*)"}], "\[IndentingNewLine]", ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"degIncIndex", ",", " ", "1"}], "}"}], ",", " ", "1", ",", 
+         " ", "NumDegreeIncrements", ",", " ", "1"}], "}"}]}], "]"}]}], 
+    "\[IndentingNewLine]", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"PlotErrors", "[", 
+     RowBox[{"index_:", " ", "0"}], "]"}], " ", ":=", " ", 
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+       "errors", ",", " ", "trainList", ",", " ", "testList", ",", " ", 
+        "minimizer", ",", " ", "bestDegree", ",", " ", "bestDegreeIncrement", 
+        ",", " ", "degreeIncrement", ",", " ", "degIncIndex"}], "}"}], ",", 
+      " ", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"index", " ", "!=", " ", "0"}], ",", " ", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"trainList", " ", "=", " ", 
+           RowBox[{
+            RowBox[{"Errors", "[", "train", "]"}], "[", 
+            RowBox[{"[", "index", "]"}], "]"}]}], ";", "    ", 
+          RowBox[{"testList", " ", "=", " ", 
+           RowBox[{
+            RowBox[{"Errors", "[", "test", "]"}], "[", 
+            RowBox[{"[", "index", "]"}], "]"}]}]}], ",", " ", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"trainList", " ", "=", " ", 
+           RowBox[{"MeanErrors", "[", "train", "]"}]}], ";", " ", 
+          RowBox[{"testList", " ", "=", " ", 
+           RowBox[{"MeanErrors", "[", "test", "]"}]}]}]}], 
+        "\[IndentingNewLine]", "]"}], ";", "\n", "   ", 
+       RowBox[{"minimizer", " ", "=", " ", 
+        RowBox[{"Minimizer", "[", "testList", "]"}]}], ";", "\n", "   ", 
+       RowBox[{"bestDegree", " ", "=", " ", 
+        RowBox[{"minimizer", "[", 
+         RowBox[{"[", "1", "]"}], "]"}]}], ";", "\n", "   ", 
+       RowBox[{"bestDegreeIncrement", " ", "=", " ", 
+        RowBox[{"minimizer", "[", 
+         RowBox[{"[", "2", "]"}], "]"}]}], ";", "\[IndentingNewLine]", " ", 
+       RowBox[{"Print", "[", 
+        RowBox[{
+        "\"\<trainList: \>\"", ",", "trainList", ",", "\"\<\\ntestList: \>\"",
+          ",", "testList", ",", " ", "\"\<\\nbestDegree: \>\"", ",", " ", 
+         "bestDegree"}], "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"ActuallyPlotErrors", "[", 
+        RowBox[{
+        "bestDegree", ",", " ", "bestDegreeIncrement", ",", " ", "trainList", 
+         ",", " ", "testList"}], "]"}]}]}], "\[IndentingNewLine]", "]"}]}], 
+   ";"}], "\[IndentingNewLine]"}], "\n", 
+ RowBox[{"PlotErrors", "[", "]"}], "\n"}], "Input",
+ CellChangeTimes->{{3.7482009008790717`*^9, 3.7482009008810716`*^9}, {
+   3.7482009427420716`*^9, 3.748201091003072*^9}, {3.7588426746103125`*^9, 
+   3.7588426816060123`*^9}, {3.7588427131411653`*^9, 3.758842740442895*^9}, 
+   3.758842776315482*^9, {3.758892615889001*^9, 3.7588926168480015`*^9}, 
+   3.7588935883358717`*^9, {3.758896168467063*^9, 3.7588962263958163`*^9}, {
+   3.758896300254816*^9, 3.7588963535318165`*^9}, {3.7588976717084103`*^9, 
+   3.758897707390978*^9}, {3.758897782466485*^9, 3.758897784962734*^9}, 
+   3.758897816936813*^9, {3.7588978664018126`*^9, 3.7588978748008127`*^9}, {
+   3.7588980377018127`*^9, 3.758898043207813*^9}, {3.758898141077813*^9, 
+   3.758898150660813*^9}, {3.758898238258813*^9, 3.758898247046813*^9}, {
+   3.7588999537648053`*^9, 3.7588999655179806`*^9}, {3.758900258897315*^9, 
+   3.7589002629217176`*^9}, {3.7589005974141636`*^9, 3.758900614687891*^9}, {
+   3.7589006462190437`*^9, 3.7589006507064924`*^9}, {3.758900688028224*^9, 
+   3.7589007430957303`*^9}, {3.758900786857106*^9, 3.758900834530873*^9}, {
+   3.7589009272941484`*^9, 3.7589009351279316`*^9}, {3.7589010011935377`*^9, 
+   3.758901003098728*^9}, {3.7589010409955173`*^9, 3.758901089738391*^9}, {
+   3.758901133658783*^9, 3.7589011592603426`*^9}, {3.758901297937209*^9, 
+   3.7589013999885993`*^9}, {3.7589014473895993`*^9, 
+   3.7589014506885996`*^9}, {3.7589014967505994`*^9, 
+   3.7589015089095993`*^9}, {3.758901754555599*^9, 3.7589017711005993`*^9}, {
+   3.7589018215085993`*^9, 3.7589018262375994`*^9}, {3.7589018609695997`*^9, 
+   3.758901928496599*^9}, {3.7589020226485996`*^9, 3.7589020475145993`*^9}, {
+   3.758902081017599*^9, 3.7589020826065993`*^9}, {3.7589021195095997`*^9, 
+   3.7589021261325994`*^9}, {3.7589022285185995`*^9, 
+   3.7589022727945995`*^9}, {3.7589023464615993`*^9, 
+   3.7589024419125996`*^9}, {3.7589024945275993`*^9, 
+   3.7589025353909607`*^9}, {3.758902578696291*^9, 3.7589025793523564`*^9}, {
+   3.7589026234287634`*^9, 3.758902624633884*^9}, {3.7589026914015603`*^9, 
+   3.7589027212285423`*^9}, {3.7589027902814474`*^9, 3.758902873844803*^9}, {
+   3.758902972336651*^9, 3.7589029739348106`*^9}, {3.7589031167680926`*^9, 
+   3.7589031283342495`*^9}, {3.7589031832237377`*^9, 
+   3.7589033518425975`*^9}, {3.758903407450983*^9, 3.758903410306983*^9}, {
+   3.7589034585409827`*^9, 3.758903481860983*^9}, {3.758903794664983*^9, 
+   3.758903908881983*^9}, {3.758903958623983*^9, 3.758903969537983*^9}, {
+   3.758904013808797*^9, 3.7589040240638227`*^9}, {3.7589040996363792`*^9, 
+   3.7589041011735325`*^9}, {3.7589044264830604`*^9, 
+   3.7589044269931116`*^9}, {3.7589051083332386`*^9, 
+   3.7589051178721924`*^9}},ExpressionUUID->"a4c9c397-603c-4a6d-861d-\
+fa88f709af2b"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"rowMins: \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"0.007435908965856719`", ",", "0.00046609363259890734`"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" min: \"\>", "\[InvisibleSpace]", 
+   "0.00046609363259890734`", 
+   "\[InvisibleSpace]", "\<\" degreeIncrementIndex: \"\>", 
+   "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\" startDegreeIndex: \"\>", "\[InvisibleSpace]", 
+   "7"}],
+  SequenceForm[
+  "rowMins: ", {0.007435908965856719, 0.00046609363259890734`}, " min: ", 
+   0.00046609363259890734`, " degreeIncrementIndex: ", 2, 
+   " startDegreeIndex: ", 7],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.7589085387652617`*^9, 3.75890859165455*^9, 
+  3.75890874927431*^9, 3.758908964302811*^9, 3.758909005813962*^9, 
+  3.7589092933427114`*^9},ExpressionUUID->"53de950e-fc62-4488-b706-\
+86ac5d348b9f"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"degreeIncrement: \"\>", "\[InvisibleSpace]", 
+   FractionBox["1", "2"], 
+   "\[InvisibleSpace]", "\<\" StartDegrees[degreeIncrement]: \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", 
+     FractionBox["5", "2"], ",", "3", ",", 
+     FractionBox["7", "2"], ",", "4", ",", 
+     FractionBox["9", "2"], ",", "5", ",", 
+     FractionBox["11", "2"], ",", "6"}], "}"}]}],
+  SequenceForm["degreeIncrement: ", 
+   Rational[1, 2], " StartDegrees[degreeIncrement]: ", {2, 
+    Rational[5, 2], 3, 
+    Rational[7, 2], 4, 
+    Rational[9, 2], 5, 
+    Rational[11, 2], 6}],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.7589085387652617`*^9, 3.75890859165455*^9, 
+  3.75890874927431*^9, 3.758908964302811*^9, 3.758909005813962*^9, 
+  3.7589092933487124`*^9},ExpressionUUID->"d8976b20-643d-4ebd-8ede-\
+2951fcff5b06"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"trainList: \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "0.005337514195363191`", ",", "0.003735898971801976`", ",", 
+       "0.0037014217821875082`", ",", "0.004842744058571824`", ",", 
+       "0.0070717705780313665`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.0010848665959373393`", ",", "0.0007285106005580633`", ",", 
+       "0.0004922103140076794`", ",", "0.000341132107448161`", ",", 
+       "0.00024304230732229425`", ",", "0.0001837103303504284`", ",", 
+       "0.00016167947093393976`", ",", "0.00018013484619604502`", ",", 
+       "0.00024258907572363153`"}], "}"}]}], "}"}], 
+   "\[InvisibleSpace]", "\<\"\\ntestList: \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "0.00942763218473206`", ",", "0.007435908965856719`", ",", 
+       "0.007605100692292843`", ",", "0.009552171332619219`", ",", 
+       "0.013159618993619782`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.0022816960835491005`", ",", "0.0016427334601280986`", ",", 
+       "0.0012684267710482144`", ",", "0.0009235398730919164`", ",", 
+       "0.000665853979992126`", ",", "0.0005188290796465655`", ",", 
+       "0.00046609363259890734`", ",", "0.0004858061393800406`", ",", 
+       "0.0005600836614685578`"}], "}"}]}], "}"}], 
+   "\[InvisibleSpace]", "\<\"\\nbestDegree: \"\>", "\[InvisibleSpace]", "5"}],
+  SequenceForm[
+  "trainList: ", {{0.005337514195363191, 0.003735898971801976, 
+    0.0037014217821875082`, 0.004842744058571824, 0.0070717705780313665`}, {
+    0.0010848665959373393`, 0.0007285106005580633, 0.0004922103140076794, 
+    0.000341132107448161, 0.00024304230732229425`, 0.0001837103303504284, 
+    0.00016167947093393976`, 0.00018013484619604502`, 
+    0.00024258907572363153`}}, 
+   "\ntestList: ", {{0.00942763218473206, 0.007435908965856719, 
+    0.007605100692292843, 0.009552171332619219, 0.013159618993619782`}, {
+    0.0022816960835491005`, 0.0016427334601280986`, 0.0012684267710482144`, 
+    0.0009235398730919164, 0.000665853979992126, 0.0005188290796465655, 
+    0.00046609363259890734`, 0.0004858061393800406, 0.0005600836614685578}}, 
+   "\nbestDegree: ", 5],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.7589085387652617`*^9, 3.75890859165455*^9, 
+  3.75890874927431*^9, 3.758908964302811*^9, 3.758909005813962*^9, 
+  3.7589092933607135`*^9},ExpressionUUID->"f516d224-50ee-41ef-adc6-\
+3761c57c18f7"]
+}, Open  ]],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`degIncIndex$$ = 1, Typeset`show$$ = True, 
+    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{{
+       Hold[$CellContext`degIncIndex$$], 1}, 1, 2, 1}}, Typeset`size$$ = {
+    527., {159., 147.}}, Typeset`update$$ = 0, Typeset`initDone$$, 
+    Typeset`skipInitDone$$ = True, $CellContext`degIncIndex$28490$$ = 0}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, "Variables" :> {$CellContext`degIncIndex$$ = 1}, 
+      "ControllerVariables" :> {
+        Hold[$CellContext`degIncIndex$$, $CellContext`degIncIndex$28490$$, 
+         0]}, "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, "Body" :> 
+      Module[{$CellContext`bestDegreeIndex$}, 
+        Print["Inside manipulate. StartDegrees: ", 
+          $CellContext`StartDegrees[$CellContext`degIncIndex$$], 
+          " bestDegree: ", 5 + 1 - 
+          1]; $CellContext`bestDegreeIndex$ = $CellContext`GetPosition[
+           $CellContext`StartDegrees[
+            $CellContext`GetPosition[$CellContext`DegreeIncrements, 
+             Rational[1, 2]]], 5]; Labeled[
+          DiscretePlot[{
+            Style[
+             Min[
+              
+              Part[{{0.005337514195363191, 0.003735898971801976, 
+                0.0037014217821875082`, 0.004842744058571824, 
+                0.0070717705780313665`}, {0.0010848665959373393`, 
+                0.0007285106005580633, 0.0004922103140076794, 
+                0.000341132107448161, 0.00024304230732229425`, 
+                0.0001837103303504284, 0.00016167947093393976`, 
+                0.00018013484619604502`, 
+                0.00024258907572363153`}}, $CellContext`degIncIndex$$, \
+$CellContext`startDegreeIndex]], Blue], 
+            Style[
+             Min[
+              Part[{{0.00942763218473206, 0.007435908965856719, 
+                0.007605100692292843, 0.009552171332619219, 
+                0.013159618993619782`}, {0.0022816960835491005`, 
+                0.0016427334601280986`, 0.0012684267710482144`, 
+                0.0009235398730919164, 0.000665853979992126, 
+                0.0005188290796465655, 0.00046609363259890734`, 
+                0.0004858061393800406, 
+                0.0005600836614685578}}, $CellContext`degIncIndex$$, \
+$CellContext`startDegreeIndex]], Red], 
+            Style[
+             Min[
+             Part[{{0.005337514195363191, 0.003735898971801976, 
+                 0.0037014217821875082`, 0.004842744058571824, 
+                 0.0070717705780313665`}, {0.0010848665959373393`, 
+                 0.0007285106005580633, 0.0004922103140076794, 
+                 0.000341132107448161, 0.00024304230732229425`, 
+                 0.0001837103303504284, 0.00016167947093393976`, 
+                 0.00018013484619604502`, 
+                 0.00024258907572363153`}}, $CellContext`degIncIndex$$, \
+$CellContext`startDegreeIndex] + 
+              Part[{{0.00942763218473206, 0.007435908965856719, 
+                 0.007605100692292843, 0.009552171332619219, 
+                 0.013159618993619782`}, {0.0022816960835491005`, 
+                 0.0016427334601280986`, 0.0012684267710482144`, 
+                 0.0009235398730919164, 0.000665853979992126, 
+                 0.0005188290796465655, 0.00046609363259890734`, 
+                 0.0004858061393800406, 
+                 0.0005600836614685578}}, $CellContext`degIncIndex$$, \
+$CellContext`startDegreeIndex]], Orange], 
+            Style[0, Gray]}, {$CellContext`startDegreeIndex, 
+            $CellContext`NumStartDegrees[$CellContext`degIncIndex$$]}, Joined -> 
+           True, Filling -> None, Epilog -> {
+             PointSize[0.02], 
+             Style[
+              Point[{$CellContext`bestDegreeIndex$, 0}], Red]}, 
+           PlotMarkers -> {None, Medium}, PlotStyle -> {PointSize -> 6}, 
+           PlotLegends -> {"Training error", "Test error", "Total error"}, 
+           PlotLabel -> 
+           StringJoin[
+            "Model Error vs. Model Complexity\nTest error minimizer in Red", 
+             "\nStart Degs: ", 
+             ToString[
+              N[
+               $CellContext`StartDegrees[$CellContext`degIncIndex$$]]], 
+             "\n(Best model: ", "Start degree index: ", 
+             ToString[$CellContext`bestDegreeIndex$], " Degree increment: ", 
+             ToString[
+              N[
+               Rational[1, 2]]], ", Number of terms: ", 
+             ToString[$CellContext`MaxParams], ")"]], {
+          "Model Complexity (starting degree)", 
+           "Avg. test error\n across all N"}, {Bottom, Left}, RotateLabel -> 
+          True]], "Specifications" :> {{{$CellContext`degIncIndex$$, 1}, 1, 2,
+          1}}, "Options" :> {}, "DefaultOptions" :> {}],
+     ImageSizeCache->{578., {209., 216.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{3.758908539328318*^9, 3.758908591681553*^9, 
+  3.75890874947033*^9, 3.7589089645058317`*^9, 3.758909005845965*^9, 
+  3.7589092933737144`*^9},ExpressionUUID->"f6069bb3-2fe7-4e3e-8f6e-\
+742fd15c8869"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Inside manipulate. StartDegrees: \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "3", ",", "4", ",", "5", ",", "6"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" bestDegree: \"\>", "\[InvisibleSpace]", "5"}],
+  SequenceForm[
+  "Inside manipulate. StartDegrees: ", {2, 3, 4, 5, 6}, " bestDegree: ", 5],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.758909293603738*^9},ExpressionUUID->"6f9dee26-519d-47b1-afae-\
+d47540dada2e"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Inside manipulate. StartDegrees: \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "3", ",", "4", ",", "5", ",", "6"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" bestDegree: \"\>", "\[InvisibleSpace]", "5"}],
+  SequenceForm[
+  "Inside manipulate. StartDegrees: ", {2, 3, 4, 5, 6}, " bestDegree: ", 5],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.7589093002414017`*^9},ExpressionUUID->"5941b121-f5fe-418e-9b1d-\
+5a8e13825315"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Inside manipulate. StartDegrees: \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", 
+     FractionBox["5", "2"], ",", "3", ",", 
+     FractionBox["7", "2"], ",", "4", ",", 
+     FractionBox["9", "2"], ",", "5", ",", 
+     FractionBox["11", "2"], ",", "6"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" bestDegree: \"\>", "\[InvisibleSpace]", "5"}],
+  SequenceForm["Inside manipulate. StartDegrees: ", {2, 
+    Rational[5, 2], 3, 
+    Rational[7, 2], 4, 
+    Rational[9, 2], 5, 
+    Rational[11, 2], 6}, " bestDegree: ", 5],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.758909304796857*^9},ExpressionUUID->"b0c12c55-919c-4106-b309-\
+4b489a4307e0"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Inside manipulate. StartDegrees: \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "3", ",", "4", ",", "5", ",", "6"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" bestDegree: \"\>", "\[InvisibleSpace]", "5"}],
+  SequenceForm[
+  "Inside manipulate. StartDegrees: ", {2, 3, 4, 5, 6}, " bestDegree: ", 5],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.75890930782516*^9},ExpressionUUID->"69a611ae-5bf5-4760-b132-80a6edeac9fa"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Inside manipulate. StartDegrees: \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "3", ",", "4", ",", "5", ",", "6"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" bestDegree: \"\>", "\[InvisibleSpace]", "5"}],
+  SequenceForm[
+  "Inside manipulate. StartDegrees: ", {2, 3, 4, 5, 6}, " bestDegree: ", 5],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.75890931742912*^9},ExpressionUUID->"a7273445-a326-47f8-969b-d7a6b8448824"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Inside manipulate. StartDegrees: \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"2", ",", "3", ",", "4", ",", "5", ",", "6"}], "}"}], 
+   "\[InvisibleSpace]", "\<\" bestDegree: \"\>", "\[InvisibleSpace]", "5"}],
+  SequenceForm[
+  "Inside manipulate. StartDegrees: ", {2, 3, 4, 5, 6}, " bestDegree: ", 5],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.7589098835987744`*^9},ExpressionUUID->"12b13ce2-48c5-44a7-82c2-\
+0711db2cc3f6"]
+}, Open  ]],
+
+Cell[BoxData[
+ TemplateBox[{
+  "First","nofirst",
+   "\"\\!\\(\\*RowBox[{\\\"{\\\", \\\"}\\\"}]\\) has zero length and no first \
+element.\"",2,1331,91,20562341991487845932,"Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{
+  3.7589098836337748`*^9},ExpressionUUID->"fa98aab7-97d1-474e-9175-\
+c761cc579bf0"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "First","nofirst",
+   "\"\\!\\(\\*RowBox[{\\\"{\\\", \\\"}\\\"}]\\) has zero length and no first \
+element.\"",2,1331,92,20562341991487845932,"Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{
+  3.758909883669774*^9},ExpressionUUID->"e63770d9-3fda-4f99-bb7f-\
+7bb80c663b34"]
+}, Open  ]],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{3.7589038473009825`*^9, 
+  3.7589044486682787`*^9},ExpressionUUID->"f35332b5-b9b8-4bb2-a0de-\
+28d24988ff9a"],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.7589020148815994`*^9, 
+  3.7589020210975995`*^9}},ExpressionUUID->"9301a153-88a7-4707-80dc-\
+f7b42f750349"]
+},
+WindowSize->{1063, 1862},
+WindowMargins->{{Automatic, -1071}, {Automatic, 0}},
+FrontEndVersion->"11.2 for Microsoft Windows (64-bit) (September 10, 2017)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 58330, 1330, 4667, "Input",ExpressionUUID->"077330e0-69d6-4884-8287-2f4c250644c3"],
+Cell[58913, 1354, 1285, 21, 22, "Print",ExpressionUUID->"0ce34233-bfd5-4caa-a6fa-94cc985a6bc4"],
+Cell[60201, 1377, 5527, 154, 204, "Output",ExpressionUUID->"121ff5a5-9225-4fc1-a671-ab57d83afb79"],
+Cell[65731, 1533, 1796, 38, 324, "Output",ExpressionUUID->"58875dfd-3918-42ed-835b-0ee33fe3975a"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[67564, 1576, 2047, 37, 105, "Input",ExpressionUUID->"444f353c-27e6-48d9-ae87-09767cfdca86"],
+Cell[69614, 1615, 467, 9, 22, "Print",ExpressionUUID->"2474f34d-491f-4de8-92b1-c1b0759ea460"],
+Cell[70084, 1626, 802, 11, 32, "Output",ExpressionUUID->"0eaca0a4-74b9-4e82-88e3-64cc189c1769"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[70923, 1642, 10108, 225, 656, "Input",ExpressionUUID->"f85117c6-3a08-4f2c-aa9e-f80b90366132"],
+Cell[81034, 1869, 3270, 67, 450, "Output",ExpressionUUID->"ecdc38a9-b580-45f1-93db-26e9af5aecf4"],
+Cell[CellGroupData[{
+Cell[84329, 1940, 858, 17, 22, "Print",ExpressionUUID->"629d7ce0-8aeb-4a99-9b94-19e677c9e360"],
+Cell[85190, 1959, 1476, 36, 45, "Print",ExpressionUUID->"3f6e9723-48d5-4158-975c-af75686b0266"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[86715, 2001, 21590, 456, 1625, "Input",ExpressionUUID->"a4c9c397-603c-4a6d-861d-fa88f709af2b"],
+Cell[CellGroupData[{
+Cell[108330, 2461, 881, 19, 22, "Print",ExpressionUUID->"53de950e-fc62-4488-b706-86ac5d348b9f"],
+Cell[109214, 2482, 879, 22, 40, "Print",ExpressionUUID->"d8976b20-643d-4ebd-8ede-2951fcff5b06"],
+Cell[110096, 2506, 2497, 50, 113, "Print",ExpressionUUID->"f516d224-50ee-41ef-adc6-3761c57c18f7"]
+}, Open  ]],
+Cell[112608, 2559, 5690, 110, 444, "Output",ExpressionUUID->"f6069bb3-2fe7-4e3e-8f6e-742fd15c8869"],
+Cell[CellGroupData[{
+Cell[118323, 2673, 496, 11, 22, "Print",ExpressionUUID->"6f9dee26-519d-47b1-afae-d47540dada2e"],
+Cell[118822, 2686, 498, 11, 22, "Print",ExpressionUUID->"5941b121-f5fe-418e-9b1d-5a8e13825315"],
+Cell[119323, 2699, 715, 18, 40, "Print",ExpressionUUID->"b0c12c55-919c-4106-b309-4b489a4307e0"],
+Cell[120041, 2719, 493, 10, 22, "Print",ExpressionUUID->"69a611ae-5bf5-4760-b132-80a6edeac9fa"],
+Cell[120537, 2731, 493, 10, 22, "Print",ExpressionUUID->"a7273445-a326-47f8-969b-d7a6b8448824"],
+Cell[121033, 2743, 498, 11, 22, "Print",ExpressionUUID->"12b13ce2-48c5-44a7-82c2-0711db2cc3f6"]
+}, Open  ]],
+Cell[121546, 2757, 327, 8, 21, "Message",ExpressionUUID->"fa98aab7-97d1-474e-9175-c761cc579bf0"],
+Cell[121876, 2767, 325, 8, 21, "Message",ExpressionUUID->"e63770d9-3fda-4f99-bb7f-7bb80c663b34"]
+}, Open  ]],
+Cell[122216, 2778, 154, 3, 28, "Input",ExpressionUUID->"f35332b5-b9b8-4bb2-a0de-28d24988ff9a"],
+Cell[122373, 2783, 156, 3, 28, "Input",ExpressionUUID->"9301a153-88a7-4707-80dc-f7b42f750349"]
+}
+]
+*)
+

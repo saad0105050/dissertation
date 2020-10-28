@@ -1,0 +1,567 @@
+
+The candidate outputs of a uniform XOR target game 
+are close to uniform. 
+(The loss in the min-entropy is due to the grinding power, 
+i.e., the number of possible outputs.) 
+In this section, 
+we study the grinding power of 
+a series of XOR target games where 
+the output of any game in the sequence is 
+the initial string of the next game.
+
+% \subsection{The composition lemma}\label{sec:composition-lemma}
+\newcommand{\ExplicitPi}[1][x]{^{#1 \rightarrow}\Pi}
+\begin{definition}[$(L, \Pi)$-composition]
+	Let $\kappa \in \NN$, $\epsilon \in (0,1)$ and 
+	let $\rho$ be a non-negative real at most $\kappa$.
+	Let $\Pi$ be an $(\epsilon, \rho)$-secure coin-flipping protocol 
+	with dimension $\kappa$ from Definition~\ref{def:coin-flipping}. 
+	Let $\ExplicitPi[\eta]$ be an explicit version of $\Pi$ 
+	which uses a given initial string $\eta$.
+	Let $L \in \NN$. 
+	An $(L, \Pi)$-composition is a tuple $(\Pi_1, \ldots, \Pi_L)$ 
+	of protocol instances where
+	\begin{enumerate}
+		\item $\Pi_1 = \Pi$ and its output is $\eta_1$. 
+
+		\item If $t \geq 2$, 		
+			$\Pi_t$ is an independent instance of $\ExplicitPi[\eta_{t-1}]$. 
+			Furthermore, $\Pi_t$ commences after $\Pi_{t-1}$ terminates.
+		
+	\end{enumerate} 
+	$\eta_L$ is called the \emph{output of the composition}. 
+	We say that this composition is $(\epsilon, \rho)$-secure 
+	if every $\Pi_t$ is $(\epsilon, \rho)$-secure.
+\end{definition}
+
+Since $\Pi_2$ commences after $\Pi_1$ terminates, 
+the explicit initial value $\eta_1$ given to $\Pi_2$ is uniform 
+and, therefore, each $\Pi_t$ is an independent instance of $\Pi$.
+
+
+
+
+\begin{lemma}\label{lemma:composition}
+Let $\Pi$ be an $(\epsilon, \rho)$-secure coin-flipping protocol. 
+An $(L, \Pi)$-composition is 
+% $\left(L\epsilon^{1 - \rho/\log_2(1/\epsilon)}, \rho\right)$-secure.
+$\left(2^\rho \epsilon L, \rho\right)$-secure.
+\end{lemma}
+\begin{proof}
+	We will prove the claim by an induction on $t \in [L]$. 
+	% As we have argued at the beginning of Section~\ref{sec:composition-lemma}, 
+	% the grinding power of the games $G_1, \ldots, G_L$ in the composition is 
+	% an independent copy of $g$, the grinding power of $G_1$. 
+	As we mentioned before, each protocol instance $\Pi_t$ 
+	in the composition is an independent instance of $\Pi$. 
+	Our inductive hypothesis is that for $t \in [L]$, 
+	$\Pi_\tau$ is $(\epsilon, \rho)$-secure for $\tau = 1, 2, \ldots, t-1$. 
+	Thus there are at most $2^\rho$ choices for $\eta_{t - 1}$. 
+	By a union bound on these choices, $\Pi_t$ is $(2^\rho \epsilon, \rho)$-secure. 
+	A union bound shows that 
+	the probability that 
+	except with probability at most $L\cdot 2^\rho \epsilon$, 
+	every $\Pi_t, t \in [L]$ is $(2^\rho \epsilon, \rho)$-secure.
+\end{proof}
+
+
+
+% Therefore, we cannot achieve both a small $\rho$ and a small $\epsilon$ at the same time. 
+% If we wish to give a strong guarantee we have to use a large $\tau$, 
+% but the min-entropy loss $\rho$ depends linearly on $\tau$. 
+
+Let $\tau > 0$ and $\alpha \in (0, 1/2)$ be two reals. 
+ % and $\EpsP = 2^{-\tau}$. 
+Let $\EpsP \in (0, 1)$. 
+Let $d, k \in \NN$ 
+so that $d$ divides $k$. 
+Let $R \in \NN, T = Rk$ so that 
+writing $n = (T - k)/d$ and $\ell = k/d$, 
+$\alpha^n$ is at most $\EpsP$. 
+Let $\Blockchain$ be an $(\EpsP, k, s)$-secure blockchain protocol 
+with epoch length at least $T + s + k$. 
+Suppose the	coin-flipping protocol $\Pi = \CoinTossingPrivate$ 
+takes place in the first $T$ slots of every epoch. 
+That is, the coin-flipping output of an epoch is used 
+as the input for the coin-flipping in the next epoch; 
+the input to the first epoch is a uniformly random string. 
+The parameter $d$ of $\Pi$ is given below.
+Let the coin-flipping outcome after $L$ epochs of $\Blockchain$ is $\eta$.
+
+\begin{corollary}\label{coro:beacon-poisson}
+	Let $\alpha \in (0, 1/2)$. 
+	Let $\lambda$ be defined in~\eqref{eq:lambda-star-poisson} and 
+	let $\gamma$ be defined in~\eqref{eq:xor-poisson-tail-gamma}. 
+	Let 
+	$$
+			d = \lfloor (T - k) \log_2(1/\alpha)/\log_2(1/\EpsP)\rfloor
+			\,,\quad
+			f(\alpha) = \frac{\ln(1 + 3 \alpha + \alpha^2)}{\ln(1/\alpha)}
+			\,,\text{and}
+	$$
+	% and
+	\begin{equation}\label{eq:delta-prob-loss-multiepoch}
+		\delta 
+		= \begin{dcases}
+			1/2 - \frac{(3/2) \log_2(T - k)}{\tau} 
+			- \frac{k \alpha}{0.82 (T - k)} 
+				&\quad\text{if $\alpha \leq 0.41$\,,}\\
+			1 - f(\alpha)/2
+			- \frac{f(\alpha)/2}{R - 1} 
+			- \frac{(1 + f(\alpha)/2 ) \log_2(k(R-1))}{\log_2(1/\EpsP) }
+				&\quad\text{otherwise\,.}
+		\end{dcases}		
+	\end{equation}
+	Then 
+	$$
+		\Pr\left[\MinEntropy(\eta) \geq \kappa - \log_2(\gamma)\right] \geq 1 -  3 L \EpsP^\delta
+		\,.
+	$$
+	% where the probability is taken over 
+	% the leader election mechanism.
+\end{corollary}
+
+% \iftoggle{drawfigs}{
+
+\begin{figure}
+  \centering
+  \pgfmathsetmacro{\k}{900}
+  \pgfmathsetmacro{\d}{1}
+  \pgfmathsetmacro{\R}{24}
+  % \pgfmathsetmacro{\T}{\R * \k}
+  % \pgfmathsetmacro{\tau}{\k/2}
+  \pgfmathsetmacro{\s}{\k}
+  % \pgfmathsetmacro{\n}{(\R - 1) * \k/\d}
+  % \pgfmathsetmacro{\ell}{\k/\d}
+  % \pgfmathsetmacro{\ellPlusN}{\ell + \n}
+  \begin{tikzpicture}[trim axis left,
+    declare function={
+    	eps(\a) = 1 - 2 * \a;
+    	tau(\eps) = \eps^3 * (1 - \eps) * log2(exp(1)) * \k;
+    	%----------- Praos beacon----------------
+    	phi(\eps) = (3/2) * (1 + \eps)^(1/3) * ( 1 - \eps)^(2/3);
+    	praos_delta(\a) = 0.5 - 0.5 * (
+    		log2(\s^2 * 2^(-1.3 + 1.85 * eps(\a))  ) 
+    		+ \s * log2( 
+	    		\a > 1/3 ? ((5 - 3 * eps(\a))/2) : (
+	    		\a > 0.2 ? (2^(2/3) * phi(eps(\a))) : (
+	    		\a > 0.0955 ? ((5/3) * phi(eps(\a))) : 	(1)
+			) ) ) )/tau(eps(\a));
+    	%----------- New beacon ----------------
+			moment(\a) = 
+				\a <= 0.41 
+				? (1 + 3 * \a + \a^2)
+				: 1/\a;
+			lambda(\a) = 
+				\a <= 0.41 
+				? 2 
+				: 2 * ln(1/\a) / ln(1 + 3 * \a + \a * \a);
+			n(\a) = tau(eps(\a)) / log2(1/\a);
+			ell(\a) = n(\a)) / (\R-1);
+      f(\a) = 2 / lambda(\a);
+      %
+      new_beacon_delta(\a) = 
+				1 - 1/lambda(\a) 
+					- (
+						ell(\a)/lambda(\a) * log2( moment(\a) )
+			      + (1 + 1/lambda(\a)) * log2( n(\a) )
+		    	)/tau(eps(\a));
+		  % new_beacon_delta(\a) = 
+      % 	1 - 1/lambda(\a) - ( 
+      % 		( ell(\a) / lambda(\a) ) * log2(	moment(\a) ) 
+		    % 		+ (1 + 1/lambda(\a) )  * log2( n(\a) ) 
+      % 	)/ tau(eps(\a));
+    }
+    %    declare function = { entropy(\x) = 1; },
+    ]
+    \begin{axis}[domain=0:0.5,
+      samples=100,
+      enlarge x limits=false,
+      grid=both,
+      no markers,
+      % ymin=0,
+      % ymax=1,
+      % x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+      % y label style={at={(axis description cs:0,.5)},anchor=south},
+      xlabel={$\alpha$, relative adversarial stake},
+      ylabel={$\delta$},
+      % there is one default value for the `legend pos' that is outside the axis
+      legend pos=outer north east,
+      % (so the legend looks a bit better)
+      legend cell align=left
+      ]
+      % \addplot +[thick,domain=0:(0.0955),red,forget plot] plot (\x, {rho_praos_small_alpha(\x)});
+      % \addplot +[thick,domain=0.0955:(1/3),red,forget plot] plot (\x, {rho_praos_mid_alpha(\x)});
+      % \addplot +[thick,domain=(1/3):(0.5),red,legend] plot (\x, {rho_praos_large_alpha(\x)});
+      % \addlegendentry{Praos, $\ellPlusN$ rounds}
+
+      % \addplot +[thick,domain=0:(1/3),blue,forget plot] plot (\x, {rho_geom_small_alpha(\x)});
+      % \addplot +[thick,domain=(1/3):(1/2),blue,legend] plot (\x, {rho_geom_large_alpha(\x)});
+      % \addlegendentry{$(\ell, \n, \alpha)$-geometric game, $d = 1$}
+
+      \addplot +[thick,domain=(0.001):(0.41),blue] plot (\x, {new_beacon_delta(\x)});
+      \addlegendentry{New beacon}
+
+      % \addplot +[thick,domain=(0):(1/2),red] plot (\x, {praos_delta(\x});
+      % \addlegendentry{Praos beacon, $s = k$}
+
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Plot of $\delta$ from~\eqref{eq:delta-prob-loss-multiepoch} using $k = 900, T = 24k, s = k/4,$ and $\EpsP = 2^{-k/3}$.}
+  \label{fig:poisson-beacon}
+\end{figure}
+
+% } % end iftoggle{drawfigs}
+
+
+
+\newcommand{\dMin}{d_\mathrm{min}}
+\newcommand{\dMax}{d_\mathrm{max}}
+
+\paragraph{Proof of Corollary~\ref{coro:beacon-poisson}}
+	% Suppose $\Pi$ is $(p, \rho)$-secure. 
+	% Since the ledger protocol $\Blockchain$ is $(2^{-\tau}, k)$-secure, 
+	% Lemma~\ref{prop:coin-tossing-security-private} states that 
+	% $\rho$ is given by~\eqref{eq:minentropy-loss-poisson} 
+	% where we use $\EpsP = 2^{-\tau}$. 
+	% It also states that 
+	% $p = \alpha^n + 2 \cdot 2^{-\tau} \leq 3 \cdot 2^{-\tau}$ 
+	% since $\alpha^n \leq 2^{-\tau}$. 
+	% Next, Lemma~\ref{lemma:composition} states that 
+	% an $(L, \Pi)$-composition must be $(2^\rho p L, \rho)$-secure.
+
+	Let $\ell = k/d$ and $n = (T - k)/d$. 
+	Let $\tau = \log_2(1/\EpsP)$. 
+	Let 
+	$$
+    a = \begin{cases}
+        1 + 3 \alpha + \alpha^2 &\quad\text{if $\alpha \leq 0.41$\,,} \\
+        1/\alpha &\quad\text{otherwise\,,}
+    \end{cases}
+	$$
+	and 
+	$$
+		p(d) = n^{1+1/\lambda} \EpsP^{1 - 1/\lambda} a^{\ell/\lambda}
+		\,.
+	$$
+	Then the total failure probability in Lemma~\ref{lemma:composition} is at most $3 L p(d)$.	
+	Let $\delta \in (0, 1)$ so that $p(d) \leq \EpsP^\delta$; 
+	the value of $\delta$ will be determined later. 
+	We wish to select a $d$ so that $\delta$ is maximized.
+
+	First, we require that 
+	\begin{align*}
+		&\alpha^n \leq \EpsP\,,\\
+		\text{or}\quad &
+			1/\EpsP \leq (1/\alpha)^{(T - k)/d}\,,\\
+		\text{or}\quad &
+			\log_2(1/\EpsP) \leq ((T - k)/d)\log_2(1/\alpha)\,,\\
+		\text{or}\quad &
+			d \leq \dMax \triangleq \frac{(T - k)\log_2(1/\alpha)}{\log_2(1/\EpsP)}
+			\,.
+	\end{align*}
+
+	We also want 
+	\begin{align*}
+		&p(d) \leq \EpsP^{\delta}\,,\\
+		\text{or}\quad &
+			n^{1+1/\lambda} \EpsP^{1 - 1/\lambda} a^{\ell/\lambda} \leq \EpsP^\delta \,,\\
+		\text{or}\quad &
+			(1+1/\lambda)\log_2(n)
+			+ (1/\lambda - 1)\log_2(1/\EpsP) 
+			+ (\ell/\lambda) \log_2(a) \leq -\delta \log_2(1/\EpsP) \,,\\
+		\text{or}\quad &			
+			(\ell/\lambda) \log_2(a) \leq (1-\delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda)\log_2(n)\,,\\
+		\text{or}\quad &			
+			(k/d\lambda) \log_2(a) \leq (1-\delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda)\log_2((T-k)/d)\,,\\
+		\text{or}\quad &			
+			\frac{(k/\lambda) \log_2(a)}{(1-\delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda)\log_2((T-k)/d)} \leq d
+			\,.
+	\end{align*}
+	
+	For the above inequality to hold, 
+	it suffices to take $d \geq \dMin(\delta)$ where 
+	$$
+		\dMin(\delta) = \frac{(k/\lambda) \log_2 a}{(1 - \delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda) \log_2(T - k)}
+		\,.
+	$$
+	An admissible $d$ must satisfy
+	\begin{align*}
+		&\dMin(\delta) \leq \dMax	\,,\\
+		\text{or}\quad &			
+			\frac{(k/\lambda) \log_2 a}{(1 - \delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda) \log_2(T - k)}
+				\leq (T - k) \log_2(1/\alpha)/\log_2(1/\EpsP) \,,\\
+		\text{or}\quad &			
+			\frac{(k/\lambda) \log_2 a}{(T - k) \log_2(1/\alpha)/\log_2(1/\EpsP)} 
+				\leq (1 - \delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda) \log_2(T - k) \,,\\
+		\text{or}\quad &			
+			\frac{(k/\lambda) \log_2 a}{(T - k) \log_2(1/\alpha)} + \frac{(1+1/\lambda) \log_2(T - k)}{\log_2(1/\EpsP)}
+				\leq 1 - \delta - 1/\lambda  \,,\\
+		\text{or}\quad &			
+			\frac{(1/\lambda) \log_2 a}{(R - 1) \log_2(1/\alpha)} + \frac{(1+1/\lambda) \log_2(k(R-1))}{\log_2(1/\EpsP)}
+				\leq 1 - \delta - 1/\lambda  
+				\,.
+	\end{align*}
+	Therefore, if we take $d = \lfloor \dMax \rfloor$ we can achieve  $p(d) \leq \EpsP^{\delta}$ 
+	where 
+	\begin{equation}\label{eq:delta}
+		\delta
+			\leq 1 - 1/\lambda - \frac{(1/\lambda) \log_2 a}{(R-1) \log_2(1/\alpha)} - \frac{(1+1/\lambda) \log_2(k(R-1))}{\log_2(1/\EpsP)}  
+	\end{equation}
+
+	\paragraph{Case: $\alpha \leq 0.41$.} 
+	We use $a = 1 + \alpha + \alpha^2, \lambda = 2$, and 
+	$$ 
+		f(\alpha) = \ln(1 + \alpha + \alpha^2)/\ln(1/\alpha)
+	$$
+	to get 
+	$$
+	\delta = 
+		1/2 
+			- \frac{f(\alpha)/2}{R - 1} 
+			- \frac{(3/2) \log_2(k(R-1))}{\log_2(1/\EpsP)}
+			\,.
+		% = 1 - \frac{\ln(1+3\alpha+\alpha^2)}{2 \ln(1/\alpha)} 
+		% 		- \left(1 + \frac{\ln(1+3\alpha+\alpha^2)}{2 \ln(1/\alpha)}\right) \log_2(T - k)/\tau 
+		% 		- \frac{k\ln(1+3\alpha+\alpha^2)}{2 (T - k) \ln(1/\alpha)} 
+		% 			&\quad\text{otherwise\,.}
+	$$
+	{\color{blue}We can check that }
+	$f(\alpha)$ is convex and increasing for $\alpha \in (0, 0.41]$; 
+	hence the linear upper bound 
+	$f(\alpha) \leq \alpha/0.41$ holds. 
+	Therefore, it is sufficient to take 
+	\begin{align*}
+		&\delta 
+			\leq 
+			\frac{1}{2} 
+				- \frac{\alpha}{0.82 (R - 1)} 
+				- \frac{(3/2) \log_2(k(R-1))}{\log_2(1/\EpsP)} 
+				\,, \\
+		\text{or}\quad&\delta \leq \frac{1}{2} 
+				- \frac{1.22 \alpha}{R - 1} 
+				- \frac{(3/2)\log_2(k(R-1))}{\log_2(1/\EpsP)} 
+				\,.		
+	\end{align*}
+
+	\paragraph{Case: $\alpha \geq 0.41$.} 
+	We use $a = 1/\alpha$ and 
+	$\lambda = 2 \ln(1/\alpha)/\ln(1+3\alpha+\alpha^2) = 2/f(\alpha)$ to get 
+	$$
+	\delta = 
+		1 - f(\alpha)/2
+			- \frac{f(\alpha)/2}{R - 1} 
+			- \frac{(1 + f(\alpha)/2 ) \log_2(k(R-1))}{\log_2(1/\EpsP) }
+			\,.
+	$$
+	As before, $f(\alpha)$ is convex and increasing for $\alpha \in (0.41, 0.5)$. 
+	Using the linear approximation 
+	% \ln(1 + \alpha + \alpha^2)/\ln(1/\alpha) \leq 1 + (\alpha- 0.41) (1/2)/(0.5 - 0.41)
+	$f(\alpha) \leq -1.27 + \alpha/0.18$, it is sufficient to take 
+	\begin{align*}
+		&\delta \leq 
+			1 - (-0.635 + \alpha/0.36)
+				- \frac{(-0.635 + \alpha/0.36)}{(R - 1)} 
+				- \frac{(1 - 0.635 + \alpha/0.36 ) \log_2(k(R-1))}{\log_2(1/\EpsP)} 
+				\,,\\
+		\text{or}\quad&
+			\delta \leq 
+				1.635 - \frac{\alpha}{0.36} 
+				- \frac{(-0.635 + \alpha/0.36)}{R - 1} 
+				- \frac{(0.365 + \alpha/0.36) \log_2(k(R-1))}{\log_2(1/\EpsP)} \,,\\
+		\text{or}\quad&
+			\delta \leq 
+				1.635 - 2.78 \left( 
+					\alpha
+					+ \frac{-0.22 + \alpha}{R - 1} 
+					+ \frac{(0.14 + \alpha) \log_2(k(R-1))}{\log_2(1/\EpsP)} 
+				\right)\,,\\
+		\text{or}\quad&
+			\delta \leq 
+				1.635 - 2.78 \left( 
+					\frac{\alpha R -0.22}{R - 1} 
+					+ \frac{(0.14 + \alpha) \log_2(k(R-1))}{\log_2(1/\EpsP)} 
+				\right)
+		\,.
+	\end{align*}
+	
+
+
+	% Note that $2^\rho p L = 3 L 2^{\rho - \tau}$; 
+	% this equals $3 L \epsilon$ where $\epsilon$ is given in~\eqref{eq:beacon-geometric}. 
+	% On the other hand, this also means 
+	% $\epsilon = 2^{\rho - \tau}$; 
+	% this gives the expression for $\rho$ in~\eqref{eq:beacon-geometric}.
+	\hfill\qed
+
+
+% \subsection{Min-entropy of a composition of \texorpdfstring{$(\ell, n, \alpha)$-}{}Bernoulli games}
+
+% \begin{theorem}[Composing $(\ell, n, \alpha)$-Bernoulli games]\label{thm:xor-game-beacon-bernoulli}
+% 	Let $\EpsP, \delta \in (0,1), \alpha \in (0, 1/2)$, 
+% 	and $L, \kappa \in \NN$ be arbitrary parameters. 
+% 	Set
+% 	% $\lambda = \log_2(1/\alpha)$, 
+% 	\begin{align*}
+% 		q &= \log_2(1/\EpsP)\,, \quad
+% 		n = \frac{q}{\log_2(1/\alpha)}\,, \quad\text{and}\quad	
+% 		\ell \leq q\left(1 - \delta \right) - n - \log_2 n - 3
+% 		\,.
+% 	\end{align*}
+% 	% $\ell \leq q(1 - \delta - 1/\lambda) - 3 - \log_2(q/\lambda)$,
+% 	Let $U$ be an $(\ell, n, \alpha)$-Bernoulli game 
+% 	with 
+% 	% a uniformly random value and 
+% 	parameter $\kappa$. 
+% 	With probability at least $1 - L \EpsP^\delta$,
+% 	the min-entropy loss in 
+% 	an $(L, \ell, n)$-composition of $U$ 
+% 	% (cf. Definition~\ref{def:composition}) 
+% 	is at most 
+% 	$$
+% 		\ell + n + 1 + \log_2(n)
+% 		\,.
+% 	$$
+% 	% \] 
+% 	% In particular, $\delta \in (0,1)$ if $\ell < q - 3 - n - \log_2(L n)$.
+% \end{theorem}
+% \begin{proof}
+% 	First, we claim that the prerequisite $\Pr[A_1] \leq \EpsP$ 
+% 	in Lemma~\ref{lemma:composition} holds. 
+% 	This is because (i.) $\EpsA = \alpha^{n+\ell} \leq \alpha^n$ by 
+% 	the independence of the Bernoulli random variables $Z_i$s, and 
+% 	(ii.) since $n = q/\log_2(1/\alpha)$, we have $\alpha^n = \EpsP$.  
+
+% 	Next, observe that the expression of $\delta$ in~\eqref{eq:delta-composition-generic} stays the same 
+% 	even if we use the base-$2$ logarithm instead of the natural logarithm. 
+% 	Thus we will have $\delta = 1 - (n + \ell + 1 + \log_2(3 n))/q$. 
+% 	However, we can change the order of choosing $\hat{\delta}$ and $\ell$. 
+% 	Namely, the above choice of $\hat{\delta}$ and $\ell$ is equivalent to first choosing 
+% 	an arbitrary $\delta \in (0, 1)$ and then choosing an $\ell \in \NN$, 
+% 	as a function of $n, q$, and $\delta$, 
+% 	satisfying $\ell \leq q(1 - \delta) - (n + \log_2(3 n) + 1)$. 
+% 	% It follows that the failure probability $\EpsP^{\delta^\prime}$ is at most $\EpsP^\delta$. 
+% 	This bound on $\ell$ means it suffices to take 
+% 	$\ell \leq  q(1 - \delta) - (n + \log_2(n) + 3)$ 
+% 	since $1 + \log_2(3) < 3$.
+
+% 	The min-entropy bound in the claim follows from using 
+% 	the expression of $\gamma$ from~\eqref{eq:bernoulli-game-gamma}
+% 	into Corollary~\ref{coro:composition-min-entropy}. 
+% \end{proof}
+
+
+% %--------------------------------------------------------------
+% % \begin{theorem}[Composing $(\ell, n, \alpha)$-Bernoulli games]\label{thm:xor-game-beacon}
+% % 	Let $\EpsP, \delta \in (0,1), \alpha \in (0, 1/2)$, 
+% % 	and $L, \kappa \in \NN$ be arbitrary parameters. 
+% % 	Set $q = \log_2(1/\EpsP)$, 
+% % 	$\lambda = \log_2(1/\alpha)$, 
+% % 	$n = q/\lambda$,  
+% % 	$\ell \leq q(1 - \delta - 1/\lambda) - (3 + \log_2 n)$,
+% % 	% $\ell \leq q(1 - \delta - 1/\lambda) - 3 - \log_2(q/\lambda)$,
+% % 	and $N = \ell + n$.
+% % 	Consider an $(L, N, \kappa)$-composition (cf. Definition~\ref{def:composition}) 
+% % 	of the $(\ell, n, \alpha)$-Bernoulli game  
+% % 	with a uniformly random value. 
+% % 	The min-entropy of this composition 
+% % 	is at least $\kappa - \left(\ell + 1 + n + \log_2(n) \right)$, 
+% % 	except with probability at most $\EpsP^\delta$. 
+% % 	% In particular, $\delta \in (0,1)$ if $\ell < q - 3 - n - \log_2(L n)$.
+% % \end{theorem}
+% % \begin{proof}
+% % 	First, we claim that the prerequisite $\EpsA \leq \EpsP$ 
+% % 	in the Composition Lemma (Lemma~\ref{lemma:composition}) holds. 
+% % 	This is because (i.) $\EpsA = \alpha^{n+\ell} \leq \alpha^n$ by 
+% % 	the independence of the Bernoulli random variables $Z_i$s, and 
+% % 	(ii.) setting $n = q/\lambda$ implies $\alpha^n = \EpsP$.  
+
+% % 	Next, observe that the expression of $\delta$ in~\eqref{eq:delta-composition-generic} stays the same 
+% % 	even if we use the base-$2$ logarithm instead of the natural logarithm. 
+% % 	In addition, notice that $1/\lambda = n/q$ by design and 
+% % 	$(1/\lambda) \log_2 \Exp g^\lambda = \ell + 1 + (\log_2(n))/\lambda$ 
+% % 	by Lemma~\ref{lemma:xor-game-bernoulli-moment}.
+% % 	By the Composition Lemma, the error probability is at most $L \EpsP^{\delta^\prime}$ 
+% % 	where
+% % 	$\delta^\prime = 1 - (n + \ell + 1 + \log_2(3 n)/\lambda)/q$. 
+% % 	It is easy to see that $\delta^\prime < 1$.
+% % 	Since $\alpha < 1/2$, we have $\lambda > 1$ and consequently, we can take
+% % 	$\hat{\delta} = 1 - (n + \ell + 1 + \log_2(3 n))/q < \delta^\prime < 1$. 
+% % 	This choice implies $\EpsP^{\hat{\delta}}$ is an upper bound on the failure probability $\EpsP^{\delta^\prime}$. 
+
+% % 	However, we can change the order of choosing $\hat{\delta}$ and $\ell$. 
+% % 	Namely, the above choice of $\hat{\delta}$ and $\ell$ is equivalent to first choosing 
+% % 	an arbitrary $\delta \in (0, 1)$ and then choosing an $\ell \in \NN$, 
+% % 	as a function of $n, q$, and $\delta$, 
+% % 	satisfying $\ell \leq q(1 - \delta) - (n + \log_2(3 n) + 1)$. 
+% % 	It follows that the failure probability $\EpsP^{\delta^\prime}$ is at most $\EpsP^\delta$. 
+% % 	This bound on $\ell$ means it suffices to take 
+% % 	$\ell \leq  q(1 - \delta - 1/\lambda) - (3 + \log_2(n))$ 
+% % 	since $n = q/\lambda$ and $1 + \log_2(3) < 3$.
+
+% % 	The min-entropy bound in the claim follows from using the expression of $\gamma$ from
+% % 	Lemma~\ref{lemma:xor-game-bernoulli-gamma} 
+% % 	into Corollary~\ref{coro:composition-min-entropy}. 
+% % \end{proof}
+
+
+% \subsection{Min-entropy of a composition of \texorpdfstring{$(\ell, n, \alpha)$-}{}geometric games}
+% \begin{theorem}[Composing $(\ell, n, \alpha)$-geometric games]\label{thm:xor-game-beacon-geometric}
+% 	Let $\EpsP, \delta \in (0,1), \alpha \in (0, 1/2)$, 
+% 	and $L, \kappa \in \NN$ be arbitrary parameters. 
+% 	Define $\beta = \beta(\alpha)$ and $c = c(\alpha)$ as
+% 	\[
+% 		\begin{cases}
+% 			\beta = 1/2,\, c = \sqrt{e}
+% 				\,,&\qquad\text{if}\quad \alpha \in (0, 1/4]\,, \\
+% 			\beta = 2/3,\, c = 0.85
+% 				\,,&\qquad\text{if}\quad \alpha \in (1/4, 1/3]\,, \\
+% 			\beta = 5/(12 - 14 \alpha),\, c = (1.67 + 2.66 \alpha)/3^\beta
+% 				\,,&\qquad\text{if}\quad \alpha \in (1/3, 1/2)\,.
+% 		\end{cases}
+% 	\]	
+% 	Set
+% 	% $\lambda = \log_2(1/\alpha)$, 
+% 	\begin{align*}
+% 		q = \log_2(1/\EpsP)\,, \quad 
+% 		n = \frac{q}{\log_2(1/\alpha)}\,,\quad\text{and}\quad
+% 		\ell \leq
+% 			\frac{q(1 - \beta - \delta ) - \log_2(3 n 5^\beta)}{\log_2(c) - \log_2(1-\alpha)}
+% 			\,.
+% 	\end{align*}
+% 	% $\ell \leq q(1 - \delta - 1/\lambda) - 3 - \log_2(q/\lambda)$,
+% 	Let $U$ be an $(\ell, n, \alpha)$-geometric game 
+% 	on strings in $\{0,1\}^\kappa$. 
+% 	With probability at least $1 - L \EpsP^\delta$,
+% 	the min-entropy loss in 
+% 	an $(L, G)$-composition 
+% 	% (cf. Definition~\ref{def:composition}) 
+% 	is at most 
+% 	\[
+% 		\beta q + \ell \log_2\left( c / (1 - \alpha)\right) + \log_2(n 5^\beta)
+% 		\,.
+% 	\]
+% \end{theorem}
+
+% \begin{proof}
+% 	First, we claim that the prerequisite $\Pr[A_1] \leq \EpsP$ 
+% 	in Lemma~\ref{lemma:composition} holds. 
+% 	Let $X \sim \GeomAlpha$ and recall that 
+% 	the size of an option set is stochastically dominated by $X$.
+% 	Since $\Pr[X \geq 2] = \alpha$, the probability that 
+% 	each of $n$ independent copies of $X$ is at least two, 
+% 	is $\alpha^n$. 
+% 	Since $n = q/\log_2(1/\alpha)$ by design, 
+% 	it follows that $\alpha^n = \EpsP$.  
+
+% 	The remainder of the proof is similar to 
+% 	the proof of Theorem~\ref{thm:xor-game-beacon-bernoulli}. 
+% 	The only variation is that we take $\gamma$ from~\eqref{eq:xor-geom-tail-gamma}.	
+% \end{proof}
+
+
+
+
+
+
+

@@ -1,0 +1,214 @@
+
+
+Let us record the following fact. 
+
+\begin{fact}\label{fact:sigma}
+    Let $\alpha \in (0, 1), n \in \NN$ and $\sigma = (\sigma_1, \ldots, \sigma_n) \in \RR^n$ 
+    where each $\sigma_i \in (0, \alpha)$ and in addition, $\sum_i \sigma_i = \alpha$. 
+    Then 
+    (i.) $\prod_i (1 - \sigma_i) \geq 1 - \alpha$ and 
+    (ii.) $\sum_i \sigma_i/(1 - \sigma_i) \geq \alpha$.
+\end{fact}
+\begin{proof}
+    The proof is via induction on $n \in \NN$.
+    Define $f_n(\alpha) \defeq \prod_i (1 - \sigma_i)$ and
+    $g_n(\alpha) \defeq \sum_i \sigma_i/(1 - \sigma_i)$.
+
+    \begin{description}
+        \item[Part (i.)]
+        For $n = 1$, we have $f_1(\alpha) = 1 - \alpha$ since $\sigma_1 = \alpha$. 
+        Our inductuve hypothesis is that $f_{n-1}(\alpha) \geq 1 - \alpha$.
+        Let $\sigma_n = \delta$ for 
+        an arbitrary $\delta \in (0, \alpha)$. 
+        Observe that 
+        \[
+        f_n(\alpha) 
+        = f_{n-1}(\alpha - \delta) \cdot (1-\delta)
+        \geq (1 - \alpha + \delta)(1 - \delta)
+        = (1 - \alpha) + \delta(\alpha - \delta)
+        > 1 - \alpha
+        \]
+        since $0 < \delta < \alpha$. 
+        We used the inductive hypothesis at the first inequality.
+
+        \item[Part (ii.)]
+        \emph{(First proof.)}
+        Fix an $i \in [n]$ and note that $\sigma_i/(1 - \sigma_i) \geq \sigma_i$. 
+        Summing both sides of this inequality 
+        for $i \in [n]$ yields the claim.
+
+        \emph{(Second proof.)}
+        For $n = 1$, we have $g_1(\alpha) = \alpha/(1 - \alpha) > \alpha$ since 
+        $\sigma_1 = \alpha$ and $\alpha \in (0, 1)$. 
+        Our inductuve hypothesis is that $g_{n-1}(\alpha) \geq \alpha$.
+        Let $\sigma_n = \delta$ for 
+        an arbitrary $\delta \in (0, \alpha)$. 
+        Observe that 
+        \[
+        g_n(\alpha) 
+        = g_{n-1}(\alpha - \delta) + \frac{\delta}{1-\delta}
+        \geq \alpha - \delta +\frac{\delta}{1-\delta}
+        = \alpha + \delta \left(-1 + \frac{1}{1 - \delta}\right)
+        = \alpha + \delta \sum_{k \geq 1} \delta^k
+        \geq \alpha
+        \,.
+        \]
+        We used the inductive hypothesis at the first inequality.
+    \end{description}
+\end{proof}
+
+
+
+
+\subsection{Proof of Lemma~\ref{lemma:geom-dominates-poisson}}
+
+
+
+% \begin{proof}
+    $Y$ stochastically dominates $Z$ if and only if $\Exp Z^\lambda \leq \Exp Y^\lambda$ 
+    for all $\lambda > 0$. 
+    By definition, if $Y$ stochastically dominates $Z$ then the right tail of $Y$ 
+    has more volume than the right tail of $Z$.
+    Thus we need to prove that for all $k = 0, 1, 2, \ldots$, $\Pr[Z \geq k] \leq \Pr[Y \geq k]$.
+
+    Before we proceed, note that the case $k = 0$ is trivial since 
+    both $Y$ and $Z$ has the same domain $0, 1, 2, \ldots$\ . 
+    We shall use the easy-to-check fact $\Pr[Y \geq k] = \alpha^k$ for integers $k \geq 0$. 
+
+    \begin{description}
+        \item[Case: $k \geq 3$.]
+        {\color{red} Why is $k$ at least $3$?} 
+        We can compute a tail bound on $Z$ as follows: 
+        for any positive real $\theta$, 
+        % satisfying $| \sigma_i(e^\theta - 1)| \leq 1$ for all $i$, we have
+
+        \begin{align*}
+            \Pr[Z \geq k] 
+            &= \Pr[e^{\theta Z} \geq e^{\theta k}] \leq e^{-\theta k} \Exp e^{\theta Z} \\
+            &=  e^{-\theta k} \Exp e^{\theta \sum_i X_i} =  e^{-\theta k}\Exp \prod_i e^{\theta X_i} \\
+            &=  e^{-\theta k} \prod_i \Exp e^{\theta X_i} 
+            =  e^{-\theta k} \prod_i \left(1 - \sigma_i + \sigma_i e^{\theta }\right) \\
+            &\leq e^{-\theta k} \prod_i e^{\sigma_i(e^\theta - 1)} = e^{- \theta k} \cdot e^{ \alpha (e^\theta - 1)} \\
+            &= e^{- \theta k + \alpha ( e^\theta - 1)}
+            \,.
+        \end{align*}
+        Here, we have used 
+        the monotonicity of the exponential function (the first equality),
+        the Markov inequality (the first inequality), 
+        the independence of the $X_i$s (fourth inequality), 
+        the fact $e^x \geq 1 + x$ for all real $x$ (second inequality), 
+        and finally, the assumption $\alpha = \sum_i \sigma_i$ (the penultimate equality).
+        % Note that we have to later verify that $\sigma_i (e^\theta - 1)$ is indeed at most $1$.
+
+        We want to minimize the above upper bound in terms of $\theta$. 
+        That is, we want to solve 
+        \begin{align*}
+                    &\dfrac{d}{d\theta} \left[ e^{- \theta k + \alpha (e^\theta - 1)} \right]= 0 \\
+            \Or&    (-k + \alpha e^\theta) e^{- \theta k + \alpha (e^\theta - 1)} = 0 \\
+            \Or& k = \alpha e^\theta \\
+            \Or& \theta = \log(k/\alpha)
+        \end{align*}
+        since $e^x \neq 0$ for $x \in \RR$. 
+        Using this $\theta$, we get
+        \begin{equation}\label{eq:Z_tail}
+            \Pr[Z \geq k] \leq e^{- k \log(k/\alpha) ) - \alpha + k} 
+            \,.
+        \end{equation}
+        Since $\Pr[Y \geq k] = \alpha^k = e^{k \log(\alpha)}$, we can check that 
+        $k \log(\alpha) - \left( k  - k \log(k/\alpha)  - \alpha \right)
+        = k (\log k - 1) + \alpha
+        $.
+        Hence as long as $k \geq e$, 
+        the quantity $k (\log k - 1) + \alpha$ is always positive. 
+        Thus $\Pr[Z \geq k] \leq \alpha^k = \Pr[Y \geq k]$ for $k = 3, 4, \ldots$.
+
+
+        \item[Case: $k = 1$ and $k = 2$.]
+        Let us write $f(\alpha) = \prod_i (1 - \sigma_i)$ and $g(\alpha) = \sum_i \sigma_i/(1 - \sigma_i)$. 
+        For the case $k = 1$, 
+        observe that $\Pr[Z \geq 1] = 1 - \Pr[Z = 0] = 1 - f(\alpha)$ 
+        By Fact~\ref{fact:sigma}, this is at most $1 - (1-\alpha) = \alpha = \Pr[Y \geq 1]$.
+
+        For the case $k = 2$,
+        Note that $\Pr[Z = 1] = \sum_i \sigma_i \prod_{j \neq i} (1 - \sigma_j) = f(\alpha) g(\alpha)$. 
+        Hence $\Pr[Z \geq 2] = 1 - \Pr[Z = 0] - \Pr[Z = 1] = 1 - f(\alpha) - f(\alpha) g(\alpha) 
+        = 1 - f(\alpha) (1 + g(\alpha) )$. 
+        Using Fact~\ref{fact:sigma}, this probability is at most 
+        $1 - (1-\alpha)(1 + \alpha) = \alpha^2 = \Pr[Y \geq 2]$. 
+    \end{description}
+
+    \hfill$\qed$
+
+    \begin{proposition}\label{prop:poisson-moment}
+        Let $\alpha \in (0.41, 1/2)$ and 
+        let $P \sim \Poisson(\alpha)$. 
+        Then $\Exp (1 + P)^\lambda \leq 1 + 2 \alpha$ and, 
+        in particular, $\alpha \Exp (1 + P)^\lambda \leq 1$.
+    \end{proposition}
+    \begin{proof}
+        Let $\lambda \in (1, 2)$. 
+        Define $f_\lambda(\alpha) = \Exp (1 + P)^\lambda = \sum_{k \geq 0} T_k$, where 
+        \begin{align*}
+            T_k &= (1 + k)^\lambda \cdot e^{-\alpha} \alpha^k/k!
+            \,.
+        \end{align*} 
+        Notice that $f_\lambda(\alpha)$ is convex and increasing in both $\alpha$ and $\lambda$. 
+        (In particular, $T_k$  is convex and increasing since 
+        the map $\alpha \mapsto \alpha^k$ is convex and increasing for positive $k$, 
+        and the map $c \mapsto c^\lambda$ is convex and increasing for $\lambda \geq 1$ and $c \geq 1$.)
+
+        Define $r_k = T_{k+1}/T_k$ so that 
+        $$
+            r_k = \frac{\alpha}{1+k} \left(\frac{2 + k}{1 + k}\right)^\lambda
+            \,.
+        $$ 
+        For a fixed $\alpha$ and $\lambda$, observe that 
+        $$\frac{r_k}{r_{k+1}} 
+        = \frac{2 + k}{1 + k} \left(\frac{(2 + k)^2}{(1+k)(3 + k)} \right)^\lambda
+        = \frac{2 + k}{1 + k} \left(\frac{4 + 4k + k^2}{3 + 4k + k^2} \right)^\lambda
+        > 1
+        \,.
+        $$
+        Therefore, $r_k > r_{k+i}$ for all $i = 1, 2, \ldots$\ .
+        It follows that for any $K \in \NN$, 
+        $$
+            F_\lambda(\alpha, \lambda; K) 
+            \triangleq \sum_{k = 0}^{K-1} T_k + \frac{T_K}{1 - r_K} 
+            \geq f_\lambda(\alpha)
+        $$
+        and, in addition, that $F_\lambda(0.5, \lambda; K) \geq f_\lambda(\alpha)$ for any $\alpha \in (0, 1/2)$.
+        % Since the terms in the sum-expression of $f_\lamnda(\alpha)$ decays quickly (in $k$), 
+        % it suffices to take $K = 3$. 
+        Furthermore, since $f_\lambda(\alpha)$ is convex and increasing in $\alpha$,  
+        the straight line segment $L(\alpha)$ connecting the points 
+        $$
+        a(\lambda) = \left(0.41, F_\lambda(0.41; K) \right)
+        \quad\text{and}\quad
+        b(\lambda) = \left(0.5, F_\lambda(0.5; K) \right)
+        $$ is an upper bound on $F_\lambda(\alpha; K)$. 
+
+        
+        For a given $K$, one can optimize for $\lambda$ that minimizes the gap $1/\alpha - F(0.5, \lambda; K)$. 
+        However, we take a more relaxed approach and simply observe that 
+        using $\lambda = 3/2$ is good enough. 
+        In particular, 
+        using $K = 3$ and $\lambda = 3/2$, we can directly calculate 
+        $$
+        F_\lambda(0.41, 3/2; 3) = 1.79428
+        \quad\text{and}\quad
+        F_\lambda(0.5; 3/2) = 1.98073 < 1/(1/2)
+        \,.
+        $$
+        Thus the line segment joining the points $a(3/2)$ and $b(3/2)$ 
+        is given by 
+        $$L(\alpha) 
+        = a(3/2) + (b(3/2) - a(3/2))\cdot (\alpha - 0.41)
+        = 1.79428 + 1.98073 (\alpha - 0.41)
+        \leq 1 + 2 \alpha.
+        $$
+        It suffices to check that $L(0.41) = 1.82 > F_\lambda(0.41, 3/2; 3) = 1.79428$ and 
+        $L(0.5) = 2 > F_\lambda(0.5, 3/2; 3) = 1.98073$.
+    \end{proof}
+
+% \end{proof} 
+

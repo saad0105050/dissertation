@@ -1,0 +1,29 @@
+
+
+
+\subsection{A randomness beacon from coin-tossing}
+Now we are poised to construct a distributed randomness beacon protocol $\Beacon$ 
+by harnessing an existing blockchain protocol $\Protocol$ 
+which satisfies the axioms in Section~\ref{sec:model}. 
+Under the hood, the beacon protocol will implement a composition of XOR target games 
+(cf. Theorem~\ref{thm:xor-game-beacon}) bootstrapped with a fresh random string. 
+
+How good is this beacon?
+As we have proved in Theorem~\ref{thm:xor-game-beacon}, 
+the min-entropy of the random strings generated in this composition 
+is ``large,'' giving a quantified bound for the bias-resistance property of the beacon. 
+Moreover, the agreement, fairness, and public-verifiability properties of the beacon 
+are easily implied by the blockchain axioms in Section~\ref{sec:model}. 
+Finally, the unpredictability of the beacon stems from 
+the assumption in Lemma~\ref{lemma:composition} that in each instance of the XOR target game, 
+at least one nonce set is empty. 
+Hence at least one of operands in the XOR operation is uniform, making the beacon output 
+uniform as well.
+
+Without any further ado, let us present our beacon protocol which is followed by 
+rigorous argument about its properties and parameters.
+
+
+
+
+

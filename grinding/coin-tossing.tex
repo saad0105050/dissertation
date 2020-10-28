@@ -1,0 +1,355 @@
+
+
+
+Let $k,s,d,T, R, \kappa \in \NN$. 
+Assume, for simplicity, that $d$ divides both $k$ and $T$. 
+Let $\EpsP \in (0,1)$ and 
+let $\Blockchain$ be an $(\EpsP, k, s)$-secure eventual consensus blockchain protocol, 
+such as Praos~\cite{Praos} or Snow White~\cite{SnowWhite}, 
+where an epoch comprises of $R$ slots, $R \geq T + k$. 
+% Let $\Chain$ denote the abstract ledger implemented by the protocol $\Blockchain$. 
+Of these, if a slot $t \in [R]$ is congruent to  $1 \bmod d$ 
+then slot it is called a \emph{nonce-emitting slot.} 
+% At any given moment, let $\Chain_u$ 
+% denote the state of the ledger in the view of a nonce player $u \in \Players$. 
+
+Let $\alpha \in (0, 1/2)$. 
+Let $\Players = \Players(\alpha)$ be the set of participants 
+in the protocol $\Blockchain$ so that: 
+\begin{itemize}
+	\item With each player $u \in \Players$ 
+	is associated a non-negative real number $\sigma_u \in (0, 1)$ 
+	satisfying $\sum_u \sigma_u = 1$. 
+
+	\item There is a designated subset $A \subset \Players$ of players 
+	so that 
+	$\sum_{u \in A} \sigma_u = \alpha$. 
+	If $u \in A$ then $u$ is called an \emph{adversarial player}; 
+	otherwise, $u$ is called an \emph{honest player}.
+\end{itemize}
+The players have access to 
+% a VRF and 
+a common random string $\eta_0 \in \{0,1\}^\kappa$.
+
+At every slot $t \in [R]$, 
+every player $u \in \Players$ 
+privately elects himself as the slot leader for slot $t$ 
+with probability $\sigma_u$. 
+If $u$ is elected a leader, 
+he is entitled to issue a new block 
+along with the proof of this election. 
+
+\newcommand{\CoinTossingPrivate}{\Pi_\mathsf{private}^{\Players(\alpha),k,d}}
+Below, we describe a \emph{coin-flipping protocol with dimension $\kappa$} $\CoinTossingPrivate$. 
+
+
+\paragraph{Nonce announcement and recording in $\CoinTossingPrivate$.}~ 
+\begin{itemize}
+	\item As soon as a player $u$ becomes a leader of some slot $t$, 
+	he immediately \emph{announces} his \emph{nonce message} $\mu_t$. 
+	That is, he broadcasts $\mu_t$ to all honest players 
+	and includes $\mu_t$ in his newly minted block. 
+	This nonce message $\mu_t$ is a tuple $(y_t, t, u, \pi)$ 
+	which means ``player $u$ is a legitimate leader for slot $t$ and 
+	he is contributing a legitimate nonce $y_t \in \{0,1\}^\kappa$'' and, furthermore, 
+	$\mu_t$ is \emph{valid} if anyone can verify this statement using $\pi$. 
+
+	\item Suppose a player $v$ receives the nonce message $\mu_t$ at some slot $r$. 
+	If $r< t + k$, he stores $\mu_t$ permanently in a set $Q_v$ in his local (off-chain) memory.
+
+	\item Suppose a slot leader $w$ extends a chain (say, $\Chain$). 
+	If $Q_w$ contains a nonce message $\mu$ which 
+	does not appear in $\Chain$, 
+	$w$ includes $\mu$ in the new block he creates.
+\end{itemize}
+Note that an adversarial slot leader 
+may choose to delay the announcement of his nonce message, 
+or not announce it at all.
+However, an announcement can be delayed by at most $k - 1$ slots since 
+otherwise, it will never be recorded in the blockchain.
+
+
+\paragraph{Output of $\CoinTossingPrivate$.}
+% (Nonce curation.)
+Let $\Chain_u$ be a blockchain 
+adopted by an honest player 
+at the end of slot {\color{red}$\tau \geq T + s + 1$}. 
+Let $t \in [T], t \equiv 1 (\bmod d)$. 
+Let $Y_t$ be the set of nonces $y_t$
+contained in valid nonce messages 
+$\mu_t = (y_t, t, \cdot, \cdot)$ 
+in $\Chain$. 
+Let $m_t$ be the lexicographically smallest element of $Y_t$. 
+The \emph{output} of the coin-flipping protocol is a $\kappa$-bit Boolean string 
+$$
+	% \eta = \eta_0 \oplus \bigoplus_{\substack{t \in [R] \\ t \equiv 1 (\bmod d)}} m_t
+	\eta = \eta_0 \oplus m_1 \oplus m_{1 + d} \oplus m_{1 + 2d} \oplus \cdots \oplus m_{1 + \lfloor T/d \rfloor \cdot d}
+$$ 
+
+
+% In the above discussion, 
+% $k$ is the length of the \emph{confirmation window} of the protocol $\Blockchain$. 
+% Suppose a slot leader at slot $t$ 
+% possesses a yet-unannounced nonce $y_t$. 
+% If he does not announce it before slot $t + k$, 
+% the views of all honest observers at any slot $r \geq t + k$ 
+% would agree that $y_t$ was never announced. 
+% Thus announcing $y_t$ later than $t + k$ 
+% is equivalent to not announcing at all.
+
+% The nonce messages announced by the nonce players 
+% are put in a publicly-visible queue $Q$; 
+% messages in $Q$ gets included in $\Chain$ via protocol $\Blockchain$. 
+% Importantly, $Q$ has a \emph{$k$-recency constraint}: 
+% at any slot $r$, only messages originating from slots $t \geq r - k$ 
+% can be inserted into $Q$. 
+% The recency constraint mimics the 
+% \emph{confirmation window} of the protocol $\Blockchain$. 
+% In particular, 
+% suppose a nonce leader at slot $t$ 
+% possesses a yet-unannounced message $y_t$ tagged with slot $t$. 
+% If he does not announce it by slot $t + k$, 
+% the views of all honest observers at any slot $r \geq t + k + 1$ 
+% would agree that $y_t$ was \emph{never announced}. 
+% Thus announcing $y_t$ later than $t + k$ 
+% is equivalent to not announcing at all.
+
+
+
+%========================================
+
+
+% \subsection{When a slot has zero or more nonce leaders}\label{sec:coin-tossing-multi-leader}
+
+
+% Recall the coin-tossing scheme from Figure~\ref{alg:coin-tossing-single-leader} 
+% and modify it as follows: 
+% \InlineCases{
+% 	\item A nonce-emitting slot may have zero or more nonce leaders.
+% 	\item Since there can be multiple nonces emitted from a slot, 	
+% 	only the nonce with the minimum value is considered in the output. 
+% }
+
+%============ Praos-style election =============
+	% Specifically, let $f \in (0,1)$ and define, for $\sigma \in [0,1]$, 
+	% \begin{equation}\label{eq:phi-testing}
+	% 	\phi_f(\sigma) = 1 - (1 - f)^\sigma
+	% 	\,.
+	% \end{equation}
+	% The function $\phi_f$ has the ``independent aggregation proeprty.'' 
+	% Specifically, for any $\alpha \in (0,1]$ and 
+	% any collection of positive reals $\sigma_1, \ldots, \sigma_m$ 
+	% so that $\sum_{i=1}^m \sigma_i = \alpha$, 
+	% it holds that 
+	% \begin{equation}\label{eq:phi-indep-agg}
+	% 	1 - \phi_f\left(\sum_i \sigma_i \right) 
+	% 	= (1-f)^{\sum_i \sigma_i} 
+	% 	= \prod_i (1-f)^{\sigma_i} 
+	% 	= \prod_i (1 - \phi_f(\sigma_i))
+	% 	\,.	
+	% \end{equation}
+	% Moreover, we can check that $\phi_f$ is concave and subadditive:
+	% \begin{equation}\label{eq:phi-subadditive}
+	% 	f \alpha \leq \phi_f(\alpha) \leq \sum_i \phi_f(\sigma_i) 
+	% 	\,.
+	% \end{equation}
+	% Importantly, the right-hand side of~\eqref{eq:phi-subadditive} 
+	% has an upper bound 
+	% which is independent of $m$:
+	% \begin{equation}\label{eq:phi-upperbound}
+	% 	\sum_i \phi_f(\sigma_i) \leq -\alpha\ln(1-f)
+	% 	\,.
+	% \end{equation}
+	% {\color{red}We defer the proof of this last inequality to the appendix.}
+
+% The modified scheme is presented in Figure~\ref{alg:coin-tossing-multi-leader} 
+% as protocol $\CoinTossingPrivate$. 
+
+
+
+% \begin{figure}
+% 	\begin{framed}
+% 		\begin{center}
+% 				\textbf{Coin-flipping protocol $\CoinTossingPrivate$
+% 					% with multiple nonce leaders per slot
+% 					}
+% 		\end{center}
+% 		\begin{enumerate}
+% 			\item 
+% 			(Nonce leaders.) 
+% 			Independently for each nonce-emitting slot $t$, 
+% 			every player $u \in \Players$ independently 
+% 			attempts to elect himself a \emph{nonce leader at slot $t$} 
+% 			with probability $\sigma_u$.
+% 			% $\phi_f(\sigma_u)$. The function $\phi_f$ is defined in~\eqref{eq:phi-testing}. 
+			
+% 			\item 
+% 			(Nonce announcement.)
+% 			At a nonce-emitting slot $t$, the designated nonce leader 
+% 			broadcasts a random string $y_t \in \{0,1\}^\kappa$ 
+% 			to all nonce players and inserts $y_t$ in $Q$. 
+			
+% 			\item 
+% 			(Nonce relay.) 
+% 			At slot $r$, suppose there is a nonce player $u$ who 
+% 			has previously heard about a nonce $y$, 
+% 			emitted from some slot $t \geq r - k$, 
+% 			which appears neither in $Q$ nor in his view of $\Chain$. 
+% 			Then $u$ re-inserts $y$ in $Q$ with timestamp $r$.
+			
+% 			\item 
+% 			% (Nonce curation.)
+% 			At any slot {\color{red}$\tau \geq T +k + s + 1$,} 
+% 			every user $u \in \Players$ examines his 
+% 			adopted blockchain $\Chain_u$. 
+% 			Let $Y_t$ be the set of (valid) nonces emitted from slot $t$ 
+% 			and recorded in $\Chain_u$ 
+% 			and let $m_t$ be the lexicographically smallest element of $Y_t$. 
+% 			Then $u$ computes $\eta = \eta_0 \oplus \bigoplus_t m_t$ 
+% 			where the exclusive-OR runs over 
+% 			all nonce-emitting slots $t$. 
+% 			The string $\eta$ is called the \emph{output} nonce.
+% 		\end{enumerate}
+% 	\end{framed}
+% 	\caption{Coin tossing with zero or more nonce leaders per slot}
+% 	\label{alg:coin-tossing-multi-leader}
+% \end{figure}
+
+
+
+% Let $\ell, n, m \in \NN, \alpha \in (0, 1/2)$ and 
+% $\sigma \in \RR^m$ so that $\sigma_i \in (0, 1)$ and $\sum_{i=1}^m \sigma_i = \alpha$. 
+% Let $X_1, \ldots, X_m \in \{0,1\}$ be independent Bernoulli random variables with 
+% $\Pr[X_i = 1] = \sigma_i$. 
+% Define $S = \sum_{i = 1}^m X_i$ 
+% and let $\Distribution$ be the distribution of $S$.
+
+\begin{claim}\label{claim:correspondence-poissongame}
+	The output distribution of the coin-flipping protocol $\Pi = \CoinTossingPrivate$ 
+	is 
+	stochastically dominated by the 
+	output distribution of 
+	an $(\ell, n, \alpha)$-game $U$ 
+	from Definition~\ref{def:xor-game-poisson}.
+\end{claim}
+We postpone a proof of the claim for the moment.
+
+\begin{proposition}\label{prop:coin-tossing-security-private}
+	Let $\alpha \in (0, 1/2), \EpsP \in (0, 1)$ and $d, k, T \in \NN$ 
+	so that $d$ divides both $k$ and $T$. 
+	Let $n = (T - k)/d$ and $\ell = k/d$ 
+	and, furthermore, assume that $n \geq \ln(1/\alpha)/\ln(1/\EpsP)$.
+	Let $\Blockchain$ be $(\EpsP, k)$-secure. 
+	Let $\eta \in \{0,1\}^\kappa$ be the output of 
+	the coin-flipping protocol $\Pi = \CoinTossingPrivate$. 
+	% Let $\gamma$ be defined in~\eqref{eq:xor-geom-tail-gamma}.
+	Then 
+	% $\Pi$ is 
+	% $(\alpha^n + 2^{-\tau + 1}, \rho)$-secure 
+	% where
+	\begin{equation}
+		\Pr\left[\MinEntropy(\eta) \geq \kappa - \log_2(\gamma) \right] \geq 1 - 3 \EpsP
+	\end{equation}
+	where $\gamma$ is defined in~\eqref{eq:xor-poisson-tail-gamma}.
+
+
+  % \begin{equation}
+  %     \label{eq:minentropy-loss-poisson}
+  %     \rho = (\ell/2) \log_2 (1 + 3 \alpha + \alpha^2) + \begin{dcases}
+  %     	\tau/2 + (3/2) \log_2 n 	
+  %         	&\quad\text{if}\quad\alpha \in (0, 0.41]\,, \\
+  %       0.73 \tau + 1.73 \log_2 n 	
+  %         	&\quad\text{if}\quad\alpha \in (0.41, 0.5)\,.
+  %     \end{dcases}
+  % \end{equation}
+\end{proposition}
+
+
+\begin{proof}
+	% Let $\EpsP = 2^{-\tau}$. 
+	It follows from Claim~\ref{claim:correspondence-poissongame} that the 
+	min-entropy of the output distribution of 
+	protocol $\Pi$ 
+	is the same as 
+	the min-entropy of the output distribution of $U$. 
+	However, 
+	Lemma~\ref{lemma:xor-game-poisson-gamma} and 
+	Lemma~\ref{lemma:xor-game-minentropy} together 
+	states that 
+	except with probability $\alpha^n + \EpsP$, 
+	the latter quantity is at least $\kappa - \log_2(\gamma)$. 
+	Note that our assumption on $n$ implies that $\alpha^n \leq \EpsP$.
+	% where $\gamma$ is defined in~\eqref{eq:xor-poisson-tail-gamma}. 
+	Since the game $U$ is played on top of 
+	the ledger protocol $\Blockchain$, 
+	any guarantee provided by $U$ is 
+	further conditioned on the (external) event that 
+	$\Blockchain$ remains $(\EpsP, k)$-secure through the execution; 
+	thus the total failure probability is $3 \EpsP$.
+	% Using Definition~\ref{def:coin-flipping-security}, 
+	% It follows that the protocol $\Pi$ is $(3 \EpsP, \rho)$-secure 
+	% where $\rho = \log_2(\gamma)$; 
+	% this $\rho$ is given in~\eqref{eq:minentropy-loss-poisson}.
+	It remains to prove Claim~\ref{claim:correspondence-poissongame}.
+
+
+	\paragraph{Proof of Claim~\ref{claim:correspondence-poissongame}.}
+		% {\color{red} As in the case of the protocol $\CoinTossingPublic$}, 
+		Note that all nonces emitted by honest nonce leaders appear in the output calculation. 
+		Specifically, for all blockchains $\Chain$ 
+		held by an honest player at slot $\tau \geq T +  s + 1$, 
+		the segment $\Chain[T:T+s]$ must contain an honest block 
+		which must contain all honest (i.e., immediately announced) nonces. 
+
+		First, note the {\color{red}obvious} correspondence 
+		between the lookahead region and the confirmation window.
+
+
+		Every nonce-emitting slot is associated with an option set. 
+		Specifically, fix a nonce-emitting slot $t$. 
+		The option set associated with $t$ 
+		contains all possible values for $m_t$; let $P$ be this option set. 
+		Note that the sizes of the option sets (for different slots) 
+		are identically distributed.
+		Let $\Distribution$ be the distribution of $|P|$. 
+		% Adopt the convention that the lexicographically smallest honest nonce 
+		% for a nonce-emitting slot 
+		% is $\infty$ if that slot does not have an honest leader. 
+		% It follows that 
+		
+		Note that 
+		$|P| = 1 + D$ where $D$ is the number of adversarial nonces that are 
+		lexicographically smaller than the smallest honest nonce. 
+		The additive term $1$ corresponds to the case that 
+		no adversarial leaders in this slot announces a nonce message. 
+		% Note that in Definition~\ref{def:xor-game-explicit}, 
+		If an honest leader is associated with that slot 
+		then it means $\star \in P$; this $\star$ later becomes a random nonce. 
+		Otherwise, this slot will be associated with no nonces; 
+		this means $0^\kappa \in P$.
+
+		Let $S$ is the total number of adversarial leaders at this slot.
+		Then the obvious upper bound $|P| \leq 1 + S$ holds with probability $1$; 
+		hence $|P| \DominatedBy 1 + S$. 
+		Observe that $S = \sum_{u \in A} X_u$ where $X_u \in \{0,1\}$ and $\Pr[X_u = 1] = \sigma_u$. 
+		This $S$ is the same as the $S$ appearing in the definition  
+		of an $(\ell, n, \alpha)$-game; see Definition~\ref{def:xor-game-poisson}.
+		It follows that the 
+		output distribution of the protocol $\Pi$
+		is 
+		stochastically dominated by the 
+		output distribution of 
+		an $(\ell, n, \alpha)$-game of dimension $\kappa$.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,451 @@
+
+\newcommand{\FuncBeacon}{\mathcal{F}_\mathsf{beacon}}
+\newcommand{\ProtocolBeacon}{\mathcal{\Pi}_\mathsf{beacon}}
+% \newcommand\Litem[1]{\item{\bfseries #1\enspace}}
+
+
+
+
+\subsection{Collective coin-flipping}
+
+    A \emph{coin-flipping protocol $\Pi$ of dimension $\kappa$} 
+    takes, as input, a uniformly random $\kappa$-bit string $\eta_0$
+    and outputs a $\kappa$-bit string $\eta$. 
+    The goal of the protocol is to make the distribution of $\eta$ 
+    as close to uniform as possible.
+    
+    \begin{definition}[Coin-flipping with $(\epsilon, \rho)$-security]\label{def:coin-flipping-security}
+        Let $\kappa \in \NN, \rho, \epsilon \in \RR, \rho \in [0, \kappa]$, and $\epsilon \in (0,1)$.
+        Let $\Pi$ be an coin-flipping protocol with dimension $\kappa$ 
+        and output $\eta$. 
+        We say that \emph{$\Pi$ is $(\epsilon, \rho)$-secure} if 
+        $\MinEntropy(\eta) \geq \kappa - \rho$ 
+        except with probability $\epsilon$. 
+        Here, $\MinEntropy$ is the min-entropy function.
+    \end{definition}
+    
+    Suppose a coin-flipping protocol $\Pi$ is $(\epsilon, \rho)$-secure. 
+    Then 
+    the min-entropy loss of its output distribution is at most $\rho$. 
+    On the other hand, let $T$ be an arbitrary set of $\kappa$-bit Boolean strings. 
+    The probability that $\eta \in T$ is at most $2^\rho \cdot |T| \cdot 2^{-\kappa}$. 
+    The amplification factor $2^\rho$ can be interpreted as 
+    the adversarial participants 
+    choosing the designated output $\eta$ from 
+    a set containing $2^\rho$ uniformly random strings; 
+    {\color{red} strings in this set may be correlated with each other}. 
+    An unbiased protocol will necessarily have $\rho = 0$.
+
+
+    \paragraph{Protocol participants.} 
+    Let $\Players$ be the set of protocol participants. 
+    With each party $u \in \Players$ is associated a positive real $\sigma_u \in [0, 1]$ 
+    so that $\sum_{u \in \Players} \sigma_u = 1$. 
+
+    \paragraph{The adversary.} 
+    Let $\alpha \in [0,1]$. 
+    The adversary can corrupt any player instantly subject to 
+    a budget $\alpha$: that is, 
+    at any moment, the set of players $A \subset \Players$ controlled by the adversary 
+    always satisfy $\sum_{u \in A} \sigma_u \leq \alpha$. 
+    This adversary is called an \emph{$\alpha$-dominated adversary}. 
+    If a player is ever corrupted by the adversary, 
+    he remains under his control for the rest of the protocol. 
+    The adversary is Byzantine: 
+    once he controls a player, he can send arbitrary messages on behalf of the player.
+
+    \paragraph{Communication model.} 
+    We assume a synchronous communication where 
+    the adversary is responsible for delivering messages in any order he chooses.
+
+    \begin{definition}[$(\ell, n)$-coin-flipping with dimension $\kappa$]\label{def:coin-flipping}
+        Let $\ell, n, \kappa \in \NN$ and 
+        let $\eta_0 \in \{0,1\}^\kappa$ be a uniformly random \emph{initial value}. 
+        The protocol has $r = \ell + n$ rounds. 
+        \begin{itemize}
+            \item (Committees.) 
+            With every round $i \in [r]$ is associated 
+            a \emph{committee} $C_i$ of players. 
+            (The committee election scheme is left unspecified at this moment. 
+            See Figure~\ref{fig:leader-election-schemes} below.)
+            The committee membership is private unless 
+            a member discloses it. 
+
+            \item (Nonces.) 
+            Before the protocol commences, 
+            for every $i \in [r]$, 
+            each member $u \in C_i$ is given a \emph{nonce} $y_{i,u} \in \{0,1\}^\kappa$. 
+            The nonces of the honest members are uniformly random. 
+            The adversarial members may choose their nonces arbitrarily at this point 
+            but once the protocol commences, 
+            they cannot change the value of their nonces. 
+
+            \item (Adversarial knowledge and the lookahead.) 
+            The adversarial players know, in advance, 
+            about all adversarial committe members and 
+            their nonces across all rounds.  
+            They also know which rounds contain an honest committee member.
+            Furthermore, at round $i$, 
+            adversarial players can see 
+            the honest nonces for rounds $i, i+1, \ldots, \min\{i + \ell - 1, r\}$.
+
+            \item (Announcement.)
+            With each round $i$ is associated 
+            a publicly visible set $Y_i$, initially empty. 
+            At round $i$, 
+            an honest committee member inserts his nonce into $Y_i$. 
+            An adversarial committee member $u$ may strategically choose to insert or not. 
+
+            \item (Output.)
+            At the end of round $r$, 
+            let $m_i$ 
+            be the lexicographic minimum of all strings recorded in $Y_i, i \in [r]$.
+            (If $Y_i$ is empty then set $m_i = 0^\kappa$.)
+            The \emph{output} of the protocol is 
+            $
+                \eta = \eta_0 \oplus m_1 \oplus \cdots m_{\ell + n}
+                % \,.
+            $. 
+        \end{itemize}
+    \end{definition}
+
+    Since the adversary cannot change the nonces, 
+    all he can do to bias the output 
+    is to strategically vary the size of the sets $Y_i, i \in [\ell + n]$.
+
+    \begin{figure}[h]
+        \begin{framed}
+            \begin{center}
+                Two committee election schemes                
+            \end{center}
+            \begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=6em]
+                \item \label{lottery:public}
+                (\textbf{Singleton committee.})
+                All players use a common random string to 
+                publicly sample, 
+                independently for each round $i \in [\ell + n]$, 
+                a single player $u_i \in \Players$   
+                with probability $\sigma_u$ and 
+                set $C_i = \{u_i\}$. 
+
+                \item \label{lottery:private}
+                (\textbf{Private lottery.})
+                Independently for each round $i \in [\ell + n]$, 
+                player $u \in \Players$ 
+                independently inserts himself 
+                into the committee $C_i$ 
+                with probability $\sigma_u$. 
+            \end{enumerate}
+        \end{framed}
+        \caption{Two committee election schemes for an $(\ell, n)$-coin-flipping protocol}
+        \label{fig:leader-election-schemes}
+    \end{figure}
+
+
+    \begin{theorem}[Main theorem]
+        Let $\kappa, \gamma, \ell, n \in \NN$ and $\epsilon \in (0,1)$.
+        Let $\Pi$ be an $(\ell, n)$-coin-flipping protocol with dimension $\kappa$ 
+        and output $\eta$ whose committees are elected using Scheme A.
+        Then $\Pi$ is $(\EpsP, \gamma)$-secure where {\color{red} to do}.
+    \end{theorem}
+
+\subsection{Eventual consensus PoS blockchains using the longest-chain rule}
+    Let $\Blockchain$ be an eventual consensus PoS blockchain protocol 
+    under the longest-chain rule. 
+    The protocol $\Blockchain$ advances in discrete rounds 
+    which we call \emph{slots}.
+    Every participant $u$ in $\Blockchain$ 
+    maintains a blockchain $\Chain_u$ 
+    and updates it at every slot using the following simple rule: 
+    \begin{enumerate}
+      \item If a longer blockchain $\Chain$ is available, 
+      $u$ sets $\Chain_u \leftarrow \Chain$.
+
+      \item If $u$ is assigned to create a block at this slot, 
+      $u$ adds a new block to $\Chain_u$ and broadcasts immediately.
+    \end{enumerate}
+%     \paragraph{Time, slots, and synchrony}
+
+%     \paragraph{Transaction ledger properties.} 
+%     A blockchain can implement a \emph{transaction ledger} in which ``transactions'' 
+%     can be divided into linearly ordered ``blocks,'' giving a partial order in the transactions. 
+%     A ledger must satisfy the following properties:
+%     \begin{description}[labelindent=0.5cm]
+%         \item[Persistence with parameter $k \in \NN$:] A block is declared \emph{stable} 
+%         if it is at least $k$ blocks deep from the end of the ledger. 
+%         If an honest node (at slot $t$) reports a block $B$ at slot $b$ to be stable, 
+%         all honest nodes, queried at any slot $t^\prime \geq t$, must also report $B$ to be stable at slot $b$.
+
+%         \item[Liveness with parameters $u,k \in \NN$:] Suppose a transaction is issued at slot $t$ and 
+%         all honest nodes attempt to include it in the ledger for $u$ consecutive slots. 
+%         Then the transaction will be stable in the views of all honest nodes at slot $t^\prime > t+u + 1$.
+%     \end{description}
+
+%     The above properties can be derived from the followoing elementary properties of the blockchain 
+%     that implements the ledger.
+%     However, it would be convenient for us to lay down some notation first. 
+    Consider a blockchain $\Chain$ and suppose its most recent block is issued from some slot $s \in \NN$. 
+    The ``trimmed chain'' $\Chain\TrimSlot{k}$ is defined as 
+    the blockchain obtained from $\Chain$ by deleting all blocks (from $\Chain$) 
+    corresponding to the last $k$ slots, i.e., slots $s, s - 1, \ldots, s - k + 1$. 
+    In addition, we use the expression $\Chain_1 \Prefix \Chain_2$ to mean that 
+    the chain $\Chain_1$ is a prefix of chain $\Chain_2$. 
+    Furthermore, given a blockchain $\Chain$ and two slots $t_1$ and $t_2 \geq t_1$, 
+    $\Chain[t_1 : t_2]$ denotes the chain segment containing all blocks from $\Chain$ 
+    that are issued from slots $t \in [t_1, t_2]$.
+
+    \begin{definition}[Common Prefix property with parameter $k \in \NN$]\label{def:cp}        
+        Let $\Chain_1$ and $\Chain_2$ be two blockchains adopted by two honest players 
+        at the onset of rounds (i.e., slots) $r_1$ and $r_2$, respectively, with $r_1 \leq r_2$. 
+        Then $\Chain_1\TrimSlot{k} \Prefix \Chain_2$. 
+    \end{definition}
+    We use the shorthand $\kSlotCP$ for referring to the Common Prefix property defined above. 
+    Observe that we defined this property in terms of elapsed time, i.e., slots; 
+    traditionally (cf. \cite{C:GarKiaLeo17}), it has been defined in terms of the number of deleted blocks. 
+
+
+    \begin{definition}[Existential Chain Quality property with parameter $s \in \NN$]\label{def:ECQ}        
+        Consider slots $t_1, t_2, t$ satisfying $t_1 + s \leq t_2 \leq t$. 
+        Let $\Chain$ be the blockchain held by an honest party at slot $t$. 
+        Then $\Chain[t_1:t_2]$ contains at least one 
+        honestly gneerated block.
+    \end{definition}
+    We use the shorthand $\sECQ$ for referring to the ECQ property defined above. 
+
+    \begin{definition}[Blockchain protocol with $(\EpsP, k,s)$-security]\label{def:blockchain-security}
+        Let $\EpsP \in \RR$ and $k, s \in \NN$. 
+        A PoS blockchain protocol is $(\epsilon, k, s)$-secure if 
+        it satisfies $\kSlotCP$ and $\sECQ$ property 
+        except with probability at most $\epsilon$.
+    \end{definition}
+
+
+% \subsection{Coin-tossing game}
+%     Consider the following decentralized coin-tossing game. 
+     
+%     \begin{description}
+%         \item[Setup:] \begin{description}
+%             \item (Parameters.) Let $\eta_0 \in \{0,1\}^\kappa$ be uniformly random. 
+%             Let $N = \ell + n$ and let $\Players$ be the set of players.
+            
+%             \item (The adversary.) A subset of the players $\Players$ are controlled by the adversary, $\Adversary$. 
+%             In addition, let $T \subset \{0,1\}^\kappa$ be an arbitrary \emph{target set} chosen by $\Adversary$.
+
+%             \item (Public roster for nonce players.) For $t \in [N]$, a player $U_t \in \Players$ is selected uniformly at random 
+%             using the random string $\eta_0$. 
+%             The list $\NoncePlayers = \{U_1, \ldots, U_N\}$ is the roster of the \emph{nonce players}.
+            
+%             \item (Nonces.) Every nonce player $U_t$ is privately given a uniformly random \emph{nonce} 
+%             $x_t \subset \{0,1\}^\kappa$. 
+%             However, the adversarial nonce players may disclose their nonces among themselves.
+
+%             % \item (Options sets.) Every nonce player $U_t$ is given an \emph{option set} 
+%             % $P_t \subset \{0,1\}^\kappa$ where each string $x \in P_t$ is selected uniformly at random. 
+%             % Moreover, (i.) the option set for an honest player contains exactly one element and 
+%             % (ii.) the option set belonging to an adversarial player is known to all adversarial players.
+            
+%             \item (Announced nonces.) Let $X = (X_1, \ldots, X_N)$ be a publicly visible list of \emph{announced nonces} where each $X_t \in \{0,1\}^\kappa$. 
+%             Initially, set $X_t = \ZeroString$ for $t \in [N]$.
+%         \end{description}
+        
+        
+        
+%         \item[Rounds:] the game progresses in rounds $t = 1, 2, \ldots, N$.
+        
+%         \item[Honest moves:] An honest nonce player $U_t$ sets $X_t = x_t$ at round $t$.
+            
+%         \item[Adversarial moves:] An adversarial player $U_t$ 
+%         makes a move at round $s = \min(t+\ell, N)$ after observing 
+%         the annoucned nonces $X_1, \ldots, X_s$. 
+%         Then he either sets $X_t = x_t$ or does nothing; 
+%         in the latter case, $X_t$ remains the all-zero string, $\ZeroString$.
+
+%         \item[Final outcome:] The string $\eta = \eta_0 \oplus X_1 \oplus \cdots \oplus X_N$ is the outcome of the coin-tossing game. 
+        
+%         \item[Win:] $\Adversary$ wins if $\eta \in T$.
+%     \end{description}
+%     Set up: 
+%     using the random string $\eta_0$.
+%     The game progresses in rounds $t = 1, \ldots, N$.
+
+% \subsection{Randomness beacon}
+
+% \begin{definition}[
+% % $\FuncBeacon$: 
+% Decentralized beacon 
+% % ideal functionality 
+% ]
+% \textbf{Parameters:} 
+% $\kappa, N \in \NN$, $\gamma \in \RR_+$, and $\EpsP \in (0,1)$. 
+% % $H : \{0,1\}^\kappa \rightarrow \{0,1\}^\kappa$, $\Players$.
+
+% Let $\eta_0 \in \{0,1\}^\kappa$ be uniformly random. 
+% For periods $t = 1, 2, \ldots$, a series of strings $\eta_1, \eta_2, \ldots$ are announced
+% where each $\eta_t$, called \emph{the $t$th output}, is in $\{0,1\}^\kappa$. 
+% In addition, the following properties are met:
+% \begin{itemize}
+
+%     \item Structure: For $n \in \NN$, 
+%     let $X_n = \{x_1, \ldots, x_N\}$ 
+%     where each $x_i$ is uniform in $\{0,1\}^\kappa$. 
+%     Define $\eta_n = x_1 \oplus \cdots \oplus x_N$.
+    
+%     \item Unpredictability: For any algorithm $\Adversary$ and all $n \in \NN$, 
+%     \[
+%         \Pr[\Adversary = \eta_n \Given \eta_0, \ldots, \eta_{n-1}] = 2^{-\kappa}
+%         \,.
+%     \]
+    
+%     \item Small bias: For any algorithm $\Adversary$, all $n \in \NN$, and arbitrary $T \subset \{0,1\}^{\kappa}$, 
+%     \[
+%         \Pr[\eta_n \in T \Given \text{$\eta_{n-1}$ is uniform}] \leq \gamma |T|/2^{\kappa}
+%         \,.
+%     \]
+    
+%     \item Liveness: For all $n \in \NN$ and any algorithm $\Adversary$, there exists at least one $x_i \in X_n$ such that 
+%     \[
+%         \Pr[\Adversary = x_i \Given \eta_0, \ldots, \eta_{n-1}, X_n / \{x_i\}] = 2^{-\kappa}
+%         \,.
+%     \]
+    
+%     \item Public verifiability: For all $n \in \NN$, every $\eta_n$ is accompanied with a proof 
+%     $\pi_n$ showing 
+%     (i.) that $\eta_{n-1}$ is the correct input for $\Epoch_n$, and 
+%     (ii.) that $x_i$ is indeed uniform in $\{0,1\}^\kappa$.
+    
+%     \item Guaranteed output delivery: The protocol always makes progress, i.e., 
+%     \[
+%         \Pr[\text{beacon outputs $\eta_n$} \Given \eta_{n-1}] = 1
+%         \,.
+%     \]
+    
+% \end{itemize}
+% \end{definition}
+
+% % When the above functionality is implemented by a protocol, 
+% % we expect some additional properties from this protocol.
+% % \begin{definition}[$\ProtocolBeacon$: Decentralized beacon protocol]
+% % \textbf{Parameters:} $\Players$ are the set of eligible protocol participants.
+
+
+% % \begin{itemize}
+% %     \item Nonce players: At $\Epoch_n$, only a subset 
+% %     $\NoncePlayers_t = \{u_1, \ldots, u_N\} \subset \Players$ 
+% %     of the eligible players participate to produce $\eta_n$. 
+% %     In particular, the player $u_i$ submits $x_i$. 
+    
+
+% %     \item Liveness: For all $n \in \NN$, there exists at least one $x_i \in X_n$ such that 
+% %     \[
+% %         \Pr[\Adversary = x_i \Given \eta_0, \ldots, \eta_{n-1}, X_n / \{x_i\}] = 2^{-\kappa}
+% %         \,.
+% %     \]
+% % \end{itemize}
+
+% % \end{definition}
+
+% \paragraph{A simplified proof-of-stake blockchain.}
+% A proof-of-stake (PoS) blockchain protocol $\Protocol$ is run by a set of players $\Players$. 
+% To do: 
+% \begin{enumerate}
+%     \item Promises: eventual consensus
+%     \item Adversary: rushing
+%     \item Network: Synchronous. Can reduce partially-synchronous setting to a synchronous one
+%     \item Mechanisms: leader election, nonce generation, longest-chain rule
+%     \item Block, chain, slot, epoch
+%     \item Blockchain axioms (genesis, increasing slots, single honest block per slot, 
+%     total order of honest blocks)
+%     \item Leader election and characteristic strings
+%     \item Nonce generation by hashing nonces
+% \end{enumerate}
+ 
+
+% A subset of $\Players$ participate in the beacon protocol $\Beacon$. 
+% Both protocols are synchronous. 
+% In particular, their clocks advance in discrete units called \emph{slots} 
+% and every $R$ consecutive slots make up one \emph{epoch} where the same
+% $R \in NN$ is used as a protocol parameter in both protocols. 
+% In addition, the two protocols are synchronoized, i.e., they start together and progress together. 
+
+% \paragraph{The beacon inside a blockchain protocol.}
+% Every epoch $\Epoch_t$ in the blockchain protocol has its own \emph{epoch randomness} $\eta_t \in \{0,1\}^\kappa$ where $\kappa \in \NN$ is a protocol parameter. 
+% In particular, the events in $\Epoch_{t}$ completely determine the next epoch randomness $\eta_{t+1}$.
+% The blockchain protocol has a \emph{public leader schedule}. 
+% That is, at the outset of $\Epoch_t$, everyone can use the random string $\eta_t$ 
+% (and other protocol-defined public information) to uniquely determine an ordered list 
+% $\Leaders_t = \{u_1, \ldots, u_R\} \subset \Players^R$ associated with this epoch. 
+% The player $u_i$ is designated to issue a block at the $i$th slot of this epoch.
+
+% The players participating in the beacon protocol are called the \emph{nonce players}. 
+% Let $\NoncePlayers_t \subset \Players$ be the nonce players for $\Epoch_t$.
+% In traditional PoS blockchain protocols such as [Ouroboros, SnowWhite], 
+% $\NoncePlayers_t$ is always equal to $\Leaders_t$. 
+% When a leader issues a block, he includes a nonce in that block along with its signature. 
+% The dynamics of the beacon protocol is thus inseparable from the dynamics of the blockchain protocol. 
+% In particular, in a given epoch, biasing the output of the beacon is equivalent to 
+% creating a fork in the blockchain. 
+% An analysis of this scenario is presented in Section~\ref{sec:grinding-praos}.
+
+% Alternatively, we can choose $\NoncePlayers_t$ independently of $\Leaders_t$ and 
+% record the nonces in the blockchain via an ``input endorsement'' mechanism. 
+% It turns out that this method has some attractive features compared to the traditional method.
+% In what follows, we formally describe the model of this alternative setting first, 
+% in Section~\ref{sec:model-xor-games}, 
+% and the model for the more traditional setting is given in Section~\ref{sec:model-blockchain}.
+
+% \subsection{Randomness beacon via off-chain nonces}\label{sec:model-xor-games}
+% In this model, we expect that blockchain protocol to satisfy the following axioms.
+
+% \begin{quote}
+
+% \begin{axiom}[\textbf{Common Prefix (CP); with parameters $k \in \NN$ and $\EpsP \in (0, 1)$}]\label{axiom:cp}
+%     At any slot $j$, the honest players agree about the blocks issued at slots $i = 1, \ldots, j - k$, except with probability $\EpsP$.
+% \end{axiom}
+
+
+% \begin{axiom}[\textbf{Frequent Honest Blocks (FHB); with parameters $k \in \NN$ and $\EpsP \in (0, 1)$}]\label{axiom:hcg}
+%     %Suppose an honest player adopts the chain $\Chain$ at the onset of slot $j$. 
+%     % Let $S_i= \{i, \ldots, i+ k - 1\}$. 
+%     % Except with probability $\EpsP$, the following holds: 
+%     % for every $i = 1, \ldots, j - k + 1$, 
+%     % $\Chain$ contains at least one honest block from $S_i$.
+    
+%     Let $\Chain$ be a chain held by an honest player,  
+%     $h$ be the number of honest blocks in $\Chain$, 
+%     and $s_1 < s_2 < \ldots < s_h$ be the slots corresponding to the honest blocks. 
+%     Then $s_{i+1} - s_{i} \leq k - 1$For every $i \in [h - 1]$
+% \end{axiom}
+
+% \begin{axiom}[\textbf{Broadcast; with parameter $b \in \NN$}]\label{axiom:broadcast}
+%     Messages initiated at slot $i$ must be delivered no later than slot $i+b$.
+% \end{axiom}
+
+% \begin{axiom}[\textbf{Public Nonce Schedule (PNS); with parameter $N \in \NN$}]\label{axiom:nonce-schedule}
+%     At the outset of every epoch $E$, the blockchain protocol must produce a schedule 
+%     $\mathcal{N} = \left\{ (u_i, s_i) \right\}_{i=1}^N$ with the following semantics: 
+%     (i.) $\mathcal{N}$ is public, 
+%     (ii.) for every $i \in [N]$, the unique player $u_i$ is selected independently 
+%     with probability proportional to his stake (which is determined by the blockchain protocol), and
+%     (iii.) only the player $u_i$ may announce (and sign) a nonce at slot $s_i \in E$. 
+% \end{axiom}
+
+% \end{quote}
+
+% The CP and HCG axioms are implied the three classical blockchain properties, namely 
+% Common Prefix (CP), Chain Quality (CQ), and Chain Growth (CG). 
+% These properties, introduced in the [GKL] paper, imply the liveness and persistence of blockchains 
+% in both Proof-of-Work [GKL, PassShiShelat] and Proof-of-Stake [Ouroboros family, Snow White, Algorand] settings. 
+
+% Keeping the CP axiom in mind, 
+% the broadcast axiom says that a message originated at slot $i$ 
+% reaches its recipients before it is too late, 
+% i.e., before everyone has already agreed about the block issued at slot $i$. 
+% Hence $b$ must be at most $k$ where $k$ is the parameter in the CP axiom.
+% The broadcast axiom is satisfied in the synchronous setting with $b = 1$, 
+% while in the semi-synchronous setting, 
+% $b$ is an upper bound on the network delay $\Delta$ which is unknown to the protocol participants.
+
+% % The PNS axiom helps isolate the description of the randomness beacon from the description of the rest of the blockchain protocol. 
+
+
+% \subsection{Randomness beacon with on-chain nonces}\label{sec:model-blockchain}

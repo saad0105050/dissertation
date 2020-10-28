@@ -1,0 +1,351 @@
+PrependTo[CurrentValue[$FrontEndSession, "NotebookPath"], 
+  NotebookDirectory[]];
+NotebookEvaluate["RelativeMarginData.nb"];
+
+AllNs = {10, 30, 40, 50, 70, 80, 100, 200, 300, 400, 500};
+Ns = Take[AllNs, 2];
+ValsArr = Log[10] (  Symbol["Vals" <> ToString[#]]  ) & /@ Ns;
+(* Convert from base-10 logarithm to base-e logarithm *)
+
+TrainFraction = 0.80;
+NumTrials = 20;
+(*DegreeIncrement = 1/3;*)
+DegreeIncrements = {1, 1/2, 1/3}; (* must be descending *)
+DegreeWindowSize = 3; (* degrees *)
+MaxStartDegree = 6;
+MinDegree = 2; (* No point trying below this degree*)
+(*MaxDegree = 10; *)
+GetPosition[list_, item_] := First@First@Position[list, item];
+
+
+(*MaxStartDegree = MaxDegree - (MaxParams - 1) * DegreeIncrement;*)
+MinDegreeIncrement = Min@DegreeIncrements;
+MinDegreeIncrementIndex = 
+  First@First@Position[DegreeIncrements, MinDegreeIncrement];
+Print["MinDegreeIncrementIndex: ", MinDegreeIncrementIndex, 
+  " MinDegreeIncrement: ", MinDegreeIncrement];
+NumDegreeIncrements = Length@DegreeIncrements;
+NumNs = Length[Ns];
+NumData = Length[Eps];
+MaxParams[degIncIndex_] := 
+  1 + DegreeWindowSize / DegreeIncrements[[degIncIndex]];
+Eps = (1 - 2 #) & /@ Alpha;
+(*MaxParams = 1 + Floor[(MaxDegree - MinDegree) / DegreeIncrement];*)
+
+
+StartDegrees[degIncIndex_] := 
+  Range[MinDegree, MaxStartDegree, DegreeIncrements[[degIncIndex]]];
+NumStartDegrees[degIncIndex_] := Length@StartDegrees[degIncIndex];
+MaxStartDegreesPerDegreeIncrement = 
+  NumStartDegrees[MinDegreeIncrementIndex];
+params = (Symbol["var" <>  ToString[#]]) & /@ 
+   Range[1, MaxParams[MinDegreeIncrementIndex]] ;
+Params[degIncIndex_] := (Symbol["var" <>  ToString[#]]) & /@ 
+   Range[1, MaxParams[degIncIndex]] ; 
+(*Print["MaxParams: ", MaxParams, " Degrees: ", Degrees, " \
+StartDegrees: ", StartDegrees, " Params: ", params];*)
+TestFraction = 1 - TrainFraction;
+
+
+
+
+
+
+IndexOfN[N_] := If[MemberQ[Ns, N], First@First@Position[Ns, N], 0];
+Data = ConstantArray[{}, {NumNs, 2}];(*({})&/@Ns;*)
+TrainData = ConstantArray[{}, {NumTrials, NumNs, 2}];
+TestData = ConstantArray[{}, {NumTrials, NumNs, 2}];
+
+TrainingSampleSize = Floor[NumData * TrainFraction];
+TrainIndex = ConstantArray[{}, {NumTrials, NumNs, TrainingSampleSize}];
+(*TrainIndex= Sort@RandomSample[Range[1, NumData], Floor[NumData * \
+TrainFraction]];*)
+(*TrainIndex = Range[1, Floor[NumData * TrainFraction]]; Print["Using \
+non-random sample"];*)
+TrainEps = ConstantArray[0, {NumTrials, NumNs, TrainingSampleSize}];
+TestEps = 
+  ConstantArray[0, {NumTrials, NumNs, NumData - TrainingSampleSize}];
+
+Errors = <|train -> {}, test -> {}|>;
+MeanErrors = <|train -> {}, test -> {}|>;
+
+Prepare[] := Block[{N, trial},
+   For[trial = 1, trial <= NumTrials, trial++,
+     For[N = 1, N <= NumNs, N++,
+       TrainIndex[[trial, N]] = 
+        Sort@RandomSample[Range[1, NumData], TrainingSampleSize];
+       TrainEps[[trial, N]] = (Eps[[#]]) & /@ TrainIndex[[trial, N]];
+       TestEps[[trial, N]] = Complement[Eps, TrainEps[[trial, N]] ];
+       Data[[N]] = ({Eps[[#]], ValsArr[[N, #]] }) & /@ 
+         Range[1, NumData];
+       TrainData[[trial, N]] = (Data[[N, #]]) & /@ 
+         TrainIndex[[trial, N]];
+       TestData[[trial, N]] = 
+        Complement[Data[[N]], TrainData[[trial, N]]];
+       (*
+       Print["i = ", i];
+       Print["TrainData: ", TrainData[[i]]];
+       Print["TestData: ", TestData[[i]]];
+       *)
+       ];
+     ];
+   ];
+Model[N_, startDegreeIndex_, degIncIndex_] := 
+  Block[{i, maxParams, startDegree, degreeIncrement},
+   degreeIncrement = DegreeIncrements[[degIncIndex]];
+   startDegree = StartDegrees[degIncIndex][[startDegreeIndex]];
+   maxParams = MaxParams[degIncIndex];
+   -N Sum[ 
+     params[[i]] eps^(startDegree + (i - 1) * degreeIncrement), {i, 
+      1, maxParams, 1}] 
+   ];
+
+
+ReplaceEps[expression_, with_] := 
+  Block[{eps}, expression /. {eps -> with}];
+EvaluateFit[model_, fit_, EpsArr_] := Block[{eps, temp},
+   Evaluate[ReplaceEps[model /. fit, #]] & /@ EpsArr
+   ];
+Error[model_, fit_, orig_, EpsArr_] := 
+  Block[{sum, pointError, numData, fittedValues, localVar, origValues},
+   numData = Length[orig];
+     origValues = orig[[ All, 2]];
+     fittedValues = EvaluateFit[model, fit, EpsArr];
+     (*
+     Print["Fitting: ", fit," with model: ", model, " and eps: ", 
+     EpsArr];
+     Print["Fitted values: ", fittedValues];
+     *).
+     pointError = (origValues[[#]] - fittedValues[[#]]  )^2 & /@ 
+     Range[1, numData] ;
+   (*Print["origValues: ", origValues,"\nFitted Values: ", 
+   fittedValues, "\nPointError: ", pointError, "\n========="];*)
+   Sqrt[Total[pointError]/numData]
+   ];
+
+Fits = Array[({}) &, {NumDegreeIncrements, 
+    MaxStartDegreesPerDegreeIncrement, NumNs, NumTrials}];
+
+TrainAndTestErrors[] := Block[{N, list, trainData, testData, 
+    nparams, model, fit, trial, 
+    trainError, testError, temp,
+    deltaDegree, startDegree, n,
+    startDegreeIndex, degreeIncrement, degInc,
+    meanTrainError, meanTestError,
+    numUnused
+    },
+   trainError = 
+    ConstantArray[
+     0, {NumDegreeIncrements, MaxStartDegreesPerDegreeIncrement, 
+      NumNs}];
+   testError = 
+    ConstantArray[
+     0, {NumDegreeIncrements, MaxStartDegreesPerDegreeIncrement, 
+      NumNs}];
+   meanTrainError = 
+    ConstantArray[
+     0, {NumDegreeIncrements, MaxStartDegreesPerDegreeIncrement}];
+   meanTestError = 
+    ConstantArray[
+     0, {NumDegreeIncrements, MaxStartDegreesPerDegreeIncrement}];
+   For[degInc = 1, degInc <= NumDegreeIncrements, degInc++,
+    degreeIncrement = DegreeIncrements[[degInc]];
+    For[startDegreeIndex = 1, 
+     startDegreeIndex <= NumStartDegrees[degInc], startDegreeIndex++,
+     (* One delta for each startDegree *)
+     startDegree = 
+      MinDegree + (startDegreeIndex - 1) * degreeIncrement;
+     For[n = 1, n <= NumNs, n++,
+      N = Ns[[n]];
+      model = Model[N, startDegreeIndex, degInc];
+      For[trial = 1, trial <= NumTrials, trial++,
+       trainData = TrainData[[trial, n]];
+       testData = TestData[[trial, n]];
+       fit = FindFit[trainData, model, Params[degInc], eps];
+       Fits[[ degInc, startDegreeIndex, n, trial]] = fit;
+       
+       temp = Error[  model, fit, trainData, TrainEps[[trial, n]] ];
+       (*Print["Error: ", trainError[[index]] ];*)
+       trainError[[degInc, startDegreeIndex, n]] += temp;
+       testError[[degInc, startDegreeIndex, n]] += 
+        Error[  model, fit, testData, TestEps[[trial, n]] ]
+       ];
+      (* Mean over all trials *)
+      trainError[[degInc, startDegreeIndex, n]] /= NumTrials;
+      testError[[degInc, startDegreeIndex, n]] /= NumTrials;
+      ];
+     (* Mean over all datasets *)
+     meanTrainError[[degInc, startDegreeIndex]] = 
+      Mean@trainError[[degInc, startDegreeIndex]];
+     meanTestError[[degInc, startDegreeIndex]] = 
+      Mean@testError[[degInc, startDegreeIndex]];
+     ];
+    
+    (* Delete the unused cells *)
+    numUnused = 
+     MaxStartDegreesPerDegreeIncrement - startDegreeIndex + 1;
+    If[numUnused >= 1,
+     meanTrainError[[degInc]] = 
+      Drop[meanTrainError[[degInc]], -numUnused];
+     meanTestError[[degInc]] = 
+      Drop[meanTestError[[degInc]], -numUnused];
+     ];
+    
+    ];
+   Errors = <|train -> trainError, test -> testError|>;
+   MeanErrors = <|train -> meanTrainError, test -> meanTestError|>;
+   
+   ];
+
+
+
+
+ErrorPlot[model_, fit_, data_, epsArr_] := Block[{},
+   (*
+   Print["Model: ", model];
+   Print["fit: ", fit];
+   Print["data: ", data];
+   Print["epsArr: ", epsArr];
+   *)
+   Error[  model, fit, data, epsArr ]
+   ];
+Ranks[list_] := Block[{n, sorted, numCoeffs, degrees}, 
+   n = Length@list; 
+   sorted = Sort[list];
+   (First@First@Position[sorted, list[[#]] ]) & /@ Range[1, n]
+   ];
+PlotErrors[index_: 0] := 
+  Block[{errors, trainList, testList, minimizer, bestDegree, 
+    bestDegreeIncrement},
+   If[index != 0,
+    trainList = Errors[train][[index]]; 
+    testList = Errors[test][[index]],
+    trainList = MeanErrors[train]; testList = MeanErrors[test]
+    ];
+   minimizer = Minimizer[testList];
+   bestDegree = minimizer[[1]];
+   bestDegreeIncrement = minimizer[[2]];
+   (*Print["trainList: ", trainList, "\ntestList: ", testList];*)
+   Labeled[DiscretePlot[{
+      Style[Min@trainList[[ StartDegreeToIndex[startDegree] ]], Blue],
+      Style[Min@testList[[   StartDegreeToIndex[startDegree] ]], Red],
+      Style[Min@trainList[[ StartDegreeToIndex[startDegree] ]] +
+        testList[[   StartDegreeToIndex[startDegree] ]], Orange],
+      Style[0, Gray]
+      }, {startDegree, MinDegree, MaxStartDegree, MinDegreeIncrement}
+     , Joined -> True, Filling -> None, 
+     Epilog -> {PointSize@.02,
+       Style[
+        Point[{bestDegree, 0}],
+         Red]
+        },
+     PlotMarkers -> {None, Medium},
+     PlotStyle -> {PointSize -> 6},
+     PlotLegends -> {"Training error", "Test error", "Total error"},
+     PlotLabel -> 
+      "Model Error vs. Model Complexity\nTest error minimizer in Red" \
+<>
+       "\n(Best model: Start degree: " <> ToString[bestDegree] <> 
+       " Degree increment: " <> ToString[N@bestDegreeIncrement] <> 
+       ", Number of terms: " <> ToString[MaxParams] <> ")"
+     ], 
+    {"Model Complexity (starting degree)", 
+     "Avg. test error\n across all N"}, {Bottom, Left}, 
+    RotateLabel -> True
+    ]
+   ];
+Minimizer[table_] := Block[{min, minIndex, startDegree, 
+    rowMins, rowContainingMin, colContainingMin, degreeIncrement, 
+    startDegreeIndex, degreeIncrementIndex},
+   rowMins = Min[Drop[#, 0]] & /@ table; (* 
+   one entry for each degreeIncrement*)
+   min = Min@rowMins;
+   rowContainingMin = First@Flatten@Position[rowMins, min]; (* 
+   degree increment index*)
+   degreeIncrementIndex = rowContainingMin;
+   colContainingMin = 
+    First@Flatten@Position[table[[degreeIncrementIndex]] , min]; (* 
+   start degree index*)
+   startDegreeIndex = colContainingMin;
+   
+   
+   Print["rowMins: ", rowMins, " min: ", min, 
+    " degreeIncrementIndex: ", degreeIncrementIndex, 
+    " startDegreeIndex: ", startDegreeIndex];
+   degreeIncrement = DegreeIncrements[[degreeIncrementIndex]];
+   Print["degreeIncrement: ", degreeIncrement,  
+    " StartDegrees[degreeIncrement]: ", 
+    StartDegrees[degreeIncrementIndex]];
+   startDegree = 
+    StartDegrees[degreeIncrementIndex][[startDegreeIndex]];
+   (*Print["Minimizer degree: ", degree];*)
+   {startDegree, degreeIncrement}
+   ];
+
+   
+Prepare[];
+TrainAndTestErrors[];
+
+TestFit[NN_, startDegreeIndex_, degreeIncrement_, trial_: 1, 
+   epsPow_: 1] := Block[{
+    model, fit, fitDirect, n,
+    data, trainData, fitted, 
+    degIncIndex, startDegree, startDegrees
+    },
+   n = First@First@Position[Ns, NN];
+   degIncIndex = 
+    First@First@Position[DegreeIncrements, degreeIncrement];
+   data = Data[[n]];
+   startDegrees = StartDegrees[degIncIndex];
+   (*startDegreeIndex = First@First@Position[startDegrees, 
+   startDegree];*)
+   startDegree = startDegrees[[startDegreeIndex]];
+   Print["n: ", n , " startDegrees: ", startDegrees, 
+    " startDegreeIndex: ", startDegreeIndex, " startDegree: ", 
+    startDegree, " degIncIndex: ", degIncIndex, " degreeIncrement: ", 
+    degreeIncrement];
+   
+   model = Model[NN, startDegreeIndex, degIncIndex];
+   trainData = TrainData[[trial, n]];
+   testData = TestData[[trial, n]];
+   (*fitDirect = FindFit[trainData, model,Params[degIncIndex],eps];*)
+
+   
+   fit = Fits[[degIncIndex, startDegreeIndex, n, trial]];
+   fitted = EvaluateFit[model, fit, TrainEps[[trial, 1]] ];
+    
+   (*
+   Print["origData: ", data,
+   "\norigDataSecondColumn: ", TrainData[[trial, n,All,2]],
+   "\nmodel: ", model, 
+   "\nfit: ", fit, 
+   "\nfitDirect: ", fitDirect, 
+   "\nFitted Values: ",  EvaluateFit[model, fit, TrainEps[[trial, 1]]]
+   ];
+   *)
+   Print["Model: ", model, " fit: ", fit, " testError: ", 
+    MeanErrors[test][[degIncIndex, startDegreeIndex]]];
+   Show[
+    ListPlot[testData, PlotStyle -> Red, PlotRange -> Full],
+    Plot[model /. fit /. {eps -> eps2}, {eps2, 0, 1} , 
+     PlotRange -> Full, PlotLabel -> "Model: " <> ToString[model]],
+    Plot[Style[NN^(1/4) Log[(1 - eps)], Red], {eps, 0, 1}, 
+     PlotRange -> Full],
+    Plot[Style[ NN^(3/5) Log[(1 - (eps  )^epsPow)], Black], {eps, 0, 
+      1}, PlotRange -> Full]
+    ]
+   
+   ];
+Print["MeanErrors[test]: ", MeanErrors[test]];
+Print["Minimizer: ", Minimizer[MeanErrors[test]]];
+
+Manipulate[
+ TestFit[NN, startDegreeIndex, degreeIncrement, trial, epsPow]
+ 
+ ,
+ {NN, Ns},
+ {trial, 1, NumTrials, 1},
+ {degreeIncrement, DegreeIncrements}, 
+ {startDegreeIndex, 1, 
+  NumStartDegrees[GetPosition[DegreeIncrements, degreeIncrement]], 1},
+ {epsPow, 1, 3}]

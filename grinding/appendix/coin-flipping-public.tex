@@ -1,0 +1,395 @@
+%=======================
+
+\subsection{Option sets of size at most two\texorpdfstring{; the $(\ell, n, \alpha)$-Bernoulli game}{}}
+
+    Let us consider a uniform XOR target game where an option set 
+    contains at most two elements. 
+    From Definition~\ref{def:xor-game-explicit}, 
+    we conclude that in this case, 
+    an option set is either $\{\star\}$ 
+    or $\{0^\kappa, s\}$ where $s$ is uniform in $\{0,1\}^\kappa$.
+
+
+    \begin{definition}[$(\ell, n, \alpha)$-Bernoulli game]
+        \label{def:static-game}\label{def:Bernoulli-game}
+        Let $\alpha \in (0, 1/2)$. 
+        Let $\Bernoulli(\alpha)$ denote the distribution of a Bernoulli random variable 
+        $B \in \{0,1\}$ where $\Pr[B = 1] = \alpha$.
+        An $(\ell, n, \Bernoulli(\alpha))$-game 
+        is called the \emph{$(\ell, n, \alpha)$-Bernoulli game}.
+    \end{definition}
+    The following is an immediate corollary from Theorem~\ref{thm:xor-game-lookahead}.
+
+    \begin{theorem}\label{thm:xor-game-playornot}
+        Let $\alpha \in (0, 1/2)$ and $\lambda \in (0, \log_2(1/\alpha)]$. 
+        Let $U$ be an $(\ell, n, \alpha)$-Bernoulli game. 
+        Let $g$ be the grinding power of $U$. 
+        Let $A$ be the event that 
+        at least one of the option sets $P_{\ell + i}, i \in [n]$ is $\{\star\}$; 
+        condition on $A$. 
+        Then 
+        $$
+            \Exp [g^\lambda \mid A] \leq 2^{\lambda(\ell + 1)} n/(1+\alpha)
+            \,.
+        $$
+    \end{theorem}
+
+    % \begin{lemma}[Grinding power moments in the $(\ell, n, \alpha)$-Bernoulli game]
+    % \label{lemma:xor-game-bernoulli-moment}
+    % \end{lemma}
+    \begin{proof}
+        We retrace the proof of Lemma~\ref{lemma:adaptive-moment} 
+        using $S = B$ and $r_i = 1 - B_i, i \in [\ell + n]$; 
+        hence $|P_i| = 1 + B, i \in [\ell + n]$. 
+        In particular, the random variables $H, r_i, i \in [\ell + n]$ 
+        and the 
+        events $A, A_h, h \in [n]$ remain the same. 
+        % Let $H \defeq \max \{i : \text{$i \in [\ell+1, \ell+n]$ and $B_i = 0$} \}$. 
+        % By our assumptions, $H \in [\ell+1, \ell+n]$ is well-defined, 
+        % at least one of the $B_i$s is zero, and hence, 
+        % the leading product in~\eqref{eq:xor-game-lookahead-gp} 
+        % vanishes. 
+        % Condition on the event $H = h$; 
+        % this means $B_{\ell + h} = 0$ and 
+        % $B_i = 1$ for $i \geq \ell + h+1$. 
+        % Thus the additive terms for $k \leq h - 1$ 
+        % in~\eqref{eq:xor-game-lookahead-gp}
+        % vanishes as well.
+        % Since $|P_i| \in \{1, 2\}$, 
+        % the expression in~\eqref{eq:xor-game-lookahead-gp} becomes 
+        Thus $\beta = 1 - \alpha$ and 
+        $\Pr[H = h] = (1 - \alpha) \alpha^{n - h}$ for $h \in [n]$. 
+        Condition on $A_h$. 
+        Since $1 + S \leq 2$ and $|P_i| = 2$ for $i \geq \ell + h + 1$, 
+        we can upper bound the right-hand side in~\eqref{eq:ell-n-d-game-bound-gh} as 
+        \begin{align*}
+        % \label{eq:xor-game-playornot-gp}
+            g_h
+            &\leq (1 + B)^\ell \sum_{k = h}^n 2^{n - k}
+            % \sum_{k=h}^n (1 - B_k) \, 
+            %     \left(  \prod_{i=k}^{\ell+k-1}      (1 + B_i)   \right)   
+            %     \left(  \prod_{i=\ell+k+1}^{\ell+n} 2 B_i       \right)    
+            %     \\        
+            % &\leq 
+            %     \sum_{k=h}^{n }
+            %     (1 - B_k)\,
+            %     2^\ell\,
+            %     2^{n - k}            
+            \leq 
+                2^{\ell} \cdot ( 1 + 2 + \cdots + 2^{n - h} ) 
+            = 2^{n + \ell - h + 1}
+        \,.
+        \end{align*}
+        It follows that
+        $
+            \Exp [g_h^\lambda \mid A_h]
+            \leq 
+                2^{\lambda(n + \ell - h + 1)} 
+        $ 
+        since 
+        the quantities $|P_{i}|$ in the game $U$ are independent. 
+        Since $\Pr[A] = 1 - \alpha^n$, we have 
+        \begin{align*}
+            \Exp [g^\lambda \mid A]
+                &=
+                \sum_{h = 1}^n \Pr[A_h \mid A] 
+                    \Exp [g_h^\lambda \mid A_h] 
+                =
+                \sum_{h = 1}^n 
+                    \frac{(1 - \alpha) \alpha^{n-h}}{1 - \alpha^n}\,
+                    \Exp [g_h^\lambda \mid A_h] 
+                \leq 
+                    \frac{2^{\lambda(\ell + 1)}}{1+\alpha}
+                    \sum_{h=1}^n 
+                    \left( \alpha 2^\lambda \right)^{n-h} 
+        \end{align*}
+        since $(1 - \alpha)/(1 - \alpha^n) \leq 1/(1 + \alpha)$ for any $n \geq 2$. 
+        By assumption, $\lambda \leq \log_2(1/\alpha)$ or, 
+        equivalently, $\alpha 2^\lambda \leq 1$.
+        It follows that 
+        $
+            \Exp [g^\lambda \mid A] \leq  n \cdot 2^{\lambda(\ell + 1)}/(1+\alpha)
+        $.
+    \end{proof}
+
+
+    \begin{lemma}\label{lemma:xor-game-Bernoulli-gamma}
+        Let $\EpsP \in (0,1), \ell, n \in \NN, n \geq 2$ and 
+        $\alpha \in (0, 1/2)$.
+        Let $U$ be a $(\ell, n, \alpha)$-Bernoulli game. 
+        The grinding power $g = g(U)$ 
+        satisfies $\Pr[g \geq \gamma] \leq \alpha^n + \EpsP$ where 
+        \begin{align}\label{eq:bernoulli-game-gamma}
+            % {\gamma = n 2^{\ell+1 + q/\log_2(1/\alpha)}}
+            \gamma = 2^{\ell + 1} \left(
+                \frac{n}{(1+\alpha)\EpsP}
+            \right)^{1/\log_2(1/\alpha)}
+            % \quad\text{and}\quad q = \log_2(1/\EpsP)
+            \,.
+        \end{align}
+    \end{lemma}
+    \begin{proof}
+        Let $\gamma$ be a positive integer whose value will be set later.
+        Let $A$ be the event that 
+        at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$. 
+        (Note that $\Pr[\overline{A}] = \alpha^n$.)
+        Theorem~\ref{thm:xor-game-playornot} states that 
+        for any $\lambda \in (0, \log_2(1/\alpha)]$, 
+        $\Exp [g^\lambda \mid A]$ is at most $n 2^{\lambda(\ell + 1)}$. 
+        Since $g$ is non-negative, 
+        Markov's inequality implies that 
+        $$
+        \Pr[g \geq \gamma] 
+        \leq \Pr[\overline{A}] + \Pr[g \geq \gamma | A]
+        \leq \alpha^n  + \Exp[g^\lambda \mid A]/\gamma^\lambda
+        \leq \alpha^n  + \frac{n}{1+\alpha} 
+            \left(\frac{2^{\ell + 1}}{\gamma}\right)^\lambda
+        \,.$$ 
+        Writing $a = 2^{\ell + 1}/\gamma$, 
+        the derivative of this upper bound with respect to $\lambda$ is 
+        $n a^\lambda \ln(a)$ . 
+        This quantity is non-positive as long as $a \leq 1$ or, equivalently, 
+        $\gamma \geq 2^{\ell + 1}$. 
+        Thus we get the tightest upper bound on $\Pr[g \geq \gamma]$ 
+        by taking the largest permitted value of $\lambda$ 
+        as long as $\gamma$ is at least $2^{\ell + 1}$. 
+        
+        Set $\lambda = \log_2(1/\alpha)$ and take any $\EpsP \in (0,1)$. 
+        For any real positive $x$, 
+        the inequality $(n/(1+\alpha)) (2^{\ell + 1}/x)^\lambda \leq \EpsP$ 
+        is equivalent to saying that 
+        $x \geq 2^{\ell + 1} (n/(1+\alpha)\EpsP)^{1/\log_2(1/\alpha)}$. 
+        Let us take 
+        $\gamma \defeq 2^{\ell + 1} (n/(1+\alpha)\EpsP)^{1/\log_2(1/\alpha)}$ 
+        so that this inequality is satisfied by setting $x = \gamma$. 
+        This implies two things. 
+        First, 
+        since $\alpha > 0, \EpsP < 1$, and $n \geq 2$, 
+        the quantity  $(n/(1+\alpha)\EpsP)^{1/\log_2(1/\alpha)}$ is at least one and, consequently, 
+        $\gamma$ is clearly larger than $2^{\ell + 1}$. 
+        Second, 
+        the quantity 
+        $\left( \Exp[g^\lambda | A]/\EpsP \right)^{1/\lambda}$ is at most $\gamma$ 
+        and, using Fact~\ref{fact:grinding-max}, 
+        $\Pr[g \geq \gamma | A]$ is at most $\EpsP$. 
+        It follows that $\Pr[g \geq \gamma] \leq \alpha^n + \EpsP$.
+    \end{proof}
+
+
+
+\subsection{When a slot has exactly one nonce leader}\label{sec:coin-tossing-single-leader}
+\newcommand{\CoinTossingPublic}{\Pi_\mathsf{public}^{\Players(\alpha),k,s,d}}
+
+% \begin{minipage}[t]{\textwidth}
+\begin{figure}
+  \begin{framed}    
+    \begin{center}
+        \textbf{Coin-tosssing protocol $\CoinTossingPublic$}
+    \end{center}
+    \begin{enumerate}
+      \item 
+      (Nonce leaders.) 
+      For each nonce-emitting slot $t$, use $\eta_0$ to 
+      select a single player $u \in \Players$ 
+      with probability $\sigma_{u}$. 
+      Set $u_t = u$ and call $u_t$ the \emph{nonce leader at slot $t$}.
+      
+      \item 
+      (Nonce announcement.)
+      At a nonce-emitting slot $t$, the designated nonce leader 
+      broadcasts a random string $y_t \in \{0,1\}^\kappa$ 
+      to all nonce players and inserts $y_t$ in $Q$. 
+
+      \item 
+      (Nonce relay.) 
+      At slot $r$, suppose there is a nonce player $u$ who 
+      has previously heard about a nonce $y$, 
+      emitted from some slot $t \geq r - k$, 
+      which appears neither in $Q$ nor in his view of $\Chain$. 
+      Then $u$ re-inserts $y$ in $Q$ with timestamp $r$.
+
+      
+      % \item 
+      % % (Nonce recording.) 
+      % At any slot $r$, 
+      % a designated slot leader in $\Pi$ 
+      % favors a new chain $\Chain$ over his currently-held chain $\Chain'$ 
+      % and appends a block $B$ on top of $\Chain$. 
+      % (It is possible that $\Chain = \Chain'$.) 
+      % In $B$, he includes every nonce $y \not \in \Chain$ 
+      % that satisfies one of the following: 
+      % \begin{enumerate*}[label=(\textit{\roman*})]
+      %   \item $y \in \Chain'$, or 
+      %   \item $y$ was emitted from a slot $t \geq s - k$.
+      % \end{enumerate*}
+      
+      \item 
+      (Output.)
+      At any slot $\tau \geq T + 2k$, 
+      every user $u \in \Players$ examines $\Chain_u$ 
+      and computes the \emph{output} $\displaystyle \eta = \eta_0 \oplus \bigoplus_{y \in \Chain_u} y$ 
+      where the exclusive-OR runs over 
+      all nonces $y$ recorded in $\Chain_u$. 
+    \end{enumerate}
+  \end{framed}
+  \caption{Coin tossing with a single nonce leader per slot}
+  \label{alg:coin-tossing-single-leader}
+\end{figure}
+% \end{minipage}
+
+\begin{proposition}\label{prop:coin-tossing-security-public}
+  Let $\alpha \in (0, 1/2)$ and $d, k, s, T, \tau \in \NN$ 
+  so that 
+  $s \leq k$ and 
+  $d$ divides both $k$ and $T$. 
+  Let $n = (T - k)/d$ and $\ell = k/d$. 
+  Suppose that the coin-flipping protocol $\Pi = \CoinTossingPublic$ 
+  uses an $(2^{-\tau}, k, s)$-secure ledger protocol $\Blockchain$.
+  Then $\Pi$ is $(\alpha^n + 2^{-\tau + 1}, \rho)$-secure 
+  where 
+  \begin{equation}\label{eq:minentropy-loss-Bernoulli}
+    % \rho = 1 + \ell + \log_2 n + \frac{\log_2(1/\EpsP)}{\log_2(1/\alpha)}
+    % \rho = \ell + \log_2 n + \tau/\log_2 (1/\alpha) + 1
+    \rho = \ell + \frac{\tau + \log_2 n - \log_2 (1 + \alpha)}{\log_2 (1/\alpha)}    \,.
+  \end{equation}
+\end{proposition}
+\begin{proof}
+  Let $\EpsP = 2^{-\tau}$. 
+  Recall the $(\ell, n, \alpha)$-Bernoulli game from Definition~\ref{def:Bernoulli-game}.
+  \begin{claim}\label{claim:correspondence-Bernoulli-game}
+    Let $k, d, T, \kappa \in \NN$ and set $\ell = k/d$ and $n = (T - k)/d$. 
+    Let $\alpha \in (0, 1/2)$ and  
+    let $\Players = \Players(\alpha)$ be the set of nonce players 
+    participating in protocol $\Pi = \CoinTossingPublic$. 
+    Then the output distribution of $\Pi$ 
+    is identical to 
+    the output distribution of 
+    an $(\ell, n, \alpha)$-Bernoulli game $U$ with dimension $\kappa$.
+  \end{claim}
+
+  Assume the claim for the moment. 
+  It follows 
+  that the 
+  min-entropy of the output distribution of 
+  protocol $\Pi$ 
+  is equal to 
+  the min-entropy of the output distribution of $U$. 
+  However, 
+  Lemma~\ref{lemma:xor-game-Bernoulli-gamma} and 
+  Lemma~\ref{lemma:xor-game-minentropy} together 
+  states that 
+  except with probability $\EpsP  +\alpha^n$, 
+  the latter quantity is at least $\kappa - \log_2 \gamma$ 
+  where $\gamma = n\,2^{\ell + 1} (1/\EpsP)^{1/\log_2(1/\alpha)}$.
+  Since the game $U$ is played on top of 
+  the ledger protocol $\Blockchain$, 
+  any guarantee provided by $U$ is 
+  further conditioned on the (external) event that 
+  $\Blockchain$ is $(\EpsP, k, s)$-secure. 
+  Using Definition~\ref{def:coin-flipping-security}, 
+  it follows that $\Pi$ is $(\alpha^n + 2 \EpsP, \rho)$-secure 
+  where $\rho = \log_2 \gamma$; 
+  this $\rho$ is given in~\eqref{eq:minentropy-loss-Bernoulli}. 
+  It remains to prove Claim~\ref{claim:correspondence-Bernoulli-game}.
+
+  \paragraph{Proof of Claim~\ref{claim:correspondence-Bernoulli-game}.}
+
+    Consider the protocol $\Pi$. 
+    First, observe that every honest nonce will 
+    appear in the output calculation of $\Pi$. 
+    {\color{red}Why?}
+    % Specifically, 
+    % the nonce relay step in $\Pi$ 
+    % guarantees that an honestly-emitted nonce w
+    % suppose a nonce $y_t$ is announced by an honest player at slot $t \in [T]$. 
+    % Let $r \geq t + 1$ be the first slot after $t$ 
+    % so that $r$ is an honest slot in the ledger protocol $\Blockchain$. 
+    % Let $u$ be an honest nonce player and let $\Chain_u$ 
+    % be his view of the ledger at slot $r$. 
+    % % $r \geq T + 2k + 1$. 
+    % Then either $y_t \in \Chain_u$, 
+    % Since $\Blockchain$ is $(\EpsP, k, s)$-secure, 
+    % it follows that $r - t \leq s \leq k$ except with probability $\EpsP$. 
+    % Hence, at slot $r$, 
+    % either $y_$is announced no later than slot $t + k - 1$, 
+    % it would appear in the calculation of the output $\eta$. 
+
+
+    % Spcifically, 
+    % consider a nonce player $u$ and his view of the ledger $\Chain_u$ 
+    % at some slot $r \geq T + 2k + 1$. 
+    % % Let $\Chain_u[0:T]$ denote the prefix of $\Chain_u$ 
+    % % corresponding to slots $0, 1, \ldots, T$. 
+    % If a nonce $y$ does not appear in $\Chain_u[0:T]$ 
+    % then the nonce relaying step ensures that 
+    % it will be in $Q$ at slot $T$. 
+    % Due to the $\sECQ[k]$ and $\kSlotCP$ properties, 
+    % it is guaranteed to appear in $\Chain_u[0: T + 2k]$. 
+
+
+    Every nonce-emitting slot $t$ yields an option set $P_t$, 
+    for the nonce leader $u_t$, 
+    which contains all possible values for the nonce $y_t$ 
+    including a uniformly random string $\eta_t$. 
+    \begin{description}[font=\normalfont\itshape\space]
+      \item[If the nonce-leader at slot $t$ is honest,] 
+      he will immediately announce his only option $y_t = \eta_t$; 
+      this corresponds to the case $P_t = \{\star\}$. 
+      The symbol $\star \in P_{\ell + 1}$ hides 
+      $\eta_{\ell  + 1}$ 
+      from the view of the adversarial players 
+      before it is announced. 
+      When the $\star$ in the game 
+      is converted into a uniformly random lookahead string $x$, 
+      it mimics the situation that the adversary gets to see 
+      $\eta_{\ell + 1}$ for the first time. 
+
+      \item[If the nonce-leader $u_t$ at slot $t$ is dishonest,] 
+      his option set $P_t$ equals $\{\eta_t, 0^\kappa\}$. 
+      The lookahead parameter $\ell$ in the XOR target game 
+      corresponds to the number of nonce-messages that 
+      $u_t$ may observe before deciding 
+      which option $y_t \in P_t = \{\eta_t, 0^\kappa\}$ to announce. 
+      Here, the option $y_t = 0^\kappa$ corresponds to the situation 
+      that $u_t$ does not announce at all (or announces late). 
+    \end{description}
+
+
+    Thus the output distribution of $\Pi$ is identical to the output distribution of $U$.
+\end{proof}
+
+
+%==========================================================
+
+
+\begin{corollary}\label{coro:beacon-Bernoulli}
+  Let $\tau, a \in \RR_+, a > 1, \tau \in (0, \infty)$. 
+   % and $\EpsP = 2^{-\tau}$. 
+  Let $d, k, T \in \NN$ 
+  so that $d$ divides both $k$ and $T$ and, 
+  writing $n = (T - k)/d$ and $\ell = k/d$, 
+  satisfy $a n \geq \tau$.
+  Set $\alpha = 2^{-a}$ and 
+  suppose that the coin-flipping protocol $\Pi = \CoinTossingPublic$ 
+  uses a $(2^{-\tau}, k)$-secure ledger protocol $\Blockchain$.
+  An $(L, \Pi)$-composition is $(3 L n \epsilon, \rho)$-secure where
+  $$
+    \epsilon = 2^{- \tau(1 - 1/a) + \ell + 1}
+    \quad\text{and} \quad
+    \rho = \ell + \log_2 n + \tau/a + 1
+    \,.
+  $$
+  % $
+  %   p 
+  %   % = 3 L \EpsP 2^\rho
+  %   % = 3 L 2^{\rho - \tau}
+  %   = 3 L 2^{- \tau(1 - 1/a) + \ell + \log_2 n + 1}
+  %   % \,.
+  % $ and 
+  % $\rho = \ell + \log_2 n + \tau/a + 1$.
+\end{corollary}
+\begin{proof}
+  Apply  
+  Lemma~\ref{prop:coin-tossing-security-public} into 
+  Lemma~\ref{lemma:composition}.
+\end{proof}

@@ -1,0 +1,164 @@
+
+\subsection{Static corruption model}
+
+\begin{minipage}[c]{\textwidth}
+	\begin{center}
+		\textbf{Blockchain Protocol $\BlockchainProtocolPublicSchedule$}
+	\end{center}
+	\begin{framed}
+		% \Hrule
+		\begin{description}[labelindent=0cm,leftmargin=0cm]
+
+			\item[Participants.]
+			$\Players$ is the (static) set of protocol participants.
+
+			\item[Parameters.]~
+			\begin{description}[labelindent=0.5cm, font=\normalfont\itshape\space]
+				\item[Unknown to the protocol:]
+				$\alpha, \EpsP \in (0, 1), k, s, \gamma, \Delta \in \NN$. 
+				% $\gamma$ is an upper bound on the total adversarial hash queries. 
+				$\Delta$ is the \emph{network delay}.
+
+				\item[External, known to the protocol:]
+				$\kappa \in \NN$, the length of the common random string. 
+				$\eta_0 \in \{0,1\}^\kappa$, the initial common random string. 
+				$\sigma : \Players \rightarrow [0,1]$, the \emph{stake function} 
+				which is also a probability function; it satisfies the 
+				Requirement (i.) below.
+
+				\item[Internal, known to the protocol:]  
+				$R \in \NN$, the \emph{epoch length}.
+			\end{description}
+
+			\item[Assumptions.] ~
+			\begin{enumerate}[label=(\roman*.),labelindent=0cm]
+				\item (Synchrony.) The protocol proceeds in slots $t = 1, 2, \ldots$\,.
+
+				\item (Message delivery.) Any message oroginating in a slot $t$ 
+				is delivered prior to the slot $t + \Delta$.
+				
+				\item (Adversarial stake.) Suppose the adversary controls a subset $A$ of players 
+				which is unknown to the protocol.
+				Let $\alpha$ denote the \emph{adversarial stake ratio}, i.e., 
+				$\alpha \defeq \sum_{\Player \in A} \sigma(\Player)$. 
+				Then $\alpha \in [0, 1/2)$ throught the execution of the protocol. 
+
+				\item (Corruption). The adversary cannot immediately corrupt a player. 
+				He has to wait at least $R$ slots before corrupting someone.
+			\end{enumerate}
+
+
+			\item[Guarantees.] 
+			% ~
+			% \begin{enumerate}[label=(\roman*.)]
+				% \item 
+				The protocol satisfies $\kSlotCP$ and $\sECQ$ except with probability at most 
+				% $\gamma \EpsP$
+				$\EpsP$
+				. 
+			% \end{enumerate}
+			
+
+			\item[Exposed functionalities.]~
+			\begin{itemize}[label=-,labelindent=0cm,leftmargin=0.5cm]
+				\item \textsf{announce}: Any player can announce a message 
+				to all other players.  
+
+				\item \textsf{add\_messages\_to\_block}: When a player becomes a slot leader, he may add any message to the newly minted block.
+			\end{itemize}
+		\end{description}
+
+
+		\dotfill
+
+		% \begin{center}
+		% 	Internal
+		% \end{center}
+		\begin{description}
+			\item[Epochs and the beacon.]
+			The execution of the protocol can be partitioned into \emph{epochs} $e = 1, 2, \ldots$\,, 
+			each epoch spanning $R$ slots. 
+			A sub-protocol $\BeaconProtocol$ takes $\eta_0$ as input and emits, for $i \in \NN$,
+			a random string $\eta_i$ at the end of the epoch $e_i$.
+
+			\item[Slot leaders.]
+			For slots $t = 1, 2, \ldots$, the execution of the protocol 
+			determines an ordered list $\Leaders = \{L_1, L_2, \ldots\}$ 
+			where each set $L_t$ contains a single player $\Player \in \Players$; 
+			this player is called the ``slot leader for slot $t$.'' 
+			At slot $t$, only the leader for that slot 
+			is allowed to add a block to an existing blockchain. 
+			Considering the $i$th epoch $E_i = \{iR + 1, iR + 1, \ldots, (i+1)R\}$, 
+			the ordered list $\{L_t\}, t \in E_i$ is the ``slot leader schdule'' for that epoch.
+			This schedule is publicly available at the onset of the epoch; 
+			thus anyone can verify if a block is issued by a legitimate slot leader.
+
+			\item[Leader election.]
+			Consider the $i$th epoch $E_i = \{iR + 1, iR + 1, \ldots, (i+1)R\}$ comprised of $R$ slots.
+			At the onset of this epoch, the sets $L_t, t \in E$ are determined as follows:
+			Independently for each slot $t \in E_i$, the random string $\eta_{i-1}$ is used to publicly draw 
+			a single slot leader $\Player \in \Players$ using the distribution $\sigma$. 			
+			i.e., every player $\Player$ has probability $\sigma(\Player)$ 
+			to be in $L_t$. 
+			$L_t = \{\Player\}$ and in particular, $|L_t| = 1$.
+
+		\end{description}
+
+	\end{framed}
+\end{minipage}
+
+% \begin{remark}
+% 	% That protocol would rely only on the guarantees given 
+% 	% by this blockchain prtocol. 
+% 	% This is this protocol does not mention \emph{network delay}; 
+% 	% it is subsumed by the guarantees it provides. 
+% 	For a fixed $\alpha$, 
+% 	the error probability $\EpsP$ may depend exponentially 
+% 	on the network delay $\Delta$ as well as 
+% 	linearly on other parameters such as $k$ and $s$. 
+% \end{remark}
+
+
+\subsection{Adaptive corruption model}
+\begin{minipage}[c]{\textwidth}
+	\begin{center}
+		\textbf{Blockchain Protocol $\BlockchainProtocolPrivateSchedule$}
+	\end{center}
+	\begin{framed}
+		The protocol is identical to $\BlockchainProtocolPublicSchedule$ except at the following steps.
+
+		\begin{description}
+
+			\item[Assumptions.]~
+			\begin{itemize}[labelindent=0cm]
+				\item (Corruption). The adversary can immediately corrupt a player. 
+			\end{itemize}
+
+			\item[Slot leaders.]
+			For slots $t = 1, 2, \ldots$, the execution of the protocol 
+			determines an ordered list $\Leaders = \{L_1, L_2, \ldots\}$ 
+			where each $L_t$ is a (possibly empty) subset of $\Players$. 
+			The players in a set $L_t$ are called the ``slot leaders for slot $t$.''
+			At slot $t$, each $\Player \in L_t$ is allowed to add a block to an existing blockchain. 
+			Considering the $i$th epoch $E_i = \{iR + 1, iR + 1, \ldots, (i+1)R\}$, 
+			the ordered list $\{L_t\}, t \in E_i$ is the ``slot leader schdule'' for that epoch.
+			Whether a player is a leader for slot $t$ is not known a priori; 
+			it is known only after he issues a block with a proof of his legitimacy.
+			Using this proof, anyone can verify whether a block is issued by a legitimate slot leader.
+
+
+			\item[Leader election.]
+			Consider the $i$th epoch $E_i = \{iR + 1, iR + 1, \ldots, (i+1)R\}$ comprised of $R$ slots.
+			The sets $L_t, t \in E_i$ are determined as follows.
+			Independently for each slot $t$, each player $\Player \in \Players$ 
+			uses the random string $\eta_{i-1}$ to make 
+			an independent and private test to determine whether he is 
+			in $L_t$; 
+			a player $\Player$ becomes a slot leader
+			with probability proportional to $\sigma(\Player)$. 
+			Thus $L_t$ may contain zero or more players. 
+
+		\end{description}
+
+	\end{framed}
+\end{minipage}
