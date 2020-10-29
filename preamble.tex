@@ -46,9 +46,12 @@
 %\usepackage{<add your packages>}
 \usepackage[titletoc]{appendix}
 \usepackage{hyperref}
-\usepackage[center,small,sc]{caption}
+\usepackage[center,small,sc]{caption,subcaption}
 \usepackage{array}
 %\usepackage{subfig}
+\usepackage{tikz}
+\usetikzlibrary{automata,arrows,positioning,calc}
+\usepackage{subfiles}
 \usepackage{accents}
 \usepackage{pgfplots}
 \usepackage{multirow}
@@ -57,9 +60,91 @@
 \usepackage{algpseudocode}
 \usepackage{enumitem}
 \usepackage{blindtext}
+\usepackage{hhline}
+\usepackage{multirow}
+\usepackage{etoolbox}
+\usepackage{lscape}
 \usepackage[numbers,sectionbib]{natbib}
+
 \usepackage{bibentry}
 \nobibliography*
+
+
+% Requires package etoolbox
+\newtoggle{Dissertation}
+\toggletrue{Dissertation}
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+% Common macros
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}{Definition}
+\newtheorem{claim}{Claim}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{observation}{Observation}
+\newtheorem{bound}{Bound}
+\newtheorem{fact}{Fact}
+
+\theoremstyle{definition}
+\newtheorem{remark}{Remark}
+\newtheorem{remark*}{Remark}
+
+
+\newcommand{\ignore}[1]{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% Consistency macros
+\newcommand\gmargin{\mathbf{m}}
+\DeclareMathOperator{\Exp}{\mathbb{E}}
+\DeclareMathOperator{\argmax}{arg\,max}
+\DeclareMathOperator{\argmin}{arg\,min}
+\newcommand{\gf}[1]{\mathsf{#1}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\hdepth}{\mathbf{d}}
+\DeclareMathOperator{\length}{length}
+\DeclareMathOperator{\depth}{depth}
+\DeclareMathOperator{\height}{height}
+\DeclareMathOperator{\gap}{gap}
+\DeclareMathOperator{\reach}{reach}
+\DeclareMathOperator{\reserve}{reserve}
+\DeclareMathOperator{\divergence}{div}
+\DeclareMathOperator{\tdivergence}{tdiv}
+\newcommand{\slot}{\textsl{sl}}
+\newcommand{\fprefix}{\sqsubseteq}
+\newcommand{\Adversary}{\mathcal{A}}
+\newcommand{\Challenger}{\mathcal{C}}
+\newcommand{\Distribution}{\mathcal{D}}
+\newcommand{\dominatedby}{\preceq}
+\newcommand{\StationaryRho}{\mathcal{R}_\infty}
+\newcommand{\DistRho}{\mathcal{R}}
+\newcommand{\Poly}{\mathrm{poly}}
+\newcommand{\SuchThat}{\, : \,}
+\newcommand{\Union}{\cup}
+\newcommand{\BigUnion}{\bigcup}
+\newcommand{\PrefixEq}{\preceq}
+\newcommand{\Prefix}{\prec}
+\newcommand{\ForkPrefix}{\fprefix}
+\newcommand{\Trim}[1]{^{\lceil {#1}}}
+% \newcommand{\TrimSlot}[1]{\left[1:-{#1}\right]}
+\newcommand{\TrimSlot}[1]{^{\lceil {#1}}}
+\newcommand{\Fork}{\vdash}
+\newcommand{\pinch}[2]{{#2}^{\vartriangleright {#1} \vartriangleleft} }
+\newcommand{\cut}[2]{{#2}^{{#1} \vartriangleleft} }
+\newcommand{\Chain}{\mathcal{C}}
+\newcommand{\Intersect}{\cap}
+\newcommand{\SlotCP}{\mathrm{CP}^{\mathsf{slot}}}
+\newcommand{\kSlotCP}[1][k]{{#1}\text{-}\SlotCP}
+\newcommand{\CP}{\mathrm{CP}}
+\newcommand{\kCP}[1][k]{{#1}\text{-}\CP}
+\newcommand{\defeq}{\triangleq}
+\newcommand{\SlotDivergence}{\mathrm{div}_{\mathsf{slot}}}
+
 
 %%%%%%%%%%%%%%%%%%%%
 %%                   Do not edit!!!                     %%
