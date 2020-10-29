@@ -7,7 +7,7 @@ First, for a given decomposition $w = xy$,
 we prove an upper bound on $\mu_x(y)$. 
 Next, 
 considering the fork $F \Fork w$ built by the strategy $Adversary^*$ 
-(see Figure~\ref{fig:adv-opt}), 
+(see Figure~\ref{fig:adv-opt-mh}), 
 we show that 
 for every decomposition $w = xy$, 
 $\mu_x(F)$ is at least as large as the upper bound proven in the first part; 
@@ -96,7 +96,7 @@ As a warm-up, we start with the following claim.
   \paragraph{Proving ~\eqref{eq:rho-upperbound}.} 
   Let $A$ be the set of all $F'$-tines with label $|xy| + 1$.
   Let $\sigma \in A$ be the first tine in the $\leq_\pi$ ordering so that $\reach(\sigma) = \max_{t \in A}\{\reach_{F'}(t)\}$.
-  By Fact~\ref{fact:reach-fork-ext}, 
+  By Fact~\ref{fact:reach-fork-ext-mh}, 
   $\reach_{F'}(\sigma) \leq 0$ and, 
   in addition, for any $t \in F$, 
   $\reach_{F'}(t) \leq \reach_F(t) - 1$.   
@@ -124,13 +124,13 @@ As a warm-up, we start with the following claim.
   If $\ell(t_\rho) = |xy| + 1$ then we are done: 
   by our preceding argument, $\reach_{F'}(t_\rho) \leq 0$. 
   On the other hand, 
-  Note that $t_\rho \not \in F$ since, by Fact~\ref{fact:reach-fork-ext}, reach of any $F$ tine can only decrease
+  Note that $t_\rho \not \in F$ since, by Fact~\ref{fact:reach-fork-ext-mh}, reach of any $F$ tine can only decrease
   $t_\rho$ must have been an extension of a maximum-reach $F$-tine.
 
   \paragraph{Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.} 
     We wish to show that $\mu_x(yb) \leq 0$.
     Suppose (toward a contradiction) that $\mu_x(yb) > 0$. 
-    Then neither $t_\rho$ nor $t_x$ is a conservative extension because, as we proved in Claim ~\ref{claim:ex}, conservative extensions have reach zero. This means that $t_\rho$ and $t_x$ existed in $F$, and their $F$-reach was strictly greater than their $F'$-reach (by Claim ~\ref{claim:nex}). 
+    Then neither $t_\rho$ nor $t_x$ is a conservative extension because, as we proved in Claim ~\ref{claim:ex-mh}, conservative extensions have reach zero. This means that $t_\rho$ and $t_x$ existed in $F$, and their $F$-reach was strictly greater than their $F'$-reach (by Claim ~\ref{claim:nex-mh}). 
     Because $t_\rho$ and $t_x$ 
     % have been implicitly 
     are 
@@ -159,7 +159,7 @@ As a warm-up, we start with the following claim.
     $t_\rho$ has a non-negative reach 
     since the longest honest tine always achieves reach zero. 
     Furthermore, 
-    Claim ~\ref{claim:nex} states that 
+    Claim ~\ref{claim:nex-mh} states that 
     all $F$-tines see their reach decrease. 
     Therefore, $t_\rho \in F$ must have had a strictly positive reach. 
     But this contradicts the central assumption of the case, i.e., 
@@ -168,7 +168,7 @@ As a warm-up, we start with the following claim.
 
     Let $s \in F$ be the tine-prefix of $t_\rho \in F'$ so that 
     $t_\rho$ is an extension of $s$. 
-    % Since $\reach_{F'}(t_\rho) = \rho(xy0) = 0$ by~\eqref{eq:rho-recursive}, 
+    % Since $\reach_{F'}(t_\rho) = \rho(xy0) = 0$ by~\eqref{eq:rho-recursive-mh}, 
     Observe that $\reach_F(s)$ must be non-negative since 
     otherwise, $s$ could not have been extended. 
     In fact, our assumption $\rho(xy)=0$ implies that 
@@ -184,7 +184,7 @@ As a warm-up, we start with the following claim.
       $\min( \reach_F(s),\reach_F(t_x) ) \leq \mu_x(y)$. 
       Because $\reach_F(s)=0$ and $\reach_F(t_x) \leq \rho(xy)=0$, it follows that $\reach_F(t_x) \leq \mu_x(y)$. 
       Finally, since $t_x \in F$, 
-      Claim ~\ref{claim:nex} tells us that 
+      Claim ~\ref{claim:nex-mh} tells us that 
       $\reach_{F'}(t_x) < \reach_F(t_x)$. 
       Taken together, these two inequalities show that 
       $\mu_x(yb) = \reach_{F'}(t_x) < \reach_F(t_x) \leq \mu_x(y)$. 
@@ -207,9 +207,9 @@ As a warm-up, we start with the following claim.
       $\mu_x(yb) \leq \mu_x(y) - 1 = -1$.
       On the other hand, if $t_x \not\in F$, 
       both $t_x$ and $t_\rho$ are extensions and, 
-      by Fact~\ref{fact:reach-fork-ext}, 
+      by Fact~\ref{fact:reach-fork-ext-mh}, 
       $\max(\reach_{F'}(t_x), \reach_{F'}(t_\rho) ) \leq 0$. 
-      In addition, Fact~\ref{fact:reach-fork-ext} states that for all $t \in F$, 
+      In addition, Fact~\ref{fact:reach-fork-ext-mh} states that for all $t \in F$, 
       $\reach_{F'}(t) < \reach_{F}(t) \leq \rho(xy) = 0$. 
       We conclude that $\mu_x(yb) \leq 0$.
 
@@ -220,13 +220,13 @@ As a warm-up, we start with the following claim.
   \paragraph{Case 3: $\rho(xy)>0$ and $\mu_x(y)\neq0$.}
     We wish to show that $\mu_x(yb) \leq \mu_x(y) - 1$ 
     or, equivalently, that $\mu_x(yb) < \mu_x(y)$. 
-    % Note that by~\ref{eq:rho-recursive}, 
+    % Note that by~\ref{eq:rho-recursive-mh}, 
     % $\rho(xy0) = \rho(xy) - 1 \geq 0$.
     We will break this case into two sub-cases. 
     \begin{description}[font=\normalfont\itshape\space]
       \item[If both $t_\rho, t_x \in F$,] 
       then $\mu_x(yb) = \reach_{F'}(t_x) < \reach_{F}(t_x) \leq \mu_x(y)$. 
-      Here, the first inequality follows from Fact~\ref{fact:reach-fork-ext} 
+      Here, the first inequality follows from Fact~\ref{fact:reach-fork-ext-mh} 
       and the second inequality follows from the fact that 
       $t_x, t_\rho$ is $y$-disjoint and 
       $\reach(t_x)$ is at most $\reach(t_\rho)$ by design.
@@ -248,7 +248,7 @@ As a warm-up, we start with the following claim.
       < \reach_F(t_x) 
       \leq \mu_x(y)
       $ 
-      where the inequality follows from Fact~\ref{fact:reach-fork-ext}.
+      where the inequality follows from Fact~\ref{fact:reach-fork-ext-mh}.
 
 
       % \item[If either $t_\rho \not \in F$ or $t_x \not \in F$.]
@@ -267,7 +267,7 @@ As a warm-up, we start with the following claim.
       % of some tine $s \in F, \reach_F(s) \geq 0$. 
       % In this scenario, $t_x$ cannot have been the extension 
       % (since there is only one). 
-      % By Claim~\ref{claim:nex}, 
+      % By Claim~\ref{claim:nex-mh}, 
       % $\reach_F(t_x) > \reach_{F'}(t_x)$. 
       % Using a now-familiar line of reasoning, note that 
       % the two tines
@@ -323,7 +323,7 @@ As a warm-up, we start with the following claim.
   By assumption, $F$ is a canonical fork for $w$; 
   this means $\rho(F) = \rho(w)$ and
   for all $x \Prefix w$, $\mu_x(F) = \mu_x(y)$. 
-  It will be helpful for the reader to recall Fact~\ref{fact:reach-fork-ext} before proceeding.
+  It will be helpful for the reader to recall Fact~\ref{fact:reach-fork-ext-mh} before proceeding.
 
 
   \paragraph{Proving~\eqref{eq:rho-lowerbound}.} 
@@ -443,14 +443,14 @@ As a warm-up, we start with the following claim.
   it follows that $\mu_x(F') \geq \min(\reach_{F'}(t_x), \reach_{F'}(t_{\rho x})) \geq \reach_{F'}(t_x) = \reach_{F}(t_x) - 1 = \mu_x(y) - 1$. 
   Here, the first inequality follows from the definition of relative margin and 
   the second one from the fact that $\reach(t_x) \leq \reach(t_{\rho x})$ by assumption. 
-  The first equality follows from Fact~\ref{fact:reach-fork-ext} and 
+  The first equality follows from Fact~\ref{fact:reach-fork-ext-mh} and 
   the second one follows from our assumption that the tines $t_{\rho x}, t_x\in F$ witness $\mu_x(F) = \mu_x(y)$. 
 
   However, we can tighten the above inequality when $\mu_x(y)$ is zero, as follows. 
   Recall the sets $Z, S, R$, 
   the zero-reach tine $z_1$, 
   and the maximum-reach tine $r_1$ 
-  from Figure~\ref{fig:adv-opt}. 
+  from Figure~\ref{fig:adv-opt-mh}. 
   Also recall that $z_1$, of all zero-reach tines, 
   diverges earliest from any maximum-reach tine.
   As $\reach_F(z_1) = \mu_x(F) = \mu_x(y) = 0$, 
@@ -543,7 +543,7 @@ We omit further details.
 Let $w \in \{\h, \H, \A\}^*$. 
 If $w = \varepsilon$ then, by Claim~\ref{claim:rho-mu-A}, 
 $\rho(\varepsilon) = 0$. 
-If $|w| \geq 1$,~\eqref{eq:rho-recursive} is implied by 
+If $|w| \geq 1$,~\eqref{eq:rho-recursive-mh} is implied by 
 the combination of 
 Claim~\ref{claim:rho-mu-A},~\eqref{eq:rho-upperbound} and~\eqref{eq:rho-lowerbound}. 
 
@@ -552,7 +552,7 @@ Let $w = xy$ be an arbitrary decomposition.
 We proceed by induction on $|y|$. 
 If $|y| = 0$ then 
 Claim~\ref{claim:rho-mu-A} implies that $\mu_x(\varepsilon) = \rho(x)$. 
-Otherwise,~\eqref{eq:mu-relative-recursive} 
+Otherwise,~\eqref{eq:mu-relative-recursive-mh} 
 is implied by the combination of 
 Claim~\ref{claim:rho-mu-A},~\eqref{eq:mu-upperbound} and~\eqref{eq:mu-lowerbound}.
 

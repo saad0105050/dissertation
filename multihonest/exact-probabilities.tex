@@ -37,14 +37,14 @@ Here, $M(i,j)$ denotes the entry at the $i$th row and $j$th column of a matrix $
 Observe that $M_t(r,s)$ can be computed solely 
 from the relevant neighboring cells of $M_{t-1}$, that is, 
 from the values $M_{t-1}(r\pm 1, s \pm 1)$. 
-Of course, only the transitions approved by~\eqref{eq:mu-relative-recursive} should be considered.
+Of course, only the transitions approved by~\eqref{eq:mu-relative-recursive-mh} should be considered.
 
 Finally, one can compute $\Pr[\mu_x(y) \geq 0]$ by summing $M_k(r,s)$ for
 $r, s \geq 0$. 
 This is precisely the probability that, 
 given a characteristic string $xy$ where $|x| \rightarrow \infty$, 
 the slot $|x| + 1$ incurs a $|y|$-settlement violation. 
-Table~\ref{table:exact-probs} (on page~\pageref{table:exact-probs}) contains these probabilities for various values of $\alpha, |y|$, and $p_\h$. 
+Table~\ref{table:exact-probs-mh} (on page~\pageref{table:exact-probs-mh}) contains these probabilities for various values of $\alpha, |y|$, and $p_\h$. 
 
 % In addition, Figure~\ref{fig:exact-probs} shows the base-$10$ logarithm of
 % these probabilities. The
@@ -66,7 +66,7 @@ at~\href{https://github.com/saad0105050/multihonest-code}{https://github.com/saa
 
 \begin{table}[t]
 	\centering
-	\caption{
+	\caption[Exact settlement error probabilities for trivalent characteristic strings]{
     Exact probabilities of $k$-settlement violations 
     where the symbols $\h, \H, \A$ are independent and identically distributed as $\Pr[\A] = \alpha \in (0, 0.5)$ and $\Pr[\H] = 1 - \alpha - \Pr[\h]$.    
     % Exact probabilities $\Pr[\mu_x(y) \geq 0]$ where 
@@ -74,7 +74,7 @@ at~\href{https://github.com/saad0105050/multihonest-code}{https://github.com/saa
     % $|x| = \infty$, and $k = |y|$.
     % Each row of the table corresponds to a different $k = |y|$.
 	} 
-	\label{table:exact-probs}
+	\label{table:exact-probs-mh}
 
 
 	\begin{tabular}{|c||l||l|l|l|l|l|l|}
@@ -434,7 +434,7 @@ at~\href{https://github.com/saad0105050/multihonest-code}{https://github.com/saa
 %   }
 % 	\end{axis}%
 % \end{tikzpicture}%
-% \caption{The probabilities from Table~\ref{table:exact-probs}  
+% \caption{The probabilities from Table~\ref{table:exact-probs-mh}  
 % drawn in the base-$10$ logarithmic scale. 
 % }
 % \label{fig:exact-probs}

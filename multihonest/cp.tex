@@ -1,8 +1,8 @@
 % \subsection{The Common Prefix  (CP) property}\label{sec:cp-model} 
   For the sake of simplicity, 
-  assume the synchronous communication model from Section~\ref{sec:game}; 
+  assume the synchronous communication model from Section~\ref{sec:game-mh}; 
   the $\Delta$-synchronous setting can be handled in the same way 
-  as delineated in Sections~\ref{sec:async-model} and~\ref{sec:async}.
+  as delineated in \Section~\ref{sec:async-multihonest}.
 
   The common prefix property with parameter $k$ asserts
   that, for any slot index $s$, if an honest observer at slot $s + k$
@@ -18,7 +18,7 @@
   $t_1 \PrefixEq t_2$ to indicate that the tine $t_1$ is a
   prefix of tine $t_2$.
 
-  \begin{definition}[Common Prefix Property with parameter $k \in \NN$]\label{def:cp-slot}
+  \begin{definition}[Common Prefix Property with parameter $k \in \NN$]\label{def:cp-slot-mh}
     Let $w$ be a characteristic string. A fork $F \vdash w$ satisfies
     $\kSlotCP$ if, for all pairs $(t_1, t_2)$ of viable tines $F$ for
     which $\ell(t_1) \leq \ell(t_2)$, we have $t_1\TrimSlot{k} \PrefixEq t_2$. 
@@ -71,11 +71,11 @@
   This fact allows us to bound 
   the probability of common prefix violations by 
   reasoning only about Catalan slots.\footnote{ 
-  One can also prove Theorem~\ref{thm:main-CP} 
+  One can also prove Theorem~\ref{thm:main-mh-CP} 
   by 
   directly showing---as is done in~\cite{LinearConsistency}---that 
   a $\kSlotCP$ violation implies a $k$-settlement violation 
-  and then appealing to Theorem~\ref{thm:main}. 
+  and then appealing to Theorem~\ref{thm:main-mh}. 
   The proof of the implication 
   turns out to be quite long and complicated 
   compared to the short proof above; 
@@ -85,7 +85,7 @@
   can be adapted to our generalized fork framework.
   }
 
-  \begin{theorem}[Main theorem; CP version] \label{thm:main-CP} Let
+  \begin{theorem}[Main theorem; CP version] \label{thm:main-mh-CP} Let
     $\epsilon, p_\h \in (0,1)$ and $T, k \in \NN, T \geq k$. 
     Let $w$ be a length-$T$ characteristic string satisfying the $(\epsilon, p_\h)$-Bernoulli condition. 
     % be a random variable satisfying the $\epsilon$-martingale condition.
@@ -112,7 +112,7 @@
     $$
   \end{theorem}
   \begin{proof}
-% \paragraph{Proof of Theorem~\ref{thm:main-CP}}
+% \paragraph{Proof of Theorem~\ref{thm:main-mh-CP}}
     \newcommand{\EpsCat}{\mathsf{\varepsilon}}
     (The first claim.) 
     % Let $w \in \{\h, \H, \A\}^T$ be a (trivalent) characteristic string 
@@ -163,6 +163,6 @@
   in the string $\Reduce(w) \in \{\h, \H, \A\}^*$ 
   and, consequently, a $\kSlotCP$ violation in $\Reduce(w)$. 
   % Hence the probability of the former event 
-  % is no more than that in Theorem~\ref{thm:main-async} 
+  % is no more than that in Theorem~\ref{thm:main-mh-async} 
   % applied on the string $\Reduce(w)$. 
   We omit further details.

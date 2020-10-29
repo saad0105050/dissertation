@@ -30,13 +30,13 @@
     A \emph{$\Delta$-fork} for the semi-synchronous string $w$ consists of a directed and rooted
     tree $F=(V,E)$ with a labeling $\ell:V \to \{0,1,\ldots,n\}$. We insist
     that each edge of $F$ is directed away from the root vertex. 
-    We require conditions~\ref{fork:root}--\ref{fork:unique-honest} 
+    We require conditions~\ref{fork:root-mh}--\ref{fork:unique-honest} 
     from Definition~\ref{def:fork} and 
     % further require that
     \begin{enumerate}[label=(F{\arabic*}\textsubscript{$\Delta$}), start=4]
-      % \item\label{fork:root-delta} the root vertex $r$ has label $\ell(r)=0$;
+      % \item\label{fork:root-mh-delta} the root vertex $r$ has label $\ell(r)=0$;
 
-      % \item\label{fork:monotone-delta} the labels of vertices along any directed path are strictly increasing;
+      % \item\label{fork:monotone-mh-delta} the labels of vertices along any directed path are strictly increasing;
 
       % \item\label{fork:unique-honest-delta}\label{fork:multiply-honest-delta} 
       % each index $i\in P$ 
@@ -61,8 +61,8 @@
   Note that 
   condition~\ref{fork:honest-depth-delta} 
   is a direct analogue of axiom~\ref{axiom:honest-depth-delta}.
-  % conditions~\ref{fork:root-delta}--\ref{fork:honest-depth-delta} 
-  (We already know that conditions~\ref{fork:root}--\ref{fork:unique-honest} 
+  % conditions~\ref{fork:root-mh-delta}--\ref{fork:honest-depth-delta} 
+  (We already know that conditions~\ref{fork:root-mh}--\ref{fork:unique-honest} 
   are direct
   analogues of axioms~\ref{axiom:root}--~\ref{axiom:honest}.) 
 
@@ -100,7 +100,7 @@
 
 
 
-  \begin{definition}[$\Delta$-settlement with parameters $s,k \in \NN$]\label{def:settlement-delta}
+  \begin{definition}[$\Delta$-settlement with parameters $s,k \in \NN$]\label{def:settlement-mh-delta}
     Let $n \in \NN$ and let $w \in \{\perp, \h, \H, \A\}^n$. 
     Let $t \in [s + k, n]$ be an integer, $\hat{w} \PrefixEq w, |\hat{w}| = t$, and 
     let $F$ be any $\Delta$-fork for $\hat{w}$. 
@@ -122,7 +122,7 @@
   \end{definition}
   Note that in the above definition, 
   we truncated $k$ trailing blocks from a tine 
-  whereas in Definition~\ref{def:settlement}, 
+  whereas in Definition~\ref{def:settlement-mh}, 
   we truncated from a tine 
   all trailing blocks corresponding to the last $k$ slots. 
   Note that this change of perspective is necessary since 
@@ -136,7 +136,7 @@
     % $x \leq y$ if and only if $\Reduce(x) \leq \Reduce(y)$
 
 
-    \begin{theorem}[Main theorem; $\Delta$-synchronous setting]\label{thm:main-async}
+    \begin{theorem}[Main theorem; $\Delta$-synchronous setting]\label{thm:main-mh-async}
       Let $f, \epsilon \in (0,1)$ and $\Delta \in \{0, 1, 2, \ldots\}$. 
       Let $s, k, T \in \NN$ so that $T \geq s + k + \Delta$. 
       Write $p_\perp = 1 - f$ and $\beta = (1 - f)^\Delta$. 
@@ -182,11 +182,11 @@
     implies a certain combinatorial event (parameterized by $\Delta$) 
     in a prefix of $\Reduce(w)$. 
     Specifically, we can analyze the latter event 
-    using techniques developed in proving Theorem~\ref{thm:main}. 
+    using techniques developed in proving Theorem~\ref{thm:main-mh}. 
 
     \paragraph{A comment on consistent chain selection.} 
     Assuming axiom~\ref{axiom:tie-breaking} is satisfied, 
-    it is easy to prove an analogue of Theorem~\ref{thm:main-bivalent} 
+    it is easy to prove an analogue of Theorem~\ref{thm:main-mh-bivalent} 
     in the $\Delta$-synchronous setting; 
     we need only use Bound~\ref{bound:two-catalans} 
     in lieu of Bound~\ref{bound:unique-honest-catalan}. 
@@ -201,7 +201,7 @@
       \,.
     $$
     We omit further details.
-    % The proof is presented in Section~\ref{sec:async}.
+    % The proof is presented in \Section~\ref{sec:async-multihonest}.
 
     % Notice that $\Delta$ can only weakly impact the bound when $k$ is large. 
     % On the other hand, 

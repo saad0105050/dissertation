@@ -1,5 +1,5 @@
 %%%---- Do not adjust ----%%%
-\documentclass[12pt,oneside]{book}
+\documentclass[11pt,oneside]{book}
 \input{preamble.tex}
 %%%-----------------------%%%
 
@@ -21,7 +21,14 @@
 \begin{document}
 \input{frontmatter.tex}
 \singlespacing
+
+\setcounter{tocdepth}{1}
 \tableofcontents
+
+\listoffigures
+
+\listoftables
+
 \thispagestyle{plain}
 \mainmatter
 \doublespacing

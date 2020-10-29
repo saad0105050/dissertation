@@ -48,7 +48,6 @@
 \usepackage{hyperref}
 \usepackage[center,small,sc]{caption,subcaption}
 \usepackage{array}
-%\usepackage{subfig}
 \usepackage{tikz}
 \usetikzlibrary{automata,arrows,positioning,calc}
 \usepackage{subfiles}
@@ -58,11 +57,12 @@
 \usepackage{pgfgantt}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage{enumitem}
+\usepackage[inline]{enumitem}
 \usepackage{blindtext}
 \usepackage{hhline}
 \usepackage{multirow}
 \usepackage{etoolbox}
+\usepackage{mathtools}
 \usepackage{lscape}
 \usepackage[numbers,sectionbib]{natbib}
 
@@ -79,6 +79,9 @@
 }{
 	\newcommand{\Section}{Section}
 }
+
+%%%%%%%%%%%%%%%%%%
+% \usepackage{stix2}
 
 
 
@@ -112,6 +115,8 @@
 \newcommand{\gf}[1]{\mathsf{#1}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\RR}{\mathbb{R}}
 \newcommand{\NN}{\mathbb{N}}
 \newcommand{\hdepth}{\mathbf{d}}
 \DeclareMathOperator{\length}{length}
@@ -123,6 +128,7 @@
 \DeclareMathOperator{\divergence}{div}
 \DeclareMathOperator{\tdivergence}{tdiv}
 \newcommand{\slot}{\textsl{sl}}
+\newcommand{\Slot}{\textsl{sl}}
 \newcommand{\fprefix}{\sqsubseteq}
 \newcommand{\Adversary}{\mathcal{A}}
 \newcommand{\Challenger}{\mathcal{C}}
@@ -131,7 +137,8 @@
 \newcommand{\StationaryRho}{\mathcal{R}_\infty}
 \newcommand{\DistRho}{\mathcal{R}}
 \newcommand{\Poly}{\mathrm{poly}}
-\newcommand{\SuchThat}{\, : \,}
+\newcommand{\SuchThat}{:}
+\newcommand{\Given}{\mid}
 \newcommand{\Union}{\cup}
 \newcommand{\BigUnion}{\bigcup}
 \newcommand{\PrefixEq}{\preceq}
@@ -151,6 +158,20 @@
 \newcommand{\kCP}[1][k]{{#1}\text{-}\CP}
 \newcommand{\defeq}{\triangleq}
 \newcommand{\SlotDivergence}{\mathrm{div}_{\mathsf{slot}}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% Multihonest macros
+\newcommand{\h}{\mathtt{h}}
+\renewcommand{\H}{\mathtt{H}}
+% \newcommand{\HH}{\mathsf{H}}
+\newcommand{\A}{\mathtt{A}}
+\newcommand{\Hheavy}{\h\H\text{-heavy}}
+\newcommand{\Aheavy}{\A\text{-heavy}}
+\newcommand{\DominatedBy}{\preceq}
+\newcommand{\Reduce}{\rho_\Delta}
+\newcommand{\DeltaFork}{\Fork_\Delta}
 
 
 %%%%%%%%%%%%%%%%%%%%

@@ -23,7 +23,7 @@ The next few definitions are the start of a general toolkit for reasoning about 
 %current state of a fork.
 
 %%%%Reach and margin
-\begin{definition}[Gap, reserve, and reach]\label{def:gap-reserve-reach}
+\begin{definition}[Gap, reserve, and reach]\label{def:gap-reserve-reach-mh}
 For a closed fork $F \vdash w$ and its unique longest tine $\hat{t}$, we define the \emph{gap} of a tine $t$ to be $\gap(t)=\length(\hat{t})-\length(t)$.
 Furthermore, we define the \emph{reserve} of $t$, denoted $\reserve(t)$, to be the number of adversarial indices in $w$ that appear after the terminating vertex of $t$. More precisely, if $v$ is the last vertex of $t$, then
 \[
@@ -184,12 +184,12 @@ Observe that for any characteristic string $x$,
 one can \emph{extend} (i.e., augment) a closed fork prefix $F \Fork x$ 
 into a larger closed fork $F' \Fork x0$ so that $F \ForkPrefix F'$. 
 A \emph{conservative extension} is a minimal extension in that 
-it consumes the least amount of reserve (cf. Definition~\ref{def:gap-reserve-reach}), 
+it consumes the least amount of reserve (cf. Definition~\ref{def:gap-reserve-reach-mh}), 
 leaving the remaining reserve to be used in future.
 Extensions and, in particular, conservative extensions 
 play a critical role in the exposition that follows. 
 
-\begin{definition}[Extensions]\label{def:extension}  
+\begin{definition}[Extensions]\label{def:extension-mh}  
   Let $w \in \{\h, \H, \A\}^*$ be a characteristic string 
   and $F$ a closed fork for $w$. 
   Let $F'$ be a closed fork for $wb, b \in \{\h, \H\}$ 
@@ -227,7 +227,7 @@ the number of such vertices is exactly $\gap_F(s)$.
 % the height of $F'$ is exactly one more than the height of $F$.
 
 
-\begin{fact}[Extensions and reach]\label{fact:reach-fork-ext}
+\begin{fact}[Extensions and reach]\label{fact:reach-fork-ext-mh}
   Let $b \in \{\h, \H\}$. 
   Let $F \Fork w$ and $F^\prime \Fork wb$ be closed forks so that 
   $F \ForkPrefix F^\prime$ and 
@@ -240,7 +240,7 @@ the number of such vertices is exactly $\gap_F(s)$.
   $\reach_{F^\prime}(\sigma) = 0$.
 \end{fact}
 The above fact follows from the claims below.
-\begin{claim}\label{claim:nex}
+\begin{claim}\label{claim:nex-mh}
   Let $b \in \{\h, \H\}$. 
   Consider a closed fork $F\vdash w$ and some closed fork $F'\vdash wb$ such that $F\fprefix F'$. 
   If $t \in F$ then 
@@ -262,7 +262,7 @@ The above fact follows from the claims below.
     =\reach_{F}(t) - 1
   $. 
 \end{proof}
-\begin{claim}\label{claim:ex}
+\begin{claim}\label{claim:ex-mh}
   Conservative extensions have reach zero.
   % Let $b \in \{\h, \H\}$. 
   % Consider closed forks $F\vdash w, F'\vdash wb$ 
@@ -358,7 +358,7 @@ for a given decomposition $w = xy$.
     \rho(wb) = \begin{cases} 0 & \text{if $\rho(w) = 0$,}\\
       \rho(w)-1 & \text{otherwise.}
     \end{cases}
-    \label{eq:rho-recursive}
+    \label{eq:rho-recursive-mh}
   \end{equation}
 
 
@@ -371,7 +371,7 @@ for a given decomposition $w = xy$.
       0 & \text{if $\rho(xy) = \mu_x(y) = 0$ and $b = \H$}\,, \\
       \mu_x(y)-1 & \text{otherwise.}
     \end{cases}
-    \label{eq:mu-relative-recursive}
+    \label{eq:mu-relative-recursive-mh}
   \end{equation}
 
   % Additionally, for every $w \in \{\h, \H, \A\}^*$ 
@@ -382,7 +382,7 @@ Let $w$ be a characteristic string and
 let $m, k \in \NN$ so that $m + k \leq |w|$. 
 Let $x \Prefix w, |x| = m-1$ and $xy \PrefixEq w, |xy| \geq m + k$.
 If the symbols in $w$ are independent and identically distributed, 
-the recursive formulation in~\eqref{eq:mu-relative-recursive} implies an algorithm --- which takes time and space $O(|w|^3)$ --- 
+the recursive formulation in~\eqref{eq:mu-relative-recursive-mh} implies an algorithm --- which takes time and space $O(|w|^3)$ --- 
 for computing the probability that $\mu_x(y) \geq 0$. 
 But this is exactly the probability that slot $m$ is not $k$-settled, 
 according to~\eqref{eq:settlement-uvp} 

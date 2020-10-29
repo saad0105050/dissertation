@@ -129,7 +129,7 @@ approach} used in the Ouroboros Praos analysis~\cite{Praos}. Thus, we
 can achieve a consistency error probability of $e^{-\Theta(k)}$ in this
 setting as well. 
 This analysis is presented in 
-Section~\ref{sec:async}.
+Section~\ref{sec:async-multihonest}.
 
   % \item 
 \paragraph{A technical overview.}
@@ -226,34 +226,34 @@ in the multi-leader setting.
 We specify our model in Section~\ref{sec:model} and focus on a
 specific consistency property called ``$k$-settlement.''  This section
 also contains our main theorems; the proofs are deferred to
-Section~\ref{sec:bounds-main-proofs}.  In
+\Section~\ref{sec:bounds-main-proofs-multihonest}.  In
 Section~\ref{sec:definitions}, we describe amplifications
 % further necessary elements of
 to the fork framework of~\cite{LinearConsistency} in order to
 %so that we can
 explore the relationship between Catalan slots and the UVP. 
-In Section~\ref{sec:bounds-main-proofs},
+In \Section~\ref{sec:bounds-main-proofs-multihonest},
 we present two bounds on the stochastic events of interest, e.g., the
 rarity of a Catalan slot; these bounds lead to short proofs of the
 main theorems.  The proofs of these bounds are presented next in
 Section~\ref{sec:estimates} which contains all of our probabilistic
 arguments.  
 
-Section~\ref{sec:recursion} contains an alternative treatment 
+\Section~\ref{sec:recursion-multihonest} contains an alternative treatment 
 of the UVP via fork-theoretic notions of~\cite{LinearConsistency}. 
 Along the way, it describes an optimal adversary who simultaneously attacks the consistency of all slots. 
 It also describes an algorithm to compute explicit values 
 for the probability of consistency violations. 
 The proofs of two important theorems from this section 
-are presented subsequently in Section~\ref{sec:margin-proof}.
+are presented subsequently in \Section~\ref{sec:margin-proof-multihonest}.
 
 
 Our treatment of the $\Delta$-synchronous setting is
-presented in Section~\ref{sec:async}.  In Section~\ref{sec:cp}, we
+presented in \Section~\ref{sec:async-multihonest}.  In \Section~\ref{sec:cp-multihonest}, we
 treat the traditional Common Prefix (CP) violations using our bounds
 on the UVP.  
 
-In Appendix~\ref{sec:cp-forks}, 
+In \Section~\ref{sec:cp-forks}, 
 we characterize common prefix violations 
 in the presence of multiply honest slots 
 using ``balanced forks'' from~\cite{LinearConsistency} (and, importantly, 

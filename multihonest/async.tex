@@ -1,6 +1,6 @@
 We set the stage by stating the $\Delta$-synchronous model.
 
-\input{model-async}
+\input{multihonest/model-async}
 
 \paragraph{Road-map for the proof.}
 Let $w \in \{\perp, \h, \H, \A\}^*$, 
@@ -34,7 +34,7 @@ Our roadmap forward is as follows:
   This is done in Lemma~\ref{prop:reduction-indep}.
 
   \item Obtain a bound on $Pr[B_\Delta]$ in Bound~\ref{bound:unique-honest-catalan-Delta} and 
-  proceed to prove Theorem~\ref{thm:main-async}.
+  proceed to prove Theorem~\ref{thm:main-mh-async}.
 \end{enumerate}
 
 
@@ -123,7 +123,7 @@ defined as $S_0 = 0, S_i = S_{i-1} + b_i$.
   If $E$ occurs then 
   $s$ is $(|y'|,\Delta)$-settled in $w$. 
   % Here, 
-  % settlement is defined in~\ref{def:settlement-delta} and 
+  % settlement is defined in~\ref{def:settlement-mh-delta} and 
 \end{lemma}
 % We insist that the event $E_y$ in the lemma is sufficient, but not necessary, 
 % for the conclusion to hold.\footnote{ 
@@ -262,7 +262,7 @@ define $x\TrimSlot{k} \triangleq x_1 \ldots x_{|x| - k}$.
   % \hfill$\qed$    
 \end{proof}
 
-The final ingredient to proving Theorem~\ref{thm:main-async} 
+The final ingredient to proving Theorem~\ref{thm:main-mh-async} 
 is a tail bound for (the complement of) the event $E$ 
 in Lemma~\ref{lemma:async-catalan-uvp}. 
 
@@ -351,7 +351,7 @@ in Lemma~\ref{lemma:async-catalan-uvp}.
 \end{proof}
 
 
-\subsection{Proof of Theorem~\ref{thm:main-async}}
+\subsection{Proof of Theorem~\ref{thm:main-mh-async}}
   The symbols in $w$ are independent and identically distributed.
   Write 
   % $w = xa$ where $|x| \geq s, |a| = \Delta$ and 
@@ -416,8 +416,8 @@ in Lemma~\ref{lemma:async-catalan-uvp}.
   \]
 
   The claim involving the distribution $\mathcal{W}$ 
-  follows from the analogous claim in Theorem~\ref{thm:main}. 
-  % This completes the proof of Theorem~\ref{thm:main-async}. 
+  follows from the analogous claim in Theorem~\ref{thm:main-mh}. 
+  % This completes the proof of Theorem~\ref{thm:main-mh-async}. 
   \hfill $\qed$  
 
 
