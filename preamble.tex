@@ -74,6 +74,13 @@
 \newtoggle{Dissertation}
 \toggletrue{Dissertation}
 
+\iftoggle{Dissertation} {
+	\newcommand{\Section}{Chapter}
+}{
+	\newcommand{\Section}{Section}
+}
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%

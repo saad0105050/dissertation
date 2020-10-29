@@ -48,7 +48,7 @@ an ideal distribution, which is also the approach we will adopt for our analysis
 %properties.
 \end{sloppypar}
 
-\subsection{The blockchain axioms and forks}
+\section{The blockchain axioms and forks}
 
 To simplify our analysis, we assume a synchronous communication
 network in the presence of a \emph{rushing} adversary: in particular,
@@ -57,7 +57,7 @@ particular slot is received by the adversary first, who may decide
 strategically and individually for each recipient in the network
 whether to inject additional messages and in what order all messages
 are to be delivered prior to the conclusion of the slot. (See
-\S\ref{sec:model-comments} below for comments on this network
+Section\ref{sec:model-comments} below for comments on this network
 assumption.)
 
 Given this, the behavior of the protocol when carried out by a group
@@ -345,7 +345,7 @@ consistently-labeled subgraph of $\hat{F}$.
  associated with an honest slot; by~\ref{fork:honest-depth},
  $\hdepth(\cdot)$ is strictly increasing.
   
-  \subsection{Settlement and the common prefix
+  \section{Settlement and the common prefix
     property}\label{sec:cp-settlement}
   
   We are now ready to explore the power of an adversary in this
@@ -388,7 +388,7 @@ consistently-labeled subgraph of $\hat{F}$.
 
 \paragraph{Common prefix.} Settlement violations are a convenient and
 intuitive proxy for the notion of common prefix discussed in the
-introduction. Indeed, as we show in Section~\ref{sec:cp-forks}, the
+introduction. Indeed, as we show in \Section~\ref{sec:cp-forks}, the
 two notions are equivalent, so we have the luxury of discussing
 settlement violations which have the advantage of a more ready
 interpretation. Concretely, we will simultaneously upper bound---using
@@ -498,7 +498,7 @@ $\kSlotCP$ violation is sufficient to rule out both events.
 % =======
 % >>>>>>> 76b7669dd268be2605c40af0e8d17d88d7dc22f3
 
-\subsection{Adversarial attacks on settlement time; the settlement game}\label{sec:game} 
+\section{Adversarial attacks on settlement time; the settlement game}\label{sec:game} 
 
 To clarify the relationship between forks and the chains at play in a
 canonical blockchain protocol, we define a game-based model below that
@@ -539,6 +539,7 @@ $\Pr[w_i = 1 \mid w_1, \ldots, w_{i-1}] \leq (1 - \epsilon)/2$.
 
 
 \begin{center}
+  \singlespacing
   \fbox{
     \begin{minipage}{.9 \textwidth}
       \begin{center}
@@ -747,7 +748,7 @@ directly to $\kSlotCP$ (and $\kCP$).
 \end{theorem}
 The proofs of these theorems are presented in Section~\ref{sec:thm-proofs}.
 Additionally, we provide a $O(k^3)$-time algorithm for 
-computing an explicit upper bound on these probabilities; cf. Appendix~\ref{sec:exact-prob}.
+computing an explicit upper bound on these probabilities; cf. \Section~\ref{sec:exact-prob}.
 
 
 \subsection{Survey of the proofs of the main theorems}\label{sec:args-survey}
@@ -777,7 +778,7 @@ $s + k \leq n$,
 (This is a variant of Lemma~\ref{lemma:settlement-margin} from Section~\ref{sec:thm-proofs}.)
 
 As promised above, common prefix violations can be handled the same
-way: we likewise establish (see Section~\ref{sec:cp-forks}; Theorem~\ref{thm:cp-fork}) that a common
+way: we likewise establish (see \Section~\ref{sec:cp-forks}; Theorem~\ref{thm:cp-fork}) that a common
 prefix violation implies that there exists a balanced fork for some prefix of
 $w$.  Specifically, for any distribution of characteristic strings, 
 \begin{equation}\label{eq:pr-cp-fork}
@@ -791,7 +792,7 @@ $w$.  Specifically, for any distribution of characteristic strings,
     \,. 
 \end{equation}
 
-Next, in Section~\ref{sec:recursion}, 
+Next, in \Section~\ref{sec:recursion}, 
 we give a recursive expression for the combinatorial quantity 
 ``relative margin,'' written
 $\mu_x(y)$ (see Definition~\ref{def:margin} in Section~\ref{sec:definitions}). 
@@ -806,7 +807,7 @@ In Lemma~\ref{lem:relative-margin}, we develop an exact recursive presentation f
 by reasoning about the non-negativity of the relative margin 
 and, in particular, without reasoning directly about forks. 
 
-In Section~\ref{sec:estimates}, we prove two bounds for the probability 
+In \Section~\ref{sec:estimates}, we prove two bounds for the probability 
 \[
   \Pr_{\substack{w = xy\\|x| = s}}[\mu_x(y) \geq 0]\,,
 \]
@@ -824,7 +825,7 @@ via generating functions; this yields the bound
 Notice that this bound does not depend on $s$, the length of $x$.  The
 result for distributions satisfying the $\epsilon$-martingale
 condition then follows from stochastic dominance
-(Lemma~\ref{lemma:rho-stationary}).  See Section~\ref{sec:estimates}
+(Lemma~\ref{lemma:rho-stationary}).  See \Section~\ref{sec:estimates}
 for details.
 
 %; the uncertainty comes
@@ -851,7 +852,7 @@ the Snow White and Ouroboros Praos protocols and analyses. In
 particular, \citet{DBLP:conf/eurocrypt/DavidGKR18} developed a
 ``$\Delta$-reduction'' mapping on the space of characteristic strings
 that permits analyses of forks (and the related statistics of
-interest, cf. \S\ref{sec:definitions}) in the $\Delta$-synchronous
+interest, cf. Section~\ref{sec:definitions}) in the $\Delta$-synchronous
 setting by a direct appeal to the synchronous setting.
 
 \paragraph{Public leader schedules.} One attractive feature of this

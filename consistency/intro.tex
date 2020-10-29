@@ -239,7 +239,7 @@ relationship between the general (e.g., PoS) case and a pair of
 is to bound the behavior of this richer stochastic process.  Our tools
 yield precise, explicit upper bounds on the probability of persistence
 violations that can be directly applied to tune the parameters of
-deployed PoS systems. See Appendix~\ref{sec:exact-prob} where we
+deployed PoS systems. See Chapter~\ref{sec:exact-prob} where we
 record some concrete results of the general theory. The importance of
 these results in the practice of PoS blockchain systems cannot be
 overstated: they provide, for the first time, concrete error bounds
@@ -255,7 +255,7 @@ an abstraction of the protocol execution given the outcomes of the
 leader-election process.)  We begin by generalizing the notion of
 margin to account for local, rather than global, features of a leader
 schedule, and provide an exact, recursive closed form for this new
-quantity (see Section~\ref{sec:recursion}). This proof identifies an
+quantity (see \Section~\ref{sec:recursion}). This proof identifies an
 optimal online adversary (i.e., a fork-building strategy whose current
 decisions do not depend on the future) for PoS blockchain algorithms
 %when
@@ -264,7 +264,7 @@ decisions do not depend on the future) for PoS blockchain algorithms
 with the remarkable property that the sequence of forks produced by
 this adversary \emph{simultaneously} achieve the worst-case (slot)
 common-prefix violations associated with all slots (see
-Section~\ref{sec:canonical-forks}). We then study the stochastic
+\Section~\ref{sec:canonical-forks}). We then study the stochastic
 process generated when the \emph{characteristic string}---a Boolean
 string representing the outcome of the leader election scheme---is
 given by a family of i.i.d.\ Bernoulli random variables. In this case,
@@ -356,21 +356,21 @@ orthogonal and synergistic to those since they can be used to improve
 the settlement time bounds of the blockchain protocol that operates as
 a fallback mechanism.
 
-\paragraph{Outline.} We begin in Section~\ref{sec:model} by describing
+\paragraph{Outline.} We begin in \Section~\ref{sec:model} by describing
 a simple general model for blockchain
 dynamics. Section~\ref{sec:definitions} builds on this model to set
 down a number of basic definitions required for the proofs. The first
-part of the main proof is described in Section~\ref{sec:recursion},
+part of the main proof is described in \Section~\ref{sec:recursion},
 which develops a ``relative'' version of the theory of margin
 from~\cite{KRDO17}; most details are then relegated to
-Section~\ref{sec:margin-proof} in order to move quickly to the
-consistency estimates in Section~\ref{sec:estimates}.  In
-Section~\ref{sec:canonical-forks}, we present an optimal online
+\Section~\ref{sec:margin-proof} in order to move quickly to the
+consistency estimates in \Section~\ref{sec:estimates}.  In
+\Section~\ref{sec:canonical-forks}, we present an optimal online
 adversary who can simultaneously maximize the relative margins for all
 prefixes of the characteristic string.  \ignore{We then provide two
   different settlement estimates in Section~\ref{sec:estimates};
   roughly, the two bounds trade off generality with the strength of
-  the final estimates.} Finally, in Appendix~\ref{sec:exact-prob}, we
+  the final estimates.} Finally, in \Section~\ref{sec:exact-prob}, we
 compute exact upper bounds on $k$-settlement error probabilities for
 various values of $k$ and describe a simple $O(k^3)$-time algorithm to
 compute these probabilities in general.

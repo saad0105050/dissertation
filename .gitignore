@@ -10,6 +10,10 @@ Release
 *.filters
 *.o
 
+## Ignore sublime-specific files
+*.sublime-workspace
+*.sublime-project
+
 
 ## Ignore all PDF and zipped folders
 *.pdf
