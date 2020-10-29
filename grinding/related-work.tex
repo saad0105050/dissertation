@@ -1,60 +1,137 @@
-
-\paragraph{Randomness beacons.}
-The concept of the randomness beacon was introduced by \citet{rabin-beacon} in his seminal paper 
-``Transaction Protection by Beacons'' although in that paper, the beacon was in the hand of a trusted party.
-In the same year, 
-% This paper came in the same year as the ``Coin Flipping by Telephone'' paper by 
-\citet{blum-coin-flipping} showed how to do ``coin flipping by telephone,'' i.e., 
-how two parties can agree on a shared random string by sending messages over a network. 
-Randomness beacons have evolved quite a bit since then. 
-Some beacons are stand-alone and many, as we mentioned before, exist inside other protocols. 
-Some are based on publicly-verifiable secret sharing (PVSS) schemes [SCRAPE, Hydrand, Ouroboros, RandHerd], 
-threshold signature schemes [Cachin-Shoup, DFinity],  
-Verifiable Random Functions (VRF) [Ouroboros Praos, Snow White, Algorand], 
-or cryptographic hash functions [PoW]. 
-Compared to other constructions, the VRF- and hash-based ones are simpler to describe and has 
-more efficient computation/verification schemes. 
+\section{Related work}\label{sec:related-work}
 
 
-\paragraph{Grinding attack and the $q$-bounded security model.}
-Consider a proof-of-stake (PoS) blockchain protocol. 
-In every period, designated players (called \emph{leaders}) in a PoS protocol 
-are supposed to contribute a random nonce to compute the beacon value for the next period. 
-The nonce is typically a verifiable output from a random oracle.
-Unlike the proof-of-work (PoW) model, however, no direct cost is associated with querying the random oracle in the PoS model. 
-No one is stopping a malicious player from trying different nonces over and over again 
----as if grinding the crank in a coffee machine---and finally submitting the one nonce he likes. 
-This is the so called \emph{grinding attack}, where the goal of the malicious player is to 
-non-negligibly increase the probability that a leader of his choice is elected in the next period. 
+Below, we survey the coin-flipping and beacon literature in more detail.
 
-\paragraph{Ethereum's VDF beacon.} 
-The blockchain Ehtereum plans to implement a randomness beacon using Verifiable Delay Functions (VDF) 
-(cf. the blog post \cite{ethereum-vdf-beacon}). 
-The beacon outputs are the epoch-nonces $r_i$ for $i = 1, 2, \ldots$. 
-Every block in $\Epoch_i$ contains a block-nonce. 
-Let $\eta$ be the exclusive-OR of all block-nonces from $\Epoch_i$.
-The beacon output corresponding to this epoch is $r_i = D(\eta)$ 
-where $D$ is a function which guarantees a minimum computation time. 
-Here, it is assumed that the adversary would take at least one epoch to perform a single evaluation 
-of $D$ whereas it would take at most $A$ epochs for an ordinary player. 
-In addition, it is assumed that at at (or after) $\Epoch_{i + A}$, some player 
-would altruistically announce the evaluation $r_i = D(\eta)$ along with a proof for easy verification. 
-Every honest slot leader in $\Epoch_{i + A}$ is supposed to 
-include this announcement in his block. 
-The epoch-randomness for the $\Epoch_k$ is set as $r_{k - N}$ where $N$ is a protocol parameter.
+\paragraph{Collective coin-flipping as a Boolean function.} 
+The (single round) collective coin-flipping in the full information
+model is a classic problem introduced in the seminal work
+of~\citet{BL85}.  In this problem, $n$-players communicate over a
+single broadcast channel.  First, each honest player submits a
+uniformly random bit, and then each adversarial player (strategically)
+submits an arbitrary bit.  The output of the protocol is a single bit,
+computed as a Boolean function $F$ applied to the submitted bits.  If
+$F$ is the majority function, an adversarial coalition of size
+$O(\sqrt{n})$ can arbitrarily influence the output of the
+protocol~\cite{BL85}.  Later,~\citet*{KKL} showed that for
+\emph{every} Boolean function $F$ in this setting, there is an
+adversarial coalition of size $O(n/(\log n))$ that can bias the
+output.  It was conjectured by~\citet{Friedgut} that Boolean functions
+on the continuous cube $[0,1]^n$ (or equivalently, the discrete cube
+$[n]^n$) can be biased by a coalition of size $o(n)$.
+See~\cite{Hatami} and~\cite{Kalai} for advances on this line of
+research.  As for multi-round coin-flipping protocols, \citet*{RSZ}
+showed that any $o(\log^* n)$-round coin-flipping protocol can be
+biased by a coalition of size $o(n)$.
 
-A desirable feature of this beacon is that it is unbiasable 
-since in $\Epoch_i$, 
-by the time the adversary evaluates a single $D(\eta)$ (i.e., one epoch), 
-the future epoch-nonce $r_i$ is already settled. 
-This beacon is ungrindable (in our parlance, the  grinding power is just one.) 
-On the other hand, 
-(i.) it makes a computational assumption on the adversary, 
-e.g., how fast can he compute some function. 
-At present, the community thinks $A = 10$ is a safe choice, 
-but it would lead to using a stake distribution that is at least 
-$10$ epochs old. 
-In contrast, we make no computational assumption on the adversary 
-at the expense of allowing a bounded amount of grinding. 
-(ii.) The output from $\Epoch_i$ is available only after $A$ additional epochs. 
-In contrast, the $i$th output of our beacon is available right after epoch $\Epoch_i$.
+Cryptography is a powerful tool for collective coin-flipping. While the most directly relevant related work is AlgoRand---which uses a mechanism similar to ours---we survey some other work first to set the stage. 
+
+\paragraph{PVSS-based beacons.} 
+Publicly verifiable secret sharing (PVSS) techniques have been
+successfully used to design unbiasable, multi-round coin-flipping
+protocols, such as Ouroboros~\cite{Ouroboros},
+RandHound~\cite{RandHound}, Scrape~\cite{Scrape}, and
+HydRand~\cite{HydRand}.  The coin-flipping in these protocols have two
+(logical) rounds: first, a round where the players broadcast
+commitments to their inputs, followed by a round where these
+commitments are revealed. An advantage of these protocols is that they
+can provide extremely strong guarantees on the quality of the
+randomness---when the protocols are secure, they produce output values
+that are indistinguishable from uniform. A difficulty is that they
+demand $O(n^2)$ messages to be broadcast, which is intractable in
+practice. A standard technique to mitigate this is to first elect a small
+committee of players which then carry out the full PVSS. Of course,
+such a procedure is immediately subject to attacks by an adaptive
+adversary who can corrupt the committee once it is determined.
+
+\paragraph{VDF-based beacons.} 
+Verifiable Delay Functions (VDF)
+\cite{vdf-boneh,vdf-wesolowski,vdf-pietrzak} may be used to construct
+unpredictable, multi-round coin-flipping protocols (for a sketch of
+such a possible construction see~\cite{vdf-ethereum}). Using VDFs in
+this context is orthogonal to our techniques: a VDF can delay the
+revelation of the beacon outcome to temper the opportunities the
+adversary has to grind the beacon output. In general, tuning the
+hardness parameter of the VDF to a high level aids this security
+objective but naturally interferes with the availability (or liveness)
+of the beacon.
+% (in the sense of the immediate availability of the
+% beacon outputs).
+For this reason, a fine-grained analysis of the
+randomness properties of the beacon is a precondition to the effective
+use of a VDF in a practical beacon algorithm. Moreover, employing a
+VDF will require a less cryptographic assumption (moderate hardness).
+We leave the combination of VDF techniques with our randomness
+generation algorithm as an interesting future research direction.
+
+\paragraph{Threshold signatures.}
+DFINITY~\cite{Dfinity} uses a one-round coin-flipping protocol based
+on non-interactive $(t,n)$-Threshold BLS signatures~\cite{BLS}. 
+In the setup phase, a random subset of $n$
+players---a ``group''---is selected from a universe of $N$
+players  
+and 
+key-pairs for the group members are established. 
+After the setup, 
+each player broadcasts his share 
+and any player can
+recover the (unique) beacon output from any $t$ shares.
+%If there are $f$ adversarial players, taking
+%$t \in [f + 1, n-f]$ ensures that the adversarial players cannot
+%prevent a recovery and, importantly, they cannot predict the beacon
+%output.  As for the iterated beacon, a random group is selected at
+%each epoch from a family of groups configured during the setup phase.
+%
+%Note that this beacon is secure only against static
+%adversaries.  Specifically, $n$ depends on the size of the adversarial
+%coalition during the setup phase.  This is necessary: since groups are
+%pre-configured, an adaptive adversary can enlarge his coalition over
+%time and corrupt the group majority 
+% violate the constraint $t \in [f+1, n-f]$ (by increasing $f$)
+%at a future round with a constant probability. In contrast, our
+%protocol is secure as long as the adversary controls less than $N/2$
+%players.  In addition, our protocol is simpler: there is no committee
+%or group selection.
+The main disadvantage with respect to our techniques is of course
+the complexity of the group setup which requires $\Omega(n^2)$ communication
+for a single distributed key generation process between $n$ players.
+
+\paragraph{Algorand.} 
+Algorand~\cite{Algorand} uses a Byzantine Agreement-based multi-round
+coin-flipping protocol where the players are equipped with verifiable
+random functions (VRF).  While the multi-round beacon output is
+uniform except with a negligible probability, the beacon output of a
+single-round is uniform with only constant probability---thus
+conditional min entopy is small. As mentioned above, our protocol can
+be viewed as a parallelization of the AlgoRand technique; indeed, a
+single-round of AlgoRand coin-flipping is equivalent to setting
+$k = 1$ in our protocol.  In contrast, our one-round protocol
+guarantees a ``small'' loss in min-entropy except with a negligible
+probability.
+
+
+\paragraph{VRF-based eventual consensus Proof-of-Stake blockchains.}
+Many proof-of-stake blockchain
+protocols, such as Ouroboros Praos~\cite{Praos}, 
+Genesis~\cite{Genesis}, and Snow White~\cite {SnowWhite}, 
+use VRFs 
+in their coin-flipping protocols. 
+This is a multi-round protocol 
+where each ``block'' contains a nonce.  
+The coin-flipping output is a cryptographic hash 
+of the XOR of the nonces 
+recorded in the ``common prefix'' of all 
+blockchains held by the honest players 
+at the end of the epoch. 
+(Thus, these protocols do not use a broadcast channel.)
+As we show in Appendix~\ref{sec:praos}, 
+the min-entropy loss for this beacon 
+is linear in the security parameter 
+for an adversarial stake $10\%$ or higher.
+Our treatment of this beacon 
+is a first in the literature. 
+
+\paragraph{Nakamoto-style PoW beacons.} 
+\citet{ZuckermanBeacon} establish a lower bound for a class of
+Nakamoto-style proof-of-work based beacons and discuss approaches for
+a game-theoretic analysis of beacon protocols.

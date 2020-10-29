@@ -25,7 +25,9 @@ To set the stage, we record a simple upper bound on grinding power:
   \]
 \end{proof}
 
-\section{Some relaxed bounds on the first and second moments of the grinding power in case of \texorpdfstring{large $\epsilon$}{highly-biased binomial distributions}}
+\subsection{Some relaxed bounds on the first and second moments of the grinding power in case of large $\epsilon$
+% \texorpdfstring{large $\epsilon$}{highly-biased binomial distributions} 
+}
 To obtain more precise estimates, for a string $w \in \{0,1\}^*$ define
 \[
   t(w) = \begin{cases}
@@ -73,8 +75,7 @@ Intuitively, the quantity $t(w_{n-d+1} \ldots w_n)$ reflects the grinding power 
   \begin{align*}
     \Exp[ t(W) ] &\leq \min_{\alpha \geq 1} \Exp\left[2^{(1 - \alpha)d/2 + \alpha\sum_i W_i}\right] = \min_{\alpha \geq 1} 2^{-(\alpha - 1)d/2} \Exp\left[2^{\alpha\sum_i W_i}\right]\\
                  &= \min_{\alpha \geq 1} 2^{-(\alpha - 1)d/2} \prod_i \Exp\left[2^{\alpha W_i}\right] = \min_{\alpha \geq 1} 2^{-(\alpha - 1)d/2} \prod_i \left[\left(\frac{1+\epsilon}{2}\right) + \left(\frac{1-\epsilon}{2}\right) 2^{\alpha}\right]\\
-  &= \min_{\alpha \geq 1} \left(2^{-(\alpha - 1)/2} \left[\left(\frac{1+\epsilon}{2}\right) + \left(\frac{1-\epsilon}{2}\right) 2^{\alpha}\right]\right)^d \\
-  &= \min_{\alpha \geq 1} \left(2^{-1/2} \left[(1+\epsilon)2^{-\alpha/2}  + (1-\epsilon) 2^{\alpha/2}\right]\right)^d\,.
+  &= \min_{\alpha \geq 1} \left(2^{-(\alpha - 1)/2} \left[\left(\frac{1+\epsilon}{2}\right) + \left(\frac{1-\epsilon}{2}\right) 2^{\alpha}\right]\right)^d = \min_{\alpha \geq 1} \left(2^{-1/2} \left[(1+\epsilon)2^{-\alpha/2}  + (1-\epsilon) 2^{\alpha/2}\right]\right)^d\,.
 \end{align*}
 Considering the quantity
 $\beta(a) = (1 - \epsilon) a + (1 + \epsilon) a^{-1}$, note that
@@ -165,46 +166,10 @@ These geometric series lead to immediate bounds.
 
 In what follows, we develop tighter bounds via the asymptotics of the binomial coefficients.
 
-\paragraph{Asymptotic bounds on $S(d,z)$.} 
-When $z \leq d/3$, the sum $S(d,z)$ will contain the central binomial coefficient ${d-z \choose (d-z)/2}$ which is $\Theta(2^{d-z}/\sqrt{d-z})$. 
-It follows that 
-\begin{equation} \label{eq:S_d_z_small}
-    2^{d-z-1} 
-    \leq 
-    S(d,z)
-    \leq 2^{d-z}\,, 
-    \qquad \text{if}\quad 0 \leq z \leq d/3 
-    \,.
-\end{equation}
-On the other hand, for any $0 \leq t < N/2$
-\begin{align}\label{eq:binomial-sum-bound}
-\frac{2^{H(t/N)N} }{\sqrt{8 (t/N) (1-t/N)} }
-\leq 
-\sum_{k=0}^t{ {N \choose k} } 
-&\leq 
-2^{H(t/N)N} \, , 
-\end{align}
-where $H : [0, 1] \rightarrow [0, 1]$ is the binary entropy function defined as
-\begin{align*}
-    H(0) &= H(1) = 0\, , \\
-    H(\alpha) &= -\alpha \log_2(\alpha) - (1-\alpha) \log_2(1-\alpha)\,, 
-        \qquad \text{if}\quad 0 < \alpha < 1\, .
-\end{align*}
-Thus we can bound $S(d,z)$ using (\ref{eq:binomial-sum-bound}) as follows:
-\begin{equation} \label{eq:S_d_z_large}
-    \frac{2^{(d-z)H(z/(d-z))}(d-z)}{\sqrt{8 z(d-2z) }}
-    \leq
-    S(d, z) 
-    \leq
-    2^{(d-z)H(z/(d-z))}
-    \,,\qquad \text{if} \quad d/3 < z \leq d/2 
-    \,.
-\end{equation}
 
-
-\section{Exact asymptotics for the first moment}
-\newcommand{\DoverTwo}{\lfloor d/2 \rfloor}
-\newcommand{\DoverThree}{d/3}
+\subsection{Exact asymptotics for the first moment}
+% \newcommand{\DoverTwo}{\lfloor d/2 \rfloor}
+% \newcommand{\DoverThree}{d/3}
 
 In what follows, we establish asymptotically tight upper and lower bounds on 
 \begin{align}\label{eq:m_z}
@@ -404,8 +369,7 @@ m(z)
 {d \choose z} \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} 
 \left(\frac{1-\epsilon}{2}\right)^{d} \\
 &\geq 2^{(d-z)H(z/(d- z))}\frac{(d-z)}{\sqrt{8z(d-2z)} } \frac{2^{d H(z/d)} \sqrt{d}}{\sqrt{8z(d-z)} }
-\left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \left(\frac{1-\epsilon}{2}\right)^{d} \\
-&\qquad \text{using Corollary~\ref{coro:nchoosek_1} on }{d \choose z}\\
+\left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \left(\frac{1-\epsilon}{2}\right)^{d} \qquad \text{using Corollary~\ref{coro:nchoosek_1} on }{d \choose z}\\
 &= \frac{\sqrt{d} \sqrt{d-z}}{8z\sqrt{(d-2z)} } 
 \left( 2^{q(\alpha, \epsilon)}\right)^{d} \qquad \text{using}\quad \alpha = z/d \quad \text{and} \quad q(\alpha, \epsilon) \text{ from (\ref{eq:q2}) }\\
 &= \frac{\sqrt{1-\alpha}}{8\alpha \sqrt{d} \sqrt{(1-2\alpha)} } 
@@ -467,7 +431,7 @@ This proves the lower bound in the claim.
 
 
 
-\section{Exact asymptotics for higher moments}
+\subsection{Exact asymptotics for higher moments}
 \begin{proposition}\label{prop:grinding-power-moment}
 For $t \in \mathbb{N}, t \geq 2$,
 \[
@@ -659,70 +623,3 @@ The last inequality is equivalent to saying $\epsilon(2^t - 1) \leq 2^t - 3$, or
 % % &= \frac{3-2\alpha( 3-2\alpha)^2}{\alpha^2(1+2\alpha^2 -3\alpha)^2} < 0\, .
 % \end{align*}
 
-%===========================================================
-\subsection{Stirling's approximation and binomial coefficients}
-Let us briefly recall an upper bound on binomial coefficients.
-
-\begin{theorem}[Stirling's approximation]
-For any positive integer $n$,
-\[
-n! \, = \, \sqrt{2\pi n}(\frac{n}{e})^n e^{r(n)}\, ,
-\]where
-\[
-\frac{1}{12n} < r(n) < \frac{1}{12n + 1}.
-\]
-\end{theorem}
-
-Let the binary entropy function $H : [0, 1] \rightarrow [0, 1]$ be defined as
-\begin{align*}
-H(\alpha) & \defeq \left\{ \begin{array}{ll}0 & \text{ if } \alpha \in \{0, 1\}\\
-\\
--\alpha \log_2(\alpha) - (1-\alpha) \log_2(1-\alpha) & \text{ if } \alpha \in (0, 1)\end{array} \right. .
-\end{align*}
-
-\begin{corollary}\label{coro:nchoosek_1}
-For a positive integer $n$ and any $\alpha \in \{\frac{1}{n}, \frac{2}{n}, \cdots, \frac{1}{2} \}$, 
-\begin{align}\label{eq:nck}
-  \frac{2^{n H(\alpha)}}{\sqrt{8 n\alpha (1-\alpha)}} 
-  \leq {n \choose \alpha n} 
-  \leq \frac{2^{n H(\alpha)}}{\sqrt{\pi n\alpha (1-\alpha)}} 
-  \leq \frac{2^{n H(\alpha)}}{\sqrt{\pi/2}} \, .
-\end{align}
-\end{corollary}
-
-\begin{proof}
-\begin{align*}
-{n \choose \alpha n}
-&= \frac{n!}{(\alpha n)!\, \left( (1-\alpha)n \right)! }\\
-&\approx \frac{\sqrt{2\pi n}(\frac{n}{e})^n}{2\pi n\sqrt{\alpha (1-\alpha)}(\frac{\alpha n}{e})^{\alpha n}(\frac{(1-\alpha)n}{e})^{(1-\alpha)n} } \underbrace{ \exp\left( \frac{1}{12n} - \frac{1}{12\alpha n + 1} - \frac{1}{12(1-\alpha)n+1}\right) }_{ E(n,\alpha) } \\
-&= 2^{n H(\alpha)} \, 1/\underbrace{ \sqrt{2 \pi n\alpha (1-\alpha)} }_{F(n, \alpha)} \, E(n, \alpha) \\
-&=2^{n H(\alpha)} E(n, \alpha)/F(n, \alpha) \, .
-\end{align*}
-
-\emph{(The upper bounds.)} $E(n,\alpha)$ is at most $e^{1/12 n} < \sqrt{2}$. Hence the first (tighter) upper bound follows. Now we deal with the quantity $F(n, \alpha)/\sqrt{2} = \sqrt{\pi n \alpha (1-\alpha)}$. Since $1-\alpha \geq 1/2$ and $\alpha \geq 1/n$, we have this is at least $ \sqrt{\pi/2}$. \emph{(The lower bound.)} $E(n, \alpha)$ is at least $1$, and $2\pi$ is at most $8$. Hence the bound follows.
-
-\end{proof}
-
-\begin{corollary}\label{coro:nchoosek_2}
-For a positive integer $n$ and any $\alpha \in [\frac{1}{n},\frac{1}{2} - \frac{1}{n}]$, 
-\begin{align}\label{eq:nck_2}
-{(1-\alpha)n \choose \alpha n} \leq 2^{(1-\alpha)n\,H\left( \frac{\alpha}{1-\alpha} \right)}\, G(n, \alpha)\,,
-\end{align}
-where \[
- G(n,\alpha) \leq \sqrt{\frac{1-\alpha}{\alpha(1-2\alpha) \pi n} } \leq \sqrt{\frac{1-\alpha}{ 2 \pi \alpha} } \leq \sqrt{ \frac{n-1}{2 \pi} }\, . 
- \]
-\end{corollary}
-\begin{proof}
-
-\begin{align*}
-{(1-\alpha)n \choose \alpha n}
-&= \frac{((1-\alpha)n)!}{(\alpha n)!\, \left( (1-2\alpha)n \right)! }\\
-&\approx \frac{\sqrt{2\pi (1-\alpha)n}(\frac{(1-\alpha)n}{e})^{(1-\alpha)n}}{2\pi n\sqrt{\alpha (1-2\alpha)}(\frac{\alpha n}{e})^{\alpha n}(\frac{(1-2\alpha)n}{e})^{(1-2\alpha)n} } \\
-&\qquad \cdot \underbrace{ \exp\left( \frac{1}{12(1-\alpha)n} - \frac{1}{12\alpha n + 1} - \frac{1}{12(1-2\alpha)n+1}\right) }_{E(n,\alpha)}  \\
-&= \underbrace{ \sqrt{\frac{1-\alpha}{\alpha(1-2\alpha) 2 \pi n} } }_{F(n, \alpha)}\, \left( \frac{(1-\alpha)^{1-\alpha}}{\alpha^\alpha (1-2\alpha)^{1-2\alpha}} \right)^n\, E(n, \alpha)\\
-&=F(n, \alpha) \, 2^{(1-\alpha)n\,H\left( \frac{\alpha}{1-\alpha} \right)} \, E(n, \alpha)\, .
-\end{align*}
-
-First, note that $\alpha \leq 1/2 - 1/n$ implies $(1-2\alpha)n \geq 2$. Consequently, $F(n, \alpha) \leq \sqrt{\frac{1-\alpha}{ 4 \pi \alpha} }$. Moreover, $E(n,\alpha)$ is at most $e^{1/12(1-\alpha)n} < \sqrt{2}$. This gives $F(n, \alpha)E(n, \alpha) \leq \sqrt{\frac{1-\alpha}{ 2 \pi \alpha} }$. Since $\alpha \geq 1/n$, the quantity inside the square root is at most $(1-1/n)/2 \pi(1/n) = (n-1)/2\pi$.
-
-\end{proof}

@@ -59,10 +59,21 @@
 \addtocontents{toc}{\protect\setChapterprefix{}}
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliographystyle{plainnat}  
-\bibliography{bib/forks,bib/grinding,bib/thesis,bib/abbrev0,bib/crypto_crossref}
+\bibliography{bib/forks,bib/grinding,bib/abbrev0,bib/crypto_crossref}
 
 \appendix
 \addtocontents{toc}{\protect\setChapterprefix{Appendix }}
-\input{app.tex}
+
+\chapter{Stirling's Approximation and Binomial Coefficients}\label{app:binomial-coeff}
+\input{grinding/app-binomial-coeff}
+
+\chapter{Omitted Proofs for Grinding in Praos}\label{app:grinding-praos}
+\input{grinding/app-praos}
+
+\chapter{Fractional moment bounds for the geometric distribution}\label{app:geometric}
+\input{grinding/appendix/geometric.tex}
+
+
+
 
 \end{document}

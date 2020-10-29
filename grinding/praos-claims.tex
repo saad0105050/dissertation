@@ -1,0 +1,501 @@
+
+% \paragraph{Asymptotic bounds on $S(d,z)$.} 
+When $z \leq d/3$, the sum $S(d,z)$ in~\eqref{eq:S_d_z} 
+will contain the central binomial coefficient ${d-z \choose (d-z)/2}$ which is $\Theta(2^{d-z}/\sqrt{d-z})$. 
+It follows that 
+\begin{equation} \label{eq:S_d_z_small}
+    2^{d-z-1} 
+    \leq 
+    S(d,z)
+    \leq 2^{d-z}\,, 
+    \qquad \text{if}\quad 0 \leq z \leq d/3 
+    \,.
+\end{equation}
+On the other hand, for any $0 \leq t < N/2$
+\begin{align}\label{eq:binomial-sum-bound}
+\frac{2^{H(t/N)N} }{\sqrt{8 (t/N) (1-t/N)} }
+\leq 
+\sum_{k=0}^t{ {N \choose k} } 
+&\leq 
+2^{H(t/N)N} \, , 
+\end{align}
+where $H : [0, 1] \rightarrow [0, 1]$ is the binary entropy function defined as
+\begin{align*}
+    H(0) &= H(1) = 0\, , \\
+    H(\alpha) &= -\alpha \log_2(\alpha) - (1-\alpha) \log_2(1-\alpha)\,, 
+        \qquad \text{if}\quad 0 < \alpha < 1\, .
+\end{align*}
+Thus we can bound $S(d,z)$ using (\ref{eq:binomial-sum-bound}) as follows:
+\begin{equation} \label{eq:S_d_z_large}
+    \frac{2^{(d-z)H(z/(d-z))}(d-z)}{\sqrt{8 z(d-2z) }}
+    \leq
+    S(d, z) 
+    \leq
+    2^{(d-z)H(z/(d-z))}
+    \,,\qquad \text{if} \quad d/3 < z \leq d/2 
+    \,.
+\end{equation}
+
+
+
+\subsection{Proof of Claim~\ref{claim:multiple-honest-blocks}}
+
+  Let $m \in \NN$. 
+  (Think of $m$ as the total number of honest participants. 
+  However, as we show below, our analysis would not depend on $m$.)
+  Consider the independent Bernoulli random variables $X_i \in \{0, 1\}, i \in [m]$ 
+  and a tuple $(\sigma_1, \ldots, \sigma_m) \in [0,1]^m$ 
+  so that $\Pr[X_i = 1] = \sigma_i$ 
+  and $\sum \sigma_i = 1 - \alpha$. 
+  Define $H = H_m = \sum_{i =1}^m X_i$ and observe that $\Exp H = 1 - \alpha$. 
+  Then 
+  $$
+    A(\epsilon, \lambda) 
+    = \Pr[W_1 \neq \A] \cdot \Exp[H^\lambda \mid H \geq 1]
+    = (1-\alpha) \cdot \Exp[H^\lambda]/(1 - \Pr[H = 0])
+    \leq \frac{1 - \alpha}{1 - e^{-(1 - \alpha)}} \cdot \Exp[H^\lambda]
+  $$ 
+  since $\Pr[H = 0] = \prod_i (1 - \sigma_i) \leq e^{-\sum_i \sigma_i} = e^{-(1 - \alpha)}$.
+  Next, consider the i.i.d.\ Bernoulli random variables $X'_i \in \{0, 1\}, i \in [m]$ 
+  so that $\Pr[X_i' = 1] = (1-\alpha)/m$. 
+  Define $H' = H'_m = \sum_{i =1}^m X'_i$ and observe that $\Exp H' = \Exp H = 1 - \alpha$. 
+
+  % \begin{fact}\label{fact:mgf-equal-unequal-stake}
+  %   For any integer $m \geq 1$ and positive real $\lambda$, 
+  %   $\Exp e^{\lambda H'_m} \geq \Exp e^{\lambda H_m}$.
+  % \end{fact}
+  % \begin{proof}
+  %   Writing $c = 1 - \alpha$, 
+  %   the moment generating function of $H$ is 
+  %   $$
+  %     \Exp e^{\lambda H_m} 
+  %     = \prod_i \Exp e^{\lambda X_i} 
+  %     = \prod_i \left( (1 - \sigma_i)\cdot e^0 + \sigma_i \cdot e^\lambda  \right)
+  %     = \prod_i \left(1 + \sigma_i(e^\lambda - 1) \right)
+  %     = \prod_i (1 + \beta \sigma_i)
+  %   $$
+  %   where we write $\beta = e^\lambda - 1$. 
+  %   By the AM-GM inequality, 
+  %   the right-hand side above is at most 
+  %   $$
+  %     \prod_i (1 + \beta \sigma_i)
+  %     \leq \left(\sum_{i=1}^m(1 + \beta \sigma_i)/m\right)^m 
+  %     = (1 + \beta c/m)^m
+  %     \,.
+  %   $$
+  %   On the other hand, 
+  %   $$
+  %     \Exp e^{\lambda H'_m} 
+  %     = \prod_i \Exp e^{\lambda X'_i} 
+  %     = \prod_i \left( (1 - c/m)\cdot e^0 + c/m \cdot e^\lambda  \right)
+  %     = \prod_i (1 + \beta c/m)
+  %     \geq \Exp H_m^\lambda
+  %     \,.
+  %   $$
+  % \end{proof}
+
+
+
+  Since the $X'_i$s are i.i.d., 
+  \begin{align*}
+    \Exp {H'_m}^2 
+    &= \Exp \left(\sum_{i = 1}^m X'_i \right)^2
+    = m \Exp {X'_1}^2 + \binom{m}{2} (\Exp X'_1)^2
+    = m ((1-\alpha)/m) + \binom{m}{2} ((1 - \alpha)/m)^2 \\
+    &= (1-\alpha) + \frac{m-1}{2m} (1 - \alpha)^2
+    = (1-\alpha) \left( 1 + (1 - 1/m) (1 - \alpha)/2 \right) \\
+    &\leq (1-\alpha) \left( 1 + (1 - \alpha)/2 \right)
+    = (1-\alpha) (3 - \alpha)/2
+    \,.    
+  \end{align*}
+
+
+  \begin{fact}\label{fact:second-moment-equal-unequal-stake}
+    Let $m \in \NN$ and $c = \sum_{i = 1}^m \sigma_i$. 
+    Then $\Exp H_m^2 \leq \Exp {H'_m}^2 \leq c + c^2$.
+  \end{fact}
+  \begin{proof}
+    Writing $c = 1 - \alpha$, 
+    \begin{align*}
+      \Exp H_m^2 
+      &=\Exp \left(\sum_i X_i\right)^2 
+      = \sum_i \Exp X_i^2 + \sum_{i \neq j} (\Exp X_i)(\Exp X_j) 
+      = \sum_i \sigma_i + \sum_i \sigma_i \sum_{j \neq i} \sigma_j \\ 
+      &= c + \sum_i \sigma_i (c - \sigma_i) 
+      = c + c^2 - \sum_i{\sigma_i^2}
+      \,.      
+    \end{align*}
+    Similarly,
+    \begin{align*}
+      \Exp {H'_m}^2 
+      &=\Exp \left(\sum_i X'_i\right)^2 
+      = m \cdot c/m + m \cdot (c/m) (c - c/m) 
+      = c + c^2 - c^2/m
+      \,.      
+    \end{align*}
+    By the Cauchy-Schwartz inequality, 
+    $
+      c^2 = \left(\sum_i \sigma_i \right)^2 \leq m \, \sum_i \sigma_i^2
+      % \,.
+    $; the claim follows.
+  \end{proof}
+
+  Let $f(\alpha) = A(\epsilon, 2)$ where $\alpha = (1-\epsilon)/2$.
+  It follows that 
+  $$
+    f(\alpha) 
+    \leq \frac{1 - \alpha}{1 - e^{-(1 - \alpha)}} \cdot \Exp {H_m}^2
+    \leq \frac{1 - \alpha}{1 - e^{-(1 - \alpha)}} \cdot \Exp {H'_m}^2
+    \leq \frac{1 - \alpha}{1 - e^{-(1 - \alpha)}} \cdot (1-\alpha) (3 - \alpha)/2
+    = \frac{(1 - \alpha)^2 (3 - \alpha)}{2 \left( 1 - e^{-(1 - \alpha)} \right)}
+    \,.
+  $$
+
+  Let $g(\alpha)$ denote the quantity at the right-hand side. 
+  Note that $g(\alpha)$ is a convex function of $\alpha$ 
+  and, furthermore, that $f(0)\leq g(0) \leq 2.4$ 
+  and $f(1/2) \leq g(1/2) \leq 0.8$.
+  It follows that 
+  $$
+  f(\alpha) 
+  \leq 2.4 + \alpha \cdot \frac{0.8-2.4}{1/2 - 0}
+  = 2.4 - 3.2 \alpha
+  = 2.4 - 3.2 (1 - \epsilon)/2
+  = 0.8  + 1.6 \epsilon
+  = 0.8 (1 + 2 \epsilon)
+  \,.
+  $$
+  \hfill\qed
+
+
+
+\subsection{Proof of Claim~\ref{claim:t1star-variance-exact}}
+  We use $\log$ to denote the base-$2$ logarithm and $H()$ to denote the binary entropy function. 
+  Since $z \leq d/3$, $S(d,z)$ is at most $2^{d-z}$ and consequently, 
+  $S(d, z)^2 B_{d, \epsilon}(d-z)$ is at most
+  \begin{align}\label{eq:tz-variance-small-d}
+  t_z&\defeq 2^{2(d-z)} \cdot (1-\epsilon)^d 2^{-d} {d \choose z}  \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \nonumber \\
+  &= 2^d(1-\epsilon)^d {d \choose z} \left(\frac{1+\epsilon}{4(1-\epsilon)}\right)^{z}\,.
+  \end{align}
+  Our goal is to bound $t_z$ from above. 
+
+  % \paragraph{Case: $\epsilon < 1/3$.} 
+  % Now we are dealing with the situation where $d \leq d/3$ and $\epsilon < 1/3$. 
+  Let $\alpha \defeq z/d$ and observe that $\alpha \in [0, 1/3]$ since $z \leq d/3$.
+  Using $z = \alpha d$ in~\eqref{eq:tz-variance-small-d} and 
+  using the simplified bound $\binom{d}{\alpha d} \leq 2^{H(\alpha)d}$ from~\eqref{eq:nck}, 
+  we can write
+  \begin{align*}
+  t_z
+  &= 2^{d}(1-\epsilon)^d {d \choose \alpha d} \left(\frac{1+\epsilon}{4(1-\epsilon)}\right)^{\alpha d} \\
+  &\leq 2^d
+  (1-\epsilon)^d 
+  2^{H(\alpha)d} 
+  \left(\frac{1+\epsilon}{4(1-\epsilon)}\right)^{\alpha}
+  \,.
+  \end{align*}
+  If we define 
+  \begin{align*}
+  q(\alpha, \epsilon)
+  &\defeq H(\alpha)+1-2\alpha+ \alpha \log \frac{1+\epsilon}{1-\epsilon}+\log(1-\epsilon)
+  \,,
+  \end{align*}
+  we can write $t_z = t_{\alpha d} \leq 2^{q(\alpha, \epsilon)d}$. 
+  Thus our goal is to bound $q(\alpha, \epsilon)$ from above. 
+
+  The function $q(\alpha, \epsilon)$ must be a unimodal concave function in $\alpha$ since for a fixed $\epsilon$, 
+  it is a linear combination of $\alpha$ and the entropy function which is a unimodal concave function. 
+  The largest term in the sequence $\{t_z\}$ corresponds to some $\alpha=\alpha^*$ that maximizes $q(\alpha, \epsilon)$. 
+  % In order to bound $t_z$, it suffices to bound $q(\alpha^*, \epsilon)$. 
+  The partial derivative of $q(\alpha, \epsilon)$ with respect to $\alpha$ is
+  \begin{align*}
+  \frac{\partial}{\partial \alpha}q(\alpha, \epsilon) &= -\log \frac{\alpha}{1-\alpha} - 2 + \log \frac{1+\epsilon}{1-\epsilon} 
+  \,.
+  % \frac{\partial^2}{\partial \alpha^2}q(\alpha, \epsilon) &= -\frac{1}{\alpha} - \frac{1}{1-\alpha} < 0
+  % q^{(3)}(\alpha, \epsilon) &= \frac{1}{\alpha^2} - \frac{1}{(1-\alpha)^2} \\
+  % q^{(4)}(\alpha, \epsilon) &= -\frac{2}{\alpha^3} - \frac{2}{(1-\alpha)^3} < 0
+  \end{align*}
+  The solution to the equation $\frac{\partial}{\partial \alpha}q(\alpha, \epsilon) = 0$ is given by
+  % \begin{align*}
+  % &\log (\frac{1}{\alpha} - 1) = 2 + \log\frac{1-\epsilon}{1
+  % +\epsilon}\\
+  % \text{or, }& \frac{1}{\alpha}-1 = \frac{4(1-\epsilon)}{1
+  % +\epsilon} \\
+  % \text{or, }&  \alpha^* \defeq \alpha^*(\epsilon) = \frac{1}{1+\frac{4}{r}} =  \frac{r}{4+r}\,,\\
+  % \end{align*}
+  $\alpha^* = r/(4 + r)$ where $r \defeq (1+\epsilon)/(1-\epsilon) < (1+1/3)/(1-1/3) = 2$.
+  % Since $q(\alpha, \epsilon)$ is a linear combination of an $\alpha$-concave function (entropy) and linear terms in $\alpha$, $\alpha^*$ must maximize $q(\alpha, \epsilon)$. 
+
+  We can substitute the definition of the binary entropy function $H(.)$ 
+  in the definition of $q(\alpha, \epsilon)$ to get 
+  \begin{align*}
+  q(\alpha^*, \epsilon) 
+  &= -\log\left[
+  \left(\alpha^*\right)^{\alpha^*}(1-{\alpha^*})^{1-{\alpha^*}}
+  \right] 
+  + \log r^{\alpha^*} + 1 - 2{\alpha^*} + \log(1-\epsilon) \\
+  &= -\log\left[ \left(\frac{r}{4+r}\right)^{\frac{r}{4+r}} \left(\frac{4}{4+r}\right)^{\frac{4}{4+r}}\right] 
+   - \log \left(r^{-\frac{r}{4+r}} \right) + 1 - \frac{2r}{4+r}+\log(1-\epsilon) \\
+  &= -\frac{1}{4+r} \log(4^4) + \log(4+r)+\frac{4-r}{4+r} + \log(1-\epsilon) \\
+  &= \log\left[(4+r)(1-\epsilon)\right] - 1 \\
+  &= \log\left[\left(4+\frac{1+\epsilon}{1-\epsilon}\right)(1-\epsilon)\right] - 1 \\
+  &= \log(5-3\epsilon) - 1  = \log\left( (5 - 3 \epsilon)/2 \right)
+  % \\
+  % \implies 2^{q(\alpha, \epsilon)}
+  % &\leq \frac{5-3 \epsilon}{2}
+  \,.
+  \end{align*} 
+  Since $q(\alpha, \epsilon) \leq q(\alpha^*, \epsilon)$, we have 
+  \[
+      t_z \leq 2^{q(\alpha, \epsilon)d} \leq 2^{q(\alpha^*, \epsilon)d} = \frac{5 - 3 \epsilon}{2}
+      \,.
+  \]
+  Although this bound holds for $\epsilon \in (0, 1)$, we claim this bound for only $\epsilon < 1/3$ 
+  since we can in fact obtain a tighter bound for $\epsilon \geq 1/3$. 
+
+
+  \paragraph{A tighter bound for $\epsilon \geq 1/3$.} 
+  % First consider the case when $\epsilon \geq 1/3$. 
+  We start by observing that $t_z$ increases monotonically in $z$ if $\epsilon \geq 1/3$. 
+  To see this, note that the ratio of two consecutive terms in the sequence $t_0, t_1, t_2, \ldots$ is
+  \[
+  % r(z) \defeq
+  \frac{t_{z+1}}{t_z} 
+  =\frac{ {d \choose z+1} (1+\epsilon) }{ {d \choose z} 4(1-\epsilon) } 
+  \geq \frac{(d-z)(1+\epsilon)}{4(z+1) (1-\epsilon)}\, .
+  \]
+  Since $\epsilon \geq 1/3$, this ratio is at least $(d-z)/2(z+1)$ which is 
+  strictly greater than one for $z+1 \leq d/3$. 
+  Hence the largest term in the sequence $\{t_z\}$ would be the last one. 
+  Therefore,
+  \begin{align*}
+  t_z
+  &\leq t_{d/3} = 2^d (1-\epsilon)^d 
+  {d \choose d/3} 
+  \left(\frac{1+\epsilon}{4(1-\epsilon)}\right)^{d/3} \\
+  &\leq 2^{d/3}
+  \frac{2^{H(1/3)d}}{\sqrt{ \pi (d/3) (2/3)}} 
+  (1+\epsilon)^{d/3}(1-\epsilon)^{2d/3}  \qquad \text{using Corollary~\ref{coro:nchoosek_1}} \\
+  &= \left( 2^{1/3 + H(1/3)} (1+\epsilon)^{1/3} (1-\epsilon)^{2/3} \right)^d \frac{3}{\sqrt{2 \pi d}} \\
+  &= \left( 2^{2/3} \phi(\epsilon) \right)^d \frac{3}{\sqrt{2 \pi d}} 
+  \qquad \text{using (\ref{eq:phi_eps}) and since }2^{1/3 + H(1/3)} = 3/2^{1/3}\\
+  &\leq \left( 2^{2/3} \phi(\epsilon) \right)^d
+  \end{align*}
+  since $d \geq 2$. 
+
+  It is not hard to check that 
+  $2^{2/3} \phi(\epsilon)$ is at most $(5 - 3\epsilon)/2$ for $\epsilon \geq 1/3$. 
+  First, check that they are equal at $\epsilon = 1/3$ and 
+  at $\epsilon = 1$, $2^{2/3}\phi(1) = 0 < (5 - 3\cdot 1)/2 = 1$.
+  Next, we establish the claimed
+  inequality for respective logarithms. 
+  In particular, let 
+  \[
+      a(\epsilon) = \ln\left( 2^{2/3} \phi(\epsilon) \right)
+      \,,\qquad\text{and}\qquad 
+      b(\epsilon) = \ln\left( (5 - 3 \epsilon)/2\right)
+      \,.
+  \]
+  Check that the respective derivatives are 
+  $a^\prime(\epsilon) = -(1+3 \epsilon)/3(1 - \epsilon^2)$ 
+  and $b^\prime(\epsilon) = - 3/(5 - 3\epsilon)$. 
+  Since both derivatives are negative, it remains to check that $|a^\prime(\epsilon)| \geq |b^\prime(\epsilon)|$. 
+  To that end, we claim that the ratio $|a^\prime(\epsilon)|/|b^\prime(\epsilon)|$ 
+  is strictly positive for $\epsilon > 1/3$. 
+  To see this, observe that the ratio equals $(5 + 12 \epsilon - 9 \epsilon^2)/9(1-\epsilon^2)$. 
+  For $\epsilon = 1/3 + \delta$ for any $\delta > 0$, 
+  the numerator is $5 + 12 (1/3 + \delta) - 9 \epsilon^2$, 
+  or $9(1 - \epsilon^2) + 12\delta$. 
+  Since the denominator is $9(1 - \epsilon^2)$, the ratio is positive for $\epsilon \in(1/3, 1)$. 
+\hfill$\qed$
+
+
+
+
+
+\subsection{Proof of Claim~\ref{claim:t2star-variance-exact}}
+  We use $\log$ to denote the base-$2$ logarithm and $H()$ to denote the binary entropy function. 
+  Define $\alpha \defeq z/d \in (1/3, 1/2)$ and $r \defeq (1+\epsilon)/(1-\epsilon)$.
+  Recall that $\binom{d}{\alpha d} \leq 2^{d H(\alpha)}$ using~\eqref{eq:nck}.
+  Since $z$ is strictly larger than $(d - z)/2$, 
+  we have the upper bound $S(d,z) \leq 2^{(d-z)H(z/(d-z))}$ from~\eqref{eq:S_d_z_large}). % S_d_z_upperbound
+
+  % \begin{description}
+
+  \paragraph{Case: $0 < \epsilon \leq 3/5$.} 
+  % \item[Case: $0 < \epsilon \leq 3/5$.] 
+  % In this case, $r = (1+\epsilon)/(1-\epsilon) \leq 4$.
+  This gives
+  \begin{align*}
+  S(d, z)^2 B_{d,\epsilon}(d-z) 
+  &\leq 2^{2(d-z)H(z/(d-z))} \cdot (1-\epsilon)^d 2^{-d} {d \choose z}  r^{z} \\
+  % &\leq 2^{2(d-z)H(z/(d-z))} \cdot (1-\epsilon)^d 2^{-d} 2^{d H(z/d)}  \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \\
+  % &= \left( 2^{2(1-z/d)H(z/(d-z)) + H(z/d) - 1} \right)^d (1-\epsilon)^d 
+  %  \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \\
+  &\leq \left( 2^{2(1-z/d)H(z/(d-z)) + H(z/d) - 1} \right)^d (1-\epsilon)^d r^{\alpha d} \\
+   &= \left( 2^{ \alpha \log r + 2(1-\alpha)H(\alpha/(1 - \alpha)) + H(\alpha) - 1} (1-\epsilon) \right)^d 
+  %  &= \left(2^{q(\alpha, \epsilon)} (1-\epsilon) \right)^d
+  \,.
+  \end{align*}
+  % where we have used $4^z = 2^{2\alpha d}$. 
+  Let us define 
+  \[
+      p(\alpha) \defeq 2 \alpha \log r + 2(1-\alpha)H(\alpha/(1 - \alpha)) + H(\alpha) - 1 
+  \]
+  so that 
+  $
+      S(d, z)^2 B_{d,\epsilon}(d-z) \leq \left(2^{p(\alpha)} (1-\epsilon) \right)^d
+  $.
+
+  Observe that $p(\alpha)$ is a unimodal concave function. 
+  The derivative of this function is
+  $
+      -\left(4(1-2\alpha \log r)^4\right)/\left(\alpha^3(1-\alpha) \right)
+  $
+  which is strictly negative for $1/3 \leq \alpha < 1/2$. 
+  It follows that $\alpha = 1/3$ (i.e., $z = d/3$) maximizes $p(\alpha)$. 
+  Consequently,
+  \begin{align*}
+  S(d, z)^2 B_{d,\epsilon}(d-z)
+  % &\leq S(d, d/3)^2 B_{d,\epsilon}(2d/3) \\
+  &\leq \left(2^{q(1/3)} (1-\epsilon) \right)^d \\
+  &= \left( 2^{(1/3)\log r + 2(2/3)H(1/2) + H(1/3) - 1}  (1-\epsilon) \right)^d \\
+  &= \left( 2^{2(2/3)H(1/2) + H(1/3) - 1}  (1-\epsilon)
+   \left(\frac{1+\epsilon}{1-\epsilon}\right)^{1/3} \right)^d \\
+  &= \left( \frac{3}{2^{1/3}}  (1-\epsilon)
+   \left(\frac{1+\epsilon}{1-\epsilon}\right)^{1/3} \right)^d \\
+   &= \left(2^{2/3} \phi(\epsilon) \right)^d 
+  \end{align*}
+  since $2^{2^{1/3 + H(1/3)}} = 3/2^{1/3}$.
+
+  \paragraph{Case: $3/5 < \epsilon \leq 0.81$.}
+  % \item[Case: $3/5 < \epsilon \leq 0.81$.] 
+  In this case, 
+  \begin{align*}
+  S(d,\alpha d)^2 B_{d,\epsilon}(d-\alpha d)
+  &\leq \left( 2^{2(1-\alpha)H(\alpha/(1-\alpha)) + H(\alpha) - 1} \right)^d (1-\epsilon)^d 
+   r^{\alpha d} \\
+  &=\left( 2^{q(\alpha, \epsilon)} \right)^d\, ,
+  \end{align*}
+  where
+  \begin{align*}
+  q(\alpha, \epsilon)
+  &\defeq H(\alpha) - 1 + 2(1-\alpha) H\left(\frac{\alpha}{1-\alpha}\right) 
+  + \alpha \log r +\log(1-\epsilon)\,.
+  \end{align*}
+  Observe that $q(\alpha, \epsilon)$ is concave in $\alpha$ since for a fixed $\epsilon$, it is a linear combination of the concave entropy function and $\alpha$.  
+  The derivatives of $q(\alpha, \epsilon)$ with respect to $\alpha$ are as follows:
+  \begin{align*}
+  d_1(\alpha) = \frac{\partial}{\partial \alpha}q(\alpha, \epsilon)
+   &= \log \left(\frac{(1-2\alpha)^4}{\alpha^3(1-\alpha)}  \frac{1+\epsilon}{1-\epsilon} \right)\, .\\
+  d_2(\alpha) = \frac{\partial^2}{\partial \alpha^2}q(\alpha, \epsilon)
+  &= -\frac{3-2\alpha}{\alpha(1+2\alpha^2 -3\alpha) \ln 2} \\
+  d_3(\alpha) = \frac{\partial^3}{\partial \alpha^3}q(\alpha, \epsilon)
+  &= \frac{3-2\alpha( 3-2\alpha)^2}{\alpha^2(1+2\alpha^2 -3\alpha)^2 \ln 2}
+  \, .
+  \end{align*}
+  We claim that $d_3(\alpha) < 0$ for $\alpha \in (1/3, 1/2)$. 
+  To see this, let $f(\alpha) = 3 - 2\alpha(3 - 2\alpha)^2$. 
+  Its derivative is $-2(3 - 2\alpha)(3 - 6\alpha)$ which is strictly negative for $\alpha \in (1/3, 1/2)$. 
+  Hence $f(\alpha) < f(1/3) < 0$ and consequently, $d_3(\alpha) < 0$. 
+  It follows that we can upper bound $q(\alpha, \epsilon)$ 
+  by truncating its power series around $\alpha = 1/3$ 
+  at the quadratic term. 
+  The relevant derivatives at $\alpha = 1/3$ are 
+  $d_1(1/3) = \log r - 1$ and
+  $d_2(1/3) = -63/(2 \ln 2)$. 
+  Thus $q(\alpha, \epsilon) \leq R(\alpha)$ where
+  \begin{align*}
+  R(\alpha)
+  &= q(1/3, \epsilon) + (\alpha-1/3)\cdot d_1(1/3) + \frac{(\alpha-1/3)^2}{2}\cdot d_2(1/3) \\
+  &= \left( H(1/3) - 1 + 4/3
+      + (1/3)\log r + \log(1-\epsilon) \right)
+      + (\alpha-1/3) \left( -1 + \log r \right)
+      + \frac{(\alpha-1/3)^2}{2} \frac{-63}{2\ln 2}
+  \\
+  % &=  H(1/3) +2/3 - \alpha
+  % + \alpha \log r + \log(1-\epsilon)
+  % - (\alpha-1/3)^2 \cdot 63/(4\log_e 2) \\
+  &= H(1/3) + 2/3 + \log(1-\epsilon) 
+      + \alpha (\log r - 1) 
+      - (\alpha-1/3)^2 \cdot 63/(4\ln 2)
+      \,.
+  \end{align*}
+  % by ignoring the negative term.
+  Its derivative is $R^\prime(\alpha)$ is $\log r - 1 - (\alpha - 1/3)63/(2 \ln 2)$. 
+  The solution to the equation $R^\prime(\alpha) = 0$ is 
+  $\alpha^* = 1/3 + \left( \log r - 1\right) (2 \log_e 2)/63$.
+  This implies $q(\alpha, \epsilon) \leq R^*(\epsilon)$ for $\epsilon \in (0.6, 1]$ where
+  \begin{align*}
+      R^*(\epsilon)&\defeq R(\alpha^*) \\
+      &= H(1/3) + 2/3 + \log(1-\epsilon)
+          + \left( 1/3 + \left( \log r - 1\right) (2 \log_e 2)/63 \right) (\log r - 1) \\
+      &{\quad}    - \left( (\log r - 1) (2 \ln 2)/63 \right)^2 \cdot 63/(4\ln 2) \\
+      &= H(1/3) + 2/3 + \log(1-\epsilon)
+          + (\log r - 1)/3 + (\log r - 1)^2 (2 \ln 2)/63  
+          - (\log r - 1)^2 (\ln 2)/63 \\
+      &= H(1/3) + 2/3 + \log(1-\epsilon)
+          + (\log r - 1)/3 + (\log r - 1)^2 (\ln 2)/63  
+          \,.
+  % &= \log_2\left[ 
+  %   \frac{3}{2^{1/3}} (1 + \epsilon)^{1/3} (1 - \epsilon)^{2/3} \right] 
+  %   + \left(1 - \log_2 \frac{1+\epsilon}{1-\epsilon} \right)^2 \frac{ \log_e 2}{63} \\
+  % &= \log_2\left[ 
+  %   2^{2/3} \phi(\epsilon) \right] 
+  %   + \left(1 - \log_2 \frac{1+\epsilon}{1-\epsilon} \right)^2 \frac{ \log_e 2}{63} \,.
+  \end{align*}
+  Since $2^{\log r - 1} = r/2$, we can compute
+  \begin{align*}
+      2^{R^*(\epsilon)}
+      &= 2^{H(1/3)+2/3}(1-\epsilon) (r/2)^{1/3} (r/2)^{(\log r - 1)(\ln 2)/63} \\
+      &= \phi(\epsilon) \cdot 2^{2/3} (r/2)^{(\log r - 1)(\ln 2)/63}
+      \,,
+  \end{align*}
+  where we used~\eqref{eq:phi_eps} and the fact that $2^{H(1/3) + 2/3} = 3\cdot2^{-1/3}$.
+
+  If $\epsilon \leq 0.81$, the factor $2^{2/3} (r/2)^{(\log r - 1)(\ln 2)/63}$ is at most $5/3$. 
+  This gives us 
+  \[
+      S(d, z)^2 B_{d,\epsilon}(d-z) 
+      \leq 2^{d q(\alpha, \epsilon)} 
+      \leq 2^{R^*(\epsilon)} 
+      \leq (5/3) \phi(\epsilon)
+  \]
+  for $\epsilon \in (3/5, 0.81]$.
+
+  \paragraph{Case: $0.81 < \epsilon \leq 1$.}
+  % \item[Case: $0.81 < \epsilon \leq 1$.]
+  For the remainder of the proof, it suffices to establish
+  \[
+      q(\alpha, \epsilon) \leq q(\alpha, 0.81) \leq R^*(0.81) < 0
+  \]
+  for any $\epsilon \in (0.81, 1]$ and $\alpha \in (1/3, 1/2)$. 
+  We already proved the inequality $q(\alpha, 0.81) \leq R^*(0.81)$ in the previous case. 
+  A direct calculation shows that $R^*(0.81)$ is strictly negative; 
+  hence $q(\alpha, 0.81)$ is strictly negative as well. 
+  It remains to show that $q(\alpha, \epsilon) \leq q(\alpha, 0.81)$.
+  We claim that the derivatives of $q(\alpha, \epsilon)$ and $R^*(\epsilon)$, 
+  with respect to $\epsilon$, is negative for $\epsilon \in (0, 1]$ and $\alpha \in (1/3, 1/2)$. 
+  Specifically,
+  \begin{align*}
+      \frac{d}{d\epsilon} q(\alpha, \epsilon)
+      &= \alpha \dfrac{d}{d\epsilon} \left( \log(1+\epsilon) - \log(1-\epsilon)\right) 
+          + \dfrac{d}{d\epsilon} \log(1-\epsilon) \\
+      &= \frac{\alpha}{\ln 2}\left( 1/(1+\epsilon) + 1/(1-\epsilon)\right)
+          - 1/(1-\epsilon) \\
+      &= \frac{1}{(1-\epsilon)\ln 2}\left( \frac{2\alpha}{1+\epsilon} - 1\right) \\
+      &\leq \left(\frac{1}{(1-\epsilon)\ln 2} \right) \cdot \left( \frac{1}{1+\epsilon} - 1\right) \\
+      &< 0
+  \end{align*}
+  since the second factor above is negative while the first factor is positive.
+  Hence $q(\alpha, \epsilon)$ is strictly negative for 
+  $\epsilon \in [0.81, 1]$ and $\alpha \in (1/3, 1/2)$. 
+  As a consequence,
+  \[
+      S(d, z)^2 B_{d,\epsilon}(d-z) 
+      \leq 2^{d q(\alpha, \epsilon)} 
+      \leq 1
+      \,.
+  \]
+
+\hfill$\qed$

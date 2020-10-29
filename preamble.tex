@@ -64,8 +64,11 @@
 \usepackage{etoolbox}
 \usepackage{mathtools}
 \usepackage{lscape}
-\usepackage[numbers,sectionbib]{natbib}
+\usepackage{color}
+\usepackage{framed}
 
+
+\usepackage[numbers,sectionbib]{natbib}
 \usepackage{bibentry}
 \nobibliography*
 
@@ -80,6 +83,11 @@
 	\newcommand{\Section}{Section}
 }
 
+\newtoggle{drawfigs}
+% \toggletrue{drawfigs}
+\togglefalse{drawfigs}
+
+
 %%%%%%%%%%%%%%%%%%
 % \usepackage{stix2}
 
@@ -88,18 +96,18 @@
 
 %%%%%%%%%%%%%%%%%%%%
 % Common macros
-\newtheorem{theorem}{Theorem}
-\newtheorem{proposition}{Proposition}
-\newtheorem{definition}{Definition}
-\newtheorem{claim}{Claim}
-\newtheorem{lemma}{Lemma}
-\newtheorem{corollary}{Corollary}
-\newtheorem{observation}{Observation}
-\newtheorem{bound}{Bound}
-\newtheorem{fact}{Fact}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{claim}{Claim}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\newtheorem{corollary}{Corollary}[chapter]
+\newtheorem{observation}{Observation}[chapter]
+\newtheorem{bound}{Bound}[chapter]
+\newtheorem{fact}{Fact}[chapter]
 
 \theoremstyle{definition}
-\newtheorem{remark}{Remark}
+\newtheorem{remark}{Remark}[chapter]
 \newtheorem{remark*}{Remark}
 
 
@@ -116,6 +124,7 @@
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\CC}{\mathbb{C}}
 \newcommand{\RR}{\mathbb{R}}
 \newcommand{\NN}{\mathbb{N}}
 \newcommand{\hdepth}{\mathbf{d}}
@@ -172,6 +181,78 @@
 \newcommand{\DominatedBy}{\preceq}
 \newcommand{\Reduce}{\rho_\Delta}
 \newcommand{\DeltaFork}{\Fork_\Delta}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% Grinding macros
+\newcommand{\EpsG}{\mathsf{\varepsilon_g}}
+\newcommand{\EpsA}{\mathsf{\varepsilon}_a}
+\newcommand{\EpsP}{\mathsf{\varepsilon}_p}
+\newcommand{\EpsTotal}{\mathsf{\varepsilon}_{total}}
+\newcommand{\gSlice}{\gamma}
+\newcommand{\Slice}{\mathsf{slice}}
+\newcommand{\Epoch}{\mathsf{epoch}}
+\newcommand{\Block}{\mathsf{block}}
+\newcommand{\GameXor}{\mathcal{G}}
+\newcommand{\GameNoSynch}{\GameXor_\mathsf{nosynch}}
+\newcommand{\GameAllSynch}{\GameXor_\mathsf{allsynch}}
+\newcommand{\BlockLength}{\ell}
+\newcommand{\EpochLength}{k}
+\newcommand{\NumEpochs}{L}
+\newcommand{\NonceDim}{\kappa}
+\newcommand{\Binomial}{\mathsf{Bin}}
+\newcommand{\Poisson}{\mathsf{Poi}}
+\newcommand{\Bernoulli}{\mathsf{Ber}}
+\newcommand{\Geometric}{\mathsf{Geo}}
+\newcommand{\Beacon}{\mathsf{B}}
+\newcommand{\Protocol}{\mathsf{P}}
+
+
+\DeclareMathOperator*{\Var}{\mathbf{Var}}
+\DeclareMathOperator{\wt}{wt}
+
+\pgfplotsset{compat=1.14}
+
+\DeclareRobustCommand{\Eulerian}{\genfrac<>{0pt}{}}
+\DeclareMathOperator{\Li}{Li}
+\newcommand{\Lifunc}{\Li_{-\lambda}(\alpha)}
+\newcommand{\Geom}{\mathcal{G}}
+\newcommand{\GeomAlpha}{\Geom_\alpha^+}
+\newcommand{\GeomOneMinusAlpha}{\Geom_{1 - \alpha}^+}
+% \newcommand{\GeomAlphaHat}{\hat{\Geometric}_\alpha}
+\newcommand{\GeomAlphaHat}{\Geom_\alpha}
+\newcommand{\EmptyString}{\varepsilon}
+% \newcommand{\EmptyString}[1][\kappa]{0^{#1}}
+\newcommand{\ZeroString}[1][\kappa]{0^{#1}}
+\newcommand{\MinEntropy}{H_\infty}
+\newcommand{\Indicator}{\mathbf{1}}
+
+
+\newcommand{\Player}{u}
+\newcommand{\Players}{\mathcal{U}}
+\newcommand{\Leaders}{\mathcal{L}}
+\newcommand{\NoncePlayers}{\mathcal{N}}
+\newcommand{\Endorser}{E}
+\newcommand{\Nonce}{\mathsf{nonce}}
+\newcommand{\BeaconProtocol}{\pi_{\mathsf{beacon}}}
+\newcommand{\ECQ}{\exists\mathrm{CQ}}
+\newcommand{\sECQ}[1][s]{{#1}\text{-}\ECQ}
+\newcommand{\Hrule}{\noindent\rule{\textwidth}{1pt}}
+\newcommand{\RandOracle}{\mathsf{H}}
+\newcommand{\VRF}{\mathsf{VRF}}
+\newcommand{\pk}{\mathsf{pk}}
+\newcommand{\sk}{\mathsf{sk}}
+\newcommand{\Or}{\text{or,}\quad}
+\newcommand{\Blockchain}{\Pi_\mathsf{bc}}
+\newcommand{\Astar}{\mathtt{A\star}}
+\newcommand{\UniformIn}{\sim_{\mathrm{u}}}
+
+\newcommand{\InlineCases}[1]{
+  \begin{enumerate*}[label=(\textit{\roman*})]
+    #1
+  \end{enumerate*}}
+
 
 
 %%%%%%%%%%%%%%%%%%%%

@@ -1,4 +1,35 @@
-\chapter{Grinding intro}
-\chapter{Praos Beacon}
-\chapter{Simple Beacon against Static Adversary}
-\chapter{Simple Beacon against Adaptive Adversary}
+\chapter{Grinding Introduction }\label{ch:grinding-intro}
+\input{grinding/intro.tex}
+
+\chapter{The security model}\label{sec:model-grinding}
+\input{grinding/model.tex}
+
+% \chapter{Definitions}
+% \label{sec:definitions}
+% \input{grinding/definitions.tex}
+
+% \pagebreak         
+\chapter{Analysis of Ouroboros Praos beacon in the synchronous setting}\label{sec:praos}\input{grinding/praos}
+
+\chapter{Proofs Omitted in \Section~\ref{sec:praos}}\label{sec:praos-claims}
+\input{grinding/praos-claims}
+
+\chapter{XOR target games}\label{sec:xor-games}
+\input{grinding/xor-games.tex}
+
+\chapter{Coin-flipping with a private leader election}\label{sec:coin-tossing}
+\input{grinding/coin-tossing.tex}
+
+\chapter{Coin-flipping over multiple epochs}\label{sec:composing-xor-games}\label{sec:beacon}
+\input{grinding/composing-xor-games.tex}
+
+
+\chapter{Coin-flipping with public leader election}\label{app:bernoulli}
+\input{grinding/appendix/coin-flipping-public.tex}
+
+
+\chapter{Poisson distribution is subgeometric}\label{app:poisson}
+\input{grinding/appendix/poisson.tex}
+
+\chapter{Omitted proofs for grinding in praos}\label{app:grinding-praos}
+\input{grinding/appendix/grinding-praos.tex}
