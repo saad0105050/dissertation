@@ -1,0 +1,238 @@
+Stochastic dominance plays an important role in the arguments
+below. First of all, we observe that the distribution
+$\mathcal{B}_\epsilon$ stochastically dominates any distribution
+satisfying the $\epsilon$-martingale condition; this yields the first
+inequality in Theorem~\ref{thm:main}. A more delicate application of
+stochastic dominance is used in order to achieving bounds, such as
+those of Section~\ref{sec:bounds}, that are independent of the length of
+$x$. This follows from the fact that $\reach(B_{\epsilon})$ converges to a
+particular, dominant distribution as its argument increases in length.
+
+For notational convenience, we denote
+the probability distribution associated with a random variable using
+uppercase script letters; for example, the distribution of a random
+variable $R$ is denoted by $\mathcal{R}$.  This usage should be clear
+from the context.
+
+
+\begin{definition}[Monotonicity and stochastic dominance]\label{def:dominance}
+  Let $\Omega$ be a set endowed with a partial order $\leq$. A subset
+  $A \subset \Omega$ is monotone if for all $x \leq y$, $x \in A$
+  implies $y \in A$.  Let $X$ and $Y$ be random variables taking
+  values in $\Omega$.
+  % Let $\mathcal{X}$ and $\mathcal{Y}$ be distributions associated with 
+  % $X$ and $Y$, respectively. 
+  We say that $X$ \emph{stochastically dominates} $Y$, 
+  written $Y \dominatedby X$, if 
+  $
+    \mathcal{X}(A) \geq \mathcal{Y}(A)
+    % \,.
+    $ for all monotone $A \subseteq \Omega$.  As a special case, when
+    $\Omega = \R$, $Y \dominatedby X$ if
+    $\Pr[X \geq \Lambda] \geq \Pr[Y \geq \Lambda]$ for every
+    $\Lambda \in \R$.  We extend this notion to probability
+    distributions in the natural way.
+\end{definition}
+% \begin{definition}[Stochastic dominance]\label{def:dominance} 
+% Let $X$ and $Y$ be random
+%   variables taking values in $\R$. We say that $X$ \emph{stochastically
+%   dominates} $Y$, written $Y \dominatedby X$ if
+%   \[
+%     \Pr[X \geq \Lambda] \geq \Pr[Y \geq \Lambda]
+%   \]
+%   for every $\Lambda \in \R$.  We extend this notion to probability
+%   distributions in the natural way.
+% %  In addition, for two distributions $\mathcal{X}, \mathcal{Y}$,
+% %  we say that $\mathcal{X}$ stochastically dominates $\mathcal{Y}$ 
+% %  if and only if there are random variables $X \sim \mathcal{X}, Y \sim %\mathcal{Y}$ such that $Y \dominatedby X$;
+% %  this is written as $\mathcal{Y} \dominatedby \mathcal{X}$.
+% \end{definition}
+Observe that for any non-decreasing function $u$ defined on $\Omega$,
+$Y \dominatedby X$ implies $u(Y) \leq u(X)$. Finally, we note that for
+real-valued random variables $X$, $Y$, and $Z$, if $Y \dominatedby X$
+and $Z$ is independent of both $X$ and $Y$, then
+$Z + Y \dominatedby Z + X$.
+
+% Let $m \in \NN$ and suppose 
+% $W = (W_1, \ldots, W_m) \in \{0,1\}^m$ satisfies the 
+% $\epsilon$-martingale condition. 
+% It turns out that $\rho(W)$ 
+% is stochastically dominated by 
+% the distribution of $\rho(B_1, \ldots, B_m)$, 
+% where each $B_i \in \{0, 1\}$ is 
+% an independent Bernoulli random variable with parameter $(1 - \epsilon)/2$.
+% In addition, $\rho(B_1, \ldots, B_m)$ is stochastically dominated by 
+% its limiting (stationary) distribution where we take $m \rightarrow \infty$.
+
+%=======================================================
+\begin{lemma}\label{lemma:rho-stationary}
+  % Let $n \in \NN$ and consider a sequence of random variables
+  % $W = (W_1, \ldots, W_n) \in \{0,1\}^n$ satisfying the
+  % $\epsilon$-martingale condition. 
+  Suppose $W = (W_1, \ldots, W_n) \in \{0,1\}^n$ satisfies the 
+  $\epsilon$-martingale condition. 
+  Let $\epsilon \in (0, 1)$ and $B = (B_1, \ldots, B_n) \in \{0,1\}^n$ 
+  where each $B_i$ is independent with expectation $(1- \epsilon)/2$.
+  Let $R_\infty \in \{0, 1, \ldots\}$ be a random variable 
+  whose distribution $\StationaryRho$ is defined as 
+    \begin{equation}
+      \label{eq:stationary}
+      \StationaryRho(k) 
+        = \Pr[R_\infty = k] 
+        \defeq \left(\frac{2\epsilon}{1+\epsilon}\right)\cdot \left(\frac{1-\epsilon}{1 + \epsilon}\right)^k
+        \qquad \text{for $k = 0, 1, 2, \ldots$}\ 
+      \,.
+    \end{equation}
+  Then $\rho(W) \dominatedby \rho(B) \dominatedby R_\infty$.
+\end{lemma}
+
+\begin{proof}
+  We begin by observing that $B$ stochastically dominates $W$. As a
+  matter of notation, for any fixed values
+  $w_1, \ldots, w_k \in \{0,1\}^k$, let
+  \[
+    \theta[w_1, \ldots, w_k] = \Pr[ W_{k+1} = 1 \mid
+    \text{$W_i = w_i$, for $i \leq k$}] \leq (1 - \epsilon)/2
+  \]
+  and $\theta[\varepsilon] = \Pr[W_1 = 1]$ 
+  where $\varepsilon$ is the empty string. Then consider $n$ uniform and
+  independent real numbers $(A_1, \ldots, A_n)$, each taking a value
+  in the unit interval $[0,1]$; we use these random variables to construct a monotone
+  coupling between $W$ and $B$. 
+  Specifically, define $\beta: [0,1]^n \rightarrow \{0,1\}^n$
+  by the rule $\beta(\alpha_1, \ldots, \alpha_n) = (b_1, \ldots, b_n)$
+  where
+  \[
+    b_t = \begin{cases} 1 & \text{if $\alpha_t \leq (1-\epsilon)/2$},\\
+      0 & \text{if $\alpha_t > (1 - \epsilon)/2$},
+    \end{cases}
+  \]
+  and define
+  $B = (B_1, \ldots, B_n) = \beta(A_1, \ldots, A_n)$; these
+  $B_i$s are independent zero-one Bernoulli random variables with expectation
+  $(1-\epsilon)/2$. Likewise define the function
+  $\omega:[0,1]^n \rightarrow \{0,1\}^n$ so that
+  $\omega(\alpha_1, \ldots, \alpha_n) = (w_1, \ldots, w_n)$
+  where each $w_t$ is assigned by the iterative rule
+  \[
+    w_{t+1} = \begin{cases} 1 & \text{if $\alpha \leq \theta[w_1, \ldots, w_t]$},\\
+      0 & \text{if $\alpha > \theta[w_1, \ldots, w_t]$},
+    \end{cases}
+  \]
+  and observe that the probability law of
+  $\omega(A_1, \ldots, A_n)$ is precisely that of
+  $W = (W_1, \ldots, W_n)$. For convenience, we simply identify the
+  random variable $W$ with $\omega(A_1, \ldots, A_n)$. Note
+  that for any $\alpha = (\alpha_1, \ldots, \alpha_n)$ and for each
+  $i$, the $i$th coordinates of $\beta(\alpha)$ and $\omega(\alpha)$ satisfy
+  $\omega(\alpha)_i \leq \beta(\alpha)_i$ 
+  % (which is to say that $W_i \leq B_i$). 
+  % It follows immediately that
+  % $\rho(\omega(\alpha)) \leq \rho(\beta(\alpha))$ with probability 1 and
+  % hence $\rho(W) \dominatedby \rho(B)$. 
+  % See~\cite[Lemma 22.5]{LevinPeres}. 
+  (which is to say that $W_i \leq B_i$ with probability 1). 
+  But this is equivalent to saying $W \dominatedby B$. 
+  (See~\cite[Lemma 22.5]{LevinPeres}.) 
+  Now consider the following partial order $\leq$ on the $n$-bit Boolean strings: 
+  for $x,y \in \{0,1\}^n$, 
+  we write $x \leq y$ if and only if $x_i = 1$ implies $y_i = 1, i \in [n]$.
+  Since $\rho$ is non-decreasing with respect to this partial order, 
+  we have  
+  $\rho(\omega(\alpha)) \leq \rho(\beta(\alpha))$ with probability 1 and
+  hence $\rho(W) \dominatedby \rho(B)$ as well. 
+  
+
+  %  \paragraph{$R_\infty$ stochastically dominates $\rho(B)$.}
+  To complete the proof, we now establish that
+  $\rho(B) \dominatedby R_\infty$.  We remark that the random variables
+  $\rho(B)$ (and $R_\infty$) have an immediate interpretation in terms
+  of the Markov chain corresponding to a biased random walk on $\Z$
+  with a ``reflecting boundary'' at -1. Specifically, consider the
+  Markov chain on $\{0, 1, \ldots\}$ given by the transition diagram
+  \begin{center}
+    \begin{tikzpicture}[scale=1,>=stealth', auto, semithick,
+      flat/.style={circle,draw=black,thick,text=black,font=\small}]
+      \node[flat] (n0) at (0,0)  {$0$};
+      \node[flat] (n1) at (1,0)  {$1$};
+      \node[flat] (n2) at (2,0)  {$2$};
+      \node[flat,white] (n3) at (3,0) {$ \ \ \ $};
+      \node[] at (3,0) {$\ldots$};
+      \draw[thick,->,bend left] (n0) to (n1);
+      \draw[thick,->,bend left] (n1) to (n2);
+      \draw[thick,->,bend left] (n2) to (n3);
+      \draw[thick,->,loop left] (n0) to (n0);
+      \draw[thick,->,bend left] (n1) to (n0);
+      \draw[thick,->,bend left] (n2) to (n1);
+      \draw[thick,->,bend left] (n3) to (n2);
+    \end{tikzpicture}
+  \end{center}
+  where edges pointing right have probability $(1-\epsilon)/2$ and edges pointing left---including the loop at 0---have probability $(1+\epsilon)/2$. Examining the recursive description of $\rho(w)$, it is easy to confirm that the random variable $\rho(B_1, \ldots, B_n)$ is precisely given by the result of evolving the Markov chain above for $n$ steps with all probability initially placed at 0. It is further easy to confirm that the distribution given by~\eqref{eq:stationary} above is stationary for this chain.
+
+  % The above Markov chain is \emph{irreducible} since every state is
+  % reachable from every state.  In addition, it is easy to see that this
+  % chain is \emph{aperiodic}---at time $n$, the walk visits every state
+  % $s \in \{0, 1, \cdots, n\}$ with a strictly positive probability.
+  % According to~\citep[Theorem 21.12]{LevinPeres}, an irreducible Markov
+  % chain is positive recurrent if and only if there exists a distribution
+  % $\pi$ on the state space satisfying $\pi P = \pi$, where $P$ is the
+  % transition matrix of the chain.  We can take $\pi$ to be the
+  % distribution given by~\eqref{eq:stationary}, implying that the chain
+  % is positive recurrent.  Consequently, by ~\citep[Theorem
+  % 21.14]{LevinPeres}, this irreducible, aperiodic, positive recurrent
+  % Markov chain converges to the unique stationary distribution $\pi$.
+  % It follows that the distributions $R_n$ limit to $R_\infty$.
+
+  To establish stochastic dominance, it is convenient to work with the
+  underlying distributions and consider walks of varying lengths: let
+  $\DistRho_n: \Z \rightarrow \R$ denote the probability distribution given by
+  $\rho(B_1, \ldots, B_n)$; likewise
+  define $\DistRho_\infty$. For a distribution $\DistRho$ on $\Z$, we define $[\DistRho]_0$
+  to denote the probability distribution obtained by shifting all
+  probability mass on negative numbers to zero; that is, for $x \in \Z$,
+  \[
+    [\DistRho]_0(x) = \begin{cases} \DistRho(x) & \text{if $x > 0$},\\
+      \sum_{t \leq 0} \DistRho(t) & \text{if $x = 0$},\\
+      0 & \text{if $x < 0$.}
+    \end{cases}
+  \]
+  We observe that if $A \dominatedby C$ then $[A]_0 \dominatedby [C]_0$ for any
+  distributions $A$ and $C$ on $\Z$. It will also be convenient to
+  introduce the shift operators: for a distribution
+  $\DistRho: \Z \rightarrow \R$ and an integer $k$, we define $S^k\DistRho$ to be the
+  distribution given by the rule $S^k\DistRho(x) = \DistRho(x-k)$. With these
+  operators in place, we may write
+  \[
+    \DistRho_t = \left(\frac{1 - \epsilon}{2}\right) S^1 \DistRho_{t-1} +
+      \left(\frac{1 + \epsilon}{2}\right) \left[S^{-1}\DistRho_{t-1} \right]_0\,,
+  \]
+  with the understanding that $\DistRho_0$ is the distribution placing unit probability at $0$. The proof now proceeds by induction. It is clear that $\DistRho_0 \dominatedby \DistRho_\infty$. Assuming that $\DistRho_n \dominatedby \DistRho_\infty$, we note that for any $k$
+  \[
+    S^k \DistRho_n \dominatedby S^k \DistRho_\infty \qquad \text{and, additionally, that
+    }\qquad [S^{-1}\DistRho_n]_0 \dominatedby [S^{-1}\DistRho_{\infty}]_0\,.
+  \]
+  Finally, it is clear that stochastic dominance respects convex combinations, 
+  in the sense that if $A_1 \dominatedby C_1$ and $A_2 \dominatedby C_2$ then 
+  $\lambda A_1 + (1-\lambda) A_2 \dominatedby \lambda C_1 + (1-\lambda) C_2$ (for $0 \leq \lambda \leq 1$). We conclude that
+  \[
+    \DistRho_{t+1} = \left(\frac{1 - \epsilon}{2}\right) S^1 \DistRho_{t} +
+      \left(\frac{1 + \epsilon}{2}\right) \left[S^{-1}\DistRho_{t} \right]_0 \dominatedby \left(\frac{1 - \epsilon}{2}\right) S^1 \DistRho_{\infty} +
+      \left(\frac{1 + \epsilon}{2}\right) \left[S^{-1}\DistRho_{\infty} \right]_0 
+      \,.
+  \]
+  By inspection, the right-hand side equals $\DistRho_{\infty}$, as desired. 
+  Hence $\rho(B) \dominatedby R_\infty$.
+  % $\qedhere$
+\end{proof}
+
+  \paragraph{Remark.} 
+  In fact, the random variable $\rho(B)$
+  actually converges to $R_\infty$ as $n \rightarrow \infty$. 
+  This can be seen, for example, 
+  by solving for the stationary distribution of the Markov chain in the proof above. 
+  However, we will only require the dominance for our exposition. 
+  Importantly, since $\mu_x(\varepsilon) = \rho(x)$, and 
+  $\Pr[\mu_x(y) \geq 0]$ increases monotonically 
+  with an increase in $\Pr[\mu_x(\varepsilon) \geq r]$ for any $r \geq 0$, 
+  it suffices to take $|x| \rightarrow \infty$ 
+  when reasoning about an upper bound on $\Pr[\mu_x(y) \geq 0]$.

@@ -1,0 +1,189 @@
+% Stochastic dominance plays an important role in the arguments
+% below. First of all, we observe that the distribution
+% $\mathcal{B}_\epsilon$ stochastically dominates any distribution
+% satisfying the $\epsilon$-martingale condition; this yields the first
+% inequality in Theorem~\ref{thm:main}. A more delicate application of
+% stochastic dominance is used in order to achieving bounds, such as
+% those of Section~\ref{sec:bounds}, that are independent of the length of
+% $x$. This follows from the fact that $\reach(B_{\epsilon})$ converges to a
+% particular, dominant distribution as its argument increases in length.
+
+
+%=======================================================
+
+In this chapter, we first define a simple, biased random walk on a characteristic string 
+which satisfies $(\epsilon, p_\h)$-Bernoulli condition (Definition~\ref{def:bernoulli-cond}).
+In later chapters, we will derive tail bounds (e.g., Bound~\ref{bound:unique-honest-catalan}) 
+for certain bad events on this walk.
+
+
+\section{The random walk}
+  Let $\epsilon \in (0,1)$. 
+  Let $p = (1 - \epsilon)/2$ and $q = (1 + \epsilon)/2$ 
+  so that $q - p = \epsilon$. 
+  Let $q_\h \in (0, q]$ and $q_\H = q - q_\h$. 
+  Let $B = B_1 B_2 \cdots$ be a characteristic string 
+  satisfying the $(\epsilon, p_\h)$-Bernoulli condition. 
+  Define the process $W = (W_t : t \in \NN), W_t \in \{\pm 1\}$ as $W_t = 1$ if and only if $B_t = \A$. 
+  % That is, for all $t$, $\Pr[W_t = \h] = q_\h, \Pr[W_t = \H] = q_\H$, and $\Pr[W_t = \A] = p$. 
+  Let 
+  \begin{align}
+    S(B) &= \#_\A(B) - \#_\h(B) - \#_\H(B)\,, \\
+    M(B) &= \min_{t \leq |B|} S(B_1 \cdots B_t)\,, \quad\text{and } \\
+    X(B) &= S(B) - M(B)\,. \label{eq:X-walk}
+  \end{align}
+  We say that the process $S$ is a \emph{simple biased random walk on integers with $\epsilon$ negative (i.e., downward) bias}. 
+  $S_t$ is the position of the particle (i.e., the random walker) at time $t$. 
+  By convention, set $B_0 = S_0 = 0$. 
+  Let $\mathcal{X}_t(B)$ be the distribution of $X(B_1 \cdots B_t)$. 
+  When $B$ is understood from the context, we often omit $B$ and simply write $X$ and $X_t$.
+  Finally, let $X_\infty = X_t$ where $t = \infty$. 
+
+  % Below, we show that if $W$ satisfies the $(\epsilon, p_\h)$-Bernoulli condition 
+  % then $X(W_1 \cdots W_t) \DominatedBy X(W_1 \cdots W_{t+1})$. 
+  % We also derive a closed-form expression for the distribution of $X(W)$ 
+  % when $|W| = \infty$. 
+  % This will allow us to overcome the difficulty of dealing with prefixes of a particular length, 
+  % as it suffices (via stochastic dominance) to consider an infinitely long prefix. 
+
+  Note that the random variables
+  $X(B)$ (and $X_\infty$) have an immediate interpretation in terms
+  of the Markov chain corresponding to a biased random walk on $\Z$
+  with a ``reflecting boundary'' at -1. Specifically, consider the
+  Markov chain on $\{0, 1, \ldots\}$ given by the transition diagram
+  \begin{figure}
+    \begin{center}
+      \begin{tikzpicture}[scale=1,>=stealth', auto, semithick,
+        flat/.style={circle,draw=black,thick,text=black,font=\small}]
+        \node[flat] (n0) at (0,0)  {$0$};
+        \node[flat] (n1) at (1,0)  {$1$};
+        \node[flat] (n2) at (2,0)  {$2$};
+        \node[flat,white] (n3) at (3,0) {$ \ \ \ $};
+        \node[] at (3,0) {$\ldots$};
+        \draw[thick,->,bend left] (n0) to (n1);
+        \draw[thick,->,bend left] (n1) to (n2);
+        \draw[thick,->,bend left] (n2) to (n3);
+        \draw[thick,->,loop left] (n0) to (n0);
+        \draw[thick,->,bend left] (n1) to (n0);
+        \draw[thick,->,bend left] (n2) to (n1);
+        \draw[thick,->,bend left] (n3) to (n2);
+      \end{tikzpicture}
+    \end{center}
+    \caption{Markov chain for the random variable $X(B)$ in \eqref{eq:X-walk}.}
+    \label{fig:X-walk}  
+  \end{figure}
+  where edges pointing right have probability $(1-\epsilon)/2$ and edges pointing left---including the loop at 0---have probability $(1+\epsilon)/2$.
+
+  % \begin{lemma}\label{lemma:rho-stationary}
+  %   Let $\epsilon, p_\h \in (0,1)$ and consider 
+  %   two equally long characteristic strings $W$ and $B$, 
+  %   so that $W$ satisfies the $(\epsilon, p_\h)$-martingale condition 
+  %   and $B$ satisfies the $(\epsilon, p_\h)$-Bernoulli condition. 
+  %   Let $X_\infty \in \{0, 1, \ldots\}$ be a random variable 
+  %   whose distribution $\mathcal{X}_\infty$ is defined as 
+  %     \begin{equation}
+  %       \label{eq:stationary}
+  %       \mathcal{X}_\infty(k) 
+  %         = \Pr[X_\infty = k] 
+  %         \defeq \left(\frac{2\epsilon}{1+\epsilon}\right)\cdot \left(\frac{1-\epsilon}{1 + \epsilon}\right)^k
+  %         \qquad \text{for $k = 0, 1, 2, \ldots$}\ 
+  %       \,.
+  %     \end{equation}
+  %   Then $X(W) \DominatedBy X(B) \DominatedBy X_\infty$.
+  % \end{lemma}
+
+
+  \begin{lemma}\label{lemma:rho-stationary}
+    Let $\epsilon, p_\h \in (0,1)$. 
+    Le $B$ be a characteristic string which satisfies the $(\epsilon, p_\h)$-Bernoulli condition. 
+    Let $X_\infty \in \{0, 1, \ldots\}$ be a random variable 
+    whose distribution $\mathcal{X}_\infty$ is defined as 
+      \begin{equation}
+        \label{eq:stationary}
+        \mathcal{X}_\infty(k) 
+          = \Pr[X_\infty = k] 
+          \defeq \left(\frac{2\epsilon}{1+\epsilon}\right)\cdot \left(\frac{1-\epsilon}{1 + \epsilon}\right)^k
+          \qquad \text{for $k = 0, 1, 2, \ldots$}\ 
+        \,.
+      \end{equation}
+    Then $X(B) \DominatedBy X_\infty$.
+  \end{lemma}
+  Note that $p_\h$ does not appear in \eqref{eq:stationary}.
+
+  \begin{proof}  
+    %  \paragraph{$R_\infty$ stochastically dominates $X(B)$.}
+   
+    Examining~\eqref{eq:X-walk}, it is easy to confirm that 
+    the random variable $X_n$ is precisely given by 
+    the result of evolving the Markov chain in Figure~\ref{fig:X-walk} for $n$ steps 
+    with all probability initially placed at 0. 
+    It is further easy to confirm that the distribution given by~\eqref{eq:stationary} above is stationary for this chain.
+
+    % The above Markov chain is \emph{irreducible} since every state is
+    % reachable from every state.  In addition, it is easy to see that this
+    % chain is \emph{aperiodic}---at time $n$, the walk visits every state
+    % $s \in \{0, 1, \cdots, n\}$ with a strictly positive probability.
+    % According to~\citep[Theorem 21.12]{LevinPeres}, an irreducible Markov
+    % chain is positive recurrent if and only if there exists a distribution
+    % $\pi$ on the state space satisfying $\pi P = \pi$, where $P$ is the
+    % transition matrix of the chain.  We can take $\pi$ to be the
+    % distribution given by~\eqref{eq:stationary}, implying that the chain
+    % is positive recurrent.  Consequently, by ~\citep[Theorem
+    % 21.14]{LevinPeres}, this irreducible, aperiodic, positive recurrent
+    % Markov chain converges to the unique stationary distribution $\pi$.
+    % It follows that the distributions $R_n$ limit to $R_\infty$.
+
+
+    To establish stochastic dominance, it is convenient to work with the
+    underlying distributions and consider walks of varying lengths: let
+    $\mathcal{X}_n: \Z \rightarrow \R$ denote the probability distribution given by
+    $X(B_1, \ldots, B_n)$; likewise
+    define $\mathcal{X}_\infty$. For a distribution $\mathcal{X}$ on $\Z$, we define $[\mathcal{X}]_0$
+    to denote the probability distribution obtained by shifting all
+    probability mass on negative numbers to zero; that is, for $x \in \Z$,
+    \[
+      [\mathcal{X}]_0(x) = \begin{cases} \mathcal{X}(x) & \text{if $x > 0$},\\
+        \sum_{t \leq 0} \mathcal{X}(t) & \text{if $x = 0$},\\
+        0 & \text{if $x < 0$.}
+      \end{cases}
+    \]
+    We observe that if $A \dominatedby C$ then $[A]_0 \dominatedby [C]_0$ for any
+    distributions $A$ and $C$ on $\Z$. It will also be convenient to
+    introduce the shift operators: for a distribution
+    $\mathcal{X}: \Z \rightarrow \R$ and an integer $k$, we define $S^k\mathcal{X}$ to be the
+    distribution given by the rule $S^k\mathcal{X}(x) = \mathcal{X}(x-k)$. With these
+    operators in place, we may write
+    \[
+      \mathcal{X}_t = \left(\frac{1 - \epsilon}{2}\right) S^1 \mathcal{X}_{t-1} +
+        \left(\frac{1 + \epsilon}{2}\right) \left[S^{-1}\mathcal{X}_{t-1} \right]_0\,,
+    \]
+    with the understanding that $\mathcal{X}_0$ is the distribution placing unit probability at $0$. The proof now proceeds by induction. It is clear that $\mathcal{X}_0 \dominatedby \mathcal{X}_\infty$. Assuming that $\mathcal{X}_n \dominatedby \mathcal{X}_\infty$, we note that for any $k$
+    \[
+      S^k \mathcal{X}_n \dominatedby S^k \mathcal{X}_\infty \qquad \text{and, additionally, that
+      }\qquad [S^{-1}\mathcal{X}_n]_0 \dominatedby [S^{-1}\mathcal{X}_{\infty}]_0\,.
+    \]
+    Finally, it is clear that stochastic dominance respects convex combinations, 
+    in the sense that if $A_1 \dominatedby C_1$ and $A_2 \dominatedby C_2$ then 
+    $\lambda A_1 + (1-\lambda) A_2 \dominatedby \lambda C_1 + (1-\lambda) C_2$ (for $0 \leq \lambda \leq 1$). We conclude that
+    \[
+      \mathcal{X}_{t+1} = \left(\frac{1 - \epsilon}{2}\right) S^1 \mathcal{X}_{t} +
+        \left(\frac{1 + \epsilon}{2}\right) \left[S^{-1}\mathcal{X}_{t} \right]_0 \dominatedby \left(\frac{1 - \epsilon}{2}\right) S^1 \mathcal{X}_{\infty} +
+        \left(\frac{1 + \epsilon}{2}\right) \left[S^{-1}\mathcal{X}_{\infty} \right]_0 
+        \,.
+    \]
+    By inspection, the right-hand side equals $\mathcal{X}_{\infty}$, as desired. 
+    Hence $X(B) \dominatedby X_\infty$.
+    % $\qedhere$
+  \end{proof}
+  \paragraph{Remark.} 
+  In fact, the random variable $X(B)$
+  actually converges to $X_\infty$ as $|B| \rightarrow \infty$. 
+  This can be seen, for example, 
+  by solving for the stationary distribution of the Markov chain in the proof above. 
+  However, we will only require the dominance for our exposition. 
+  % Importantly, since $\mu_x(\varepsilon) = X(x)$, and 
+  % $\Pr[\mu_x(y) \geq 0]$ increases monotonically 
+  % with an increase in $\Pr[\mu_x(\varepsilon) \geq r]$ for any $r \geq 0$, 
+  % it suffices to take $|x| \rightarrow \infty$ 
+  % when reasoning about an upper bound on $\Pr[\mu_x(y) \geq 0]$.
+

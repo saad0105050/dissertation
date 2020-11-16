@@ -45,6 +45,9 @@
   implies a $\kSlotCP$ violation; hence, bounding the probability of a
   $\kSlotCP$ violation is sufficient to rule out both events.
 
+
+\section{A short proof of CP via the UVP }
+
   \paragraph{Connection with the UVP.}
   Note that 
   if $w$ admits a $\kSlotCP$ violation, 
@@ -112,7 +115,7 @@
     $$
   \end{theorem}
   \begin{proof}
-% \paragraph{Proof of Theorem~\ref{thm:main-mh-CP}}
+  % \paragraph{Proof of Theorem~\ref{thm:main-mh-CP}}
     \newcommand{\EpsCat}{\mathsf{\varepsilon}}
     (The first claim.) 
     % Let $w \in \{\h, \H, \A\}^T$ be a (trivalent) characteristic string 
@@ -166,3 +169,7 @@
   % is no more than that in Theorem~\ref{thm:main-mh-async} 
   % applied on the string $\Reduce(w)$. 
   We omit further details.
+
+
+\section{A second proof of CP, without using the UVP}\label{sec:cp-nocatalan-multihonest}
+\input{multihonest/cp-forks}

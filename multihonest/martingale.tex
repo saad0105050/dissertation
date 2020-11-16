@@ -1,0 +1,469 @@
+In the definition of $(\epsilon, p_\h)$-Bernoulli condition (Definition~\ref{def:bernoulli-cond}), 
+we assumed that the symbols of the characteristic string are independent. 
+However, there are realistic election mechanisms where 
+the election in the current slot depends on the past elections in an arbitrary way. 
+For example, in Ouroboros Genesis~\cite{Genesis}, the model needs this structure 
+so that it can handle ``dynamic availability,'' i.e., users joining and dropping off as they wish.
+
+We can formalize the notion of ``dependence on the past'' 
+in \emph{$(\epsilon, p_\h)$-martingale condition} below;
+this is a generalization of Definition~\ref{def:bernoulli-cond}. 
+
+
+\begin{definition}[$(\epsilon, p_\h)$-martingale condition]\label{def:martingale-cond}
+  Let $T \in \NN, \epsilon \in (0,1)$, and $p_\h, p_\H \in  [0, (1+\epsilon)/2]$ so that 
+  $p_\h + p_\H = (1+\epsilon)/2$. A random variable $w = w_1 \ldots w_T$
+  taking values in $\{\h, \H, \A\}^T$ is said to satisfy the
+  \emph{$\epsilon$-Martingale condition} if each
+  $w_i, i \in [T]$, is independent and identically distributed as
+  follows: 
+  $\Pr[w_i = \A \mid w_1 \cdots w_{i-1}] \leq (1-\epsilon)/2$ and 
+  $\Pr[w_i = \h \mid w_1 \cdots w_{i-1}] \geq p_\h$.
+  The distribution of $w$ is also said
+  to satisfy the $(\epsilon, p_\h)$-martingale condition.
+\end{definition}
+
+
+In Section~\ref{sec:martingale-dominance}, we prove that the tail bounds 
+for the Bernoulli condition 
+(e.g., Bounds~\ref{bound:unique-honest-catalan},\ref{bound:unique-honest-catalan-Delta}, 
+and~\ref{bound:two-catalans})
+can directly apply to characteristic strings that satisfy the analogous martingale condition. 
+Our argument relies on stochastic dominance.
+
+In Section~\ref{sec:martingale-proof}, 
+we prove a a slightly weaker bound 
+by directly using martingale techniques (without relying on stochastic dominance). 
+
+
+
+\section{Handling martingale-like dependency via stochastic dominance}\label{sec:martingale-dominance}
+
+
+  
+  Define the partial order $\leq$ on the set $\{\h, \H, \A\}$:
+  $\h \leq \A$ and $\H \leq \A$. 
+  (The symbols $\h$ and $\H$ are not partially ordered.)
+  We can extend this partial order on characteristic strings as well: 
+  for $x,y \in \{\h, \H, \A\}^n$, 
+  we write $x \leq y$ if and only if for all $i \in [n], x_i = \A$ implies $y_i = \A$.
+  A function $X_n$ on $\{\h, \H, \A\}^n$ is \emph{monotone with respect to $\leq$} 
+  if, for any two strings $W, B \in \{\h, \H, \A\}^n$, $W \leq B$ implies $X_n(W) \leq X_n(B)$. 
+
+   
+
+  \begin{lemma}\label{lemma:dominance-martingale}
+    Let $\epsilon, p_\h \in (0,1)$ and consider 
+    two equally long characteristic strings $W$ and $B$, 
+    so that $W$ satisfies the $(\epsilon, p_\h)$-martingale condition 
+    and $B$ satisfies the $(\epsilon, p_\h)$-Bernoulli condition. 
+    Let $X$ be a monotone function on $\{\h, \H, \A\}^n$ with respect to $\leq$. 
+    Then $X(W) \DominatedBy X(B)$.
+  \end{lemma}
+
+  Note that the important random variables studied so far -- e.g., 
+  relative margin, the first Catalan slot, the settlement insecurity, etc. -- are 
+  all monotone functions on characteristic strings. 
+  It follows that our results for strings satisfying the $(\epsilon, p_\h)$-Bernoulli condition, 
+  can be used directly for strings satisfying the analogous martingale condition.
+
+
+  \begin{proof}
+    As a
+    matter of notation, for any fixed values
+    $w_1, \ldots, w_k \in \{\h, \H, \A\}^k$, let
+    \[
+      \theta[w_1, \ldots, w_k] = \Pr[ W_{k+1} = \A \mid
+      \text{$W_i = w_i$, for $i \leq k$}] \leq (1 - \epsilon)/2
+    \]
+    and $\theta[\varepsilon] = \Pr[W_1 = \A]$ 
+    where $\varepsilon$ is the empty string. Then consider $n$ uniform and
+    independent real numbers $(A_1, \ldots, A_n)$, each taking a value
+    in the unit interval $[0,1]$; we use these random variables to construct a monotone
+    coupling between $W$ and $B$. 
+    Specifically, define $\beta: [0,1]^n \rightarrow \{\h, \H, \A\}^n$
+    by the rule $\beta(\alpha_1, \ldots, \alpha_n) = (b_1, \ldots, b_n)$
+    where
+    \[
+      b_t = \begin{cases} 
+        \A & \text{if $\alpha_t \leq (1-\epsilon)/2$},\\
+        \h & \text{if $(1-\epsilon)/2 < \alpha_t \leq (1-\epsilon)/2 + p_\h$},\\
+        \H & \text{if $\alpha_t > (1-\epsilon)/2 + p_\h$}\,,
+      \end{cases}
+    \]
+    and define
+    $B = (B_1, \ldots, B_n) = \beta(A_1, \ldots, A_n)$; these
+    $B_i$s are independent $\{\h,\H,\A\}$-valued random variables.
+     % with expectation $(1-\epsilon)/2$. 
+    Likewise define the function
+    $\omega:[0,1]^n \rightarrow \{\h,\H,\A\}^n$ so that
+    $\omega(\alpha_1, \ldots, \alpha_n) = (w_1, \ldots, w_n)$
+    where each $w_t$ is assigned by the iterative rule
+    \[
+      w_{t+1} = \begin{cases} 
+        \A & \text{if $\alpha_{t+1} \leq \theta[w_1, \ldots, w_t]$},\\
+        \h & \text{if $\theta[w_1, \ldots, w_t] < \alpha_{t+1} \leq \theta[w_1, \ldots, w_t] + p_\h$},\\
+        \H & \text{if $\alpha_{t+1} > \theta[w_1, \ldots, w_t] + p_\h$}\,,
+      \end{cases}
+    \]
+    and observe that the probability law of
+    $\omega(A_1, \ldots, A_n)$ is precisely that of
+    $W = (W_1, \ldots, W_n)$. For convenience, we simply identify the
+    random variable $W$ with $\omega(A_1, \ldots, A_n)$. Note
+    that for any $\alpha = (\alpha_1, \ldots, \alpha_n)$ and for each
+    $i$, the $i$th coordinates of $\beta(\alpha)$ and $\omega(\alpha)$ satisfy
+    $\omega(\alpha)_i \leq \beta(\alpha)_i$ 
+    % (which is to say that $W_i \leq B_i$). 
+    % It follows immediately that
+    % $X(\omega(\alpha)) \leq X(\beta(\alpha))$ with probability 1 and
+    % hence $X(W) \dominatedby X(B)$. 
+    % See~\cite[Lemma 22.5]{LevinPeres}. 
+    (which is to say that $W_i \leq B_i$ with probability 1). 
+    But this is equivalent to saying $W \DominatedBy B$. 
+    (See~\cite[Lemma 22.5]{LevinPeres}.) 
+    Since $X$ is non-decreasing with respect to this partial order, 
+    we have  
+    $X(\omega(\alpha)) \leq X(\beta(\alpha))$ with probability 1 and
+    hence $X(W) \dominatedby X(B)$ as well. 
+
+  \end{proof}
+
+
+
+
+\section{A bound using martingale techniques}\label{sec:martingale-proof}
+
+Recall that $\mu_x(y)$ is the relative margin (Definition~\ref{def:margin}) 
+of a characteristic string $w = xy$, 
+and that $\mu_x(y) \geq 0$ implies that there is an $x$-balanced fork for $w$. 
+(This implies, slot $|x|+1$ is not $(|y|-1)$-settled).
+\begin{bound}\label{bound:martingale}
+  Let $\epsilon \in (0,1)$ and $p_\h \geq (1+\epsilon)/2$. 
+  Let $x \in \{0,1\}^m$ and $y \in \{0,1\}^k$ be characteristic strings 
+  satisfying the $(\epsilon, p_\h)$-martingale condition (with respect to the ordering $x_1, \ldots, x_m, y_1, \ldots, y_k$). 
+  Then
+  \[
+    \Pr[\mu_x(y) \geq 0] \leq
+    % \exp({-2\epsilon^4 (1 - O(\epsilon))n})
+    3 \exp\left( -\epsilon^4 (1 - O(\epsilon) ) k/64 \right)  
+    \, .
+  \]
+\end{bound}
+Note that this bound is weaker than Bound~\ref{bound:unique-honest-catalan} and the likes.
+
+Before we proceed, recall 
+the following standard large deviation bound for supermartingales.
+\begin{theorem}[Azuma's inequality (Azuma; Hoeffding). See {\cite[4.16]{Motwani:1995:RA:211390}} for a discussion]\label{thm:azuma}
+  Let $X_0, \ldots, X_n$ be a sequence of real-valued random variables
+  so that, for all $t$,
+  $\Exp[X_{t+1} \mid X_0, \ldots, X_{t}] \leq X_t$ and
+  $|X_{t+1} - X_t| \leq c$ for some constant $c$. Then  
+  $
+    \Pr[X_n - X_0 \geq \Lambda] \leq
+    \exp\left(-{\Lambda^2}/{2nc^2}\right)
+    %\,.
+  $ 
+  for every $\Lambda \geq 0$.
+\end{theorem}
+
+The proof uses the following results from \citet{Ouroboros} and \citet{LinearConsistencySODA}.
+
+\begin{lemma}[{\cite[Lemma~4.19]{Ouroboros}}]\label{lem:margin-old} 
+  $\rho(\varepsilon) = 0$ 
+  where $\varepsilon$ is the empty string, and, for all nonempty strings $w\in\{0,1\}^*$,
+  \begin{equation}
+    \rho(w1) = \rho(w)+1\,, \qquad\text{and}\qquad
+    \rho(w0) = \begin{cases} 0 & \text{if $\rho(w) = 0$,}\\
+      \rho(w)-1 & \text{otherwise.}
+    \end{cases}
+    \label{eq:rho-recursive}
+  \end{equation}
+  Furthermore, margin satisfies the mutually recursive relationship
+  $\mu(\varepsilon) = 0$ and for all $w \in \{0,1\}^*$,
+  \begin{equation}
+    \mu(w1) = \mu(w)+1\,,\qquad\text{and}\qquad
+    \mu(w0) = \begin{cases}
+      0 & \text{if $\rho(w)>\mu(w)=0$,} \\
+%      \mu(w)-1 & \text{if $\rho(w)=0$,} \\
+      \mu(w)-1 & \text{otherwise.}
+    \end{cases}
+    \label{eq:mu-recursive}
+  \end{equation}
+  Additionally, there exists a closed fork $F\vdash w$ such that
+  $\rho(F)=\rho(w)$ and $\mu(F)=\mu(w)$.
+  %(It is convenient to separate the case $\rho(w) = 0$ from the other case which also yields $\mu(w) - 1$ in the proof, so we reflect that in the statement of the theorem.)
+\end{lemma}
+
+and
+
+\begin{lemma}[{\cite[Lemma~5.2]{LinearConsistencySODA}}]\label{lem:relative-margin-old}
+  Given a fixed string $x\in\{0,1\}\text{\emph{*}}$,
+  $\mu_x(\varepsilon) =\rho(x)$ 
+  where $\varepsilon$ is the empty string, and, for all nonempty strings $w=xy\in\{0,1\}\text{\emph{*}},$
+  \begin{equation}
+    \mu_x(y1)= \mu_x(y)+1\,,\qquad\text{and}\qquad
+    \mu_x(y0)= \begin{cases}
+      0 & \text{if } \rho(xy) > \mu_x(y)=0\,, \\
+%      \mu_x(y)-1 &  \text{if } \rho(xy)=0\,, \\
+      \mu_x(y)-1 & \text{otherwise.}
+    \end{cases}
+    \label{eq:mu-relative-recursive}
+  \end{equation}
+  Additionally, there exists a closed fork $F\vdash xy$ such that
+  $\rho(F)=\rho(xy)$ and $\mu_x(F)=\mu_x(y)$.
+  %(It is convenient to
+  %separate the case $\rho(w) = 0$ from the other case which also
+  %yields $\mu(w) - 1$ in the proof, so we reflect that in the
+  %statement of the lemma.)
+\end{lemma}
+
+
+%Now we are ready to prove Bound~\ref{bound:geometric-original}.
+
+%\begin{proof}[of Bound~\ref{bound:geometric}]
+\begin{proof}
+  Let $w_1, w_2, \ldots$ be random variables obeying the
+  $\epsilon$-martingale condition.  Specifically,
+  $\Pr[w_t = 1 \mid E] \leq (1 - \epsilon)/2$ conditioned on any event
+  $E$ expressed in the variables $w_1, \ldots, w_{t-1}$.  For
+  convenience, define the associated $\{\pm1\}$-valued random
+  variables $W_t = (-1)^{1+w_t}$ and observe that
+  $\Exp[W_t] \leq -\epsilon$.
+
+%\vspace{-2ex}
+\paragraph{If $x$ is empty.}
+Observe that in this case, the relative margin $\mu_x(y)$ reduces to 
+the non-relative margin $\mu(y)$ from Lemma~\ref{lem:margin}. 
+Since the sequence $y_1, y_2, \ldots$ in the statement of the claim 
+is identical to the sequence $w_1, w_2, \ldots$ defined above, 
+we focus on the reach and margin of the latter sequence. 
+Specifically, define $\rho_t = \rho(w_1 \ldots w_t)$ and
+$\mu_t = \mu(w_1 \ldots w_t)$ to be the two random variables from
+Lemma~\ref{lem:margin} acting on the string $w=w_1 \ldots w_t$. The
+analysis will rely on the ancillary random variables
+$\overline{\mu}_t = \min(0,\mu_t)$.  Observe that $\Pr[\text{$w$
+  forkable}] = \Pr[\mu(w) \geq 0] = \Pr[\overline{\mu}_k = 0]$, so we
+may focus on the event that $\overline{\mu}_k = 0$. As an additional
+preparatory step, define the constant
+$\alpha = (1+\epsilon)/(2\epsilon) \geq 1$ and define the random
+variables $\Phi_t \in \mathbb{R}$ by the inner product
+  \[
+    \Phi_t = (\rho_t, \overline{\mu}_t) \cdot
+    \left(\begin{array}{c} 1\\ \alpha\end{array}\right) = \rho_t +
+    \alpha \overline{\mu}_t\,.
+  \]
+  The $\Phi_t$ will act as a ``potential function'' in the analysis:
+  we will establish that $\Phi_k < 0$ with high probability and,
+  considering that
+  $\alpha\overline{\mu}_k \leq \rho_k + \alpha \overline{\mu}_k =
+  \Phi_k$, this implies $\overline{\mu}_k < 0$, as desired.
+  
+  Let $\Delta_t = \Phi_t - \Phi_{t-1}$; we claim that---conditioned
+  on any fixed value $(\rho, \mu)$ for $(\rho_t, \mu_t)$---the
+  random variable $\Delta_{t+1} \in [-(1 + \alpha),1+ \alpha]$ has
+  expectation no more than $-\epsilon$. The analysis has four cases,
+  depending on the various regimes of $\rho$ and $\mu$ from Lemma~\ref{lem:margin}. 
+  When $\rho > 0$ and $\mu < 0$,
+  $\rho_{t+1} = \rho + W_{t+1}$ and
+  $\overline{\mu}_{t+1} = \overline{\mu} + W_{t+1}$, where
+  $\overline{\mu} = \max(0,\mu)$; then
+  $\Delta_{t+1} = (1 + \alpha)W_{t+1}$ and
+  $\Exp[\Delta_{t+1} ] \leq -(1 + \alpha)\epsilon \leq -\epsilon$. When
+  $\rho > 0$ and $\mu \geq 0$, $\rho_{t+1} = \rho + W_{t+1}$
+  but $\overline{\mu}_{t+1} = \overline{\mu}$ so that
+  $\Delta_{t+1} = W_{t+1}$ and $\Exp[\Delta_{t+1} ] \leq -\epsilon$. Similarly, when
+  $\rho = 0$ and $\mu < 0$,
+  $\overline{\mu}_{t+1} = \overline{\mu} + W_{t+1}$ while
+  $\rho_{t+1} = \rho + \max(0, W_{t+1})$; we may compute
+  \[
+    \Exp[\Delta_{t+1} ] \leq \frac{1 - \epsilon}{2}(1 + \alpha) - \frac{1 +
+      \epsilon}{2}\alpha = \frac{1 - \epsilon}{2} - \epsilon\alpha =
+    \frac{1 - \epsilon}{2} - \epsilon\left(\frac{1}{\epsilon} \cdot
+      \frac{1 + \epsilon}{2}\right) = -\epsilon\,.
+  \]
+  Finally, when $\rho = \mu = 0$ exactly one of the two random
+  variables $\rho_{t+1}$ and $\overline{\mu}_{t+1}$ differs from
+  zero: if $W_{t+1} = 1$ then
+  $(\rho_{t+1}, \overline{\mu}_{t+1}) = (1,0)$; likewise, if
+  $W_{t+1} = -1$ then
+  $(\rho_{t+1}, \overline{\mu}_{t+1}) = (0,-1)$. It follows that
+  \[
+    \Exp[\Delta_{t+1} ] \leq \frac{1 - \epsilon}{2} - \frac{1 +
+      \epsilon}{2}\alpha \leq -\epsilon\,.
+  \]
+
+  \noindent
+  Thus $
+  \Exp[\Phi_k] = \Exp \sum_{t=1}^k \Delta_t  
+  \leq -\epsilon k
+  $. 
+  We wish to apply Azuma's inequality to conclude that
+  $\Pr[\Phi_k \geq 0]$ is exponentially small. For this purpose, we
+  transform the random variables $\Phi_t$ to a related supermartingale by
+  shifting them: specifically, define
+  $\tilde{\Phi}_t = \Phi_t + \epsilon t$ and
+  $\tilde{\Delta}_t = \Delta_t + \epsilon$ so that
+  $\tilde{\Phi}_t = \sum_i^t \tilde{\Delta}_t$. Then
+  \[
+    \Exp[\tilde{\Phi}_{t+1} \mid \tilde{\Phi}_1, \ldots,
+    \tilde{\Phi}_{t}] = \Exp[\tilde{\Phi}_{t+1} \mid W_1, \ldots,
+    W_{t}]\leq \tilde{\Phi}_t\,,
+    \qquad
+    \tilde{\Delta}_t \in [-(1 + \alpha) + \epsilon, 1+ \alpha +
+    \epsilon]\,,
+  \]
+  and $\tilde{\Phi}_k = \Phi_k + \epsilon k$. It follows
+  from Azuma's inequality that
+  \begin{align}\label{eq:azuma-bound}
+    \Pr[\text{$w$ forkable}] 
+    &= \Pr[\overline{\mu}_k = 0] \leq \Pr[\Phi_k \geq 0] = \Pr[\tilde{\Phi}_k \geq \epsilon k] 
+    \nonumber \\ 
+    &\leq \exp\left(-\frac{\epsilon^2 k^2}{2k (1 + \alpha + \epsilon)^2}\right)
+       = \exp\left(-\left(\frac{2 \epsilon^2}{1 + 3 \epsilon + 2\epsilon^2}\right)^2 \cdot \frac{k}{2}\right) \nonumber \\
+    &\leq \exp\left(-\frac{2\epsilon^4}{1 + 35\epsilon} \cdot k\right)
+    \,.
+    %                  \qedhere
+  \end{align}
+
+
+\newcommand{\muxr}{\mu_x^{(r)}}
+\newcommand{\Snr}{S_k^{(r)}}
+\newcommand{\Sr}{S^{(r)}}
+\newcommand{\Srstar}{S^{(r^*)}}
+\newcommand{\event}[1]{\mathsf{#1}}
+\newcommand{\notevent}[1]{\overline{\event{#1}}}
+
+%\vspace{-2ex}
+\paragraph{If $x$ is not empty.} 
+In this case, we go back to study the sequences $x$ and $y$ as in the statement of the claim.
+Recall the reach distribution (i.e., the distribution of the random variable $\rho(x)$) 
+$\DistRho_m : \Z \rightarrow [0,1]$ from~\eqref{eq:dist-rho}. 
+Since $x = (x_1, \ldots, x_m)$ satisfies the $\epsilon$-martingale condition, 
+Lemma~\ref{lemma:rho-stationary} states that $\DistRho_m \dominatedby \StationaryRho$.
+We reserve the symbol $\muxr$ for the relative margin 
+random walk $\mu_x$ which starts at a non-negative initial position $r$. 
+Thus $\rho(x) = \mu_x(\epsilon) = r$, and
+\begin{align}\label{eq:azuma-generic}
+\Pr[\mu_x(y) \geq 0] 
+&= \sum_{r \geq 0}{\DistRho_m(r) \Pr[\muxr(y) \geq 0]} 
+\leq \sum_{r \geq 0}{\StationaryRho(r) \Pr[\muxr(y) \geq 0]} 
+\, 
+\end{align}
+since the sequence $( \, \Pr[\muxr(y) \geq 0] \, )_{r=0}^\infty$ is non-decreasing and $\DistRho_m \dominatedby \StationaryRho$. Fix a ``large enough'' positive integer $r^*$ whose value will be assigned later in the analysis. 
+Let us define the following events:
+ \begin{itemize}
+  %\item Event $\event{A}_r$:~when $r > r^*$. 
+  \item Event $\event{B}_r$:~it occurs when $r \in [0, r^*]$ and the $\muxr$ walk is strictly positive on every prefix of $y$ with length at most $k/2$; and 
+  \item Event $\event{C}_{r,s}$:~it occurs when $r \in [0, r^*]$ and 
+  $\hat{y}$ is the smallest prefix of $y$ of length $s \in [r, k/2]$ 
+  such that $\muxr(\hat{y}) = 0$. 
+  We say that $\hat{y}$ is a witnesses to the event $\event{C}_{r, s}$.
+\end{itemize}
+%Note that these two events cannot happen simultaneously. 
+The right-hand side of~\eqref{eq:azuma-generic} can be written as
+\begin{align*}
+     &\quad \sum_{r>r^*}{\StationaryRho(r) \Pr[\muxr(y) \geq 0]} 
+		+ \sum_{r \leq r^*}{\StationaryRho(r) \Pr[\event{B}_r] \cdot \Pr\left[\muxr(y) \geq 0 \mid \event{B}_r\right]} \\
+    &\quad+ \sum_{r \leq r^*}{\StationaryRho(r) \sum_{s = r}^{k/2}{\Pr[\event{C}_{r,s}] \cdot \Pr[\muxr(y) \geq 0 \mid \event{C}_{r,s}]} }
+    \, .
+\end{align*} 
+We observe that the probabilities $\Pr[\muxr(y) \geq 0]$ and $\Pr[\muxr(y) \geq 0 \mid \event{B}_r]$ are at most one. 
+In addition, recall that for two non-negative sequences $(a_i), (b_i)$ of equal lengths, 
+we have $\sum{a_i b_i} \leq \max b_i$ if $\sum{a_i} \leq 1$. 
+Thus~\eqref{eq:azuma-generic} can be simplified as
+\begin{align}\label{eq:three-terms}
+\Pr[\mu_x(y) \geq 0] 
+ &\leq 
+    \sum_{r > r^*}{\StationaryRho(r)} 
+  + \sum_{r \leq r^*}{\StationaryRho(r) \Pr[\event{B}_r]} \nonumber \\
+  &\quad+ \sum_{r \leq r^*}{\StationaryRho(r)\, \max_{r \leq s \leq k/2}{\Pr[\muxr(y) \geq 0 \mid \event{C}_{r,s}]} }
+  \nonumber \\
+ &\leq    
+      \sum_{r > r^*}{\StationaryRho(r)}            
+  + 
+      \max_{r \leq r^*}{\Pr[\event{B}_r]}          
+  + 
+      \max_{\substack{r \leq r^* \\ r \leq s \leq k/2}}{\Pr[\muxr(y) \geq 0 \mid \event{C}_{r,s}]}   
+\, .
+\end{align}
+
+
+\emph{The first term in~\eqref{eq:three-terms} } is the right-tail of the distribution $\StationaryRho$. 
+Using Lemma~\ref{lemma:rho-stationary}, 
+this quantity is at most $\beta^{r^*}$ where $\beta := (1-\epsilon)/(1+\epsilon)$. 
+Furthermore, it can be easily checked that the above quantity is at most $\exp(-5 \epsilon/3)$.
+
+\emph{The second term in~\eqref{eq:three-terms} } concerns the event
+$\event{B}_r$ and calls for more care.  Define
+\[
+  \Snr := \sum_{t=0}^k {W_t}
+\]
+where $W_0 = r$ and the random variables $W_t$ are defined at the
+outset of this proof for $t \geq 1$.  We know that the $\muxr$ walk
+starts with $\rho(x) = \mu(x) = r \geq 0$.  Since $\event{B}_r$ holds,
+both the margin $\mu_x(\hat{y})$ and the reach $\rho(x\hat{y})$ remain
+non-negative for all prefixes $\hat{y}$ of length
+$t = 1, 2, \cdots, k/2$.  These two facts imply that the random
+variable $\muxr(\hat{y})$ is identical to the sum $\Sr_t$ for all
+prefixes $\hat{y}$ of length $t = 1, 2, \cdots, k/2$.
+
+To be precise,
+\[
+  \Pr[\event{B}_r] = \Pr[\Sr_t \geq 0 \quad \text{for all } t \leq k/2]\,.
+\]
+The latter probability is at most $\Pr[\Sr_{k/2} \geq 0]$ because the
+event $\Sr_{k/2} \geq 0$ does not constrain the intermediate sums
+$\Sr_t$ for $t < k/2$.  Since $\Pr[\Sr_{k/2} \geq 0]$ increases
+monotonically in $r$, we conclude that the second term
+in~\eqref{eq:three-terms} is at most $\Pr[\Srstar_{k/2} \geq 0]$.  Now
+we are free to shift our focus from the relative margin walk to the
+sum of a martingale sequence.
+
+For notational clarity, let us write $S := \Srstar_{k/2}$. 
+Since the sequence $(w_t)$ obeys the $\epsilon$-martingale condition, 
+$\Exp S$ is at most $M := r^* - k\epsilon/2$. 
+Let us set $r^* = W_0 = k\epsilon/4$. Then $\Exp S$ is at most $-k\epsilon/4$ and Azuma's inequality gives us
+\[
+\Pr[S \geq 0] 
+= \Pr[(S - \Exp S) \geq k\epsilon/4] 
+\leq \exp\left( - \frac{(k\epsilon/4)^2}{2(k/2)\cdot 2^2}\right) 
+= \exp\left( -\frac{k \epsilon^2}{64} \right)
+\, .
+\]
+This is an upper bound on the second term in~\eqref{eq:three-terms}.
+
+\emph{The third term in~\eqref{eq:three-terms}} concerns the event $\event{C}_{r,s}$ and it can be bounded using 
+our existing analysis of the $|x|=0$ case. 
+Specifically, suppose $y = \hat{y} z$ where
+$\hat{y}$ is a witness to the event $\event{C}_{r,s}$. 
+Since the $\muxr$ walk remains non-negative over the entire string $\hat{y}$, 
+it follows that $\rho(x\hat{y}) = \mu(x\hat{y}) = 0$ 
+and as a consequence, the $\mu_{x\hat{y}}$ walk on $z$ is identical to 
+the $\mu$ walk on $z$. 
+Our analysis in the $|x| = 0$ case suggests that 
+$\Pr[\mu(z) \geq 0]$ is at most $A(k-s, \epsilon)$ 
+where $|z| = k - s$ and $A(k, \epsilon)$ is the bound in~\eqref{eq:azuma-bound}. 
+Since $A(\cdot,\epsilon)$ decreases monotonically in the first argument, 
+$A(k-s, \epsilon)$ is at most $A(k/2, \epsilon)$. 
+However, since the last quantity is independent of $r$, 
+the third term in~\eqref{eq:three-terms} is at most 
+$A(k/2, \epsilon) = \exp\left( -k \epsilon^4/(1+35\epsilon) \right)$. 
+
+
+Returning to~\eqref{eq:three-terms} and using $r^* = k\epsilon/4$, we get
+\begin{align*}
+\Pr[\mu_x(y) \geq 0] 
+ &\leq    \exp\left(-\frac{5 \epsilon}{3} \cdot \frac{k\epsilon}{4} \right)  
+        + \exp\left(-\frac{2\epsilon^4}{1 + 35\epsilon} \cdot \frac{n}{2}\right)
+        + \exp\left( -\frac{k \epsilon^2}{64} \right)
+\, .
+\end{align*}
+It is easy to check that the above quantity is at most
+$$
+  3 \exp\left( - k \epsilon^4/(64 + 35 \epsilon) \right) 
+= 3 \exp\left( - \epsilon^4 (1 - O(\epsilon) ) k/64 \right)
+\,.
+$$
+
+% $\qed$
+\end{proof}

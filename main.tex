@@ -31,7 +31,8 @@
 
 \thispagestyle{plain}
 \mainmatter
-\doublespacing
+% \doublespacing
+\singlespacing
 %%%-----------------------%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -42,14 +43,18 @@
 \input{ch1-intro}
 \input{ch2-prelim}
 
-\part{Consistency under Super Honest Majority}
-\input{consistency}
+% \part{Consistency under Super Honest Majority}
+% \input{consistency}
 
-\part{Consistency under Simple Honest Majority}
+\part{Eventual Consensus PoS Consistency}
 \input{multihonest}
 
-\part{Security of PoS Randomness Beacons}
-\input{grinding}
+% \part{Eventual Consensus PoS Randomness Beacons}
+% \input{grinding-praos}
+
+% \part{Simple, Secure PoS Beacons}
+% \input{xorgames}
+
 
 %... etc.
 %%%-----------------------%%%
@@ -64,14 +69,14 @@
 \appendix
 \addtocontents{toc}{\protect\setChapterprefix{Appendix }}
 
-\chapter{Stirling's Approximation and Binomial Coefficients}\label{app:binomial-coeff}
-\input{grinding/app-binomial-coeff}
+% \chapter{Stirling's Approximation and Binomial Coefficients}\label{app:binomial-coeff}
+% \input{grinding-praos/app-binomial-coeff}
 
-\chapter{Omitted Proofs for Grinding in Praos}\label{app:grinding-praos}
-\input{grinding/app-praos}
+% \chapter{Fractional moment bounds for the geometric distribution}\label{app:geometric}
+% \input{xorgames/geometric.tex}
 
-\chapter{Fractional moment bounds for the geometric distribution}\label{app:geometric}
-\input{grinding/appendix/geometric.tex}
+% \chapter{Poisson distribution is subgeometric}\label{app:poisson}
+% \input{xorgames/poisson.tex}
 
 
 

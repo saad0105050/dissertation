@@ -386,7 +386,7 @@ consistently-labeled subgraph of $\hat{F}$.
     % % which achieves the reach and relative margin of the string $xy$. 
 
 
-\subsection{Slot settlement and the Unique Vertex Property}\label{sec:model-settlement}
+\section{Slot settlement and the Unique Vertex Property}\label{sec:model-settlement}
   
   We are now ready to explore the power of an adversary in this
   setting who has corrupted a (perhaps evolving) coalition of the
@@ -637,7 +637,7 @@ consistently-labeled subgraph of $\hat{F}$.
   \begin{definition}[$(\epsilon, p_\h)$-Bernoulli
     condition]\label{def:bernoulli-cond}
     Let $T \in \NN, \epsilon \in (0,1)$, and
-    $p_h \in [0,(1+\epsilon)/2]$. Define $p_\A = (1-\epsilon)/2$ and
+    $p_\h \in [0,(1+\epsilon)/2]$. Define $p_\A = (1-\epsilon)/2$ and
     $p_\H = 1- p_\A - p_\h$.  A random variable $w = w_1 \ldots w_T$
     taking values in $\{\h, \H, \A\}^T$ is said to satisfy the
     \emph{$(\epsilon, p_\h)$-Bernoulli condition} if each
@@ -676,13 +676,13 @@ consistently-labeled subgraph of $\hat{F}$.
   \end{theorem}
   Note that the quantity $p_\h$ above cannot be zero.
   We present the proof in Section~\ref{sec:bounds-main-proofs-multihonest}. 
-  In Section~\ref{sec:recursion}, 
+  In Section~\ref{sec:recursion-multihonest}, 
   we give a characterization of the UVP which 
   allows us to explicitly compute $\mathbf{S}^{s,k}[\mathcal{B}]$; 
   see 
   % Lemma~\ref{lemma:uvp-margin}, 
   Theorem~\ref{thm:relative-margin} and 
-  Section~\ref{sec:exact-prob}.
+  Section~\ref{sec:exact-prob-multihonest}.
 
 
   \paragraph{Analysis in the $\Delta$-synchronous setting.} The security
@@ -719,158 +719,6 @@ consistently-labeled subgraph of $\hat{F}$.
 
 
 
-\section{A consistent longest-chain selection rule}\label{sec:lcr-model} 
-  % Let $\leq_\pi$ be the lexicographical ordering of the tines in a fork where 
-  % each tine is represented as the list of vertex labels appearing in the tine's root-to-leaf path.
-  % If two tines have the same vertex labels, 
-  % $\leq_\pi$ must break tie in an arbitrary but consistent way. 
-  %
-  % \begin{definition}[Conservative fork]\label{def:conservative-fork}
-  %   The term \emph{conservative fork} is defined inductively, as follows.
-  %   The trivial fork $F_0$ for the empty string $\varepsilon$ 
-  %   is conservative. 
-  %   A fork $F_{T} \Fork w0$ is conservative if 
-  %   the fork prefix $F_{T_1} \ForkPrefix F_T, F_{T-1} \Fork w$ 
-  %   is conservative 
-  %   and every honest tine $t \in F_T$ at slot $T$ 
-  %   is a conservative extension with respect to $F_{T-1}$.
-  %   Likewise, 
-  %   a fork $F_{T} \Fork w1$ is conservative if 
-  %   the fork prefix $F_{T_1} \ForkPrefix F_T, F_{T-1} \Fork w$ 
-  %   is conservative and $F_T = F_{T-1}$. 
-  % \end{definition}
-  % Observe that a conservative fork is closed. 
-
-  % The rushing adversary 
-  % described at the outset of Section~\ref{sec:model} 
-  % can always reorder messages before delivering to a recipient. 
-  Let us 
-  modify axiom~\ref{axiom:message-delivery} as follows:
-    % the adversary uses an arbitrary (but fixed) 
-    % ordering for each subset of honest blockchains. 
-    % When he delivers honest blockchains 
-    % to an honest player, 
-    % he delivers them in this pre-specified order. 
-
-  \begin{enumerate}[label={\textbf{A\arabic*}\ensuremath{^\prime}}., ref={\textbf{A\arabic*}\ensuremath{^\prime}}, start=0]
-  \item\label{axiom:tie-breaking} 
-%     if all maximally long blockchains to be received by an honest party 
-%     are honest, 
-%     the adversary delivers these blockchains
-    % in an arbitrary but consistent order.
-    % Suppose two honest recipients receive 
-    % the same set $L$ of maximally long blockchains. 
-    % If all chains in $L$ end in honest blocks then 
-    % the adversary delivers the elements of $L$ to these honest recipients 
-    % in an arbitrary but consistent order.
-    In addition to axiom~\ref{axiom:message-delivery},  
-    an arbitrary but consistent 
-    longest-chain tie-breaking rule 
-    is used by all honest participants.
-  \end{enumerate}
-  % Note that 
-  % the adversary is free to deliver adversarial blockchains 
-  % in any order, interleaving the honest chains if he so wishes. 
-  As a consequence, 
-  if two honest participants observe 
-  the same set of blockchains of maximum length, 
-  they will extend the same blockchain.
-  % there is no competitive adversarial blockchain 
-  % when delivering to an honest recipient, 
-  % he relinquishes his right to 
-  % reorder the maximally long honest blockchains. 
-
-
-
-  \begin{definition}[Bivalent characteristic
-    string]\label{def:bivalent-char-string}
-    Let $\slot_1, \ldots, \slot_{n}$ be a sequence of slots. 
-    A \emph{bivalent characteristic string} $w$ 
-    is an element of $\{\H,\A\}^n$ 
-    defined for a particular execution of a blockchain protocol on these slots so that 
-    for $t \in [n]$, 
-    $w_t = \A$ if $\slot_{t}$ is assigned to an adversarial participant, 
-    and $w_t = \H$ otherwise.
-    % \[
-    %   w_t =   \begin{cases}
-    %   \H & \text{if $\slot_{t}$ was assigned to one or more participants, all honest},\\
-    %   \A & \text{otherwise.}
-    %   \end{cases}
-    % \]
-  \end{definition}
-  The definition of a fork for a bivalent characteristic string is
-  identical to Definition~\ref{def:fork} (somewhat simplified as a
-  bivalent string does not contain any $\h$ symbol).
-  Also note that the $(\epsilon, 0)$-condition 
-  from Definition~\ref{def:bernoulli-cond} 
-  is well-defined for bivalent characteristic strings.
-  %  except the following: 
-  % \begin{enumerate}[label=(F{\arabic*}.),start=3]
-  %   \item\label{fork:multiply-honest-bivalent}
-  %     % \label{fork:unique-honest}\label{fork:multiply-honest} 
-  %     each index in $\{j : w_j = \H\}$ 
-  %     is the label of at least one vertex of $F$.
-  % \end{enumerate}
-  % However, condition~\ref{fork:multiply-honest-bivalent} above 
-  % is identical to the condition~\ref{fork:multiply-honest} 
-  % in Definition~\ref{def:fork} 
-  % since $w$ does not contain the symbol $\h$.
-
-  Let $w$ be a bivalent characteristic string, $F$ a fork for $w$, and
-  $F'$ a fork for $w\H$ so that $F \ForkPrefix F'$ and any honest
-  vertex in $F' \setminus F$ has label $|w| + 1$.  If $F$ contains a
-  maximum-length adversarial tine, there is no guarantee that two
-  honest observers at slot $|w| + 1$ will agree on the longest chain:
-  the adversary may chose to expose the adversarial chain to one and
-  not the other.
-  In this case, we say that \emph{$F$ has a tie for the longest-chain
-  rule}---or, in short, that \emph{$F$ has an LCR tie}.  
-  % For example, consider the two honest vertices 
-  % with label 6 in Figure~\ref{fig:fork}. 
-  % Although both observe 
-  % the (honest) vertex with label 5, 
-  % only the top one observes 
-  % the middle (adversarial) vertex with label 4.
-  When there
-  is no LCR tie (that is, no maximum-length adversarial tine), all
-  honest slot leaders at slot $|w| + 1$ necessarily extend the same
-  honest tine determined by the consistent longest-chain tie-breaking
-  rule.
-
-
-
-  \begin{theorem}[Main theorem; consistent tie-breaking]\label{thm:main-mh-bivalent}
-    % Let $\epsilon \in (0, 1), s, k, T \in \NN$.  Let
-    % $\mathcal{W}$ and $\tilde{\mathcal{B}}_\epsilon$ be two distributions on
-    % $\{\H, \A\}^T$ where 
-    % $\tilde{\mathcal{B}}_\epsilon$ is defined above and
-    Let $\epsilon \in (0, 1)$ and $s, k, T \in \NN$.  
-    Let $\mathcal{B}$ be a distribution 
-    on length-$T$ bivalent characteristic strings 
-    satisfying the $(\epsilon, 0)$-Bernoulli condition. 
-    Let 
-    $\mathcal{W}$ be a distribution on
-    $\{\H, \A\}^T$ so that 
-    $\mathcal{W} \DominatedBy \mathcal{B}$. 
-    Then 
-    $
-      \mathbf{S}^{s,k}[\mathcal{W}] 
-        \leq \mathbf{S}^{s,k}[\mathcal{B}] 
-        \leq 
-        \exp\bigl(-k \cdot \Omega(\epsilon^3 (1 + O(\epsilon) ) )\bigr)
-      % \,.
-    $. 
-    % for large $k$. 
-    (Here, the asymptotic notation hides constants that do not depend on $\epsilon$ or $k$.)
-  \end{theorem}
-
-  The proof is deferred to \Section~\ref{sec:bounds-main-proofs-multihonest}.
-  Note that the theorem above states that a 
-  PoS protocol can achieve optimal consistency error 
-  even with a leader election scheme 
-  that produces no uniquely honest slots. 
-  In contrast, Theorem~\ref{thm:main-mh} requires 
-  a non-zero probability for uniquely honest slots.
 
 %%% Local Variables:
 %%% mode: latex

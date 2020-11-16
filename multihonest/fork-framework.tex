@@ -1,5 +1,20 @@
 
-\subsection{Closed forks, reach, and extensions}
+In this chapter, 
+we build upon the exposition in Section~\ref{sec:model-settlement} 
+and develop some important combinatorial notions. 
+These notions help us quantify the ``power'' of the adversary 
+in terms of causing a settlement violation. 
+In particular, we show that the notion of ``relative margin'' is just as expressive 
+as the Catalan slots for characterizing the UVP. 
+An added advantage is that we can obtain a recurrence relation 
+for relative margin as a function of the characteristic string; 
+see Theorem~\ref{thm:relative-margin}. 
+This leads to an algorithm which can calculate explicit error estimates by converting 
+this recurrence relation into a Markov chain; see \Section~\ref{sec:exact-prob-multihonest}.
+% The main results in this chapter are Theorem~\ref{} Theorem~\ref{thm:relative-margin}
+
+
+\section{Closed forks, reach, and extensions}
 \begin{definition}[Closed fork]
   A fork $F$ is \emph{closed} if every leaf is honest. For convenience, we say the trivial fork is closed.
 \end{definition}
@@ -205,26 +220,19 @@ play a critical role in the exposition that follows.
   $\height(F') = \height(F) + 1$.  
 \end{definition} 
 Since $F'$ is closed, all longest tines in $F'$ are honest and they have label $|w| + 1$.
-% , i.e., they belong to $S$ in the above definition.
-Let $\hat{t}$ be the unique longest honest tine in $F'$ 
-under the consistent longest-chain selection rule 
-in Axiom~\ref{axiom:tie-breaking}.
-Now consider a tine $\sigma \in S$. 
-Since $\sigma$ is honest, 
-it follows that 
+Consider a longest honest tine $\sigma \in F'\setminus F$ and 
+let $s \in F$ be the longest honest prefix of $\sigma$.
+It follows that 
 $\length(\sigma) 
 \geq 1 + \height(F) 
 = 1 + \length(s) + \gap_F(s)$ 
-where $s \in F$ is the longest honst prefix of $\sigma$.
-The root-to-leaf path in $F^\prime$ 
+Therefore, the root-to-leaf path in $F^\prime$ 
 that ends at $\sigma$ 
 contains at least $\gap_F(s)$ adversarial vertices $u \in F'$ 
 so that $\ell(u) \in [\ell(s) + 1, |w|]$ and 
 $u \not \in F$. 
 If $\sigma$ is a conservative extension, 
 the number of such vertices is exactly $\gap_F(s)$. 
-% Finally, if $F'$ is a conservative extension, 
-% the height of $F'$ is exactly one more than the height of $F$.
 
 
 \begin{fact}[Extensions and reach]\label{fact:reach-fork-ext-mh}
@@ -284,7 +292,7 @@ The above fact follows from the claims below.
 \end{proof}
 
 
-\subsection{Relative margin}
+\section{Relative margin}
 \begin{definition}[The $\sim_x$ relations]
   For two tines $t_1$ and $t_2$ of a fork $F$, we write $t_1 \sim t_2$
   when $t_1$ and $t_2$ share an edge; otherwise we write
@@ -343,6 +351,8 @@ $\mu_{xx'}(y)$ is negative then $\mu_x(x'y)$ is negative as well.
 %   If $\mu_{xx'}(y) < 0$ then $\mu_x(x'y) < 0$.
 % \end{fact}
 
+
+\section{A recurrence relation for relative margin}\label{sec:margin-recurrence}
 The theorem below shows how to recursively compute $\mu_x(y)$ 
 for a given decomposition $w = xy$.
 
@@ -387,10 +397,320 @@ for computing the probability that $\mu_x(y) \geq 0$.
 But this is exactly the probability that slot $m$ is not $k$-settled, 
 according to~\eqref{eq:settlement-uvp} 
 and Lemma~\ref{lemma:uvp-margin} below. 
-In Section~\ref{sec:exact-prob}, 
+In Section~\ref{sec:exact-prob-multihonest}, 
 we describe this algorithm in more detail and 
 compile some explicit values for this probability.
 
+
+In \Section~\ref{sec:exact-prob-multihonest}, 
+we describe an algorithm which explicitly computes 
+consistency violation estimates using Theorem~\ref{thm:relative-margin}.
+
+
+\section{Balanced forks, settlement violations, and relative margin}
+%Informally, $t_1\sim_x t_2$ indicates that when we restrict our view of history to only blocks \emph{after}
+%the prefix $x$, $t_1$ and $t_2$ share an edge (and thus agree on at least one block after that point).
+
+A natural structure we can use to reason about settlement times 
+(see Definition~\ref{def:settlement-mh}) 
+is that of a ``balanced fork.''
+
+\begin{definition}[Balanced fork]\label{def:balanced-fork} A
+  fork $F$ is \emph{balanced} if it contains a pair of tines $t_1$ and
+  $t_2$ for which $t_1\nsim t_2$ and
+  $\length(t_1)=\length(t_2)=\height(F)$. We define a relative notion
+  of balance as follows: a fork $F \vdash xy$ is \emph{$x$-balanced}
+  if it contains a pair of tines $t_1$ and $t_2$ for which
+  $t_1 \not\sim_x t_2$ and $\length(t_1) = \length(t_2) = \height(F)$.
+\end{definition}
+
+Thus, balanced forks contain two completely disjoint, maximum-length
+tines, while $x$-balanced forks contain two maximum-length tines that
+may share edges in $x$ but must be disjoint over the rest of the
+string. 
+See Figures~\ref{fig:balanced-mh} and~\ref{fig:x-balanced-mh} 
+for examples of balanced forks.
+\begin{figure}[ht]
+  \centering
+  \begin{minipage}{0.45\textwidth}\centering
+
+
+    \begin{tikzpicture}[>=stealth', auto, semithick,
+      honest/.style={circle,draw=black,thick,text=black,double,font=\small},
+     malicious/.style={fill=gray!10,circle,draw=black,thick,text=black,font=\small}]
+      \node at (0,-2) {$w =$};
+    \node at (1,-2) {$\h$}; \node[honest] at (1,-.7) (b1) {$1$};
+    \node at (2,-2) {$\A$}; \node[malicious] at (2,.7) (a1) {$2$};
+    \node at (3,-2) {$\h$}; \node[honest] at (3,.7) (a2) {$3$};
+    \node at (4,-2) {$\A$}; \node[malicious] at (4,-.7) (b2) {$4$};
+    \node at (5,-2) {$\h$}; \node[honest] at (5,-.7) (b3) {$5$};
+    \node at (6,-2) {$\A$}; \node[malicious] at (6,.7) (a3) {$6$};
+      \node[honest] at (-1,0) (base) {$0$};
+    \draw[thick,->] (base) to[bend left=10] (a1);
+        \draw[thick,->] (a1) -- (a2);
+        \draw[thick,->] (a2) -- (a3);
+    \draw[thick,->] (base) to[bend right=10] (b1);
+        \draw[thick,->] (b1) -- (b2);
+        \draw[thick,->] (b2) -- (b3);
+      \end{tikzpicture} 
+    \caption{A balanced fork}
+    \label{fig:balanced-mh}
+  % \end{figure}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}\centering
+
+  % \begin{figure}[ht]
+  %   \centering
+    \begin{tikzpicture}[>=stealth', auto, semithick,
+      honest/.style={circle,draw=black,thick,text=black,double,font=\small},
+     malicious/.style={fill=gray!10,circle,draw=black,thick,text=black,font=\small}]
+      \node at (0,-2) {$w =$};
+    \node at (1,-2) {$\h$}; \node[honest] at (1,0) (ab1) {$1$};
+    \node at (2,-2) {$\h$}; \node[honest] at (2,0) (ab2) {$2$};
+    \node at (3,-2) {$\h$}; \node[honest] at (3,.7) (a3) {$3$};
+    \node at (4,-2) {$\A$}; \node[malicious] at (4,-.7) (b3) {$4$};
+    \node at (5,-2) {$\h$}; \node[honest] at (5,-.7) (b4) {$5$};
+    \node at (6,-2) {$\A$}; \node[malicious] at (6,.7) (a4) {$6$};
+      \node[honest] at (-1,0) (base) {$0$};
+    \draw[thick,->] (base) -- (ab1);
+    \draw[thick,->] (ab1) -- (ab2);
+    \draw[thick,->] (ab2) to[bend left=10] (a3);
+      \draw[thick,->] (a3) -- (a4);
+    \draw[thick,->] (ab2) to[bend right=10] (b3);
+      \draw[thick,->] (b3) -- (b4);
+      \end{tikzpicture} 
+    \caption{An $x$-balanced fork, where $x=\h\h$}
+    \label{fig:x-balanced-mh}
+
+  \end{minipage}
+\end{figure}
+
+
+% \paragraph{Balanced forks and settlement time.}
+A fundamental question arising in typical blockchain settings is how
+to determine \emph{settlement time}, the delay after which the
+contents of a particular block of a blockchain can be considered
+stable. The existence of a balanced fork is a precise indicator for
+``settlement violations'' in this sense. Specifically, consider a
+characteristic string $xy$ and a transaction appearing in a block
+associated with the first slot of $y$ (that is, slot $|x| + 1$). One
+clear violation of settlement at this point of the execution is the
+existence of two chains---each of maximum length---which diverge
+\emph{prior to $y$}; in particular, this indicates that there is an
+$x$-balanced fork $F$ for $xy$. Let us record this observation below.\footnote{
+  A balanced fork in~\cite{LinearConsistency} 
+  had the property that 
+  at least one maximum-length tine was adversarial. 
+  But this is not true in our setting since we allow multiply honest slots.
+}
+
+
+\begin{observation}\label{obs:settlement-balanced-fork-mh}
+  Let $s, k \in \NN$ be given and 
+  let $w$ be a characteristic string. 
+  Slot $s$ is not $k$-settled for the characteristic string $w$ 
+  if 
+  there exist a decomposition $w = xyz$, 
+  where $|x| = s - 1$ and $|y| \geq k+1$, 
+  and an $x$-balanced fork for $xy$. 
+\end{observation}
+
+In particular, to provide a rigorous $k$-slot settlement
+guarantee---which is to say that the transaction can be considered
+settled once $k$ slots have gone by---it suffices to show that with
+overwhelming probability in choice of the characteristic string
+determined by the leader election process (of a full execution of the
+protocol), no such forks are possible. Specifically, if the protocol
+runs for a total of $T$ time steps yielding the characteristics string
+$w = xy$ (where $w \in \{0,1\}^T$ and the transaction of interest
+appears in slot $|x| + 1$ as above) then it suffices to ensure that
+there is no $x$-balanced fork for $x\hat{y}$, where $\hat{y}$ is an
+arbitrary prefix of $y$ of length at least $k + 1$. 
+% see Corollary~\ref{cor:main} in Section~\ref{sec:estimates}.  
+Note that
+for systems adopting the longest chain rule, this condition must
+necessarily involve the \emph{entire future dynamics} of the
+blockchain. We remark that our analysis below will in fact let us take
+$T = \infty$.
+
+
+% \paragraph{An alternative proof of Lemma~\ref{lemma:uvp-margin} via balanced forks.}
+Let $w$ be a characteristic string. 
+Writing $w = xy$, 
+consider any tine-pair $(t_x, t_\rho)$ in a fork $F \Fork w$ so that 
+$\reach_F(t_\rho) = \rho(F)$ and $t_x$ is $y$-disjoint with $t_\rho$.
+Observe that if $\mu_x(y) < 0$ then $\reach_F(t_x) < 0$. 
+
+% In a similar Fact 1 in~\cite{LinearConsistencySODA}, 
+\begin{fact}\label{fact:margin-balance}
+  Let $xy \in \{\h, \H, \A\}^*$ be a characteristic string. 
+  There is no 
+  $x$-balanced fork for $xy$ 
+  if and only if 
+  $\mu_x(y) < 0$.
+\end{fact}
+\begin{proof}[Proof sketch.]  
+  If a fork $F \Fork xy$ 
+  satisfies $\mu_x(F) \geq 0$, 
+  it contains two $y$-disjoint tines $t_1, t_2$, 
+  each with a non-negative reach, 
+  so that $\min(\reach(t_1), \reach(t_2)) = \mu_x(F)$. 
+  As $\reserve(t_i) \geq \gap(t_i)$ for $i \in \{1,2\}$, 
+  we can extend these tines using only new adversarial vertices 
+  so that both these extensions 
+  have the maximum length 
+  in the augmented fork. 
+  Thus the augmented fork is $x$-balanced.
+
+  On the other hand, if a fork $F \Fork xy$ is $x$-balanced, 
+  there must be two $y$-disjoint 
+  maximum-length tines $t_1, t_2 \in F$. 
+  As the gap of a maximum-length tine is zero, 
+  we must have $\reach(t_i) = \reserve(t_i) \geq 0$ 
+  for $i \in \{1, 2\}$. 
+  It follows that $\mu_x(y) \geq \mu_x(F) \geq \min_i \reach(t_i) \geq 0$.
+\end{proof}
+
+% Let us focus on proving Lemma~\ref{lemma:uvp-margin} 
+% using the above fact. 
+% Let $x\Prefix w$. 
+% It is easy to see that 
+% if the slot $s = |x| + 1$ has the UVP 
+% then there can be no $x$-balanced fork for $xx'$ 
+% where $xx' \PrefixEq w$;
+% consequently, $\mu_x(x') < 0$. 
+% On the other hand, if $s$ does not have the UVP 
+% then there must be a prefix $xx' \PrefixEq w$ 
+% and a fork $F \Fork xx'$ 
+% containing two maximum-length (and hence viable) 
+% tines $t_1, t_2$ 
+% diverging prior to slot $s$. 
+% Hence $F$ is $x$-balanced.
+% \hfill\qed
+
+
+\section{Relative margin to characterize the UVP}
+Let $w$ be a characteristic string. 
+Recall that in Theorem~\ref{thm:unique-honest}, 
+we showed that whether a slot has the UVP in $w$ --- a 
+structural property of the forks for $w$ --- is 
+characterized by the ``Catalan-ness'' of the said slot. 
+Below, we show that relative margin 
+has the same expressive power 
+as the Catalan slots 
+in terms of characterizing the UVP. 
+
+
+  
+% \begin{definition}[Margin-critical slot]\label{def:margin-critical-slot}
+%     Let $w \in \{\h,\H,\A\}^T$ be a characteristic string, 
+%     $s \in [T]$ be a slot in $w$, 
+%     and $x$ be a prefix of $w$ so that $|x| = s - 1$. 
+%     Slot $s$ is called \emph{margin-critical} 
+%     if, 
+%     for all decompositions 
+%     $w = xyz$ so that $|y| \geq 1$ and $|z| \geq 0$, 
+%     we have $\mu_{x}(y) < 0$.
+%     % for all decompositions $w = xyz$ so that $|x| < s, |xy| \geq s$.    
+% \end{definition}
+% Since $\mu_x(\varepsilon) \geq 0$ and $|y| \geq 1$ in the above definition, 
+% it follows that a margin-critical slot (i.e., the first slot in $y$) must be honest.
+
+
+
+
+% Below, we show that a margin-critical honest slot has the bottleneck property as well. 
+\begin{lemma}\label{lemma:uvp-margin}
+  Let $T \in \NN, w \in \{\h, \H, \A\}^T$, and 
+  $s \in [T]$ so that $w_s = \h$. 
+  Let $x = w_1 \ldots w_{s-1}$.
+  Slot $s$ has the UVP in $w$ 
+  if and only if 
+  for every prefix $xy \PrefixEq w$, 
+  $\mu_x(y) < 0$. 
+  % A a uniquely honest slot is margin-critical 
+  % if and only if 
+  % it has the UVP. 
+\end{lemma}
+
+
+% \begin{corollary}\label{coro:catalan-margin-critical}
+%   Let $w \in \{\h, \H, \A\}^T$ be a characteristic string 
+%   and let $x \PrefixEq$ 
+%   A uniquely honest slot in $w$ 
+%   is Catalan 
+%   if and only if 
+%   % it is margin-critical. 
+%   for every prefix $xy \PrefixEq w$, 
+%   $\mu_x(y) < 0$. 
+% \end{corollary}
+
+\begin{proof}~
+  % Recall from Theorem~\ref{thm:unique-honest} 
+  % that a uniquely honest slot is Catalan in $w$ 
+  % if and only if 
+  % it has the UVP in $w$. 
+
+  \begin{description}[font=\normalfont\itshape\space]
+    \item[The $\Longleftarrow$ direction.]
+      Suppose that 
+      for every prefix $xy \PrefixEq w$ where $|y| \geq 1$, 
+      we have $\mu_x(y) < 0$. 
+      We wish to show that $s$ has the UVP in $w$.
+
+      Let $F$ be any fork for $xy$ 
+      and let 
+      $t \in F, \ell(t) \leq s - 1$ be an honest tine. 
+      Since it is disjoint with any tine in $F$ over the suffix $y$, 
+      $\reach(t) < 0$ and, by Fact~\ref{fact:fork-structure-reach}, 
+      $t$ does not have an adversarial extension $t' \in F, t \Prefix t'$ that is 
+      viable at the onset of slot $|xy| + 1$. 
+      Therefore, if a tine in $F$ 
+      is viable at the onset of slot $|xy| + 1$, 
+      it must contain an honest vertex with label at least $s$. 
+      However, since an honest vertex builds only on top of a viable tine, 
+      it follows that any viable tine must contain 
+      the unique honest vertex with label $s$.
+
+    \item[The $\Longrightarrow$ direction.]
+      Suppose $s$ has the UVP in $w$.
+      Let $k \in [s, T]$ be an integer and 
+      write $w = xyz$ with $|xy| = k$. 
+      (Note that $y_1 = w_s$.)
+      We wish to show that $\mu_x(y) < 0$.
+
+      Let $F$ be any fork for $xy$.
+      % all tines in $F$ viable at the onset of 
+      % % slot $|xy| + 1$ 
+      % slot $|xy| + 1$ 
+      % have, as their common prefix, 
+      % {\color{blue}the unique honest tine} $\tau, \ell(\tau) = s$. 
+      Since slot $s$ belongs to $y$, 
+      $F$ cannot contain two tines 
+      such that 
+      \begin{enumerate*}[label=(\roman*)]
+        \item both tines are viable at the onset of slot $|xy| + 1$ 
+        and, at the same time, 
+        \item disjoint over the length of $y$ 
+        since they must contain the unique vertex with label $s$. 
+      \end{enumerate*}
+      % As any $x$-balanced fork for $xy$ requires two maximally long tines 
+      % that are disjoint over $y$, 
+      In particular, 
+      $F$ cannot be $x$-balanced. 
+      As $F$ was an arbitrary fork for $xy$, 
+      no fork for $xy$ can be $x$-balanced for our choice of $k$.
+      We use Fact~\ref{fact:margin-balance} 
+      to conclude that 
+      $\mu_x(y)$ must be negative.
+      % Since our $k \in [s, T]$ is arbitrary, 
+      % the above conclusion applies to 
+      % all decompositions $w = xyz$ where $|x| = s - 1$ and $|xy| \geq s$.
+      % Therefore, slot $s$ is margin-critical in $w$.
+
+  \end{description}
+\end{proof}
 
 
 

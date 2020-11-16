@@ -3,32 +3,47 @@
 
 \chapter{Blockchain Axioms and the Settlement Security Model}\label{sec:model-multihonest}
 \input{multihonest/model}
-\input{multihonest/definitions}\label{sec:definitions-multihonest}
+% \input{multihonest/definitions}\label{sec:definitions-multihonest}
+
+\chapter{Catalan Slots and the UVP}\label{sec:catalan}\label{sec:definitions-multihonest}
+\input{multihonest/definitions}
 \input{multihonest/fork}
-
-
-\chapter{Catalaon Slots and the Unique Vertex Property}\label{sec:catalan}
 \input{multihonest/catalan-cp}
 
-\chapter{Main Theorems via Tail Bounds for Catalan Slots}\label{sec:bounds-main-proofs-multihonest}
+\chapter{Tail Bounds for Catalan Slots; Proof of Main Theorems}\label{sec:bounds-main-proofs-multihonest}
 \input{multihonest/bounds}
 
-\chapter{Proofs of Bounds~\ref{bound:unique-honest-catalan} and~\ref{bound:two-catalans}}\label{sec:estimates-multihonest}
+\chapter{A Random Walk; Handling Dependence on the Past}\label{sec:rand-walk}
+\input{multihonest/randwalk} 
+
+
+\chapter{Proof of \texorpdfstring{Bound~\ref{bound:unique-honest-catalan}}{the First Tail Bound} }\label{sec:estimates-multihonest}
 \input{multihonest/estimates}
 
-\chapter{An Optimal Online Adversary Against Slot Settlement}\label{sec:recursion-multihonest}
-\input{multihonest/recursive-formulation}
-\section{An algorithm to compute exact settlement probabilities}\label{sec:exact-prob-multihonest}
-\input{multihonest/exact-probabilities}
+\chapter{Implication of a Consistent Longest-Chain Tie-Breaking Rule}\label{sec:lcr-tie-multihonest}
+\input{multihonest/tie-breaking}
+
+\chapter{Proving UVP without Catalan Slots}\label{sec:fork-framework}
+\input{multihonest/fork-framework}
+
+
+\chapter{An Optimal Attack against Consistency}\label{sec:opt-adversary}
+\input{multihonest/opt-adversary}
 
 \chapter{Proofs of Theorem~\ref{thm:relative-margin} and Theorem~\ref{thm:opt-adversary-canonical}}\label{sec:margin-proof-multihonest}
 \input{multihonest/margin-proof}
+
+\chapter{Explicit Error Estimates}\label{sec:exact-prob-multihonest}
+\input{multihonest/exact-probabilities}
+
 
 \chapter{The Semi-synchronous Setting}\label{sec:async-multihonest}\label{sec:async-model-multihonest}
 \input{multihonest/async}
 
 
-\chapter{Proving Common Prefix Property without Catalan Slots}\label{sec:cp-multihonest}\label{sec:cp-model-multihonest}
+\chapter{Common Prefix Property (CP)}\label{sec:cp-multihonest}\label{sec:cp-model-multihonest}
 \input{multihonest/cp}
 
 
+\chapter{History-Dependence in Leader Elections}
+\input{multihonest/martingale}

@@ -1,0 +1,322 @@
+We can think of the longest chain tie-breaking rule (LCR) 
+as a function applied by the adversary on a set of longest chains within the view of an honest observer. 
+In this chapter, 
+we assume that this rule is \emph{consistent}, i.e., 
+if the same set of longest chains is served to two honest observers, 
+they always select the same chain. 
+It turns out that 
+we can prove stronger consistency bounds under this assumption 
+(compared to Theorem~\ref{thm:main-mh}); 
+in particular, we can achieve consistency even when 
+uniquely honest slots are rare (or even non-existent).
+
+In Section~\ref{sec:lcr-model}, we specify the model and state our main theorem. 
+In the subsequent section, we state a tail bound, and prove this theorem. 
+Finally, in the last section, we prove this tail bound using a random walk analysis.
+
+\section{A consistent longest-chain selection rule}\label{sec:lcr-model} 
+  % Let $\leq_\pi$ be the lexicographical ordering of the tines in a fork where 
+  % each tine is represented as the list of vertex labels appearing in the tine's root-to-leaf path.
+  % If two tines have the same vertex labels, 
+  % $\leq_\pi$ must break tie in an arbitrary but consistent way. 
+  %
+  % \begin{definition}[Conservative fork]\label{def:conservative-fork}
+  %   The term \emph{conservative fork} is defined inductively, as follows.
+  %   The trivial fork $F_0$ for the empty string $\varepsilon$ 
+  %   is conservative. 
+  %   A fork $F_{T} \Fork w0$ is conservative if 
+  %   the fork prefix $F_{T_1} \ForkPrefix F_T, F_{T-1} \Fork w$ 
+  %   is conservative 
+  %   and every honest tine $t \in F_T$ at slot $T$ 
+  %   is a conservative extension with respect to $F_{T-1}$.
+  %   Likewise, 
+  %   a fork $F_{T} \Fork w1$ is conservative if 
+  %   the fork prefix $F_{T_1} \ForkPrefix F_T, F_{T-1} \Fork w$ 
+  %   is conservative and $F_T = F_{T-1}$. 
+  % \end{definition}
+  % Observe that a conservative fork is closed. 
+
+  % The rushing adversary 
+  % described at the outset of Section~\ref{sec:model} 
+  % can always reorder messages before delivering to a recipient. 
+  Let us 
+  modify axiom~\ref{axiom:message-delivery} as follows:
+    % the adversary uses an arbitrary (but fixed) 
+    % ordering for each subset of honest blockchains. 
+    % When he delivers honest blockchains 
+    % to an honest player, 
+    % he delivers them in this pre-specified order. 
+
+  \begin{enumerate}[label={\textbf{A\arabic*}\ensuremath{^\prime}}., ref={\textbf{A\arabic*}\ensuremath{^\prime}}, start=0]
+  \item\label{axiom:tie-breaking} 
+  %     if all maximally long blockchains to be received by an honest party 
+  %     are honest, 
+  %     the adversary delivers these blockchains
+    % in an arbitrary but consistent order.
+    % Suppose two honest recipients receive 
+    % the same set $L$ of maximally long blockchains. 
+    % If all chains in $L$ end in honest blocks then 
+    % the adversary delivers the elements of $L$ to these honest recipients 
+    % in an arbitrary but consistent order.
+    In addition to axiom~\ref{axiom:message-delivery},  
+    an arbitrary but consistent 
+    longest-chain tie-breaking rule 
+    is used by all honest participants.
+  \end{enumerate}
+  % Note that 
+  % the adversary is free to deliver adversarial blockchains 
+  % in any order, interleaving the honest chains if he so wishes. 
+  As a consequence, 
+  if two honest participants observe 
+  the same set of blockchains of maximum length, 
+  they will extend the same blockchain.
+  % there is no competitive adversarial blockchain 
+  % when delivering to an honest recipient, 
+  % he relinquishes his right to 
+  % reorder the maximally long honest blockchains. 
+
+
+
+  \begin{definition}[Bivalent characteristic
+    string]\label{def:bivalent-char-string}
+    Let $\slot_1, \ldots, \slot_{n}$ be a sequence of slots. 
+    A \emph{bivalent characteristic string} $w$ 
+    is an element of $\{\H,\A\}^n$ 
+    defined for a particular execution of a blockchain protocol on these slots so that 
+    for $t \in [n]$, 
+    $w_t = \A$ if $\slot_{t}$ is assigned to an adversarial participant, 
+    and $w_t = \H$ otherwise.
+    % \[
+    %   w_t =   \begin{cases}
+    %   \H & \text{if $\slot_{t}$ was assigned to one or more participants, all honest},\\
+    %   \A & \text{otherwise.}
+    %   \end{cases}
+    % \]
+  \end{definition}
+  The definition of a fork for a bivalent characteristic string is
+  identical to Definition~\ref{def:fork} (somewhat simplified as a
+  bivalent string does not contain any $\h$ symbol).
+  Also note that the $(\epsilon, 0)$-condition 
+  from Definition~\ref{def:bernoulli-cond} 
+  is well-defined for bivalent characteristic strings.
+  %  except the following: 
+  % \begin{enumerate}[label=(F{\arabic*}.),start=3]
+  %   \item\label{fork:multiply-honest-bivalent}
+  %     % \label{fork:unique-honest}\label{fork:multiply-honest} 
+  %     each index in $\{j : w_j = \H\}$ 
+  %     is the label of at least one vertex of $F$.
+  % \end{enumerate}
+  % However, condition~\ref{fork:multiply-honest-bivalent} above 
+  % is identical to the condition~\ref{fork:multiply-honest} 
+  % in Definition~\ref{def:fork} 
+  % since $w$ does not contain the symbol $\h$.
+
+  Let $w$ be a bivalent characteristic string, $F$ a fork for $w$, and
+  $F'$ a fork for $w\H$ so that $F \ForkPrefix F'$ and any honest
+  vertex in $F' \setminus F$ has label $|w| + 1$.  If $F$ contains a
+  maximum-length adversarial tine, there is no guarantee that two
+  honest observers at slot $|w| + 1$ will agree on the longest chain:
+  the adversary may chose to expose the adversarial chain to one and
+  not the other.
+  In this case, we say that \emph{$F$ has a tie for the longest-chain
+  rule}---or, in short, that \emph{$F$ has an LCR tie}.  
+  % For example, consider the two honest vertices 
+  % with label 6 in Figure~\ref{fig:fork}. 
+  % Although both observe 
+  % the (honest) vertex with label 5, 
+  % only the top one observes 
+  % the middle (adversarial) vertex with label 4.
+  When there
+  is no LCR tie (that is, no maximum-length adversarial tine), all
+  honest slot leaders at slot $|w| + 1$ necessarily extend the same
+  honest tine determined by the consistent longest-chain tie-breaking
+  rule.
+
+
+
+  \begin{theorem}[Main theorem; consistent tie-breaking]\label{thm:main-mh-bivalent}
+    % Let $\epsilon \in (0, 1), s, k, T \in \NN$.  Let
+    % $\mathcal{W}$ and $\tilde{\mathcal{B}}_\epsilon$ be two distributions on
+    % $\{\H, \A\}^T$ where 
+    % $\tilde{\mathcal{B}}_\epsilon$ is defined above and
+    Let $\epsilon \in (0, 1)$ and $s, k, T \in \NN$.  
+    Let $\mathcal{B}$ be a distribution 
+    on length-$T$ bivalent characteristic strings 
+    satisfying the $(\epsilon, 0)$-Bernoulli condition. 
+    Let 
+    $\mathcal{W}$ be a distribution on
+    $\{\H, \A\}^T$ so that 
+    $\mathcal{W} \DominatedBy \mathcal{B}$. 
+    Then 
+    $
+      \mathbf{S}^{s,k}[\mathcal{W}] 
+        \leq \mathbf{S}^{s,k}[\mathcal{B}] 
+        \leq 
+        \exp\bigl(-k \cdot \Omega(\epsilon^3 (1 + O(\epsilon) ) )\bigr)
+      % \,.
+    $. 
+    % for large $k$. 
+    (Here, the asymptotic notation hides constants that do not depend on $\epsilon$ or $k$.)
+  \end{theorem}
+
+  The proof is deferred to section~\ref{sec:lcr-tie-bound-main-thm-proof}.
+  Note that the theorem above states that a 
+  PoS protocol can achieve optimal consistency error 
+  even with a leader election scheme 
+  that produces no uniquely honest slots. 
+  In contrast, Theorem~\ref{thm:main-mh} requires 
+  a non-zero probability for uniquely honest slots.
+
+
+\section{Catalan slots and the UVP}\label{sec:catalan-uvi-lcr-tie}
+  
+
+  The following theorem shows that under axiom~\ref{axiom:tie-breaking}, 
+  two consecutive Catalan slots 
+  imply that the first slot has the UVP.
+
+  \begin{theorem}\label{thm:multiple-honest}
+    Let $w \in \{\H, \A\}^T$ be a bivalent characteristic string 
+    and axiom~\ref{axiom:tie-breaking} is satisfied.
+    % where 
+    % all honest slot leaders use the consistent longest-chain selection rule $\LCR(\cdot)$.
+    Let $s \in[2, T]$ be an integer such that 
+    $s$ and $s - 1$ are two honest slots in $w$. 
+    The following statements are equivalent:
+    \begin{enumerate*}[label=(\textit{\roman*})]
+      \item\label{thm:part-catalan-multiple-honest} 
+      Slots $s, s - 1$ are Catalan.
+
+      \item\label{thm:part-cp-multiple-honest} 
+      If $s \leq T - 1$, both $s$ and $s - 1$ have the UVP. 
+      Otherwise, slot $T - 1$ has the UVP but 
+      slot $T$ has the bottleneck property.
+
+      % \item\label{thm:part-margin-multiple-honest} 
+      % Slots $s, s - 1$ are margin-critical.
+    \end{enumerate*}
+  \end{theorem}
+  \begin{proof}
+    Since the slots $s, s - 1$ satisfy the (weaker) bottleneck property, 
+    Fact~\ref{fact:almost-cp-implies-catalan} implies that 
+    they must be Catalan slots. 
+    This proves 
+    ~\ref{thm:part-cp-multiple-honest} implies~\ref{thm:part-catalan-multiple-honest}.
+    
+    Now let us prove that ~\ref{thm:part-catalan-multiple-honest} implies~\ref{thm:part-cp-multiple-honest}. 
+    Slots $s, s - 1$ are Catalan. 
+    Let $V_{s}$ (resp. $V_{s+1}$) be the set of all viable tines 
+    at the onset of slot $s$ (resp. slot $s + 1$). 
+    Since $s - 1$ (resp. $s$) is a Catalan slots, we use 
+    Fact~\ref{fact:catalan-unique-longest} and conclude that 
+    $V_s$ (resp. $V_{s+1}$) can contain 
+    only maximum-length honest tines $t, \ell(t) = s - 1$ (resp. $\ell(t) = s$). 
+    Let $u_s \in V_s$ be the unique vertex determined 
+    by the consistent tie-breaking rule when applied to the set $V_s$. 
+    Define $u_{s+1} \in V_{s+1}$ in an analogous way for the set $V_{s+1}$.
+
+    Let $k \in [s + 1, T+1]$ be an integer.
+    We wish tho show that for every tine $t$ viable at the onset of slot $k$, 
+    the following holds: 
+    (i) if  $s \leq T - 1$ then $u_s \Prefix u_{s+1} \PrefixEq t$, and 
+    (ii) if $s = T$ then 
+    $u_{T-1} \Prefix t$ where $\ell(t) = T$. 
+
+    % Since $V_s$ contains only honest tines, 
+    All tines at the honest slot $s$ build upon $u_s$. 
+    If $s = T$, we are done. 
+    Otherwise, i.e., if $s \leq T - 1$, 
+    let $\tau = u_{s + 1}$ and note that $u_s \Prefix u_{s + 1} = \tau$. 
+    If $k = s + 1$, we are done since by Fact~\ref{fact:catalan-unique-longest}, 
+    every tine at the honest slot $k$ will build upon $\tau$.  
+
+    It remains to reason about the case $s \leq T - 2$ and $k \geq s + 2$. 
+    Consider a tine $t$ which is viable at the onset of slot $k$. 
+    (All we know about $t$'s label is that $\ell(t) \leq k - 1$.) 
+    We claim that $\tau \Prefix t$. 
+    Suppose, towards a contradiction, that 
+    $\tau$ is not a prefix of $t$. 
+    Let $B_1$ be the last honest vertex on $t$ such that $\ell(B_1) \leq s - 1$.
+    (If no such vertex can be found, take $B_1$ as the root vertex.) 
+    Likewise, let $B_2$ be the first honest vertex on $t$ such that $\ell(B_2) \in [s + 1, k - 1]$. 
+    
+    Below, we show that every choice for $B_1, B_2$ leads to a contradiction 
+    and, therefore, $\tau$ must be a prefix of $t$. 
+    If $B_2$ exists then, 
+    by construction, $\ell(B_1) < s < \ell(B_2) \leq k - 1$.
+    If $\ell(B_2) = s + 1$ then, as we have argued earler, 
+    $B_2$ must have built on $\tau$. 
+    This contradicts our assumption that 
+    $\tau$ is not a prefix of $t$. 
+    Otherwise, suppose $\ell(B_2) \geq s + 2$.  
+    Let $I$ be the interval $[\ell(B_1) + 1, \ell(B_2) - 1]$ and note that  
+    $I$ contains $s$. 
+    There can be two scenarios.
+    If $t$ contains an adversarial vertex between $B_1$ and $B_2$ then,  
+    by Corollary~\ref{coro:interval-honest-vertices}, 
+    $I$ must be $\Aheavy$; but 
+    this contradicts the assumption that $s$ is a Catatan slot. 
+    Otherwise,
+    $B_2$ builds on top of $B_1$ and, 
+    in particular, 
+    $B_1$ must be viable at the onset of slot $\ell(B_2) \geq s + 1$. 
+    Since $\ell(\tau) = s$, this means $\length(B_1) \geq \length(\tau)$. 
+    However, since $\ell(B_1) < s$, 
+    by the monotonicity of the honest-depth function $\hdepth(\cdot)$, 
+    $\length(\tau) \geq 1 + \length(B_1)$. 
+    This contradicts the inequality above.           
+
+    If $B_2$ does not exist then 
+    we claim that $t$ is an adversarial tine. 
+    To see why, note that if $t$ were honest and $\ell(t) \geq s + 1$ 
+    then there would have been a $B_2$. 
+    If $t$ were honest with $\ell(t) = s, t \neq \tau$ 
+    then $t$ would not be viable at the onset of slot $s + 2$. 
+    This is because $s$ is a Catalan slot and as such, 
+    each vertex from slot $s + 1$ builds on $\tau, \length(\tau) \geq \length(t)$. 
+    Hence tines viable at the onset of slot $s + 2$ must have length at least $1 + \length(\tau) > \length(t)$. 
+    Finally, if $t$ is honest and $\ell(t) \leq s - 1$ then, 
+    by Fact~\ref{fact:catalan-unique-longest}, 
+    $t$ cannot be viable at the onset of slot $s + 1$ 
+    since $s$ is Catalan.  
+    Since $s + 1$ is an honest slot, 
+    honest tines with label $s + 1$ will be strictly longer than $t$ 
+    and, therefore, 
+    $t$ cannot be viable at the onset of slot $k \geq s + 2$ either. 
+    We conclude that $t$ must be an adversarial tine viable at the onset of slot $k$. 
+    By Fact~\ref{fact:fork-structure},       
+    the interval $I = [\ell(B_1) + 1, k - 1]$ must be $\Aheavy$. 
+    However, since $I$ contains $s$, it contradicts the fact that $s$ is a Catalan slot.     
+  \end{proof}
+
+
+\section{A tail bound on Catalan slots; Proof of Theorem~\ref{thm:main-mh-bivalent}}\label{sec:lcr-tie-bound-main-thm-proof}
+
+  \begin{bound}\label{bound:two-catalans}
+    Let $T, s, k \in \NN, T \geq s + k$ and  $\epsilon \in (0, 1)$. 
+    Let $w$ be a bivalent characteristic string satisfying 
+    the $(\epsilon, 0)$-Bernoulli condition 
+    and let $y = w_s \ldots w_{s+k-1}$.
+    Then 
+    \[
+      \Pr_w[\text{$w$ does not contain two consecutive Catalan slots in $y$}]  
+        \leq 
+        \exp\left(
+          - k\cdot \Omega(\epsilon^3(1 + O(\epsilon))) 
+        \right)
+        \,.
+    \]
+  \end{bound}
+
+\paragraph{Proof of Theorem~\ref{thm:main-mh-bivalent}.}
+  This proof is identical to the proof of Theorem~\ref{thm:main-mh} 
+  except that 
+  we need to refer to Theorem~\ref{thm:multiple-honest} in lieu of Theorem~\ref{thm:unique-honest}
+  and Bound~\ref{bound:two-catalans} in lieu of Bound~\ref{bound:unique-honest-catalan}.
+  \hfill $\qed$  
+
+
+\section{Proof of \texorpdfstring{Bound~\ref{bound:two-catalans}}{the Tail Bound} }\label{sec:lcr-tie-estimates}
+\input{multihonest/proof-bound-two-cat}
+
+

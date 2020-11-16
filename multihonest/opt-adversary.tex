@@ -1,0 +1,438 @@
+
+
+In this chapter, 
+we describe a simple adversarial strategy to build a fork 
+which simultaneously maximizes the relative margins for all slots. 
+Although the proof is completed in Section~\ref{sec:opt-adversary-thm-proof}, 
+in Section~\ref{sec:opt-adv-lowerbound}, 
+we show that the relative margin achieved by the adversary $\Adversary^*$ 
+is at least as high as the best-possible value 
+(assuming Theorem~\ref{thm:relative-margin}, which is later proved in Section~\ref{sec:relative-margin-thm-proof}).
+
+\section{An optimal online adversary against slot settlement}
+\label{sec:opt-adversary}
+Let $w$ be a characteristic string. 
+For a fixed decomposition $w = xy$, 
+there is an adversary\footnote{
+  Specifically, 
+  let $w' = xyb$ 
+  where $b \in \{\h, \H, \A\}$. 
+  This strategy recursively builds a closed fork $F \Fork xy$. 
+  Then, upon encountering $b$, 
+  it augments $F$ 
+  by making zero, one, or two conservative extensions, as follows: 
+  If $b = \A$, it does nothing. 
+  If $b = \h$, it extends a zero-reach tine if possible; 
+  otherwise,it extends a maximum-reach tine. 
+  If $b = \H$, it extends a pair of tines that 
+  witness $\mu_x(F)$. 
+  By following the arguments in~\cite{LinearConsistencySODA}, 
+  one can show that 
+  if $\mu_x(F) = \mu_x(y)$ then 
+  $\mu_x(F')$ is 
+  at least as large as 
+  the right-hand side in~\eqref{eq:mu-relative-recursive-mh}.   
+} 
+who builds a fork $F \Fork xy$ 
+so that the $\mu_x(F)$ is 
+at least as large as 
+the right-hand side of~\eqref{eq:mu-relative-recursive-mh}. 
+However, 
+in light of Lemma~\ref{lemma:uvp-margin}, 
+if an adversary wants to violate the settlement 
+\emph{of all possible slots of $w$ at once}, 
+% to show that the lowerbound is satisfied 
+% \emph{simultaneously} 
+% for all decompositions $w = xy$, 
+% one has to do more work.
+he needs to produce a fork $F$ for $w$ 
+so that $\mu_x(F) \geq 0$ 
+for every prefix $x \PrefixEq w$. 
+In Figure~\ref{fig:adv-opt-mh}, 
+we describe a strategy $\Adversary^*$ 
+which does even better: 
+it produces a fork $F$ so that $\mu_x(F) = \mu_x(y)$ 
+for every prefix $x \PrefixEq w$. 
+
+
+$\Adversary^*$ builds a fork for $w = w_1 \ldots w_{n+1}$ 
+in an online fashion, i.e., 
+it scans $w$ once, from left to right, 
+maintains a fork $F_n$ after scanning 
+the first $n$ symbols, 
+and augments $F_n$ by conservatively extending 
+zero-reach tine(s) using label $n + 1$.
+Specifically, if $w_{n+1} = \A$, $\Adversary^*$ does nothing. 
+If $w_{n+1} = \h$, it (obviously) makes a single extension. 
+Now suppose $w_{n+1} = \H$. 
+It still makes a single extension
+if either $F_n$ contains exactly one zero-reach tine 
+or $F_n$'s reach is positive. 
+Otherwise, 
+if $\rho(F_n) = 0$ 
+and there are at least two zero-reach tines in $F_n$, 
+$\Adversary^*$ extends two zero-reach tines 
+that diverge earliest in $F_n$.
+
+
+
+\begin{figure}[!h]
+  \begin{center}
+    \fbox{
+      \begin{minipage}{.9 \textwidth}
+        \begin{center}
+          \textbf{The strategy $\Adversary^*$}
+        \end{center}
+        Let $n$ be a non-negative integer, 
+        $w \in \{\h, \H, \A\}^n$, 
+        and $w_{n + 1} \in \{\h, \H, \A\}$. 
+        If $n = 0$, set $F_0 \Fork \varepsilon$ as 
+        the trivial fork comprising a single vertex. 
+        Otherwise, 
+        let $F_n$ be the closed fork 
+        built recursively by $\Adversary^*$ for the string $w$. 
+        If $w_{n + 1} = \A$, 
+        output $F_n$ (as a fork for $w w_{n+1}$). 
+        Otherwise, 
+        let $Z$ and $R$ be the set of zero-reach tines 
+        and maximum-reach tines in $F_n$, respectively.
+
+        \begin{enumerate}
+          \item 
+          Identify a set $S$ as follows: 
+          If $|Z| = 1$ then set $S = Z$. 
+          Otherwise, 
+          let $r_1 \in R, z_1 \in Z$ be two tines so that 
+          $\ell(r_1 \Intersect z_1) = 
+          \min\{ \ell(r \Intersect z) :  r \in R, z \in Z \}$ 
+          and set  
+          \[
+          S = \begin{cases}
+            \{z_1\} & \text{
+              if $w_{n + 1} = \h$ 
+              or $\rho(F_n) \geq 1$ 
+              % or for all prefix $x \Prefix w$, $\mu_x(F_n) < 0$}
+              % or $|Z| = 1$
+              }\,, \\
+            \{z_1, r_1\} & \text{otherwise}\,.
+          \end{cases}
+          \]
+
+          \item
+          Conservatively extend 
+          each tine in $S$ 
+          using label $n + 1$. 
+          Let $F_{n + 1} \Fork w w_{n+1}$ 
+          be the new closed fork. 
+          Output $F_{n+1}$.
+        \end{enumerate}
+      \end{minipage}
+    }
+  \end{center}
+  \caption{Optimal online adversary $\Adversary^*$}
+  \label{fig:adv-opt-mh}
+\end{figure}
+
+
+
+
+
+
+\begin{definition}[Canonical fork]
+  A \emph{canonical fork} for $w \in \{\h, \H, \A\}^*$ 
+  is a closed fork $F \Fork w$ so that 
+  $\rho(F) = \rho(w)$ 
+  and, for all prefixes $x \Prefix w$, $\mu_x(F) = \mu_x(y)$. 
+  If $|w| = 0$, $F$ is 
+  the unique fork with a single (honest) vertex and no edge. 
+  % Let $w_1 \ldots w_T \in \{0,1\}^T$. 
+  % For $n = 0, 1, \ldots, T$, a \emph{canonical fork $F_n$ for $w = w_1\ldots w_n$} 
+  % is inductively defined as follows. 
+  % If $n = 0$ then $F_0$ is the trivial fork for the empty string; 
+  % it consists of a single (honest) vertex and no edge. 
+  % If $n \geq 1$, the following holds: 
+  % $F_n$ is a closed fork so that $F_{n-1} \ForkPrefix F_n$. 
+  % $F_n$ contains an honest tine $\tau_\rho$ so that 
+  % $\reach(\tau_\rho) = \rho(F_n) = \rho(w)$. 
+  % For every decomposition $w = xy, x \Prefix w$, 
+  % % $\mu_x(F_n) = \mu_x(y)$ and, in addition, 
+  % $F_n$ contains two honest tines $\tau_x, \tau_{\rho x}$ 
+  % so that the tine-pair $(\tau_{\rho x}, \tau_x)$ witnesses $\mu_x(F_n) = \mu_x(y)$. 
+  % The (possibly non-distinct) designated tines $\tau_\rho, \tau_{\rho x}, \tau_x, x \Prefix w$ 
+  % are called the \emph{witness tines}. 
+  % For the sake of completeness, define $\tau_w = \tau_{\rho w} = \tau_\rho$.
+\end{definition}
+
+It is not obvious whether a canonical fork always exists 
+or whether it can be found algorithmically. 
+The theorem below gives us the assurance:
+
+
+\begin{theorem}\label{thm:opt-adversary-canonical}
+  Let $w \in \{\h, \H, \A\}^*$. 
+  The strategy $\Adversary^*$ in Figure~\ref{fig:adv-opt-mh}
+  outputs a canonical fork for $w$.  
+\end{theorem}
+That is, for every characteristic string $w$ 
+there is a fork $F \Fork w$ so that 
+for every prefix $x \PrefixEq w$, $\mu_x(F) = \mu_x(y)$. 
+Note that if one's objective is to create a fork 
+which contains many early-diverging tine-pairs (that witness large relative margins), 
+a canonical fork is the best one can hope for. 
+This is why $\Adversary^*$ is called an \emph{optimal} online adversary. 
+The proof of Theorem~\ref{thm:opt-adversary-canonical} 
+is given in Section~\ref{sec:margin-proof-multihonest}.
+
+
+
+\section{\texorpdfstring{$\Adversary^*$}{The optimal adversary} simultaneously maximizes all relative margins}\label{sec:opt-adv-lowerbound}
+
+\begin{proposition}\label{prop:mu-lowerbound}
+  Let $w \in \{\h, \H, \A\}^*$ 
+  and $b \in \{\h, \H, \A\}$. 
+  Assume that Theorem~\ref{thm:opt-adversary-canonical} 
+  holds for characteristic strings of length $|w|$.
+  Let $F'$ be the fork built by $\Adversary^*$ 
+  for the characteristic string $wb$. 
+  Then 
+  \begin{equation}
+    \rho(F') \geq \begin{cases}
+     \rho(xy) + 1 & \text{if $b = \A$} \,, \\
+     0 & \text{if $b \in \{\h, \H\}$ and $\rho(xy) = 0$}\,, \\
+     \rho(xy) - 1 & \text{otherwise}\,.
+    \end{cases}
+    \label{eq:rho-lowerbound}    
+  \end{equation}
+  Furthermore, for any decomposition $w = xy, |y| \geq 0$, 
+  \begin{equation}
+    \mu_x(F') \geq \begin{cases}
+      \mu_x(y) + 1 & \text{if $b = \A$}\,, \\
+      0 & \text{if $b \in \{\h, \H\}$ and $\rho(xy) > \mu_x(y)=0$}\,, \\
+      0 & \text{if $b = \H$ and $\rho(xy) = \mu_x(y) = 0$}\,, \\
+      \mu_x(y)-1 & \text{otherwise.}
+    \end{cases}
+    \label{eq:mu-lowerbound}
+  \end{equation}
+  
+\end{proposition}
+\begin{proof}  
+  Let $w' = wb$.
+  Let $F$ and $F'$ be the forks built by $\Adversary^*$ 
+  for the characteristic string $w$ and $wb$, respectively, 
+  so that $F \fprefix F'$.
+  By assumption, $F$ is a canonical fork for $w$; 
+  this means $\rho(F) = \rho(w)$ and
+  for all $x \Prefix w$, $\mu_x(F) = \mu_x(y)$. 
+  It will be helpful for the reader to recall Fact~\ref{fact:reach-fork-ext-mh} before proceeding.
+
+
+  \paragraph{Proving~\eqref{eq:rho-lowerbound}.} 
+  We wish to show that 
+  $\rho(F')$ satisfies~\eqref{eq:rho-lowerbound}. 
+  If $b = \A$ then, by construction,
+  $F' = F$. 
+  The symbol $b = \A$ increases the reserve 
+  of every tine by one. 
+  Thus  
+  $
+  \rho(F') 
+  = \rho(F) + 1
+  = \rho(xy)  + 1
+  $. 
+  % Here, the first equality follows from our choice of $\tau_\rho$. 
+  % and the last equality follows from our assumption about $t_\rho$. 
+  Now suppose $b \in \{\h, \H\}$. 
+  Since all tines $\sigma \in F'$ with label $|xy| + 1$ 
+  are conservative extensions, $\reach_{F'}(\sigma) = 0$ 
+  and the $F'$-reach of all $F$-tines decreases by one. 
+  Let $t$ be a maximum-reach tine in $F$; 
+  since $F$ is canonical, $\reach_F(t) = \rho(F) = \rho(xy)$.
+  Therefore, 
+  $\rho(F') \geq \reach_{F'}(t) = \reach_{F}(t) - 1 = \rho(xy) - 1$. 
+  If $\rho(F) = 0$ then this inequality can be tightened, as follows. 
+  As all $F$-tines have negative $F'$-reach, 
+  any maximum-reach $F'$-tine 
+  must be one of the extensions; 
+  it follows that $\rho(F') = 0$. 
+  Thus we have proved~\eqref{eq:rho-lowerbound}. 
+
+
+
+  \paragraph{Proving~\eqref{eq:mu-lowerbound}.} 
+  Let $w = xy$ be an arbitrary decomposition; 
+  this $x$ remains fixed for the remainder of the proof. 
+  (Note that $\Adversary^*$ is unaware of this decomposition.) 
+  % Let 
+  % \begin{align*}
+  %   R' &=  \{t \in F' : \reach_{F'}(t) = \rho(F') \}\,\quad\text{and} \\
+  %   B_x &= \{t \in F' : \exists t' \in R'\,, \ell(t \Intersect t') \leq |x| \}\,.
+  %   \,.
+  % \end{align*}
+  % % and set $C_x = \{t : t \in B_x, \reach_{F'}(t) = r_x\}$.
+  % % Finally, identify the tine-pair 
+  % % $(\tau_{\rho x}, \tau_x) = \EarlyDivWitness(R', C_x)$. 
+  % Finally, let $\tau_{\rho x} \in R', \tau_x \in B_x$ be two tines 
+  % so that 
+  % \begin{align*}
+  % \reach_{F'}(\tau_x) &= \max\{\reach_{F'}(t) : t \in B_x\}\quad\text{and} \\
+  % \ell(\tau_{\rho x} \Intersect \tau_x) &= \min \{ \ell(t_1 \Intersect t_2) : t_1 \in R', t_2 \in B_x\}
+  % \,.  
+  % \end{align*}
+  % % Note that 
+  % % $\reach_{F'}(\tau_\rho) = \reach_{F'}(\tau_{\rho x}) = \rho(F')$ 
+  % % and that 
+  % % $\tau_\rho$ and $\tau_{\rho x}$ may be the same tine.
+  % We say that the tines $\tau_x, \tau_{\rho x} \in F'$ \emph{witness} $\mu_x(F')$.
+  
+
+  Let $\tau_x, \tau_{\rho x} \in F'$ be two $yb$-disjoint tines 
+  so that 
+  $\reach_{F'}(\tau_{\rho x}) = \rho(F')$, 
+  $\reach_{F'}(\tau_x) = \mu_x(F')$, 
+  and, of all $yb$-disjoint tine pairs in $F'$
+  that attain this requirement, 
+  these two tines diverge the earliest. 
+  We say that the tines $\tau_x, \tau_{\rho x}$ \emph{witness} $\mu_x(F')$. 
+
+
+  Designate the witness tines $t_x, t_{\rho x} \in F$ 
+  in the same way as we have designated $\tau_x, \tau_{\rho x} \in F'$; 
+  specifically, 
+  $w, y$, and $F$ would substitute $w', yb$, and $F'$ 
+  in the recipe above. 
+  By assumption, $F$ is a canonical fork for $xy$. 
+  Therefore, 
+  $\rho(F) = \reach_F(t_{\rho x}) = \rho(xy)$, 
+  $t_x$ is $y$-disjoint with $t_{\rho x}$, 
+  and 
+  $\mu_x(F) = \reach_F(t_x) = \mu_x(y)$. 
+  % (It is possible that $t_\rho = t_{\rho x}$.)
+  We wish to show that 
+  $\mu_x(F')$ satisfies~\eqref{eq:mu-lowerbound}. 
+
+  If $b = \A$ then, by construction,
+  $F' = F$ and, therefore,
+  % $\tau_\rho = 
+  % t_\rho$, 
+  % $\tau_x = t_x$, and $\tau_{\rho x} = t_{\rho x}$. 
+  % Thus 
+  % $\tau_x$ and $\tau_{\rho x}$ are $yb$-disjoint.
+  % Since the $F'$-reach of every $F$-tine is one plus its $F$-reach, 
+  % $
+  % \mu_x(F') \geq 
+  % \reach_{F'}(\tau_x)
+  % = \reach_{F'}(t_x)
+  % = \reach_F(t_x) + 1
+  % = \mu_x(y) + 1
+  % $. 
+  $t_x$ and $t_{\rho x}$ are $yb$-disjoint in $F'$.
+  Note that the $F'$-reach of every $F$-tine is one plus its $F$-reach. 
+  Therefore, 
+  $
+  \mu_x(F') 
+  \geq \min(\reach_{F'}(t_{\rho x}), \reach_{F'}(t_x))
+  = \reach_{F'}(t_x)
+  = \reach_F(t_x) + 1
+  = \mu_x(y) + 1
+  $. 
+
+
+  If $b \in \{\h, \H\}$, 
+  all tines in $F'$ with label $|w| + 1$ arise from conservative extensions. 
+  Since the tines $t_x, t_{\rho x}$ are $yb$-disjoint in $F'$, 
+  it follows that $\mu_x(F') \geq \min(\reach_{F'}(t_x), \reach_{F'}(t_{\rho x})) \geq \reach_{F'}(t_x) = \reach_{F}(t_x) - 1 = \mu_x(y) - 1$. 
+  Here, the first inequality follows from the definition of relative margin and 
+  the second one from the fact that $\reach(t_x) \leq \reach(t_{\rho x})$ by assumption. 
+  The first equality follows from Fact~\ref{fact:reach-fork-ext-mh} and 
+  the second one follows from our assumption that the tines $t_{\rho x}, t_x\in F$ witness $\mu_x(F) = \mu_x(y)$. 
+
+  However, we can tighten the above inequality when $\mu_x(y)$ is zero, as follows. 
+  Recall the sets $Z, S, R$, 
+  the zero-reach tine $z_1$, 
+  and the maximum-reach tine $r_1$ 
+  from Figure~\ref{fig:adv-opt-mh}. 
+  Also recall that $z_1$, of all zero-reach tines, 
+  diverges earliest from any maximum-reach tine.
+  As $\reach_F(z_1) = \mu_x(F) = \mu_x(y) = 0$, 
+  it follows that 
+  % $z_1 \in Z$. 
+  % Thus there must be a tine $t^* \in R$ 
+  % $\ell(z_1 \Intersect t^*) = \min\{\ell(z \Intersect t) : z \in Z, t \in R\}$.
+  % In particular, 
+  $z_1$ and $r_1$ must be $y$-disjoint.
+  Let $\sigma_1 \in F'$ be the conservative extension of $z_1$.
+
+
+  \begin{description}[font=\normalfont\itshape\space]
+    \item[If $\rho(xy) \geq 1$ and $\mu_x(y) = 0$]
+      then $\sigma_1$ is the only new extension in $F'$ 
+      and it has reach zero in $F'$.
+      % then $\sigma_1$ must be $yb$-disjoint with $t^*$ in $F'$.
+      Note that 
+      $\reach_{F'}(r_1) = \reach_F(r_1) - 1 = \rho(F) - 1 \geq 0$ 
+      since $\rho(F) = \rho(xy) \geq 1$ by assumption. 
+      It follows that $\mu_x(F') \geq \min(\reach_{F'}(\sigma_1), \reach_{F'}(r_1) ) \geq \reach_{F'}(\sigma_1) = 0$. 
+
+
+
+
+    \item[If $\rho(xy) = 0$ and $\mu_x(y) = 0$] 
+      then $Z = R$ and $|Z| \geq 2$. 
+      % % there must be two zero-reach $y$-disjoint tines in $F$.
+      % % Specifically, 
+      % there must be a zero-reach tine $z \in R$ so that 
+      % % and 
+      % the pair $z_1, z$ are $y$-disjoint. 
+      % %  and, 
+      % % in particular,
+      % % $\ell(z_1 \Intersect z) = \min_{t_1, t_2 \in R} \ell(t_1 \Intersect t_2)$. 
+      If $b = \h$, 
+      $\sigma_1$
+      is the only tine in $F'$ with the maximum reach, zero. 
+      Note that 
+      $\reach_{F'}(r_1) = \reach_F(r_1) - 1 = \rho(F) - 1 \geq -1$. 
+      Since $\sigma_1$ and $r_1$ are $yb$-disjoint, 
+      it follows that 
+      $\mu_x(F') \geq \min(\reach_{F'}(\sigma_1), \reach_{F'}(r_1) ) 
+      \geq \reach_{F'}(r_1) \geq = -1$.
+
+      On the other hand, if $b = \H$ then 
+      $F'$ contains two new conservative extensions, 
+      $\sigma_1$ and $\sigma_2$, 
+      both with label $|xy| + 1$, 
+      where $z_1 \Prefix \sigma_1$ and $r_1 \Prefix \sigma_2$.  
+      These extensions, therefore, are $yb$-disjoint 
+      and have zero reach.
+      It follows that $\mu_x(F') \geq 0$.
+  \end{description}
+\end{proof}
+
+
+Note that 
+if we want \eqref{eq:mu-lowerbound} 
+to hold only for \emph{a given prefix} $x \PrefixEq w$ 
+(a scenario pertinent in~\cite{LinearConsistencySODA}), 
+the adversary $\Adversary^*$ 
+% in Proposition~\ref{prop:mu-lowerbound} 
+(which produces a canonical fork) 
+would be an overkill. 
+Instead, 
+we can use a simpler, prefix-aware adversary 
+such as the one mentioned 
+at the outset of Section~\ref{sec:opt-adversary}; 
+let us call this strategy $\Adversary$. 
+In addition, 
+instead of assuming Theorem~\ref{thm:opt-adversary-canonical}, 
+it suffices to assume 
+Proposition~\ref{prop:mu-lowerbound} inductively 
+for all strings of length $|w|$. 
+Let $F$ be the fork 
+built by $\Adversary$ for the string $w = xy$.
+In conjunction with Proposition~\ref{prop:mu-upperbound}, 
+this would imply ``$\rho(F) = \rho(w)$ and 
+$\mu_x(F) = \mu_x(y),$'' 
+a critical property used inside the above proof. 
+We omit further details.
+
+
+

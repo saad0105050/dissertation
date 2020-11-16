@@ -55,70 +55,79 @@ $Y \dominatedby X$ implies $u(Y) \leq u(X)$.
 
 
 
-  \paragraph{Generating functions.}
-    We reserve the term
-    \emph{generating function} to refer to an ``ordinary'' generating
-    function which represents a sequence $a_0, a_1, \ldots$ of
-    non-negative real numbers by the formal power series
-    $\gf{A}(Z) = \sum_{t = 0}^\infty a_t Z^t$. 
-    We denote the above correspondence as $\{a_t\} \SeqGF \gfA(Z)$. 
-    When
-    $\gf{A}(1) = \sum_t a_t = 1$ we say that the generating function is
-    a \emph{probability generating function}; in this case, the
-    generating function $\gf{A}$ can naturally be associated with the
-    integer-valued random variable $A$ for which $\Pr[A = k] = a_k$. If
-    the probability generating functions $\gf{A}$ and $\gf{B}$ are
-    associated with the random variables $A$ and $B$, it is easy to
-    check that $\gf{A} \cdot \gf{B}$ is the generating function
-    associated with the convolution $A + B$ (where $A$ and $B$ are
-    assumed to be independent).  Translating the notion of stochastic
-    dominance to the setting with generating functions, we say that the
-    generating function $\gf{A}$ \emph{stochastically dominates}
-    $\gf{B}$ if $\sum_{t \leq T} a_t \leq \sum_{t \leq T} b_t$ for all
-    $T \geq 0$; we write $\gf{B} \dominatedby \gf{A}$ to denote this state of
-    affairs. If $\gf{B}_1 \dominatedby \gf{A}_1$ and
-    $\gf{B}_2 \dominatedby \gf{A}_2$ then
-    $\gf{B}_1 \cdot \gf{B}_2 \dominatedby \gf{A}_1 \cdot \gf{A}_2$ and
-    $\alpha \gf{B}_1 + \beta \gf{B}_2 \dominatedby \alpha \gf{A}_1 + \beta
-    \gf{A}_2$ (for any $\alpha, \beta \geq 0$).  Moreover, if
-    $\gf{B} \dominatedby \gf{A}$ then it can be checked that
-    $\gf{B}(\gf{C}) \dominatedby \gf{A}(\gf{C})$ for any probability
-    generating function $\gf{C}(Z)$, where we write $\gf{A}(\gf{C})$ to
-    denote the composition $\gf{A}(\gf{C}(Z))$.
+\paragraph{Generating functions.}
+  We reserve the term
+  \emph{generating function} to refer to an ``ordinary'' generating
+  function which represents a sequence $a_0, a_1, \ldots$ of
+  non-negative real numbers by the formal power series
+  $\gf{A}(Z) = \sum_{t = 0}^\infty a_t Z^t$. 
+  We denote the above correspondence as $\{a_t\} \SeqGF \gfA(Z)$. 
+  When
+  $\gf{A}(1) = \sum_t a_t = 1$ we say that the generating function is
+  a \emph{probability generating function}; in this case, the
+  generating function $\gf{A}$ can naturally be associated with the
+  integer-valued random variable $A$ for which $\Pr[A = k] = a_k$. If
+  the probability generating functions $\gf{A}$ and $\gf{B}$ are
+  associated with the random variables $A$ and $B$, it is easy to
+  check that $\gf{A} \cdot \gf{B}$ is the generating function
+  associated with the convolution $A + B$ (where $A$ and $B$ are
+  assumed to be independent).  Translating the notion of stochastic
+  dominance to the setting with generating functions, we say that the
+  generating function $\gf{A}$ \emph{stochastically dominates}
+  $\gf{B}$ if $\sum_{t \leq T} a_t \leq \sum_{t \leq T} b_t$ for all
+  $T \geq 0$; we write $\gf{B} \dominatedby \gf{A}$ to denote this state of
+  affairs. If $\gf{B}_1 \dominatedby \gf{A}_1$ and
+  $\gf{B}_2 \dominatedby \gf{A}_2$ then
+  $\gf{B}_1 \cdot \gf{B}_2 \dominatedby \gf{A}_1 \cdot \gf{A}_2$ and
+  $\alpha \gf{B}_1 + \beta \gf{B}_2 \dominatedby \alpha \gf{A}_1 + \beta
+  \gf{A}_2$ (for any $\alpha, \beta \geq 0$).  Moreover, if
+  $\gf{B} \dominatedby \gf{A}$ then it can be checked that
+  $\gf{B}(\gf{C}) \dominatedby \gf{A}(\gf{C})$ for any probability
+  generating function $\gf{C}(Z)$, where we write $\gf{A}(\gf{C})$ to
+  denote the composition $\gf{A}(\gf{C}(Z))$.
 
 
-    Finally, we remark that
-    if $\gf{A}(Z)$ is a generating function which converges as a
-    function of a complex $Z$ for $|Z| < R$ for some non-negative $R$, 
-    $R$ is called the \emph{radius of convergence} of $\gf{A}$.  
-    It follows from Theorem 2.19 in~\cite{WilfGF} that 
-    $\lim_{k \rightarrow \infty} {|a_k|}R^k = 0$ and that $|a_k| = O(R^{-k})$. 
-    In addition, if $\gf{A}$ is a probability generating function associated with the
-    random variable $A$ then it follows that
-    $\Pr[A \geq T] = O(R^{-T})$. 
+  Finally, we remark that
+  if $\gf{A}(Z)$ is a generating function which converges as a
+  function of a complex $Z$ for $|Z| < R$ for some non-negative $R$, 
+  $R$ is called the \emph{radius of convergence} of $\gf{A}$.  
+  It follows from Theorem 2.19 in~\cite{WilfGF} that 
+  $\lim_{k \rightarrow \infty} {|a_k|}R^k = 0$ and that $|a_k| = O(R^{-k})$. 
+  In addition, if $\gf{A}$ is a probability generating function associated with the
+  random variable $A$ then it follows that
+  $\Pr[A \geq T] = O(R^{-T})$. 
 
-
-
-\subsection{Proof of Bound~\ref{bound:unique-honest-catalan}}\label{sec:catalan-estimates}
-  % \begin{proof}
-  Let $p = (1 - \epsilon)/2$ and $q = (1 + \epsilon)/2$ 
-  so that $q - p = \epsilon$. 
-  Let $q_\H = q - q_\h$. 
+  
+  Recall that in the statement of Bound~\ref{bound:unique-honest-catalan}, 
+  we have essentially written $w = xyz$ where $x = w_1 \cdots w_{s-1}$ and $y = w_s \cdots w_{s+k-1}$. 
+  Our proof is based on a random walk (see \Section~\ref{sec:rand-walk}) 
+  on a characteristic string $W$ satisfying the $(\epsilon, q_\h)$-Bernoulli condition. 
   Let $B$ denote the event that 
   $w$ does not contain a uniquely honest Catalan slot in $y$. 
-  We would like to bound $\Pr_w[B]$ from above.
+  We would like to upper-bound $\Pr_w[B]$.
+
+  Our proof is done in two parts. First, we prove the bound when $|x| = 0$. 
+  Next, we prove the general case $|x| \geq 0$ 
+  by sampling the initial position of the walk $S$ 
+  from the distribution $\mathcal{X}_\infty$ in \eqref{eq:stationary}. 
+  This is equivalent to taking an infinite prefix that ``more adversarial'' 
+  than any finite prefix $x$; see Lemma~\ref{lemma:rho-stationary}.
 
 
-  Define the process $W = (W_t : t \in \NN), W_t \in \{\pm 1\}$ as $W_t = 1$ if and only if $w_t = \A$. 
-  Let $S = (S_t : t \in \NN), S_t = \sum_{i \leq t} W_i$ be the position of the particle at time $t$. 
-  Thus $S$ is a random walk on $\ZZ$ with $\epsilon$ negative (i.e., downward) bias. 
-  By convention, set $W_0 = S_0 = 0$. 
 
-  \paragraph{Case 1: $x$ is an empty string.} 
+
+\section{Walk with an empty prefix}\label{sec:catalan-estimates}
+  % \begin{proof}
+
+  % Write $w = xyz$ where $x = w_1 \cdots w_{s-1}$ and $y = w_s \cdots w_{s+k-1}$. 
+
+
+  % \paragraph{Case 1: $x$ is an empty string.} 
+
   % \paragraph{Case: $x = \varepsilon$.} 
   % \subsubsection*{If $x = \varepsilon$} 
   % First, let us consider the case when $x = \varepsilon$, i.e., $|x| = 0$. 
-  In this case, we write $w = yz$ so that $|y| = k$. 
+  In this case, we write $w = y, |y| = k$. 
   Let $c_t$ be the probability that $t$ is the first uniquely honest Catalan slot in $w$ 
   with $c_0 = 0$, and consider the probability generating function 
   $\{c_t\} \SeqGF \gfC(Z) = \sum_{t = 0}^\infty c_t Z^t$. 
@@ -568,7 +577,10 @@ $Y \dominatedby X$ implies $u(Y) \leq u(X)$.
   % \end{align}
 
 
-  \paragraph{Case 2: $x$ is non-empty.}
+
+
+\section{Walk with a non-empty prefix}
+  % \paragraph{Case 2: $x$ is non-empty.}
   % \paragraph{Case: $|x| \geq 1$.}
   % \subsubsection*{If $|x| \geq 1$}
   Next, let us consider the case when $x \neq \varepsilon$, i.e., $|x| \geq 1$. 
@@ -654,32 +666,12 @@ $Y \dominatedby X$ implies $u(Y) \leq u(X)$.
   % in~\eqref{eq:prob_catalan_gf} 
   on $\Pr_w[B]$ from the previous case holds for $|x| \geq 0$. 
   % \end{proof}
-  \hfill$\qed$
+
+  This completes the proof of Bound~\ref{bound:unique-honest-catalan}.
+  \hfill\qed
 
 
 
-
-\subsection{Proof of Bound~\ref{bound:two-catalans}}
-  % (The full proof is presented in 
-  % Section~\ref{sec:two-catalan-estimates}.
-  % % ~\cite{MultiHonestFullVersion}.
-  % )
-  % The random walk of interest is the same as in the previous proof. 
-  % However, we are interested in a slightly different stopping time. 
-  % Its generating function is  
-  % $\gfM(Z) = \frac{\epsilon \gfD(Z)}{1 - (1 - \epsilon) \gfE(Z) }$ 
-  % where $\gfE(Z)$, the ``epoch generating function,'' is dominated by 
-  % $\gfEhat(Z) = p Z \gfD(Z) + q Z \gfA(Z \gfD(Z) )/\gfA(1)$. 
-  % % That is, the epochs in this case can have two shapes: 
-  % % either the walk goes up and then comes back down, 
-  % % or it goes down, comes back up with certainty (say, after $t$ steps), 
-  % % and then descends $t$ levels.
-  % It can be easily checked that $\gfM(Z)$ converges as long as 
-  % $\gfA(Z), \gfD(Z)$, and $\gfA(Z \gfD(Z))$ converge 
-  % and $(1 - \epsilon)\gfEhat(Z) < 1$.
-  % Thus the radius of convergence of $\gfM(Z)$ is determined by~\eqref{eq:roc-AZDZ}. 
-  % \hfill$\qed$
-  \input{multihonest/proof-bound-two-cat}
 
   
 
