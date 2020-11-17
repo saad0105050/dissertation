@@ -9,8 +9,8 @@ we show that the relative margin achieved by the adversary $\Adversary^*$
 is at least as high as the best-possible value 
 (assuming Theorem~\ref{thm:relative-margin}, which is later proved in Section~\ref{sec:relative-margin-thm-proof}).
 
-\section{An optimal online adversary against slot settlement}
-\label{sec:opt-adversary}
+% \section{An optimal online adversary against slot settlement}\label{sec:opt-adversary}
+
 Let $w$ be a characteristic string. 
 For a fixed decomposition $w = xy$, 
 there is an adversary\footnote{
@@ -181,7 +181,7 @@ which contains many early-diverging tine-pairs (that witness large relative marg
 a canonical fork is the best one can hope for. 
 This is why $\Adversary^*$ is called an \emph{optimal} online adversary. 
 The proof of Theorem~\ref{thm:opt-adversary-canonical} 
-is given in Section~\ref{sec:margin-proof-multihonest}.
+is given in \Section~\ref{sec:margin-proof-multihonest}.
 
 
 
@@ -223,7 +223,7 @@ is given in Section~\ref{sec:margin-proof-multihonest}.
   By assumption, $F$ is a canonical fork for $w$; 
   this means $\rho(F) = \rho(w)$ and
   for all $x \Prefix w$, $\mu_x(F) = \mu_x(y)$. 
-  It will be helpful for the reader to recall Fact~\ref{fact:reach-fork-ext-mh} before proceeding.
+  It will be helpful for the reader to recall Proposition~\ref{prop:reach-fork-ext-mh} before proceeding.
 
 
   \paragraph{Proving~\eqref{eq:rho-lowerbound}.} 
@@ -343,7 +343,7 @@ is given in Section~\ref{sec:margin-proof-multihonest}.
   it follows that $\mu_x(F') \geq \min(\reach_{F'}(t_x), \reach_{F'}(t_{\rho x})) \geq \reach_{F'}(t_x) = \reach_{F}(t_x) - 1 = \mu_x(y) - 1$. 
   Here, the first inequality follows from the definition of relative margin and 
   the second one from the fact that $\reach(t_x) \leq \reach(t_{\rho x})$ by assumption. 
-  The first equality follows from Fact~\ref{fact:reach-fork-ext-mh} and 
+  The first equality follows from Proposition~\ref{prop:reach-fork-ext-mh} and 
   the second one follows from our assumption that the tines $t_{\rho x}, t_x\in F$ witness $\mu_x(F) = \mu_x(y)$. 
 
   However, we can tighten the above inequality when $\mu_x(y)$ is zero, as follows. 

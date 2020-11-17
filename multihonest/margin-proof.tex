@@ -96,7 +96,7 @@ As a warm-up, we start with the following claim.
   \paragraph{Proving ~\eqref{eq:rho-upperbound}.} 
   Let $A$ be the set of all $F'$-tines with label $|xy| + 1$.
   Let $\sigma \in A$ be the first tine in the $\leq_\pi$ ordering so that $\reach(\sigma) = \max_{t \in A}\{\reach_{F'}(t)\}$.
-  By Fact~\ref{fact:reach-fork-ext-mh}, 
+  By Proposition~\ref{prop:reach-fork-ext-mh}, 
   $\reach_{F'}(\sigma) \leq 0$ and, 
   in addition, for any $t \in F$, 
   $\reach_{F'}(t) \leq \reach_F(t) - 1$.   
@@ -124,7 +124,7 @@ As a warm-up, we start with the following claim.
   If $\ell(t_\rho) = |xy| + 1$ then we are done: 
   by our preceding argument, $\reach_{F'}(t_\rho) \leq 0$. 
   On the other hand, 
-  Note that $t_\rho \not \in F$ since, by Fact~\ref{fact:reach-fork-ext-mh}, reach of any $F$ tine can only decrease
+  Note that $t_\rho \not \in F$ since, by Proposition~\ref{prop:reach-fork-ext-mh}, reach of any $F$ tine can only decrease
   $t_\rho$ must have been an extension of a maximum-reach $F$-tine.
 
   \paragraph{Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.} 
@@ -207,9 +207,9 @@ As a warm-up, we start with the following claim.
       $\mu_x(yb) \leq \mu_x(y) - 1 = -1$.
       On the other hand, if $t_x \not\in F$, 
       both $t_x$ and $t_\rho$ are extensions and, 
-      by Fact~\ref{fact:reach-fork-ext-mh}, 
+      by Proposition~\ref{prop:reach-fork-ext-mh}, 
       $\max(\reach_{F'}(t_x), \reach_{F'}(t_\rho) ) \leq 0$. 
-      In addition, Fact~\ref{fact:reach-fork-ext-mh} states that for all $t \in F$, 
+      In addition, Proposition~\ref{prop:reach-fork-ext-mh} states that for all $t \in F$, 
       $\reach_{F'}(t) < \reach_{F}(t) \leq \rho(xy) = 0$. 
       We conclude that $\mu_x(yb) \leq 0$.
 
@@ -226,7 +226,7 @@ As a warm-up, we start with the following claim.
     \begin{description}[font=\normalfont\itshape\space]
       \item[If both $t_\rho, t_x \in F$,] 
       then $\mu_x(yb) = \reach_{F'}(t_x) < \reach_{F}(t_x) \leq \mu_x(y)$. 
-      Here, the first inequality follows from Fact~\ref{fact:reach-fork-ext-mh} 
+      Here, the first inequality follows from Proposition~\ref{prop:reach-fork-ext-mh} 
       and the second inequality follows from the fact that 
       $t_x, t_\rho$ is $y$-disjoint and 
       $\reach(t_x)$ is at most $\reach(t_\rho)$ by design.
@@ -248,7 +248,7 @@ As a warm-up, we start with the following claim.
       < \reach_F(t_x) 
       \leq \mu_x(y)
       $ 
-      where the inequality follows from Fact~\ref{fact:reach-fork-ext-mh}.
+      where the inequality follows from Proposition~\ref{prop:reach-fork-ext-mh}.
 
 
       % \item[If either $t_\rho \not \in F$ or $t_x \not \in F$.]

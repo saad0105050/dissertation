@@ -17,7 +17,7 @@ In later chapters, we will derive tail bounds (e.g., Bound~\ref{bound:unique-hon
 for certain bad events on this walk.
 
 
-\section{The random walk}
+\section{\texorpdfstring{The random walks $W$ and $X$}{Two random walks on integers}}
   Let $\epsilon \in (0,1)$. 
   Let $p = (1 - \epsilon)/2$ and $q = (1 + \epsilon)/2$ 
   so that $q - p = \epsilon$. 
@@ -27,52 +27,91 @@ for certain bad events on this walk.
   Define the process $W = (W_t : t \in \NN), W_t \in \{\pm 1\}$ as $W_t = 1$ if and only if $B_t = \A$. 
   % That is, for all $t$, $\Pr[W_t = \h] = q_\h, \Pr[W_t = \H] = q_\H$, and $\Pr[W_t = \A] = p$. 
   Let 
-  \begin{align}
-    S(B) &= \#_\A(B) - \#_\h(B) - \#_\H(B)\,, \\
-    M(B) &= \min_{t \leq |B|} S(B_1 \cdots B_t)\,, \quad\text{and } \\
-    X(B) &= S(B) - M(B)\,. \label{eq:X-walk}
-  \end{align}
+  \begin{align*}
+    S(B) &= \#_\A(B) - \#_\h(B) - \#_\H(B)\,.
+  \end{align*}
   We say that the process $S$ is a \emph{simple biased random walk on integers with $\epsilon$ negative (i.e., downward) bias}. 
   $S_t$ is the position of the particle (i.e., the random walker) at time $t$. 
   By convention, set $B_0 = S_0 = 0$. 
-  Let $\mathcal{X}_t(B)$ be the distribution of $X(B_1 \cdots B_t)$. 
-  When $B$ is understood from the context, we often omit $B$ and simply write $X$ and $X_t$.
-  Finally, let $X_\infty = X_t$ where $t = \infty$. 
 
-  % Below, we show that if $W$ satisfies the $(\epsilon, p_\h)$-Bernoulli condition 
-  % then $X(W_1 \cdots W_t) \DominatedBy X(W_1 \cdots W_{t+1})$. 
-  % We also derive a closed-form expression for the distribution of $X(W)$ 
-  % when $|W| = \infty$. 
-  % This will allow us to overcome the difficulty of dealing with prefixes of a particular length, 
-  % as it suffices (via stochastic dominance) to consider an infinitely long prefix. 
-
-  Note that the random variables
+  Specifically, the random variables
   $X(B)$ (and $X_\infty$) have an immediate interpretation in terms
   of the Markov chain corresponding to a biased random walk on $\Z$
   with a ``reflecting boundary'' at -1. Specifically, consider the
-  Markov chain on $\{0, 1, \ldots\}$ given by the transition diagram
-  \begin{figure}
-    \begin{center}
-      \begin{tikzpicture}[scale=1,>=stealth', auto, semithick,
-        flat/.style={circle,draw=black,thick,text=black,font=\small}]
-        \node[flat] (n0) at (0,0)  {$0$};
-        \node[flat] (n1) at (1,0)  {$1$};
-        \node[flat] (n2) at (2,0)  {$2$};
-        \node[flat,white] (n3) at (3,0) {$ \ \ \ $};
-        \node[] at (3,0) {$\ldots$};
-        \draw[thick,->,bend left] (n0) to (n1);
-        \draw[thick,->,bend left] (n1) to (n2);
-        \draw[thick,->,bend left] (n2) to (n3);
-        \draw[thick,->,loop left] (n0) to (n0);
-        \draw[thick,->,bend left] (n1) to (n0);
-        \draw[thick,->,bend left] (n2) to (n1);
-        \draw[thick,->,bend left] (n3) to (n2);
-      \end{tikzpicture}
-    \end{center}
-    \caption{Markov chain for the random variable $X(B)$ in \eqref{eq:X-walk}.}
-    \label{fig:X-walk}  
+  Markov chain on $\{0, 1, \ldots\}$ given by the transition diagram 
+  in Figure~\ref{fig:walk}
+  \begin{figure}[tb]
+    \centering
+    \begin{minipage}{0.5 \textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1.5,>=stealth', auto, semithick,
+          flat/.style={circle,draw=black,thick,text=black,font=\small}]
+          \node[] at (-2,0) {$\ldots$};
+          \node[flat,white] (n_2) at (-2,0) {$ \ \ \ $};
+          \node[flat] (n_1) at (-1,0)  {$-1$};
+          \node[flat] (n0) at (0,0)  {$0$};
+          \node[flat] (n1) at (1,0)  {$1$};
+          \node[flat,white] (n2) at (2,0) {$ \ \ \ $};
+          \node[] at (2,0) {$\ldots$};
+          
+          \draw[thick,->,bend left] (n_2) to (n_1);
+          \draw[thick,->,bend left] (n_1) to (n0);
+          \draw[thick,->,bend left] (n0) to (n1);
+          \draw[thick,->,bend left] (n1) to (n2);
+
+          \draw[thick,->,bend left] (n2) to (n1);
+          \draw[thick,->,bend left] (n1) to (n0);
+          \draw[thick,->,bend left] (n0) to (n_1);
+          \draw[thick,->,bend left] (n_1) to (n_2);
+        \end{tikzpicture}
+      \end{minipage}%
+      \begin{minipage}{0.5 \textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1.5,>=stealth', auto, semithick,
+          flat/.style={circle,draw=black,thick,text=black,font=\small}]
+          \node[flat] (n0) at (0,0)  {$0$};
+          \node[flat] (n1) at (1,0)  {$1$};
+          \node[flat] (n2) at (2,0)  {$2$};
+          \node[flat,white] (n3) at (3,0) {$ \ \ \ $};
+          \node[] at (3,0) {$\ldots$};
+          \draw[thick,->,bend left] (n0) to (n1);
+          \draw[thick,->,bend left] (n1) to (n2);
+          \draw[thick,->,bend left] (n2) to (n3);
+          \draw[thick,->,loop left] (n0) to (n0);
+          \draw[thick,->,bend left] (n1) to (n0);
+          \draw[thick,->,bend left] (n2) to (n1);
+          \draw[thick,->,bend left] (n3) to (n2);
+        \end{tikzpicture}    
+      \end{minipage}
+    \caption{Markov chain for the random variable $S(B)$ \emph{(left)} and $X(B)$ \emph{(right)}
+    with parameter $\epsilon \in (0,1)$.  
+    A right-arrow has probability $(1-\epsilon)/2$ and a left-arrow (and the only self loop) 
+    has probability $(1+\epsilon)/2$.}
+    \label{fig:walk}  
   \end{figure}
   where edges pointing right have probability $(1-\epsilon)/2$ and edges pointing left---including the loop at 0---have probability $(1+\epsilon)/2$.
+
+
+  Consider the random variables 
+  \begin{align}
+    M(B) &= \min_{t \leq |B|} S(B_1 \cdots B_t)\,, \quad\text{and } \\
+    X(B) &= S(B) - M(B)\,. \label{eq:X-walk}
+  \end{align}
+  When $B$ is understood from the context, we often omit $B$ and simply write $X$ and $X_t$.
+  Here, $X_t$ has the interpretation that it is the relative hight of $S_t$ 
+  with respect to its minimum over the prefix $S_1 \cdots S_t$. 
+  Let $\mathcal{X}_t(B)$ be the distribution of $X(B_1 \cdots B_t)$ 
+  and define $X_\infty = X_t$ where $t = \infty$. 
+
+
+  \section{The limiting distribution for reach}\label{sec:stationary-dist-reach}
+  By examining~\eqref{eq:rho-recursive-mh}, 
+  we can confirm that $X_t = \rho(W_1 \cdots W_t)$. 
+  Thus it is not surprising that $X_t$ will play an important role in our analysis.
+  In this section, 
+  we compute the limiting distribution $\mathcal{X}_\infty$ 
+  and show that it stochastically dominates $\mathcal{X}_t(B), t \geq 0$.
+
 
   % \begin{lemma}\label{lemma:rho-stationary}
   %   Let $\epsilon, p_\h \in (0,1)$ and consider 
@@ -115,7 +154,7 @@ for certain bad events on this walk.
    
     Examining~\eqref{eq:X-walk}, it is easy to confirm that 
     the random variable $X_n$ is precisely given by 
-    the result of evolving the Markov chain in Figure~\ref{fig:X-walk} for $n$ steps 
+    the result of evolving the Markov chain in Figure~\ref{fig:walk} for $n$ steps 
     with all probability initially placed at 0. 
     It is further easy to confirm that the distribution given by~\eqref{eq:stationary} above is stationary for this chain.
 

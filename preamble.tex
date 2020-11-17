@@ -99,18 +99,19 @@
 %%%%%%%%%%%%%%%%%%%%
 % Common macros
 \newtheorem{theorem}{Theorem}[chapter]
-\newtheorem{proposition}{Proposition}[chapter]
-\newtheorem{definition}{Definition}[chapter]
-\newtheorem{claim}{Claim}[chapter]
-\newtheorem{lemma}{Lemma}[chapter]
-\newtheorem{corollary}{Corollary}[chapter]
-\newtheorem{observation}{Observation}[chapter]
-\newtheorem{bound}{Bound}[chapter]
-\newtheorem{fact}{Fact}[chapter]
+\newtheorem*{theorem*}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{bound}[theorem]{Bound}
+\newtheorem{fact}[theorem]{Fact}
 
 \theoremstyle{definition}
-\newtheorem{remark}{Remark}[chapter]
-\newtheorem{remark*}{Remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem*{remark*}{Remark}
 
 
 \newcommand{\ignore}[1]{}

@@ -1,23 +1,21 @@
 
-In the previous section, 
+In \Section~\ref{sec:catalan}, 
 we explored the structural connection 
 between the UVP and Catalan slots. 
-In this section, we present two bounds 
-on the stochastic event ``Catalan slots are rare.'' 
-Specifically,
-Bound~\ref{bound:unique-honest-catalan} 
-concerns uniquely honest Catalan slots and complements Theorem~\ref{thm:unique-honest}; 
-Bound~\ref{bound:two-catalans} concerns 
-two consecutive Catalan slots and complements Theorem~\ref{thm:multiple-honest}. 
-We defer the proofs till the next section 
-and prove the main theorems below.
+In this section, we present a bound (Bound~\ref{bound:unique-honest-catalan}) 
+on the stochastic event that ``a uniquely honest Catalan slot appears frequently;'' 
+it complements Theorem~\ref{thm:unique-honest}. 
+(Later, in \Section~\ref{sec:lcr-tie-multihonest}, 
+we prove a similar bound, Bound~\ref{bound:two-catalans}, 
+which concerns two consecutive Catalan slots and complements Theorem~\ref{thm:multiple-honest}.)
+We defer the proof of Bound~\ref{bound:unique-honest-catalan} till \Section~\ref{sec:estimates-multihonest}
+and proceed, instead, to prove Theorem~\ref{thm:main-mh} below.
 
 % As we shall see, 
 % the main theorems follow easily from these connections. 
 
 
-Recall the $(\epsilon, p_\h)$-Bernoulli condition 
-from~\ref{def:bernoulli-cond}.
+Recall the $(\epsilon, p_\h)$-Bernoulli condition from~\ref{def:bernoulli-cond}.
 \begin{bound}\label{bound:unique-honest-catalan}
   Let $T, s, k \in \NN, T \geq s + k$ and  $\epsilon, q_\h \in (0, 1)$. 
   Let $w$ be a characteristic string satisfying 
@@ -37,9 +35,9 @@ In particular,
 % when $q_\H = 0$, 
 when $q_\h = (1+\epsilon)/2$, 
 the bound above coincides with the 
-bound in~\cite{LinearConsistency}; 
-it follows that the current analysis 
-subsumes their result.
+bound in~\citet{LinearConsistency}. 
+Combined with the stochastic dominance argument in Lemma~\ref{lemma:dominance-martingale}, 
+it follows that the result in Theorem~\ref{thm:main-mh} subsumes the result in~\citet{LinearConsistency}.
 
 
 
@@ -81,7 +79,7 @@ subsumes their result.
   Clearly, $C$ is monotone 
   with respect to the partial order $\leq$ 
   defined on $\{\h, \H, \A\}^T$ 
-  (see below Definition~\ref{def:dominance-mh}).  
+  (see the commentary following Definition~\ref{def:dominance-mh}).  
   To see why, note that if the player wins 
   on a specific string $w$, 
   he can certainly win on any string $w^\prime$ so that $w \leq w^\prime$. 

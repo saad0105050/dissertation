@@ -44,18 +44,41 @@
 % stated in Section~\ref{sec:bounds-main-proofs}. 
 % Let us recall stochastic dominance from Definition~\ref{def:dominance-mh} 
 % and that,
-As a rule, we denote the
-probability distribution associated with a random variable using
-uppercase script letters. 
-Observe that if $Y \dominatedby X$ and 
-$Z$ is independent of both $X$ and $Y$, 
-then $Z + Y \dominatedby Z + X$. 
-In addition, for any non-decreasing function $u$ defined on $\Omega$, 
-$Y \dominatedby X$ implies $u(Y) \leq u(X)$.
+
+
+ 
+  Let $\epsilon \in (0,1)$,  
+  $p = (1 - \epsilon)/2$, and $q = (1 + \epsilon)/2$ 
+  so that $q - p = \epsilon$. 
+  Let $q_\h \in (0, q]$ and $q_\H = q - q_\h$. 
+  Let $w = w_1 w_2 $ be a characteristic string 
+  satisfying the $(\epsilon, p_\h)$-Bernoulli condition. 
+  Let $B$ denote the event that 
+  $w$ does not contain a uniquely honest Catalan slot in $y$. 
+  We would like to upper-bound $\Pr_w[B]$.
+
+  In the statement of Bound~\ref{bound:unique-honest-catalan}, 
+  we have essentially written $w = xyz$ where $x = w_1 \cdots w_{s-1}$ and $y = w_s \cdots w_{s+k-1}$. 
+  First, we prove the bound in the special case where $|x| = 0$ 
+  via a random walk defined for $w$, with $|x| = 0$. 
+  Next, we tackle the general case $|x| \geq 0$
+  by sampling the initial position of this walk
+  from the distribution $\mathcal{X}_\infty$ in \eqref{eq:stationary}. 
+  This is equivalent to taking an infinite prefix that is ``more adversarial'' 
+  than any finite prefix $x$.
 
 
 
-\paragraph{Generating functions.}
+\paragraph{Generating functions and stochastic dominance.}
+  As a rule, we denote the
+  probability distribution associated with a random variable using
+  uppercase script letters. 
+  Observe that if $Y \dominatedby X$ and 
+  $Z$ is independent of both $X$ and $Y$, 
+  then $Z + Y \dominatedby Z + X$. 
+  In addition, for any non-decreasing function $u$ defined on $\Omega$, 
+  $Y \dominatedby X$ implies $u(Y) \leq u(X)$.
+
   We reserve the term
   \emph{generating function} to refer to an ``ordinary'' generating
   function which represents a sequence $a_0, a_1, \ldots$ of
@@ -71,7 +94,9 @@ $Y \dominatedby X$ implies $u(Y) \leq u(X)$.
   associated with the random variables $A$ and $B$, it is easy to
   check that $\gf{A} \cdot \gf{B}$ is the generating function
   associated with the convolution $A + B$ (where $A$ and $B$ are
-  assumed to be independent).  Translating the notion of stochastic
+  assumed to be independent).  
+
+  Translating the notion of stochastic
   dominance to the setting with generating functions, we say that the
   generating function $\gf{A}$ \emph{stochastically dominates}
   $\gf{B}$ if $\sum_{t \leq T} a_t \leq \sum_{t \leq T} b_t$ for all
@@ -95,23 +120,40 @@ $Y \dominatedby X$ implies $u(Y) \leq u(X)$.
   $\lim_{k \rightarrow \infty} {|a_k|}R^k = 0$ and that $|a_k| = O(R^{-k})$. 
   In addition, if $\gf{A}$ is a probability generating function associated with the
   random variable $A$ then it follows that
-  $\Pr[A \geq T] = O(R^{-T})$. 
+  $\Pr[A \geq T] = O(R^{-T})$.
 
-  
-  Recall that in the statement of Bound~\ref{bound:unique-honest-catalan}, 
-  we have essentially written $w = xyz$ where $x = w_1 \cdots w_{s-1}$ and $y = w_s \cdots w_{s+k-1}$. 
-  Our proof is based on a random walk (see \Section~\ref{sec:rand-walk}) 
-  on a characteristic string $W$ satisfying the $(\epsilon, q_\h)$-Bernoulli condition. 
-  Let $B$ denote the event that 
-  $w$ does not contain a uniquely honest Catalan slot in $y$. 
-  We would like to upper-bound $\Pr_w[B]$.
 
-  Our proof is done in two parts. First, we prove the bound when $|x| = 0$. 
-  Next, we prove the general case $|x| \geq 0$ 
-  by sampling the initial position of the walk $S$ 
-  from the distribution $\mathcal{X}_\infty$ in \eqref{eq:stationary}. 
-  This is equivalent to taking an infinite prefix that ``more adversarial'' 
-  than any finite prefix $x$; see Lemma~\ref{lemma:rho-stationary}.
+
+  \paragraph{The random walk $S$ and the first ascent/decent GFs.}
+  Recall the process $W = W_1 W_2 \cdots = W(w_1 w_2 \cdots)$ 
+  and the simple, negatively biased random walk $S = S(W)$ 
+  from \Section~\ref{sec:rand-walks} and Figure~\ref{fig:walk}.
+  Define $\gfD$ (resp. $\gfA$) to be
+  the generating function for the \emph{descent stopping time} 
+  (resp. the \emph{ascent stopping time}) 
+  of the walk; this is the first time the random walk, starting at 0, visits
+  $-1$ (resp. $+1$). 
+  The natural recursive formulation of these descent time yield 
+  simple algebraic equations for the descent generating function,
+  $\gfD(Z) = qZ + pZ \gfD(Z)^2$ and $\gfA(Z) = pZ + qZ \gfA(Z)^2$, 
+  and from this we may conclude
+  \begin{align*}
+    \gfD(Z) &= (1 - \sqrt{1 - 4pqZ^2})/2pZ\,, \\
+    \gfA(Z) &= (1 - \sqrt{1 - 4pqZ^2})/2qZ\,.
+  \end{align*}
+  % Here, we discard the other candidate solution 
+  % $(1 + \sqrt{1 - 4pqZ^2})/(2pZ)$ since in that case, for any real $\delta \in (0,1)$ we would get 
+  % $\gfD(1 - \delta) > \gfD(1)$; 
+  % but this conflicts with the fact that the coefficients of $\gfD(Z)$ are non-negative. 
+  Note that while $\gfD$ is a probability generating function, 
+  $\gfA$ is not: according to the classical
+  ``gambler's ruin'' analysis,
+  % ~\cite{Grinstead:1997ng}, 
+  the probability
+  that a negatively-biased random walk starting at 0 ever rises to 1
+  is exactly $p/q$; thus $\gfA(1) = p/q$.
+
+
 
 
 
@@ -151,35 +193,6 @@ $Y \dominatedby X$ implies $u(Y) \leq u(X)$.
   Finally, bound the latter sum  
   by using the analytic properties of $\gfChat(Z)$. 
 
-  % \paragraph{Generating functions for the first ascent and descent.}
-  % Before proceeding further, we set down two
-  % elementary generating functions for the ``first descent'' and the ``first ascent''
-  % stopping times. 
-  Treating the random variables $W_1, \ldots$ as
-  defining a (negatively) biased random walk, define $\gfD$ (resp. $\gfA$) to be
-  the generating function for the \emph{descent stopping time} 
-  (resp. the \emph{ascent stopping time}) 
-  of the walk; this is the first time the random walk, starting at 0, visits
-  $-1$ (resp. $+1$). 
-  The natural recursive formulation of these descent time yield 
-  simple algebraic equations for the descent generating function,
-  $\gfD(Z) = qZ + pZ \gfD(Z)^2$ and $\gfA(Z) = pZ + qZ \gfA(Z)^2$, 
-  and from this we may conclude
-  \begin{align*}
-    \gfD(Z) &= (1 - \sqrt{1 - 4pqZ^2})/2pZ\,, \\
-    \gfA(Z) &= (1 - \sqrt{1 - 4pqZ^2})/2qZ\,.
-  \end{align*}
-  % Here, we discard the other candidate solution 
-  % $(1 + \sqrt{1 - 4pqZ^2})/(2pZ)$ since in that case, for any real $\delta \in (0,1)$ we would get 
-  % $\gfD(1 - \delta) > \gfD(1)$; 
-  % but this conflicts with the fact that the coefficients of $\gfD(Z)$ are non-negative. 
-  Note that while $\gfD$ is a probability generating function, 
-  $\gfA$ is not: according to the classical
-  ``gambler's ruin'' analysis,
-  % ~\cite{Grinstead:1997ng}, 
-  the probability
-  that a negatively-biased random walk starting at 0 ever rises to 1
-  is exactly $p/q$; thus $\gfA(1) = p/q$.
 
   % \paragraph{Generating function for the first uniquely honest Catalan slot.}
   Recall that a slot is Catalan in $w$ if and only if 
@@ -585,12 +598,11 @@ $Y \dominatedby X$ implies $u(Y) \leq u(X)$.
   % \subsubsection*{If $|x| \geq 1$}
   Next, let us consider the case when $x \neq \varepsilon$, i.e., $|x| \geq 1$. 
   Let $m = |x|$ and write $w = xyz$ where $|y| = k$. 
-  Recall the processes $(W_t)$ and $(S_t)$ defined on $w$
-  and, in addition, define $M = (M_t : t \in \NN), M_t = \min_{0 \leq i \leq t } S_i$ 
-  and $X = (X_t : t \in \NN), X_t = S_t - M_t$. 
-  By convention, set $M_0 = X_0 = 0$. 
-  Thus $X_t$ denotes the height of the walk $S$, at time $t$, 
-  with respect to its minimum $M_t$.
+  Recall the processes $(X_t)$ defined on the characteristic string $w$, 
+  from~\eqref{eq:X-walk}.
+  ($X_t$ denotes the height of the walk $S$, at time $t$, 
+  with respect to its historical minimum $M_t$.)
+  Let $\gfX(Z)$ be the generating function for $(X_t)$.
 
   % For any slot $m + s$ of $w$, it is left-Catalan 
   % if and only if the walk $S$, 
@@ -608,45 +620,13 @@ $Y \dominatedby X$ implies $u(Y) \leq u(X)$.
   whose $t$th coefficient is the probability that 
   $t$ is a Catalan slot in $y$.
 
-  Note that $X = (X_t)$ is an $\epsilon$-downward biased random walk 
-  on non-negative integers with a reflective barrier at $-1$. 
-  Specifically, 
-  for any $h \in \NN, \Pr[X_t = h \Given X_{t-1} = h -1] = p$ and 
-  $\Pr[X_t = h - 1 \Given X_{t-1} = h] = \Pr[X_t = 0 \Given X_{t-1} = 0] = q$. 
-  In~\cite[Lemma 6.1]{LinearConsistencySODA}, it is proved that 
-  the distribution of $X_m$ is stochastically dominated by 
-  the distribution of $X_\infty$, written $\mathcal{X}_\infty$ and 
-  defined, for $k = 0, 1, 2, \ldots$, as 
-  % $
-  %     \mathcal{X}_\infty(k) 
-  %     = \Pr[X_\infty = k] 
-  %     = (1 - \beta) \beta^k
-  % $
-  % where $\beta \defeq (1-\epsilon)/(1+\epsilon)$. 
-  \begin{equation}
-    \label{eq:stationary}
-      \mathcal{X}_\infty(k) = \Pr[X_\infty = k] 
-      \defeq 
-        \left(\frac{2\epsilon}{1+\epsilon}\right)\cdot \left(\frac{1-\epsilon}{1 + \epsilon}\right)^k
-        = 
-      (1 - \beta) \beta^k
-  \end{equation}
-  where $\beta \defeq (1-\epsilon)/(1+\epsilon)$. 
-  Let 
-  $$
-    \{\mathcal{X}_\infty(k)\} \SeqGF \gfXinf(Z) = 
-    % (1 - \beta)/(1 - \beta Z)
-    \frac{1 - \beta}{1 - \beta Z}
-    \,.
-  $$ 
-  It follows that $\gfCtilde(Z)$ is dominated by 
+  From Lemma~\ref{lemma:rho-stationary}, it immediately follows that $\gfCtilde(Z)$ is dominated by 
   $$
       \sum_{h = 0}^\infty \mathcal{X}_\infty(h) \gfD(Z)^h \gfChat(Z)
     = \gfXinf(\gfD(Z)) \gfChat(Z)
     = \frac{(1 - \beta)\gfChat(Z)}{1 - \beta \gfD(Z)}
-    % = (1 - \beta)\gfChat(Z)/(1 - \beta \gfD(Z))
-    \,.
   $$
+  where $$\beta \triangleq \frac{1-\epsilon}{1+\epsilon}\,.$$
   % \end{align*}
 
   Let $\star$ denote the quantity above. 

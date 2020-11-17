@@ -88,51 +88,6 @@ $t$ a maximum-length honest tine with label $h$,
 then $\reach(t) \geq 0$. 
 
 
-% {\color{red} Fix this.}
-% \begin{fact}\label{fact:fork-structure-reach}
-%   Let $w \in \{\h, \H, \A\}^T$ be a characteristic string, 
-%   $s \in [T + 1]$ be an integer, 
-%   $x \PrefixEq w, |x| = s - 1$. 
-%   Let 
-%   $F$ be a fork for $w$, 
-%   $B$ an honest vertex in $F$, 
-%   $h = \ell(B)$, and 
-%   $I = [h + 1, s - 1]$.
-%   Let $F_x \Fork x$ be a fork prefix of $F$ so that 
-%   $F_x$ contains all honest tines from $F$ with labels at most $s - 1$. 
-%   The following statements are equivalent: 
-%   \begin{enumerate*}[label=(\roman*)]
-%     \item \label{fact-reach-part:Aheavy} $I$ is $\Aheavy$; 
-%     \item \label{fact-reach-part:viable-adv-ext} 
-%       $B$ has an adversarial extension $t, \ell(t) \in I$ so that $t$ is 
-%       viable at the onset of slot $s$; and
-%     \item \label{fact-reach-part:nonneg-reach} $\reach_{F_x}(B) \geq 0$;
-%   \end{enumerate*}      
-% \end{fact}
-% \begin{proof}
-%   The equivalence between items~\ref{fact-reach-part:Aheavy} and~\ref{fact-reach-part:viable-adv-ext} has already been shown in Fact~\ref{fact:fork-structure}. 
-%   \begin{description}[font=\normalfont\itshape\space]
-
-%     \item[\ref{fact-reach-part:nonneg-reach} implies~\ref{fact-reach-part:Aheavy}.]
-%       By assumption, $\reach_{F_x}(B)  = \reserve_{F_x}(B) - \gap_{F_x}(B) \geq 0$.               
-%       Since $\reserve_{F_x}(B) = \#_\A(I)$ and $\gap_{F_x}(B) \geq \#_\h(I) + \#_\H(I)$, 
-%       it follows that $\#_\A(I) \geq \#_\h(I) + \#_\H(I)$. 
-
-%     \item[\ref{fact-reach-part:viable-adv-ext} implies~\ref{fact-reach-part:nonneg-reach}.]
-%       Since $t$ is an adversarial extension of $B$, 
-%       it contains only adversarial vertices from $I$. 
-%       By assumption, $t$ is viable at the onset of slot $s$.
-%       It follows that $\#_\A(I) \geq \gap_{F_x}(B)$.
-%       Since $\reserve_{F_x}(B) = \#_\A(I)$, we have 
-%       $\reach_{F_x}(B) = \reserve_{F_x}(B) - \gap_{F_x}(B) \geq 0$.  
-      
-%   \end{description}            
-% \end{proof}
-
-
-
-
-
 
 \paragraph{Non-negative reach, $\A$-heaviness, and viable adversarial extensions.}
 Let $w \in \{\h, \H, \A\}^T$,   
@@ -148,7 +103,7 @@ Consider the following statements:
   \item \label{fact-reach-part:conservative} $\length(t) = \#_\h(I) + \#_\H(I) + \length(B)$.     
 \end{enumerate}
 
-\begin{fact}\label{fact:fork-structure-reach}
+\begin{proposition}\label{prop:fork-structure-reach}
     ~\ref{fact-reach-part:viable-adv-ext} $\Longrightarrow$
     \ref{fact-reach-part:nonneg-reach} $\Longrightarrow$
     \ref{fact-reach-part:Aheavy}.
@@ -156,9 +111,9 @@ Consider the following statements:
     ~\ref{fact-reach-part:Aheavy} $\Longrightarrow$ 
     ~\ref{fact-reach-part:nonneg-reach} $\Longrightarrow$
     ~\ref{fact-reach-part:viable-adv-ext}.
-\end{fact}
-Fact~\ref{fact:fork-structure-reach} can be seen as 
-a refinement of Fact~\ref{fact:fork-structure} 
+\end{proposition}
+Proposition~\ref{prop:fork-structure-reach} can be seen as 
+a refinement of Proposition~\ref{prop:fork-structure} 
 when $F$ is a closed fork. 
 \begin{proof}~
   \begin{description}[font=\normalfont\itshape\space]
@@ -235,7 +190,7 @@ If $\sigma$ is a conservative extension,
 the number of such vertices is exactly $\gap_F(s)$. 
 
 
-\begin{fact}[Extensions and reach]\label{fact:reach-fork-ext-mh}
+\begin{proposition}[Extensions and reach]\label{prop:reach-fork-ext-mh}
   Let $b \in \{\h, \H\}$. 
   Let $F \Fork w$ and $F^\prime \Fork wb$ be closed forks so that 
   $F \ForkPrefix F^\prime$ and 
@@ -246,8 +201,8 @@ the number of such vertices is exactly $\gap_F(s)$.
   $\reach_{F^\prime}(t) = \reach_F(t) - 1$ for every $t \in F$. 
   Furthermore, a conservative extension $\sigma$ satisfies 
   $\reach_{F^\prime}(\sigma) = 0$.
-\end{fact}
-The above fact follows from the claims below.
+\end{proposition}
+The proposition above follows from the claims below.
 \begin{claim}\label{claim:nex-mh}
   Let $b \in \{\h, \H\}$. 
   Consider a closed fork $F\vdash w$ and some closed fork $F'\vdash wb$ such that $F\fprefix F'$. 
@@ -357,7 +312,6 @@ The theorem below shows how to recursively compute $\mu_x(y)$
 for a given decomposition $w = xy$.
 
 
-% \subsection{The relative margin recurrence}
 \begin{theorem}\label{thm:relative-margin}
   Let $\varepsilon$ be the empty string 
   and $b \in \{\h, \H\}$. 
@@ -382,12 +336,10 @@ for a given decomposition $w = xy$.
       \mu_x(y)-1 & \text{otherwise.}
     \end{cases}
     \label{eq:mu-relative-recursive-mh}
-  \end{equation}
-
-  % Additionally, for every $w \in \{\h, \H, \A\}^*$ 
-  % there exists a canonical fork for $w$. 
+  \end{equation}  
 \end{theorem}
-The proof of Theorem~\ref{thm:relative-margin} is given in Section~\ref{sec:margin-proof}. 
+
+The proof of Theorem~\ref{thm:relative-margin} is given in \Section~\ref{sec:margin-proof-multihonest}. 
 Let $w$ be a characteristic string and 
 let $m, k \in \NN$ so that $m + k \leq |w|$. 
 Let $x \Prefix w, |x| = m-1$ and $xy \PrefixEq w, |xy| \geq m + k$.
@@ -397,7 +349,7 @@ for computing the probability that $\mu_x(y) \geq 0$.
 But this is exactly the probability that slot $m$ is not $k$-settled, 
 according to~\eqref{eq:settlement-uvp} 
 and Lemma~\ref{lemma:uvp-margin} below. 
-In Section~\ref{sec:exact-prob-multihonest}, 
+In \Section~\ref{sec:exact-prob-multihonest}, 
 we describe this algorithm in more detail and 
 compile some explicit values for this probability.
 
@@ -590,7 +542,7 @@ Observe that if $\mu_x(y) < 0$ then $\reach_F(t_x) < 0$.
 % \hfill\qed
 
 
-\section{Relative margin to characterize the UVP}
+\section{Expressing UVP in terms of relative margin}
 Let $w$ be a characteristic string. 
 Recall that in Theorem~\ref{thm:unique-honest}, 
 we showed that whether a slot has the UVP in $w$ --- a 
@@ -663,7 +615,7 @@ in terms of characterizing the UVP.
       and let 
       $t \in F, \ell(t) \leq s - 1$ be an honest tine. 
       Since it is disjoint with any tine in $F$ over the suffix $y$, 
-      $\reach(t) < 0$ and, by Fact~\ref{fact:fork-structure-reach}, 
+      $\reach(t) < 0$ and, by Proposition~\ref{prop:fork-structure-reach}, 
       $t$ does not have an adversarial extension $t' \in F, t \Prefix t'$ that is 
       viable at the onset of slot $|xy| + 1$. 
       Therefore, if a tine in $F$ 

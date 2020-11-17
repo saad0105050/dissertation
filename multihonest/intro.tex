@@ -129,7 +129,7 @@ approach} used in the Ouroboros Praos analysis~\cite{Praos}. Thus, we
 can achieve a consistency error probability of $e^{-\Theta(k)}$ in this
 setting as well. 
 This analysis is presented in 
-Section~\ref{sec:async-multihonest}.
+\Section~\ref{sec:async-multihonest}.
 
   % \item 
 \paragraph{A technical overview.}
@@ -196,7 +196,7 @@ we show that both slots have UVP as well.  Since Catalan slots can be
 multiply honest, PoS protocols can achieve a consistency error bound
 of $e^{-\Theta(k)}$ in this model even if $p_\h = 0$.
 
-In a separate line of reasoning, in Section~\ref{sec:recursion}, 
+In a separate line of reasoning, in \Section~\ref{sec:fork-framework}, 
 we generalize the fork-theoretic framework of~\citet{LinearConsistency} for the multi-leader setting. 
 Here, we characterize the UVP 
 in terms of the so-called ``relative margin,'' 
@@ -212,7 +212,7 @@ The recurrence relation mentioned above then
 leads to an algorithm to explicitly compute 
 the probability that 
 a given slot encounters a consistency violation; 
-see Section~\ref{sec:exact-prob}. 
+see \Section~\ref{sec:exact-prob-multihonest}. 
 In contrast, the Catalan slot-centric characterization of the UVP 
 gives us only an asymptotic bound on this probability. 
 It can be concluded that the fork-framework, after all, 
@@ -223,7 +223,9 @@ in the multi-leader setting.
 
 
 \paragraph{Outline.}
-We specify our model in Section~\ref{sec:model} and focus on a
+{\color{red} Need update}
+
+We specify our model in \Section~\ref{sec:model-multihonest} and focus on a
 specific consistency property called ``$k$-settlement.''  This section
 also contains our main theorems; the proofs are deferred to
 \Section~\ref{sec:bounds-main-proofs-multihonest}.  In
@@ -236,7 +238,7 @@ In \Section~\ref{sec:bounds-main-proofs-multihonest},
 we present two bounds on the stochastic events of interest, e.g., the
 rarity of a Catalan slot; these bounds lead to short proofs of the
 main theorems.  The proofs of these bounds are presented next in
-Section~\ref{sec:estimates} which contains all of our probabilistic
+Section~\ref{sec:estimates-multihonest} which contains all of our probabilistic
 arguments.  
 
 \Section~\ref{sec:recursion-multihonest} contains an alternative treatment 
@@ -253,11 +255,12 @@ presented in \Section~\ref{sec:async-multihonest}.  In \Section~\ref{sec:cp-mult
 treat the traditional Common Prefix (CP) violations using our bounds
 on the UVP.  
 
-In \Section~\ref{sec:cp-forks}, 
-we characterize common prefix violations 
-in the presence of multiply honest slots 
-using ``balanced forks'' from~\cite{LinearConsistency} (and, importantly, 
-without using Catalan slots).
+In \Section~\ref{sec:cp-multihonest}, 
+we characterize the Common Prefix Property (CP) violations. 
+We give a simple proof using the UVP as well as 
+an alternative (lengthy) proof which uses fork-theoretic constructs (such as ``balanced forks'') 
+but not the UVP or Catalan slots. 
+This is an example where Catalan slots (and the UVP) simplifies existing proofs.
 
 
 

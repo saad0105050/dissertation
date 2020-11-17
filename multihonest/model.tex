@@ -336,7 +336,7 @@ consistently-labeled subgraph of $\hat{F}$.
  $\ell(v) \leq \ell(t)$. A tine $t$ is \emph{viable at slot $s$} if
  the length of the portion of $t$ appearing over slots $0,\ldots, s$ 
  is no smaller than the depths of any honest vertices labeled from these slots. (As noted,
- the properties~\ref{fork:multiply-honest} and~\ref{fork:honest-depth}
+ the properties~\ref{fork:multiply-honest} and~\ref{fork:honest-depth-mh}
  together imply that an honest observer at slot $s$ will only adopt a
  viable tine.)  
  % The \emph{honest depth} function
@@ -347,7 +347,7 @@ consistently-labeled subgraph of $\hat{F}$.
  $\hdepth : P \Union Q \rightarrow [n]$, 
  defined as $\hdepth(i) = \max_{t \in F} \left\{ \length(t) \SuchThat \ell(t) = i \right\}$, 
  gives the largest depth of the (honest) vertices 
- associated with an honest slot; by~\ref{fork:honest-depth},
+ associated with an honest slot; by~\ref{fork:honest-depth-mh},
  $\hdepth(\cdot)$ is strictly increasing.
 
 
@@ -424,6 +424,7 @@ consistently-labeled subgraph of $\hat{F}$.
 
 
   \begin{figure*}[t]
+    \singlespacing
     \begin{center}
       \fbox{
         \begin{minipage}{\textwidth}
@@ -526,7 +527,7 @@ consistently-labeled subgraph of $\hat{F}$.
   The analogous statement ``settlement implies CP,'' however, 
   requires a lengthy proof both in~\cite{LinearConsistency} and in 
   our framework. See 
-  Appendix~\ref{sec:cp-forks}
+  \Section~\ref{sec:cp-multihonest}
   % the full version~\cite{MultiHonestFullVersion}
   for details.
 
@@ -588,6 +589,7 @@ consistently-labeled subgraph of $\hat{F}$.
     the probability that $\Adversary$ wins $G$.
   \end{definition}
 
+  \section{Main theorem}
   Note that in typical PoS settings the distribution $\Distribution$
   is determined by the combined stake held by the adversarial players,
   the leader election mechanism, and the dynamics of the protocol. The
@@ -602,7 +604,8 @@ consistently-labeled subgraph of $\hat{F}$.
   guarantee that
   $\Pr[w_i = \A \mid w_1, \ldots, w_{i-1}] \leq (1 - \epsilon)/2$.  We
   can easily handle both types of distributions in our analysis since
-  the former distribution ``stochastically dominates'' the latter.
+  the former distribution ``stochastically dominates'' the latter; 
+  see Section~\ref{sec:martingale-dominance} for a precise definition.
   % Let us define below the notion of stochastic dominance. 
   As a rule, we denote the
   probability distribution associated with a random variable using
@@ -675,14 +678,14 @@ consistently-labeled subgraph of $\hat{F}$.
     (Here, the asymptotic notation hides constants that do not depend on $\epsilon$ or $k$.)
   \end{theorem}
   Note that the quantity $p_\h$ above cannot be zero.
-  We present the proof in Section~\ref{sec:bounds-main-proofs-multihonest}. 
-  In Section~\ref{sec:recursion-multihonest}, 
+  We present the proof in \Section~\ref{sec:bounds-main-proofs-multihonest}. 
+  In \Section~\ref{sec:fork-framework}, 
   we give a characterization of the UVP which 
   allows us to explicitly compute $\mathbf{S}^{s,k}[\mathcal{B}]$; 
   see 
   % Lemma~\ref{lemma:uvp-margin}, 
   Theorem~\ref{thm:relative-margin} and 
-  Section~\ref{sec:exact-prob-multihonest}.
+  \Section~\ref{sec:exact-prob-multihonest}.
 
 
   \paragraph{Analysis in the $\Delta$-synchronous setting.} The security
@@ -694,7 +697,7 @@ consistently-labeled subgraph of $\hat{F}$.
    the $\Delta$-reduction mapping of~\cite{Praos} (which is specifically
    designed to lift the synchronous analysis to the $\Delta$-synchronous
    setting).
-   These details appear in Section~\ref{sec:async}.
+   These details appear in \Section~\ref{sec:async-multihonest}.
 
 
   \paragraph{Public leader schedules.} One attractive feature of this

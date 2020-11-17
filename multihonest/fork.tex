@@ -74,66 +74,7 @@
     over the interval $[\ell(B) + 1, \ell(t)]$. 
     
 
-    
-    % In what follows, we record some useful observations about forks that highlight 
-    % the interplay among reach, viability, $\A$-heaviness, and adversarial extensions.
-    % % We stress that these observations do not require the honest players 
-    % % to use a consistent tie-breaking rule such as $\LCR(\cdot)$.
 
-
-    % \begin{fact}\label{fact:fork-structure}
-    %   Let $w \in \{\h, \H, \A\}^T$ be a characteristic string, 
-    %   $s \in [T + 1]$ be an integer, 
-    %   $x \PrefixEq w, |x| = s - 1$. 
-    %   Let 
-    %   $F$ be a fork for $w$, 
-    %   $B$ an honest vertex in $F$, 
-    %   $h = \ell(B)$, and 
-    %   $I = [h + 1, s - 1]$.
-    %   Let $F_x \Fork x$ be a fork prefix of $F$ so that 
-    %   $F_x$ contains all honest tines from $F$ with labels at most $s - 1$. 
-    %   The following statements are equivalent: 
-    %   \begin{enumerate*}[label=(\alph*)]
-    %     % \item \label{fact-part:nonneg-reach} $\reach_{F_x}(B) \geq 0$;
-    %     \item \label{fact-part:Aheavy} $I$ is $\Aheavy$; and 
-    %     \item \label{fact-part:viable-adv-ext} 
-    %       $B$ has an adversarial extension $t, \ell(t) \in I$ so that $t$ is 
-    %       viable at the onset of slot $s$.
-    %   \end{enumerate*}      
-    % \end{fact}
-
-    % \begin{proof}
-    %   First let us prove that~\ref{fact-part:Aheavy} implies~\ref{fact-part:viable-adv-ext}.
-    %   Let $t^*$ be a maximum-length honest tine in $F$ so that $\ell(t^*) \in I$. 
-    %   There can be two cases.
-    %   If $B$ is on $t^*$, 
-    %   the adversarial slots in $I$ can be used to create 
-    %   an adversarial tine $t$ so that 
-    %   i) $B$ is the last honest vertex on $t$, 
-    %   ii) $B$ is the last common vertex between $t$ and $t^*$, and 
-    %   iii) $\length(t) \geq \length(t^*)$ so that 
-    %   $t$ is viable at the onset of slot $s$. 
-    %   Now suppose $B$ is not on $t^*$.
-    %   Let $B^*$ be the first honest vertex on $t^*$ 
-    %   so that $\ell(B^*) \leq \ell(B)$. 
-    %   If the interval $I^\prime = [\ell(B^*) + 1, \ell(B) - 1]$ is non-empty, 
-    %   $t^*$ must contain only adversarial vertices in $I^\prime$. 
-    %   We can build the adversarial tine $t$ as follows: 
-    %   Extend $B^*$ by duplicating the vertices on $t^*$ in the interval $[\ell(B^*) + 1, \ell(B) - 1]$, 
-    %   put $B$ on $t$ 
-    %   and finally, extend $B$ using only adversarial slots from $I$ so that 
-    %   $B^*$ is the last common vertex between $t$ and $t^*$, and 
-    %   $\length(t) \geq \length(t^*)$. 
-    %   Hence $t$ is viable at the onset of slot $s$. 
-
-    %   It remains to prove that~\ref{fact-part:viable-adv-ext} implies~\ref{fact-part:Aheavy}.
-    %   Since $t$ is an adversarial extension of $B$, 
-    %   it contains only adversarial vertices from $I$. 
-    %   By assumption, $t$ is viable at the onset of slot $s$.
-    %   It follows that $\#_\A(I) \geq \#_\h(I) + \#_\H(I)$ 
-    %   since the longest tine grows by at least one vertex 
-    %   for each honest slot in $I$.
-    % \end{proof}
 
 
 
@@ -153,13 +94,13 @@
 
 
 
-    \begin{fact}[]\label{fact:fork-structure}
+    \begin{proposition}[]\label{prop:fork-structure}
     ~\ref{fact-part:viable-adv-ext} $\Longrightarrow$
     \ref{fact-part:Aheavy}.
     In addition, if we assume~\ref{fact-part:conservative}, then 
     ~\ref{fact-part:Aheavy} $\Longrightarrow$ 
     ~\ref{fact-part:viable-adv-ext}.
-    \end{fact}
+    \end{proposition}
 
     \begin{proof}~
       \begin{description}[font=\normalfont\itshape\space]
@@ -213,7 +154,7 @@
       the honest vertex $B_2$ builds on some adversarial tine $t^\prime$ 
       that is viable at the onset of slot $\ell(B_2)$ and, importantly, 
       contains $B_1$ as its last honest vertex. 
-      By Fact~\ref{fact:fork-structure}, 
+      By Proposition~\ref{prop:fork-structure}, 
       the interval $I$ is $\Aheavy$.
       % and, in addition, $\reach_{\phi}(B_1) \geq 0$.
     \end{proof}
