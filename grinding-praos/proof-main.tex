@@ -1,0 +1,230 @@
+
+
+\section{The Moment Generating Function of the grinding power}
+Let $\epsilon \in (0, 1)$ and write $\alpha = (1 - \epsilon)/2$, and 
+think of $\epsilon$ as the ``adversarial bias.'' 
+Let $W \sim \mathcal{L}_n(\alpha)$ and 
+Define 
+\begin{align}\label{eq:suffix-prob-binomial}
+    B_{n, \epsilon}(k) 
+    &= \Pr[ \#_\A(W_1 \ldots W_n) = k ]  
+    = 2^{-n}\binom{n}{k} (1-\epsilon)^k (1 + \epsilon)^{n-k} 
+    =  \binom{n}{k} 
+        \left(\frac{1-\epsilon}{2}\right)^n 
+        \left(\frac{1 + \epsilon}{1-\epsilon} \right)^{n-k} 
+        \,.
+\end{align}
+
+
+Recall that for any characteristic string $w = w_1 w_2 \ldots$, 
+we have $w_0 = 1$ by convention. 
+Let $\lambda$ be a positive real, $\lambda \geq 1$. 
+% (For our application, we would only use $\lamba = 2$.)
+We can express the $\lambda$th moment of the grinding power as
+\begin{align}\label{eq:grinding-power-moment-praos}
+    \Exp\, g(W)^\lambda 
+    &= \sum_{t = 0}^n \Pr[W_t \neq \A] \cdot \Exp (W_t\, S(W_{t+1}\ldots W_n))^\lambda \nonumber \\
+    &= \sum_{t = 0}^n
+    \sum_{k \geq 1} 
+      \Pr[W_{t} = k] \Pr[\text{$W_{t+1}\ldots W_n$ is $\Aheavy$}]\cdot (k S(n - t) )^\lambda \nonumber \\
+    &= A(\epsilon, \lambda) 
+      \sum_{t = 0}^n 
+      \Pr[\text{$W_{t+1}\ldots W_n$ is $\Aheavy$}]\cdot S(n-t)^\lambda \nonumber \\
+    &=  %\Pr[\text{$W_1$ is honest}]\,
+        A(\epsilon, \lambda)
+        \cdot 
+        \sum_{d=1}^n \sum_{z = 0}^{ d/2 } B_{d, \epsilon}(d - z) S(d,z)^\lambda
+\end{align}
+where 
+\begin{equation}
+  A(\epsilon, \lambda) \defeq \sum_{k\geq 1} \Pr[W_1 = k] \cdot k^\lambda
+  % \,,
+  \label{eq:A}
+\end{equation}
+and, by convention, 
+the inner sum in~\eqref{eq:grinding-power-moment-praos} 
+runs for $z = 0, 1, \ldots, \lfloor d/2 \rfloor$.
+
+The first equality in the derivation of~\eqref{eq:grinding-power-moment-praos} follows from 
+% the subadditivity of the convex function 
+% $x \mapsto x^\lambda$ for $\lambda \geq 1, x \geq 0$,  
+~\eqref{eq:g_praos}. 
+The second equality follows 
+since only $\Aheavy$ suffixes of $w$ contribute to $g(w)$ 
+and that the symbols in $W$ are independent. 
+The third equality follows from rearranging the sums. 
+The last equality follows from~\eqref{eq:suffix-prob-binomial} 
+and~\eqref{eq:S_d_z}.
+
+Our goal \footnote{
+It turns out that the the second moment of $g(W)$ grows 
+much faster than its first moment. In fact, 
+Chebyshev's inequality on $g(W)$ fares only marginally better 
+than what we get via Markov's inequality on $g(W)^2$. 
+% Thus we defer the analysis of the first moment in 
+% % Appendix~\ref{app:grinding-praos}.
+% the full version~\cite{GrindingFullVersion}.
+}
+is to develop a tight upper bound on $\Exp g(W)^2$ 
+which, when used in Markov's inequality, 
+would give us a tail bound on $g(W)$. 
+
+\begin{lemma}[Tail bound on $g$]\label{lemma:praos-tail-gamma}
+  Let $\epsilon, \EpsP \in (0, 1)$ and $n, k, s \in \NN$. 
+  Let $W \sim \mathcal{L}_n((1-\epsilon)/2)$.
+  % Let $m(W)$ denote the right-hand side of~\eqref{eq:grinding-praos-second-moment}. 
+  Let $E$ be the event that 
+  $\Blockchain$ remains $(\EpsP, k, s)$-secure during 
+  the $n$ slots represented by $W$. 
+  Let $m(W)$ be an upper bound on $\Exp[ g(W)^2 \mid E]$.
+  Let $\gamma = (m(W)/\EpsP)^{1/2}$.
+  Then 
+  $
+      \Pr\left[g(W) \geq \gamma\right] \leq 2 \EpsP
+      % \,.
+  $.
+\end{lemma}
+\begin{proof}
+  % Recall the event $E$ defined in Lemma~\ref{lemma:grinding-praos-second-moment}.
+  Let $\gamma \in \NN$. 
+  Since $g(W)$ is non-negative, 
+  $$
+    % p_\gamma 
+    \Pr[g(W) \geq \gamma]
+    \leq (1 - \Pr[E]) + \Pr[g(W)^2 \geq \gamma^2 \mid E] 
+    \leq \EpsP + m(W)/\gamma^2
+  $$ 
+  by Markov's inequality on the non-negative random variable $g(W)^2$. 
+  We set $\gamma$ to be large enough so that the above quantity is at most $2 \EpsP$. 
+  Equivalently, 
+  $m(W)/\gamma^2$ would be at most $\EpsP$, 
+  or $\gamma$ is at least $\sqrt{m(W)/\EpsP}$. 
+\end{proof}
+
+
+\section{The second moment of \texorpdfstring{$g(W)$}{the grinding power}}
+
+We begin by stating three helpful claims 
+whose proofs will be presented later.
+
+\begin{claim}\label{claim:multiple-honest-blocks}
+  For $\epsilon \in (0, 1)$, 
+  $
+    A(\epsilon, 2) 
+    % \leq 
+    % \frac{(1 + \epsilon)^2 (5 + \epsilon)}{16 \left( 1 - e^{(1 + \epsilon)/2} \right)}
+    % \leq 2^{- 0.3 + 1.85 \epsilon}
+    % \leq 2^{- 1.3 + 0.41 \epsilon}
+    % \leq 1
+    \leq 0.8 (1 + 2 \epsilon)
+    \,.
+  $
+\end{claim}
+
+
+% $\Exp H_m^2 \leq \Exp \GeomOneMinusAlpha^2 = (2 - \alpha)/\alpha^2$. 
+% The last equality is a known fact; see~\eqref{eq:geom-moments-1-2} 
+% which gives the second moment of $\GeomAlpha$. 
+% Therefore,
+% \begin{align}
+%   \sum_{k\geq 1} \Pr[W_1 = k]\, k^\lambda 
+%   &\leq \frac{1 - \alpha}{1 - e^{-(1 - \alpha)}} \frac{2 - \alpha}{\alpha^2} \nonumber \\
+%   % &= \frac{1+\epsilon}{2} \frac{3 + \epsilon}{2} \frac{4}{(1 - \epsilon)^2}
+%   &= \frac{(1+\epsilon)(3 + \epsilon)}{(1 - \epsilon)^2\left( 1 - e^{-(1 + \epsilon)/2} \right)}
+%   \,.
+% \end{align}
+
+
+
+\begin{claim}\label{claim:t1star-variance-exact}
+  Let $\epsilon \in (0,1)$ and 
+  let $d,z$ be non-negative integers where $d \geq 2$ and $z \leq d/3$. 
+  \begin{align*}
+    B_{d, \epsilon}(d-z) S(d,z)^2
+    &\leq \begin{dcases} 
+    \left( (5-3 \epsilon)/2 \right)^d \,,
+        &\quad \text{if}\quad
+        0 < \epsilon < 1/3 \,, \\
+    \left( 2^{2/3} \phi(\epsilon) \right)^d \,,
+    %\frac{6}{\sqrt{5 d}}
+        &\quad \text{if}\quad
+        1/3 \leq \epsilon < 1 \, ,
+    \end{dcases}
+  \end{align*}
+  where
+  \begin{align}
+    \phi(\epsilon) 
+    &\triangleq \frac{3}{2} (1+\epsilon)^{1/3} (1-\epsilon)^{2/3}\label{eq:phi_eps} 
+    \,.
+  \end{align}
+\end{claim}
+
+\begin{claim}\label{claim:t2star-variance-exact}
+  Let $\epsilon \in (0,1)$ and 
+  let $d,z$ be non-negative integers where $d/3 \leq z \leq d/2$. 
+  \begin{align*}
+    B_{d, \epsilon}(d-z) S(d,z)^2
+    &\leq \begin{cases} 
+    \left( 2^{2/3} \phi(\epsilon) \right)^d \,,
+        &\quad\text{if}\quad 0 < \epsilon \leq 0.6\,, \\
+    \left( (5/3) \phi(\epsilon)  \right)^d \,,
+        &\quad\text{if}\quad 0.6\leq \epsilon < 0.81\,, \\
+    1 \,,
+        &\quad\text{if}\quad 0.81 \leq \epsilon < 1
+        \,.
+    \end{cases}
+  \end{align*}
+\end{claim}
+% We defer the proofs of these claims in the next subsection .
+
+
+
+\begin{lemma}[Second moment of $g$]\label{lemma:grinding-praos-second-moment}
+  Let $\epsilon, \EpsP \in (0, 1)$ and $n, k, s \in \NN$. 
+  Let $W \sim \mathcal{L}_n((1 - \epsilon)/2)$. 
+  Let $E$ denote the event that 
+  the blockchain protocol $\Blockchain$ 
+  remains $(\EpsP, k, s)$-secure throughout 
+  the $n$ slots represented by $W$. 
+  Then
+  \begin{equation}\label{eq:grinding-praos-second-moment}
+    \Exp[ g(W)^2 \mid E] 
+    \leq 
+      % s^2/2 
+      % s^2 
+      % 2^{- 1.3 + 1.85 \epsilon} 
+      % A(\epsilon,2)
+      0.4 s^2 (1 + 2\epsilon)
+      \cdot \begin{cases}
+      \left( (5-3 \epsilon)/2 \right)^s & \text{if}\quad 0 < \epsilon \leq 1/3\,, \\
+      \left( 2^{2/3} \phi(\epsilon) \right)^s & \text{if}\quad 1/3 < \epsilon \leq 3/5\,, \\
+      \left( (5/3) \phi(\epsilon) \right)^s & \text{if}\quad 3/5 < \epsilon < 0.81\,, \\
+      1,  & \text{if}\quad 0.81 < \epsilon \leq 1\,,
+    \end{cases}    
+  \end{equation}
+  where $\phi(\epsilon)$ is defined in (\ref{eq:phi_eps}).
+\end{lemma}
+\begin{proof}
+  Conditioned on the event $E$, 
+  every viable blockchain at the end of slot $n$ 
+  must contain at least one honestly-generated block from the last $s$ slots. 
+  Thus, 
+  in ~\eqref{eq:grinding-power-moment-praos}, 
+  it suffices to consider the suffixes of $W$ of length at most $s$. 
+  The factor $s^2/2$ is an upper bound on 
+  the number of terms in the double sum in~\eqref{eq:grinding-power-moment-praos}. 
+  Note that the bounds in 
+  Claims~\ref{claim:t1star-variance-exact} 
+  and~\ref{claim:t2star-variance-exact} are monotone increasing in $d$. 
+  Hence we use the upper bounds on $B_{s, \epsilon}(s-z) S(s,z)^2$ for 
+  different ranges of $z$ and $\epsilon$. 
+  Furthermore, by Claim~\ref{claim:multiple-honest-blocks}, 
+  % $s^2/2 \cdot A(\epsilon,2) \leq s^2 2^{-1.3 + 1.85 \epsilon}$.
+  $A(\epsilon, 2)$ is at most $0.8 + 1.6 \epsilon$. 
+  The lemma follows by observing that $s^2/2 \cdot (0.8 + 1.6 \epsilon) = 0.4 s^2 (1 + 2 \epsilon)$.
+  % {\color{blue}Explain the case when the moment is below one.}
+\end{proof}
+
+
+
+

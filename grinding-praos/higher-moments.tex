@@ -1,0 +1,148 @@
+\begin{proposition}\label{prop:grinding-power-moment}
+For $t \in \mathbb{N}, t \geq 2$,
+\[
+\Exp[ g(W)^t ] 
+\leq 
+(n+3)\left[\frac{1}{2}\left( 2^t + 1 - \epsilon (2^t -1) \right)\right]^n 
+\qquad \text{if} \qquad \epsilon \leq \frac{2^t - 2}{2^t + 2}\, .
+\]
+\end{proposition}
+\begin{proof}
+Observe that
+\begin{align*}
+\Exp[ g(W)^t ]
+&= \sum_{d = 1}^n{ \Exp[ g(W_{n-d+1}, \cdots, W_n)^t ] }\, ,
+\end{align*}
+and
+\begin{align*}
+\Exp[ g(W_{n-d+1}, \cdots, W_n)^t ] 
+&= \sum_{z = 0}^{\lfloor d/2 \rfloor} {S(d,z)^t  B(d, (1-\epsilon)/2; z) } \, .
+% &= \sum_{z=0}^{\lfloor d/2 \rfloor} {S(d,z)^t {d \choose z} \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \left(\frac{1-\epsilon}{2}\right)^{d} }\, .
+\end{align*}
+Following our own footsteps in arriving at (\ref{eq:q2}), we can write
+\begin{align*}
+\Exp[ g(W_{n-d+1}, \cdots, W_n)^t ] 
+&\leq \sum_{\alpha=0}^{1/3}{2^{t(d-z)} B(d, (1-\epsilon)/2; z) } 
++ \sum_{\alpha=1/3}^{1/2}{2^{t(d-z)H(z/(d-z))} B(d, (1-\epsilon)/2; z) } \\
+&= \sum_{\alpha=0}^{1/3}{2^{q_1(\alpha, \epsilon, t)d}} 
++ \sum_{\alpha=1/3}^{1/2}{2^{q_2(\alpha, \epsilon, t)d}} \, ,
+\end{align*}
+where we have defined
+\begin{align} 
+q_1(\alpha, \epsilon, t)
+& \defeq t(1-\alpha) +
+H(\alpha) 
+-1  + \alpha \log \frac{1+\epsilon}{1-\epsilon} + \log (1-\epsilon) \label{eq:q1t} \, ,\\
+q_2(\alpha, \epsilon, t)
+& \defeq t(1-\alpha) H\left( \frac{\alpha}{1-\alpha} \right) +
+H(\alpha) 
+-1  + \alpha \log \frac{1+\epsilon}{1-\epsilon} + \log (1-\epsilon) \label{eq:q2t}\, .
+\end{align}
+We calculate the derivatives:
+\begin{align*}
+\frac{\partial q_1(\alpha, \epsilon, t)}{\partial \alpha}
+&= -t 
++ \log \frac{1-\alpha}{\alpha}
++ \log \frac{1+\epsilon}{1-\epsilon} \, ,
+\\
+\frac{\partial q_1(\alpha, \epsilon, t)}{\partial \alpha}
+&= 
+(1+t) \log \frac{1-\alpha}{\alpha} 
++ 2 t \log \frac{1 - 2 \alpha}{1 - \alpha}
++ \log \frac{1+\epsilon}{1-\epsilon} \, .
+\end{align*}
+We observe that $q_1()$ and $q_2()$ agree at $\alpha = 1/3$, as do their derivatives. That is,
+\begin{align*}
+&q_1(1/3, \epsilon, t) = q_2(1/3, \epsilon, t) \, , \qquad \text{and}\\
+&\frac{\partial q_1(\alpha, \epsilon, t)}{\partial \alpha}\bigg\rvert_{\alpha = 1/3}
+=
+\frac{\partial q_2(\alpha, \epsilon, t)}{\partial \alpha}\bigg\rvert_{\alpha = 1/3}
+= 
+1 - t + \log \frac{1+\epsilon}{1-\epsilon} \, .
+\end{align*}
+In addition, $\partial q_1/\partial \alpha$ -- and by equality, $\partial q_2/\partial \alpha$  -- will be non-positive if and only if
+\begin{align}
+&\epsilon \leq \epsilon^*(t) \defeq \frac{2^t - 2}{2^t + 2} \label{eq:epsstar-moment}
+\, .
+\end{align}
+Notice that we need $t \geq 2$ for $\epsilon^*(t)$ to be meaningful. 
+
+Next, observe that $q_1(\alpha, \epsilon, t)$ is concave in $\alpha$. Suppose $\alpha = \alpha^*$ maximizes $q_1()$. Then, it follows that $q_1(\alpha^*, \epsilon, t) \geq q_1(1/3, \epsilon, t) = q_2(1/3, \epsilon, t) \geq q2(\alpha, \epsilon, t)$. The last inequality follows from the two following facts: that $\partial q_2/\partial \alpha$ is non-positive at $\alpha = 1/3$ and that $q_2()$ is concave in $\alpha$. We can directly solve for $\alpha^*$ by writing \[r_\epsilon \defeq \frac{1+\epsilon}{1-\epsilon}\] and setting
+\begin{align*}
+&\frac{\partial q_1(\alpha, \epsilon, t)}{\partial \alpha} = 0 \\
+\implies& -t 
++ \log \frac{1-\alpha}{\alpha}
++ \log r_\epsilon
+=0 \\
+\implies& \alpha^* = \frac{1}{1+\frac{2^t}{r_\epsilon}}\, .
+\end{align*}
+Plugging in $\alpha = \alpha^*$ in (\ref{eq:q1t}), we get
+\begin{align*}
+q_1(\alpha^*, \epsilon, t)
+&= \frac{ \frac{2^t}{r_\epsilon}(t - 1 - \log \frac{2^t}{r_\epsilon} ) - 1 + \log r_\epsilon }{1 + \frac{2^t}{r_\epsilon} }
++ \log \left[ (1-\epsilon) (1+\frac{2^t}{r_\epsilon})\right]\\
+&= \log \left[2^t + 1 - \epsilon (2^t -1) \right] - 1\, .
+\end{align*}
+Thus if we set \begin{align*}
+s(\epsilon, t) 
+&\defeq 2^{q_1(\alpha^*, \epsilon, t)} \\
+&= \frac{1}{2}\left( 2^t + 1 - \epsilon (2^t -1) \right)\, ,
+\end{align*}
+then
+\[
+\Exp[ g(W_{n-d+1}, \cdots, W_n)^t ] 
+\leq
+\frac{d}{2} s(\epsilon, t)^d
+\qquad
+\text{and}
+\qquad
+\Exp[ g(W)^t ] 
+\leq 
+\sum_{d=1}^n{\frac{d}{2} s(\epsilon, t)^d}\, .
+\]
+It is not difficult to see that for $r> 1$,
+\[
+\sum_{d=1}^n{d r^d} 
+= r \cdot \frac{d}{d r} \left[ \sum_{d=1}^n{r^d}\right] 
+\leq \frac{d}{d r} \frac{r^{n+1}}{r-1} 
+= \frac{r^{n+1}}{r-1} \left( n + 1 + \frac{r}{r-1}\right) \, ,
+\]
+where the inequality follows from (\ref{eq:geom-series-bound}). Moreover, If we set $r = s(\epsilon, t)$ in the above equation, we have 
+\[
+\Exp[ g(W)^t ] 
+\leq 
+\frac{s(\epsilon, t)^{n+1}}{s(\epsilon, t)-1} \left( n + 1 + \frac{s(\epsilon, t)}{s(\epsilon, t)-1}\right)\, .
+\]
+
+\begin{claim}\label{claim:s-ratio}
+Equation (\ref{eq:epsstar-moment}) implies
+\[
+\frac{s(\epsilon, t)}{s(\epsilon, t) - 1 } \leq 2\, .
+\]
+\end{claim}
+Postponing a proof of Claim~\ref{claim:s-ratio} for the moment, we observe that the claim immediately leads to a proof of Proposition~\ref{prop:grinding-power-moment}:
+\begin{align*}
+\Exp[ g(W)^t ] 
+&\leq \sum_{d=1}^n{\frac{d}{2} s(\epsilon, t)^d}\\
+&\leq \frac{1}{2} \left[2 s(\epsilon,t)^n ( n + 3) \right] \\
+&= (n+3)\left[\frac{1}{2}\left( 2^t + 1 - \epsilon (2^t -1) \right)\right]^n\, .
+\end{align*}
+It remains to prove Claim~\ref{claim:s-ratio}. Using (\ref{eq:epsstar-moment}), we get
+\begin{align}
+\frac{s(\epsilon, t)}{s(\epsilon, t)-1}
+&= \frac{2^t + 1 - \epsilon(2^t - 1)}{2^t - 1 - \epsilon(2^t - 1)} \nonumber \\
+&= 1 + \frac{2}{2^t - 1 - \epsilon(2^t - 1)} \label{eq:claim-s-ratio}
+\, .
+\end{align}
+However, starting from (\ref{eq:epsstar-moment}) we can see that
+\[
+\epsilon 
+\leq 
+\frac{2^t - 2}{2^t +2} 
+\leq 
+\frac{2^t - 5}{2^t - 1}
+\leq
+\frac{2^t - 3}{2^t - 1}\, .
+\]
+The last inequality is equivalent to saying $\epsilon(2^t - 1) \leq 2^t - 3$, or $2^t - 1 -\epsilon(2^t - 1) \geq 2$. Referring back to (\ref{eq:claim-s-ratio}), this implies $\displaystyle \frac{s(\epsilon, t)}{s(\epsilon, t)-1} \leq 2$. The proof of Claim~\ref{claim:s-ratio} follows, completing the proof of Proposition~\ref{prop:grinding-power-moment}.
+\end{proof}

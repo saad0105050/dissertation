@@ -1,0 +1,185 @@
+
+  We use $\log$ to denote the base-$2$ logarithm and $H()$ to denote the binary entropy function. 
+  Define $\alpha \defeq z/d \in (1/3, 1/2)$ and $r \defeq (1+\epsilon)/(1-\epsilon)$.
+  Recall that $\binom{d}{\alpha d} \leq 2^{d H(\alpha)}$ using~\eqref{eq:nck}.
+  Since $z$ is strictly larger than $(d - z)/2$, 
+  we have the upper bound $S(d,z) \leq 2^{(d-z)H(z/(d-z))}$ from~\eqref{eq:S_d_z_large}). % S_d_z_upperbound
+
+  % \begin{description}
+
+  \paragraph{Case: $0 < \epsilon \leq 3/5$.} 
+  % \item[Case: $0 < \epsilon \leq 3/5$.] 
+  % In this case, $r = (1+\epsilon)/(1-\epsilon) \leq 4$.
+  This gives
+  \begin{align*}
+  S(d, z)^2 B_{d,\epsilon}(d-z) 
+  &\leq 2^{2(d-z)H(z/(d-z))} \cdot (1-\epsilon)^d 2^{-d} {d \choose z}  r^{z} \\
+  % &\leq 2^{2(d-z)H(z/(d-z))} \cdot (1-\epsilon)^d 2^{-d} 2^{d H(z/d)}  \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \\
+  % &= \left( 2^{2(1-z/d)H(z/(d-z)) + H(z/d) - 1} \right)^d (1-\epsilon)^d 
+  %  \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \\
+  &\leq \left( 2^{2(1-z/d)H(z/(d-z)) + H(z/d) - 1} \right)^d (1-\epsilon)^d r^{\alpha d} \\
+   &= \left( 2^{ \alpha \log r + 2(1-\alpha)H(\alpha/(1 - \alpha)) + H(\alpha) - 1} (1-\epsilon) \right)^d 
+  %  &= \left(2^{q(\alpha, \epsilon)} (1-\epsilon) \right)^d
+  \,.
+  \end{align*}
+  % where we have used $4^z = 2^{2\alpha d}$. 
+  Let us define 
+  \[
+      p(\alpha) \defeq 2 \alpha \log r + 2(1-\alpha)H(\alpha/(1 - \alpha)) + H(\alpha) - 1 
+  \]
+  so that 
+  $
+      S(d, z)^2 B_{d,\epsilon}(d-z) \leq \left(2^{p(\alpha)} (1-\epsilon) \right)^d
+  $.
+
+  Observe that $p(\alpha)$ is a unimodal concave function. 
+  The derivative of this function is
+  $
+      -\left(4(1-2\alpha \log r)^4\right)/\left(\alpha^3(1-\alpha) \right)
+  $
+  which is strictly negative for $1/3 \leq \alpha < 1/2$. 
+  It follows that $\alpha = 1/3$ (i.e., $z = d/3$) maximizes $p(\alpha)$. 
+  Consequently,
+  \begin{align*}
+  S(d, z)^2 B_{d,\epsilon}(d-z)
+  % &\leq S(d, d/3)^2 B_{d,\epsilon}(2d/3) \\
+  &\leq \left(2^{q(1/3)} (1-\epsilon) \right)^d \\
+  &= \left( 2^{(1/3)\log r + 2(2/3)H(1/2) + H(1/3) - 1}  (1-\epsilon) \right)^d \\
+  &= \left( 2^{2(2/3)H(1/2) + H(1/3) - 1}  (1-\epsilon)
+   \left(\frac{1+\epsilon}{1-\epsilon}\right)^{1/3} \right)^d \\
+  &= \left( \frac{3}{2^{1/3}}  (1-\epsilon)
+   \left(\frac{1+\epsilon}{1-\epsilon}\right)^{1/3} \right)^d \\
+   &= \left(2^{2/3} \phi(\epsilon) \right)^d 
+  \end{align*}
+  since $2^{2^{1/3 + H(1/3)}} = 3/2^{1/3}$.
+
+  \paragraph{Case: $3/5 < \epsilon \leq 0.81$.}
+  % \item[Case: $3/5 < \epsilon \leq 0.81$.] 
+  In this case, 
+  \begin{align*}
+  S(d,\alpha d)^2 B_{d,\epsilon}(d-\alpha d)
+  &\leq \left( 2^{2(1-\alpha)H(\alpha/(1-\alpha)) + H(\alpha) - 1} \right)^d (1-\epsilon)^d 
+   r^{\alpha d} \\
+  &=\left( 2^{q(\alpha, \epsilon)} \right)^d\, ,
+  \end{align*}
+  where
+  \begin{align*}
+  q(\alpha, \epsilon)
+  &\defeq H(\alpha) - 1 + 2(1-\alpha) H\left(\frac{\alpha}{1-\alpha}\right) 
+  + \alpha \log r +\log(1-\epsilon)\,.
+  \end{align*}
+  Observe that $q(\alpha, \epsilon)$ is concave in $\alpha$ since for a fixed $\epsilon$, it is a linear combination of the concave entropy function and $\alpha$.  
+  The derivatives of $q(\alpha, \epsilon)$ with respect to $\alpha$ are as follows:
+  \begin{align*}
+  d_1(\alpha) = \frac{\partial}{\partial \alpha}q(\alpha, \epsilon)
+   &= \log \left(\frac{(1-2\alpha)^4}{\alpha^3(1-\alpha)}  \frac{1+\epsilon}{1-\epsilon} \right)\, .\\
+  d_2(\alpha) = \frac{\partial^2}{\partial \alpha^2}q(\alpha, \epsilon)
+  &= -\frac{3-2\alpha}{\alpha(1+2\alpha^2 -3\alpha) \ln 2} \\
+  d_3(\alpha) = \frac{\partial^3}{\partial \alpha^3}q(\alpha, \epsilon)
+  &= \frac{3-2\alpha( 3-2\alpha)^2}{\alpha^2(1+2\alpha^2 -3\alpha)^2 \ln 2}
+  \, .
+  \end{align*}
+  We claim that $d_3(\alpha) < 0$ for $\alpha \in (1/3, 1/2)$. 
+  To see this, let $f(\alpha) = 3 - 2\alpha(3 - 2\alpha)^2$. 
+  Its derivative is $-2(3 - 2\alpha)(3 - 6\alpha)$ which is strictly negative for $\alpha \in (1/3, 1/2)$. 
+  Hence $f(\alpha) < f(1/3) < 0$ and consequently, $d_3(\alpha) < 0$. 
+  It follows that we can upper bound $q(\alpha, \epsilon)$ 
+  by truncating its power series around $\alpha = 1/3$ 
+  at the quadratic term. 
+  The relevant derivatives at $\alpha = 1/3$ are 
+  $d_1(1/3) = \log r - 1$ and
+  $d_2(1/3) = -63/(2 \ln 2)$. 
+  Thus $q(\alpha, \epsilon) \leq R(\alpha)$ where
+  \begin{align*}
+  R(\alpha)
+  &= q(1/3, \epsilon) + (\alpha-1/3)\cdot d_1(1/3) + \frac{(\alpha-1/3)^2}{2}\cdot d_2(1/3) \\
+  &= \left( H(1/3) - 1 + 4/3
+      + (1/3)\log r + \log(1-\epsilon) \right)
+      + (\alpha-1/3) \left( -1 + \log r \right)
+      + \frac{(\alpha-1/3)^2}{2} \frac{-63}{2\ln 2}
+  \\
+  % &=  H(1/3) +2/3 - \alpha
+  % + \alpha \log r + \log(1-\epsilon)
+  % - (\alpha-1/3)^2 \cdot 63/(4\log_e 2) \\
+  &= H(1/3) + 2/3 + \log(1-\epsilon) 
+      + \alpha (\log r - 1) 
+      - (\alpha-1/3)^2 \cdot 63/(4\ln 2)
+      \,.
+  \end{align*}
+  % by ignoring the negative term.
+  Its derivative is $R^\prime(\alpha)$ is $\log r - 1 - (\alpha - 1/3)63/(2 \ln 2)$. 
+  The solution to the equation $R^\prime(\alpha) = 0$ is 
+  $\alpha^* = 1/3 + \left( \log r - 1\right) (2 \log_e 2)/63$.
+  This implies $q(\alpha, \epsilon) \leq R^*(\epsilon)$ for $\epsilon \in (0.6, 1]$ where
+  \begin{align*}
+      R^*(\epsilon)&\defeq R(\alpha^*) \\
+      &= H(1/3) + 2/3 + \log(1-\epsilon)
+          + \left( 1/3 + \left( \log r - 1\right) (2 \log_e 2)/63 \right) (\log r - 1) \\
+      &{\quad}    - \left( (\log r - 1) (2 \ln 2)/63 \right)^2 \cdot 63/(4\ln 2) \\
+      &= H(1/3) + 2/3 + \log(1-\epsilon)
+          + (\log r - 1)/3 + (\log r - 1)^2 (2 \ln 2)/63  
+          - (\log r - 1)^2 (\ln 2)/63 \\
+      &= H(1/3) + 2/3 + \log(1-\epsilon)
+          + (\log r - 1)/3 + (\log r - 1)^2 (\ln 2)/63  
+          \,.
+  % &= \log_2\left[ 
+  %   \frac{3}{2^{1/3}} (1 + \epsilon)^{1/3} (1 - \epsilon)^{2/3} \right] 
+  %   + \left(1 - \log_2 \frac{1+\epsilon}{1-\epsilon} \right)^2 \frac{ \log_e 2}{63} \\
+  % &= \log_2\left[ 
+  %   2^{2/3} \phi(\epsilon) \right] 
+  %   + \left(1 - \log_2 \frac{1+\epsilon}{1-\epsilon} \right)^2 \frac{ \log_e 2}{63} \,.
+  \end{align*}
+  Since $2^{\log r - 1} = r/2$, we can compute
+  \begin{align*}
+      2^{R^*(\epsilon)}
+      &= 2^{H(1/3)+2/3}(1-\epsilon) (r/2)^{1/3} (r/2)^{(\log r - 1)(\ln 2)/63} \\
+      &= \phi(\epsilon) \cdot 2^{2/3} (r/2)^{(\log r - 1)(\ln 2)/63}
+      \,,
+  \end{align*}
+  where we used~\eqref{eq:phi_eps} and the fact that $2^{H(1/3) + 2/3} = 3\cdot2^{-1/3}$.
+
+  If $\epsilon \leq 0.81$, the factor $2^{2/3} (r/2)^{(\log r - 1)(\ln 2)/63}$ is at most $5/3$. 
+  This gives us 
+  \[
+      S(d, z)^2 B_{d,\epsilon}(d-z) 
+      \leq 2^{d q(\alpha, \epsilon)} 
+      \leq 2^{R^*(\epsilon)} 
+      \leq (5/3) \phi(\epsilon)
+  \]
+  for $\epsilon \in (3/5, 0.81]$.
+
+  \paragraph{Case: $0.81 < \epsilon \leq 1$.}
+  % \item[Case: $0.81 < \epsilon \leq 1$.]
+  For the remainder of the proof, it suffices to establish
+  \[
+      q(\alpha, \epsilon) \leq q(\alpha, 0.81) \leq R^*(0.81) < 0
+  \]
+  for any $\epsilon \in (0.81, 1]$ and $\alpha \in (1/3, 1/2)$. 
+  We already proved the inequality $q(\alpha, 0.81) \leq R^*(0.81)$ in the previous case. 
+  A direct calculation shows that $R^*(0.81)$ is strictly negative; 
+  hence $q(\alpha, 0.81)$ is strictly negative as well. 
+  It remains to show that $q(\alpha, \epsilon) \leq q(\alpha, 0.81)$.
+  We claim that the derivatives of $q(\alpha, \epsilon)$ and $R^*(\epsilon)$, 
+  with respect to $\epsilon$, is negative for $\epsilon \in (0, 1]$ and $\alpha \in (1/3, 1/2)$. 
+  Specifically,
+  \begin{align*}
+      \frac{d}{d\epsilon} q(\alpha, \epsilon)
+      &= \alpha \dfrac{d}{d\epsilon} \left( \log(1+\epsilon) - \log(1-\epsilon)\right) 
+          + \dfrac{d}{d\epsilon} \log(1-\epsilon) \\
+      &= \frac{\alpha}{\ln 2}\left( 1/(1+\epsilon) + 1/(1-\epsilon)\right)
+          - 1/(1-\epsilon) \\
+      &= \frac{1}{(1-\epsilon)\ln 2}\left( \frac{2\alpha}{1+\epsilon} - 1\right) \\
+      &\leq \left(\frac{1}{(1-\epsilon)\ln 2} \right) \cdot \left( \frac{1}{1+\epsilon} - 1\right) \\
+      &< 0
+  \end{align*}
+  since the second factor above is negative while the first factor is positive.
+  Hence $q(\alpha, \epsilon)$ is strictly negative for 
+  $\epsilon \in [0.81, 1]$ and $\alpha \in (1/3, 1/2)$. 
+  As a consequence,
+  \[
+      S(d, z)^2 B_{d,\epsilon}(d-z) 
+      \leq 2^{d q(\alpha, \epsilon)} 
+      \leq 1
+      \,.
+  \]
+  \hfill$\qed$

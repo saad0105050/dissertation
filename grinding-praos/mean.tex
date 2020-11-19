@@ -1,0 +1,221 @@
+% \newcommand{\DoverTwo}{\lfloor d/2 \rfloor}
+% \newcommand{\DoverThree}{d/3}
+
+In what follows, we establish asymptotically tight upper and lower bounds on 
+\begin{align}\label{eq:m_z}
+m(d,z) 
+&\defeq S(d,z) {d \choose z} \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \left(\frac{1-\epsilon}{2}\right)^{d} \, .
+\end{align}
+via Claims~\ref{claim:t1star-exact} and ~\ref{claim:t2star-exact}. These claims immediately lead to bounds on $\Exp[ g(W) ]$ via Proposition~\ref{prop:grinding-power-mean}.
+We also recall the following obvious bound from the sum of a geometric progression:
+\begin{align}\label{eq:geom-series-bound}
+\sum_{d=1}^n{r^d} 
+&\leq \frac{r^{n+1}}{r-1} \qquad \text{if}\quad r > 1\, .
+\end{align}
+
+
+
+
+
+\begin{claim}[Bounds on $m(d,z)$ with small $z$]\label{claim:t1star-exact}
+\[
+\phi(\epsilon)^d \frac{3}{4\sqrt{d}}
+\leq 
+m(d, z) 
+\leq \phi(\epsilon)^d
+\qquad \text{if}\quad z \leq d/3 \quad \text{and}\quad d\geq 2
+\]
+where $m(d, z)$ is defined in (\ref{eq:m_z}). 
+% Moreover, 
+% \[
+% m(d, z) \leq 1
+% \qquad \text{if}\quad z \geq 2\quad \text{and}\quad \epsilon \geq 0.6\,.
+% \]
+\end{claim}
+
+\begin{proof}
+When $z \leq \DoverThree$, we use the upper bound on $S(d,z)$ from (\ref{eq:S_d_z_small}) in (\ref{eq:m_z}) and get
+\begin{align*}
+m(z)
+&\leq 2^{d-z} {d \choose z} \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \left(\frac{1-\epsilon}{2}\right)^{d} \\
+&= {d \choose z} \left(\frac{1+\epsilon}{2(1-\epsilon)}\right)^{z} (1-\epsilon)^d\,.
+\end{align*}
+For $z+1 \leq \DoverThree$, the ratio 
+\[
+\frac{m(z+1)}{m(z)} 
+= \frac{d-z}{z+1} \frac{1+\epsilon}{2(1-\epsilon)}
+\geq \underbrace{\frac{d-d/3}{\DoverThree}}_{\geq 2} \underbrace{\frac{1+\epsilon}{2(1-\epsilon)}}_{\geq 1/2}
+\geq 1\, .
+\]
+It follows that the sequence $\{m(z)\}$ is an increasing sequence. Consequently,
+\begin{align}
+m(z; z \leq \DoverThree)
+&\leq m(\DoverThree) \nonumber \\
+&= {d \choose \DoverThree} (1+\epsilon)^{\DoverThree} (1-\epsilon)^{d- \DoverThree}2^{-\DoverThree} \nonumber \\
+&\leq \frac{2^{d H(1/3)}}{\sqrt{\pi (d/3) (2/3)}} 2^{-d/3} (1+\epsilon)^{d/3} (1-\epsilon)^{2d/3} \nonumber \\
+&= \left(2^{H(1/3)-1/3} (1+\epsilon)^{1/3} (1-\epsilon)^{2/3} \right)^d \frac{3}{\sqrt{2 \pi d}} \nonumber \\
+&= \phi(\epsilon)^d \frac{3}{\sqrt{2 \pi d}} \nonumber \\
+&\leq \phi(\epsilon)^d \frac{6}{\sqrt{5 d}} \, . \label{eq:t1star-q1}
+\end{align}
+Here, we have used Corollary~\ref{coro:nchoosek_1}, the fact that $H(1/3) - 1/3 = \log_2(3/2)$, and (\ref{eq:phi_eps}). This proves the upper bound of the claim. 
+
+% Additionally, since
+% \begin{align*}
+% \phi(\epsilon) 
+% &\defeq \frac{3}{2} (1+\epsilon)^{1/3}(1-\epsilon)^{2/3} \\
+% &= \frac{3}{2} \left( (1-\epsilon^2)(1-\epsilon) \right)^{1/3} \\
+% &= \frac{3}{2} \left( 1-\epsilon - \epsilon^2 + \epsilon^3 \right)^{1/3} \\
+% &= \frac{3}{2}\left( 
+% 1 
+% + \frac{1}{3}( -\epsilon - \epsilon^2 + \epsilon^3) 
+% + \frac{-1}{18}( -\epsilon - \epsilon^2 + \epsilon^3)^2
+% + \cdots 
+% \right)\\
+% &= \frac{3}{2} -\frac{\epsilon}{2} -\left(\frac{1}{2} + \frac{1}{12} \right)\epsilon^2 + O(\epsilon^3) \, ,
+% \end{align*}
+% $\phi(\epsilon)$ decreases monotonically as $\epsilon$ increases. Hence
+% \[
+% \phi(\epsilon)\bigg\rvert_{\epsilon \geq 0.6}
+% \leq \phi(0.6)
+% = \frac{3}{2} (1.6)^{1/3}(0.4)^{2/3}
+% = \frac{3}{2}4^{1/3}\frac{4}{10}
+% = \frac{3\cdot 4^{1/3}}{5}
+% \leq 0.96 < 1\, .
+% \]
+% This proves the ``moreover'' part of the claim. 
+
+For the lower bound on $m(z)$, apply the lower bound ${N \choose \alpha N} \geq 2^{H(\alpha)N}/\sqrt{8N\alpha (1-\alpha)}$ from Corollary~\ref{coro:nchoosek_1} to the exact expression of $m( \DoverThree)$. This gives 
+\begin{align*}
+m( \lfloor \DoverThree \rfloor )
+&= {d \choose d/3} 
+(1+\epsilon)^{d/3} 
+(1-\epsilon)^{2d/3} 
+2^{-d/3} \nonumber \\
+&\geq \frac{2^{d H(1/3)}}{\sqrt{8(d/3)(2/3)}} 2^{-d/3} 
+(1+\epsilon)^{d/3} 
+(1-\epsilon)^{2d/3} 
+\nonumber \quad \text{using Corollary~\ref{coro:nchoosek_1} } \\
+&= \frac{3}{4\sqrt{d}}\left(2^{H(1/3) - 1/3} (1+\epsilon)^{1/3} (1-\epsilon)^{2/3}\right)^d \nonumber \\
+&= \frac{3}{4\sqrt{d}}\left(\frac{3}{2} (1+\epsilon)^{1/3} (1-\epsilon)^{2/3}\right)^d \\
+&= \frac{3}{4\sqrt{d}}\phi(\epsilon)^d \, .
+\end{align*}
+
+\end{proof}
+
+
+
+
+
+Define
+\begin{equation}\label{eq:praos-func-gamma}
+  \gamma(\epsilon) = (1-\epsilon)/2 + \sqrt{1-\epsilon^2}
+  \,.
+\end{equation}
+
+
+\begin{claim}[Bounds on $m(d,z)$ with large $z$]\label{claim:t2star-exact}
+\[
+\frac{\gamma(\epsilon)^d}{2d}
+\leq
+m(d, z) 
+\leq
+\gamma(\epsilon)^d 
+% \frac{3\sqrt{d}}{8}
+\qquad \text{if}\quad \frac{d}{3} < z \leq \DoverTwo
+\, .
+\]
+where $m(d, z)$ is defined in (\ref{eq:m_z}). Moreover, 
+\[
+m(d, z) \leq 1
+\qquad \text{if}\quad \epsilon \geq 0.6\,.
+\]
+\end{claim}
+
+\begin{proof}
+\textbf{The upper bound.} When $d/3 < z \leq \DoverTwo$, we use the upper bound on $S(d, z)$ from (\ref{eq:S_d_z_large}) into (\ref{eq:m_z}) to get
+\begin{align*}
+m(z) 
+&\leq 2^{(d-z)H(z/(d- z))} {d \choose z} \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \left(\frac{1-\epsilon}{2}\right)^{d} \\
+&\leq 2^{(d-z)H(z/(d- z)) + H(z/d) d}\left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \left(\frac{1-\epsilon}{2}\right)^{d}
+\end{align*}
+using the asymptotic approximation ${N\choose k} \leq 2^{H(k/N)N}$ for $k \leq N/2$. For a fixed $\epsilon$, the function at the exponent of two is concave. There must be some $z^* \in (d/3, \DoverTwo]$ which maximizes $m(z)$. We continue developing the upper bound by setting $\alpha \defeq z/d$. 
+\begin{align}
+m(z) 
+&\leq \left( 2^{q(\alpha, \epsilon)}\right)^d \label{eq:t2star-q2}
+\end{align}
+where we have defined
+\begin{align} \label{eq:q2}
+q(\alpha, \epsilon)
+& \defeq (1-\alpha) H\left( \frac{\alpha}{1-\alpha} \right) +
+H(\alpha) 
+-1  + \alpha \log \frac{1+\epsilon}{1-\epsilon} + \log (1-\epsilon)
+\end{align}
+and $\log$ denotes the base-$2$ logarithm. By applying the definition of $H(.)$,
+\begin{align}\label{eq:q2-expanded}
+q(\alpha, \epsilon)
+&= (1-\alpha) \log\left[
+\left( \frac{1-\alpha}{\alpha} \right)^{\frac{\alpha}{1-\alpha} }
+\left(\frac{1-\alpha}{1-2\alpha} \right)^{\frac{1-2\alpha}{1-\alpha} }\right] \nonumber \\
+& \quad+ \log \left(\frac{1}{\alpha}\right)^\alpha \left(\frac{1}{1-\alpha}\right)^{1-\alpha} \nonumber \\
+& \quad+ \log \left(\frac{1+\epsilon}{1-\epsilon}\right)^\alpha + \log(1-\epsilon) -1 \nonumber \\
+&= -\log \left[ 
+\alpha^{2\alpha} 
+(1-2\alpha)^{1-2\alpha} 
+\cdot \left(\frac{1-\epsilon}{1+\epsilon}\right)^\alpha 
+\right] + \log(1-\epsilon) - 1\, .
+% &= 2 a \log(1-2 a)-2 a \log(a)-a \log(1-\epsilon)+\log((-1+\epsilon)/(-2+4 a))+a \log(1+\epsilon)
+\end{align}
+For a fixed $\epsilon$, this is a unimodal concave function in $\alpha$. The first derivatives of $q(\alpha, \epsilon)$ is
+\begin{align*}
+\frac{\partial q(\alpha, \epsilon)}{\partial \alpha}
+&= \log\left[ \frac{(1-2\alpha)^2}{\alpha^2} \frac{1+\epsilon}{1-\epsilon} \right]
+\end{align*}
+By setting the above derivative to zero, we find that $q(\alpha, \epsilon)$ is maximized at 
+\[
+\alpha^* \defeq \alpha^*(\epsilon) 
+= \frac{1}{2+\sqrt{\frac{1-\epsilon}{1+\epsilon}} }
+= \frac{1}{2+1/r_\epsilon }
+= \frac{r_\epsilon}{1 + 2 r_\epsilon }
+\]
+where we define $r_\epsilon^2 \defeq (1+\epsilon)/(1-\epsilon)$. This means $1-2\alpha = 1/(1+2 r_\epsilon)$. Substituting $\alpha = \alpha^*$ in (\ref{eq:q2-expanded}),
+\begin{align*} 
+q^*(\epsilon) 
+&\defeq q(\alpha^*, \epsilon) \\
+&= - \log\left[
+\left(\frac{r_\epsilon}{1 + 2 r_\epsilon }\right)^\frac{2 r_\epsilon}{1+2 r_\epsilon}
+\left(\frac{1}{1+2r_\epsilon}\right)^\frac{1}{1+2 r_\epsilon}
+\cdot \left(\frac{1}{r_\epsilon^2}\right)^\frac{r_\epsilon}{1+2 r_\epsilon}
+\right] + \log (1-\epsilon) - 1 \nonumber \\
+&= - \log\left[
+\frac{1}{1+2 r_\epsilon}
+\right] - \log (1-\epsilon) - 1 \nonumber \\
+&= \log\frac{1 + 2 r_\epsilon}{1-\epsilon} - 1 \nonumber \\
+&= \log\left[\left(1 + 2 \sqrt{\frac{1+\epsilon}{1-\epsilon} } \right) (1-\epsilon) \right] - 1 \nonumber \\
+&= \log\left( 1-\epsilon + 2\sqrt{1-\epsilon^2}\right) - 1 \nonumber \\
+\implies 2^{q^*(\epsilon)}
+&= \frac{1-\epsilon}{2} + \sqrt{1-\epsilon^2}\, .
+\end{align*}
+This proves the upper bound of the claim. In particular, the derivative of $q^*(\epsilon)$ with respect to $\epsilon$ is $-1/2 - \epsilon/\sqrt{1-\epsilon^2}$. This derivative is negative for all $\epsilon$. Considering that $q^*(0.6) = 1$, it follows that $q^*(\epsilon) < 1$ when $\epsilon > 0.6$. This proves the ``moreover'' part of the claim.
+
+\textbf{The lower bound.} We can use the lower bound on $S(d, z)$ from (\ref{eq:S_d_z_large}) into (\ref{eq:m_z}) to get
+\begin{align*}
+m(z) 
+&\geq 2^{(d-z)H(z/(d- z))}\frac{(d-z)}{\sqrt{8z(d-2z)}} 
+{d \choose z} \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} 
+\left(\frac{1-\epsilon}{2}\right)^{d} \\
+&\geq 2^{(d-z)H(z/(d- z))}\frac{(d-z)}{\sqrt{8z(d-2z)} } \frac{2^{d H(z/d)} \sqrt{d}}{\sqrt{8z(d-z)} }
+\left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \left(\frac{1-\epsilon}{2}\right)^{d} \\
+&\qquad \text{using Corollary~\ref{coro:nchoosek_1} on }{d \choose z}\\
+&= \frac{\sqrt{d} \sqrt{d-z}}{8z\sqrt{(d-2z)} } 
+\left( 2^{q(\alpha, \epsilon)}\right)^{d} \qquad \text{using}\quad \alpha = z/d \quad \text{and} \quad q(\alpha, \epsilon) \text{ from (\ref{eq:q2}) }\\
+&= \frac{\sqrt{1-\alpha}}{8\alpha \sqrt{d} \sqrt{(1-2\alpha)} } 
+\left( 2^{q(\alpha, \epsilon)}\right)^{d} \\
+&\geq \frac{1}{2\sqrt{d}} 
+\left( 2^{q(\alpha, \epsilon)}\right)^{d} \qquad \text{since}\quad 1/3 \leq \alpha \leq 1/2\, .
+\end{align*}
+We have already seen that the right hand side will be maximized by setting
+\[
+2^{q(\alpha, \epsilon)} \leq \frac{1-\epsilon}{2} + \sqrt{1-\epsilon^2} \qquad \text{for} 1/3 \leq \alpha \leq 1/2, .
+\]
+This proves the lower bound in the claim.
+\end{proof}

@@ -1,0 +1,126 @@
+  Let $m \in \NN$. 
+  (Think of $m$ as the total number of honest participants. 
+  However, as we show below, our analysis would not depend on $m$.)
+  Consider the independent Bernoulli random variables $X_i \in \{0, 1\}, i \in [m]$ 
+  and a tuple $(\sigma_1, \ldots, \sigma_m) \in [0,1]^m$ 
+  so that $\Pr[X_i = 1] = \sigma_i$ 
+  and $\sum \sigma_i = 1 - \alpha$. 
+  Define $H = H_m = \sum_{i =1}^m X_i$ and observe that $\Exp H = 1 - \alpha$. 
+  Then 
+  $$
+    A(\epsilon, \lambda) 
+    = \Pr[W_1 \neq \A] \cdot \Exp[H^\lambda \mid H \geq 1]
+    = (1-\alpha) \cdot \Exp[H^\lambda]/(1 - \Pr[H = 0])
+    \leq \frac{1 - \alpha}{1 - e^{-(1 - \alpha)}} \cdot \Exp[H^\lambda]
+  $$ 
+  since $\Pr[H = 0] = \prod_i (1 - \sigma_i) \leq e^{-\sum_i \sigma_i} = e^{-(1 - \alpha)}$.
+  Next, consider the i.i.d.\ Bernoulli random variables $X'_i \in \{0, 1\}, i \in [m]$ 
+  so that $\Pr[X_i' = 1] = (1-\alpha)/m$. 
+  Define $H' = H'_m = \sum_{i =1}^m X'_i$ and observe that $\Exp H' = \Exp H = 1 - \alpha$. 
+
+  % \begin{fact}\label{fact:mgf-equal-unequal-stake}
+  %   For any integer $m \geq 1$ and positive real $\lambda$, 
+  %   $\Exp e^{\lambda H'_m} \geq \Exp e^{\lambda H_m}$.
+  % \end{fact}
+  % \begin{proof}
+  %   Writing $c = 1 - \alpha$, 
+  %   the moment generating function of $H$ is 
+  %   $$
+  %     \Exp e^{\lambda H_m} 
+  %     = \prod_i \Exp e^{\lambda X_i} 
+  %     = \prod_i \left( (1 - \sigma_i)\cdot e^0 + \sigma_i \cdot e^\lambda  \right)
+  %     = \prod_i \left(1 + \sigma_i(e^\lambda - 1) \right)
+  %     = \prod_i (1 + \beta \sigma_i)
+  %   $$
+  %   where we write $\beta = e^\lambda - 1$. 
+  %   By the AM-GM inequality, 
+  %   the right-hand side above is at most 
+  %   $$
+  %     \prod_i (1 + \beta \sigma_i)
+  %     \leq \left(\sum_{i=1}^m(1 + \beta \sigma_i)/m\right)^m 
+  %     = (1 + \beta c/m)^m
+  %     \,.
+  %   $$
+  %   On the other hand, 
+  %   $$
+  %     \Exp e^{\lambda H'_m} 
+  %     = \prod_i \Exp e^{\lambda X'_i} 
+  %     = \prod_i \left( (1 - c/m)\cdot e^0 + c/m \cdot e^\lambda  \right)
+  %     = \prod_i (1 + \beta c/m)
+  %     \geq \Exp H_m^\lambda
+  %     \,.
+  %   $$
+  % \end{proof}
+
+
+
+  Since the $X'_i$s are i.i.d., 
+  \begin{align*}
+    \Exp {H'_m}^2 
+    &= \Exp \left(\sum_{i = 1}^m X'_i \right)^2
+    = m \Exp {X'_1}^2 + \binom{m}{2} (\Exp X'_1)^2
+    = m ((1-\alpha)/m) + \binom{m}{2} ((1 - \alpha)/m)^2 \\
+    &= (1-\alpha) + \frac{m-1}{2m} (1 - \alpha)^2
+    = (1-\alpha) \left( 1 + (1 - 1/m) (1 - \alpha)/2 \right) \\
+    &\leq (1-\alpha) \left( 1 + (1 - \alpha)/2 \right)
+    = (1-\alpha) (3 - \alpha)/2
+    \,.    
+  \end{align*}
+
+
+  \begin{fact}\label{fact:second-moment-equal-unequal-stake}
+    Let $m \in \NN$ and $c = \sum_{i = 1}^m \sigma_i$. 
+    Then $\Exp H_m^2 \leq \Exp {H'_m}^2 \leq c + c^2$.
+  \end{fact}
+  \begin{proof}
+    Writing $c = 1 - \alpha$, 
+    \begin{align*}
+      \Exp H_m^2 
+      &=\Exp \left(\sum_i X_i\right)^2 
+      = \sum_i \Exp X_i^2 + \sum_{i \neq j} (\Exp X_i)(\Exp X_j) 
+      = \sum_i \sigma_i + \sum_i \sigma_i \sum_{j \neq i} \sigma_j \\ 
+      &= c + \sum_i \sigma_i (c - \sigma_i) 
+      = c + c^2 - \sum_i{\sigma_i^2}
+      \,.      
+    \end{align*}
+    Similarly,
+    \begin{align*}
+      \Exp {H'_m}^2 
+      &=\Exp \left(\sum_i X'_i\right)^2 
+      = m \cdot c/m + m \cdot (c/m) (c - c/m) 
+      = c + c^2 - c^2/m
+      \,.      
+    \end{align*}
+    By the Cauchy-Schwartz inequality, 
+    $
+      c^2 = \left(\sum_i \sigma_i \right)^2 \leq m \, \sum_i \sigma_i^2
+      % \,.
+    $; the claim follows.
+  \end{proof}
+
+  Let $f(\alpha) = A(\epsilon, 2)$ where $\alpha = (1-\epsilon)/2$.
+  It follows that 
+  $$
+    f(\alpha) 
+    \leq \frac{1 - \alpha}{1 - e^{-(1 - \alpha)}} \cdot \Exp {H_m}^2
+    \leq \frac{1 - \alpha}{1 - e^{-(1 - \alpha)}} \cdot \Exp {H'_m}^2
+    \leq \frac{1 - \alpha}{1 - e^{-(1 - \alpha)}} \cdot (1-\alpha) (3 - \alpha)/2
+    = \frac{(1 - \alpha)^2 (3 - \alpha)}{2 \left( 1 - e^{-(1 - \alpha)} \right)}
+    \,.
+  $$
+
+  Let $g(\alpha)$ denote the quantity at the right-hand side. 
+  Note that $g(\alpha)$ is a convex function of $\alpha$ 
+  and, furthermore, that $f(0)\leq g(0) \leq 2.4$ 
+  and $f(1/2) \leq g(1/2) \leq 0.8$.
+  It follows that 
+  $$
+  f(\alpha) 
+  \leq 2.4 + \alpha \cdot \frac{0.8-2.4}{1/2 - 0}
+  = 2.4 - 3.2 \alpha
+  = 2.4 - 3.2 (1 - \epsilon)/2
+  = 0.8  + 1.6 \epsilon
+  = 0.8 (1 + 2 \epsilon)
+  \,.
+  $$
+  \hfill\qed
