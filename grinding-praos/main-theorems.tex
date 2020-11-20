@@ -9,6 +9,10 @@ Using Lemma~\ref{lemma:grinding-praos-second-moment} and~\ref{lemma:praos-tail-g
 we can see that except with probability $2\EpsP$, $g(n,\epsilon)$ is at most $\sqrt{m/\EpsP}$ 
 where $m$ is the right-hand-side of~\eqref{eq:grinding-praos-second-moment}.
 
+\begin{theorem}\label{thm:praos-gp-single-epoch}
+  {\color{red}To do}
+\end{theorem}
+
 
 \section{Beacon output after $L$ epochs}\label{sec:thm-praos-multiepoch}\label{sec:proof-praos-theorem}
 % \section{Beacon output after $L$ epochs; Proof of Theorem~\ref{thm:minentropy-loss-praos}}\label{sec:proof-praos-theorem}
@@ -30,8 +34,7 @@ where $m$ is the right-hand-side of~\eqref{eq:grinding-praos-second-moment}.
     except with probability $L \cdot (2 \EpsP + s \sqrt{\EpsP} )$.
 
     \item Otherwise, there is a positive constant $c = c(\alpha, s)$ so that 
-    $\rho \leq 1/2 \cdot \log_2(1/\EpsP) 
-    + c \alpha s
+    $\rho \leq 1/2 \cdot \log_2(1/\EpsP) + c \alpha s
     % + s/2 \cdot \log_2(1+3\alpha)
     $ 
     except with probability $L \cdot (2 \EpsP + (1.1 - 0.8 \alpha) s (1+3\alpha)^s \sqrt{\EpsP} )$. 

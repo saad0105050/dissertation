@@ -307,7 +307,24 @@ We define
 as \emph{the grinding power over $n$ slots with adversarial stake $(1-\epsilon)/2$.}
 Our goal is to derive tail bounds on $g(n,\epsilon)$.
 
-\begin{theorem*}[Informal]
+
+\section{Main results}
+
+\subsection{Moment bounds for GP}
+Our bounds on $g(n,\epsilon)$ 
+follow from our estimates of its first and second moments.
+Let $\epsilon \in (0,1), \alpha = (1-\epsilon)/2, n \in \NN$, and $W \sim \mathcal{L}_n(\alpha)$. 
+In Figure~\ref{fig:praos-gp-moments}, 
+we have plotted various moment bounds on the grinding power $g(n,\epsilon)$; 
+we will prove these bounds next in this exposition.
+
+\iftoggle{drawfigs}{
+  \input{grinding-praos/fig-praos-gp-moment-bounds}
+}
+
+
+\subsection{Min-entropy loss in a single epoch}
+\begin{theorem}[Informal, single epoch]\label{thm:praos-thm-singleepoch-informal}
   The following is true 
   with probability $1 - e^{-\Omega(n)}$: 
   \[
@@ -316,19 +333,20 @@ Our goal is to derive tail bounds on $g(n,\epsilon)$.
       O(2^n) & \text{otherwise}\,.
     \end{cases}
   \]
-\end{theorem*}
+\end{theorem}
 We will develop tight upper bound on $g(n, \epsilon)$.
 
-
-
 \iftoggle{drawfigs}{
-  Let $\epsilon \in (0,1), \alpha = (1-\epsilon)/2, n \in \NN$, and $W \sim \mathcal{L}_n(\alpha)$. 
-  In Figure~\ref{fig:praos-gp-moments}, 
-  we have plotted various moment bounds on the grinding power $g(W)$; 
-  we will prove these bounds next in this exposition.
-
-  \input{grinding-praos/fig-praos-gp-moment-bounds}
+  \input{grinding-praos/fig-praos-single-epoch}
 }
+
+
+\subsection{Min-entropy loss over multiple epochs}
+\iftoggle{drawfigs}{
+  \input{grinding-praos/fig-praos-multi-epoch}
+}
+
+
 
 
 % Let $\Suffix{w}{d}$ denote the length-$d$ suffix of a string $w$.

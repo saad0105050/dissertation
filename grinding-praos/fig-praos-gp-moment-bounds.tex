@@ -3,11 +3,11 @@
   \begin{minipage}{0.5 \textwidth}
     \centering
     \begin{tikzpicture}[trim axis left,
-      declare function={
-        entropy(\x) = - \x * ln(\x)/ln(2) - (1 - \x) * ln(1 - \x) / ln(2) ; 
-        gamma(\x) = (1 - \x) / 2 + sqrt( 1 - \x^2 ) ; 
-        phi(\x) = (3/2) * (1 + \x)^(1/3) * ( 1 - \x )^(2/3) ; 
-        }
+      % declare function={
+      %   entropy(\x) = - \x * ln(\x)/ln(2) - (1 - \x) * ln(1 - \x) / ln(2) ; 
+      %   gamma(\x) = (1 - \x) / 2 + sqrt( 1 - \x^2 ) ; 
+      %   phi(\x) = (3/2) * (1 + \x)^(1/3) * ( 1 - \x )^(2/3) ; 
+      %   }
       ]
       \begin{axis}[domain=0:1,
         samples=500,
@@ -35,7 +35,7 @@
         % \addplot +[thick,blue] { ((1-x)/2)^(2/3) * (1 + x)^(1/3) * 2^(entropy(x)) };
         % \addlegendentry{$\MeanRoot$, Prop.~\ref{coro:praos-moments-simple-large-eps}}
 
-        \addplot +[ultra thick,black] plot (\x, { gamma(\x) } );  
+        \addplot +[ultra thick,black] { PraosGamma(x) } ;  
         \addlegendentry{$M(\epsilon)$, Claim~\ref{claim:t2star-exact}};
         %\addplot +[thick,black, dotted] { sqrt(2) * (1-x)/2+sqrt(1 - x^2)};  
         %\addplot +[thick,dotted,black] {(3/2)(1+x)^(1/3)(1-x)^(2/3)};  
@@ -45,12 +45,12 @@
   \begin{minipage}{0.5 \textwidth}
     \centering
     \begin{tikzpicture}[trim axis left,
-      declare function={
-        entropy(\x) = - \x * ln(\x)/ln(2) - (1 - \x) * ln(1 - \x) / ln(2) ; 
-        gamma(\x) = (1 - \x) / 2 + sqrt( 1 - \x^2 ) ; 
-        phi(\x) = (3/2) * (1 + \x)^(1/3) * ( 1 - \x )^(2/3) ; 
-        psi(\x) = ( 1 - ln( (1+\x)/(1-\x) ) / ln(2) )^2 * ln(2) / 63; 
-        }
+      % declare function={
+      %   entropy(\x) = - \x * ln(\x)/ln(2) - (1 - \x) * ln(1 - \x) / ln(2) ; 
+      %   gamma(\x) = (1 - \x) / 2 + sqrt( 1 - \x^2 ) ; 
+      %   phi(\x) = (3/2) * (1 + \x)^(1/3) * ( 1 - \x )^(2/3) ; 
+      %   psi(\x) = ( 1 - ln( (1+\x)/(1-\x) ) / ln(2) )^2 * ln(2) / 63; 
+      %   }
       ]
       \begin{axis}[domain=0:1,
         samples=500,
@@ -78,10 +78,11 @@
         % \addplot +[thick,blue] { ((1-x)/2)^(2/3) * (1 + x)^(1/3) * 2^(entropy(x)) };
         % \addlegendentry{$\MeanRoot$, Prop.~\ref{coro:praos-moments-simple-large-eps}}
 
-        \addplot +[ultra thick,domain=0:(1/3),black,dashed,forget plot] {(5 - 3 * x) / 2};
-        \addplot +[ultra  thick,domain=(1/3):0.6,black,forget plot] {2^(2/3) * phi(x)};
-        \addplot +[ultra thick,domain=0.6:1,black] { 5/3 * phi(x) )};
-        % \addplot +[ultra thick,domain=0.6:1,black] { 2^(2/3 + psi(x) ) * phi(x) )};
+        % \addplot +[ultra thick,domain=0:(1/3),black,dashed,forget plot] {(5 - 3 * x) / 2};
+        % \addplot +[ultra  thick,domain=(1/3):0.6,black,forget plot] {2^(2/3) * PraosPhi(x)};
+        % \addplot +[ultra thick,domain=0.6:1,black] { 5/3 * PraosPhi(x) )};
+        % % \addplot +[ultra thick,domain=0.6:1,black] { 2^(2/3 + psi(x) ) * phi(x) )};
+        \addplot +[ultra thick,black] { PraosVbase(\x) } ;        
         \addlegendentry{$V(\epsilon)$, Lem.~\ref{lemma:grinding-praos-second-moment}};
 
 
@@ -90,17 +91,16 @@
   \end{minipage}
 
   \caption{
-    Moment (upper) bounds for the grinding power.
-    Specifically, let $\epsilon \in (0,1)$ be the honest bias, i.e., $\Pr[\text{a slot is adversarial}] = (1-\epsilon)/2$.
-    Let $W$ be a characteristic string of length $n$, $W \sim \mathcal{L}_n((1-\epsilon)/2)$.
-    Let $g(W)$ be the grinding power of $W$.
-    Suppose $\Exp g(W) = \Poly(n) M(\epsilon)^n$ and $\Exp g(W)^2 = \Poly(n) V(\epsilon)^n$. 
-    Above, we have plotted $M(\epsilon)$ (left) and $V(\epsilon)$ (right).
-    Note that $M(\epsilon) \leq 1$ for $\epsilon \geq 0.6$, and 
-    $V(\epsilon) \leq 1$ for $\epsilon \geq 0.81$. 
-    This implies that for those $\epsilon$, the grinding power $g(W)$ is actually $\Poly(n)$.
-    % $n$ nonce-generating slots with $\Pr[\text{slot adversarial}] = (1 - \epsilon)/2$, i.e., 
-    % The black curve is the asymptotic bound from Claim~\ref{claim:t2star-exact}.
+    Moment upper bounds for the grinding power $g(n,\epsilon)$, defined in~\eqref{eq:praos-gneps}.
+    Here, $\epsilon \in (0,1)$ is the honest bias, i.e., $\Pr[\text{a slot is adversarial}] = (1-\epsilon)/2$ 
+    and $n$ is the number of nonce-generating slots. 
+    Above, we have plotted two functions $M(\epsilon)$ (left) and $V(\epsilon)$ (right) so that 
+    $\Exp g(n,\epsilon) = \Poly(n) M(\epsilon)^n$ and $\Exp g(n,\epsilon)^2 = \Poly(n) V(\epsilon)^n$. 
+    When $\epsilon \geq 0.6$, $M(\epsilon)$ is at most $1$, 
+    implying that the grinding power is $\Poly(n)$ in expectation.
+    Moreover, when $\epsilon \geq 0.809$, $V(\epsilon)$ is at most $1$, 
+    implying that the second moment of $g(n, \epsilon)$ is $\Poly(n)$ as well. 
+    In general, we can derive the tail bound in Theorem~\ref{thm:praos-thm-singleepoch-informal}.
   }
   \label{fig:praos-gp-moments}
 \end{figure}

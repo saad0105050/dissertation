@@ -48,11 +48,8 @@
 \usepackage{hyperref}
 \usepackage[center,small,sc]{caption,subcaption}
 \usepackage{array}
-\usepackage{tikz}
-\usetikzlibrary{automata,arrows,positioning,calc}
 \usepackage{subfiles}
 \usepackage{accents}
-\usepackage{pgfplots}
 \usepackage{multirow}
 \usepackage{pgfgantt}
 \usepackage{algorithm}
@@ -216,7 +213,6 @@
 \DeclareMathOperator*{\Var}{\mathbf{Var}}
 \DeclareMathOperator{\wt}{wt}
 
-\pgfplotsset{compat=1.14}
 
 \DeclareRobustCommand{\Eulerian}{\genfrac<>{0pt}{}}
 \DeclareMathOperator{\Li}{Li}
@@ -256,6 +252,154 @@
   \begin{enumerate*}[label=(\textit{\roman*})]
     #1
   \end{enumerate*}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Plotting/drawing-related functions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}
+\usetikzlibrary{automata,arrows,positioning,calc,math}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.14}
+
+% https://tex.stackexchange.com/questions/349766/pgfplots-on-tikzmath-function-with-conditionals-returns-an-error
+\makeatletter
+\def\tikz@math@if@@doif{%
+    \pgfmathparse{\tikz@math@if@condition}%
+    \ifpgfmathfloatparseactive%                 <--- Notice this
+        \pgfmathfloattofixed{\pgfmathresult}%   <--- Notice this
+    \fi%                                        <--- Notice this
+    \ifdim\pgfmathresult pt=0pt\relax%
+    \else%
+        \expandafter\tikz@math\expandafter{\tikz@math@if@trueaction}%
+    \fi%
+    \tikz@math@parse%
+}
+\def\tikz@math@if@@doifelse{%
+    \pgfmathparse{\tikz@math@if@condition}%
+    \let\tikz@math@if@falseaction=\tikz@math@collected%
+    \message{^^JCheck this: \pgfmathresult^^J}% <--- Notice this
+    \ifpgfmathfloatparseactive%                 <--- Notice this
+        \pgfmathfloattofixed{\pgfmathresult}%   <--- Notice this
+    \fi%                                        <--- Notice this
+    \message{^^JCheck again: \pgfmathresult^^J}%<--- Notice this
+    \ifdim\pgfmathresult pt=0pt\relax%
+        \expandafter\tikz@math\expandafter{\tikz@math@if@falseaction}%
+    \else%
+        \expandafter\tikz@math\expandafter{\tikz@math@if@trueaction}%
+    \fi%
+    \tikz@math@parse%
+}
+
+\tikzmath{
+		\TooSmall = 0.0000001 ; % For avoiding division by zero
+    function entropy (\x) {
+        return \x * ln(\x)/ln(2) - (1 - \x) * ln(1 - \x) / ln(2) ; 
+    };
+    % Function gamma() from praos analysis <-- not to confuse with grinding power gamma
+    function PraosGamma (\e) {
+        return  (1 - \e) / 2 + sqrt( 1 - \e^2 ) ;
+    };
+    % Function phi() from praos analysis
+    function PraosPhi (\e) {
+        return (3/2) * (1 + \e)^(1/3) * ( 1 - \e )^(2/3) ; 
+    };
+    % Function phi() from praos analysis
+    function PraosPsi (\e) {
+    		\lnr = ln(1+\e) - ln(1-\e) ;
+        return ( 1 - \lnr / ln(2) )^2 * ln(2) / 63; 
+    };
+    % Adversarial stake
+    function Alpha(\e) {
+        return (1 - \e) / 2 ; 
+    };
+    % Honest bias
+    function Eps(\a) { 
+        return 1 - 2 * \a ;
+    };
+    % Epoch length
+    function R(\e, \k) {
+        return 16 * \k  / (1 + \e) ; 
+    };
+    % Number of nonce-generating slots
+    function PraosN(\e, \k) {
+        return R(\e, \k) * 2 / 3 ; 
+    };
+    % Consistency error prob
+    function PraosEpsP(\e, \k) {
+        return R(\e, \k) * exp( 1 - \e^3 * (1-\e) * \k / 2) ;
+    };
+    function LnPraosEpsP(\e, \k) {
+        return ln(R(\e, \k)) + 1 - \e^3 * (1-\e) * \k / 2 ;
+    };
+    % ECQ parameter
+    function PraosECQs(\e, \k) {
+        return 8 * \k / (1 + \e) ;
+    };
+    % Praos GP second moment base, without the polynomial part
+    function PraosVbase(\e) {
+    	if (\e < 0 ) then {
+    		return 1; 
+    	} else {
+	    	if (\e <= 1/3) then {
+	    		return (5 - 3 * \e) / 2 ;
+	    	} else { 
+	    		if (\e <= 3/5) then {
+	    			return 2^(2/3) * PraosPhi(\e) ;
+	    		} else { 
+	    			return (5/3) * PraosPhi(\e) ;
+	  			};%
+	  		};
+    	}; 
+    };%
+    % Praos GP second moment, full
+    function PraosV(\e, \k) {
+    	\s = PraosECQs(\e, \k) ;
+    	\b = PraosVbase(\e) ;
+    	return 0.4 * \s^2 * (1 + 2 * \e) * (\b)^(\s) ; 
+    };
+    function LnPraosV(\e, \k) {
+    	\s = PraosECQs(\e, \k) ;
+    	\b = PraosVbase(\e) ;
+    	return ln(0.4 * (1 + 2 * \e) ) + 2 * ln(\s) + \s * ln(\b) ; 
+    };
+    % Praos min-entropy loss in a single epoch
+    function PraosMinEntropyLossSingleEpoch (\e, \k) {
+    	% \g = sqrt( PraosV(\e, \k) / PraosEpsP(\e, \k) ) ;% Grinding power
+    	% return ln(\g)/ln(2) ;
+    	\lng = 0.5 * ( LnPraosV(\e, \k) - LnPraosEpsP(\e, \k) ) ;% Logarithm of Grinding power
+    	return \lng / ln(2) ;% Base-2 logarithm
+    };
+    function PraosMinEntropyLossMultiEpoch (\e, \k) {
+    	\Tau = - LnPraosEpsP(\e, \k) / ln(2) ;
+    	\s = PraosECQs(\e, \k) ;
+    	\MinLoss = \Tau/2 + ln(\s) / ln(2) + 0.14 - Alpha(\e) ;
+    	% return 1 ;
+    	if (\e > 0.809) then {
+	    	% return 1/2 \cdot \log_2(1/\EpsP) + \log_2(s) + 0.14 - \alpha
+	    	return \MinLoss ;
+	    } else {
+	    	% return 1/2 \cdot \log_2(1/\EpsP) + \log_2(s) + (0.14 - \alpha) + (s/2) \log_2(1+3\alpha) 
+	    	% return \Tau/2 + \s * (3/2) * Alpha(\e) / ln(2) ;
+	    	return \MinLoss + (\s/2) * ln(1 + 3*Alpha(\e)) / ln(2) ;
+	    };
+    };
+    function LnPraosPrBadMultiEpoch (\e, \k, \L) {
+    	\s = PraosECQs(\e, \k) ;
+    	\sqepsp = sqrt(PraosEpsP(\e, \k)) ;
+    	\p = ln(\L) + LnPraosEpsP(\e, \k)/2 ;
+    	if (\e > 0.809) then {
+	    	% return L \cdot (2 \EpsP + s \sqrt{\EpsP} )
+	    	% return L \cdot \sqrt{\EpsP} (2 \sqrt{\EpsP} + s )
+    		return \p + ln(2 * \sqepsp + \s) ;
+    	} else {
+				% return L \cdot (2 \EpsP + (1.1 - 0.8 \alpha) s (1+3\alpha)^s \sqrt{\EpsP} )
+	    	% return L \cdot \sqrt{\EpsP} (2 \sqrt{\EpsP} + (1.1 - 0.8 \alpha) s (1+3\alpha)^s )
+	    	\q = ln(2*\sqepsp + \s * (1.1 - 0.8 * Alpha(\e)) * (1 + 3*Alpha(\e) )^(\s) ) ;
+				return \p + \q ;
+    	};
+    };
+}%
 
 
 
