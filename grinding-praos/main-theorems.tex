@@ -19,46 +19,38 @@ where $m$ is the right-hand-side of~\eqref{eq:grinding-praos-second-moment}.
 
 
 
-\begin{theorem}[Praos beacon over multiple epochs]\label{thm:minentropy-loss-praos}  
-  Let $\alpha \in (0, 1/2)$. 
+\begin{theorem}[Praos beacon over multiple epochs]\label{thm:minentropy-loss-praos-muliti-epochs}  
+  Let $\epsilon \in (0,0.81)$. 
+  Recall $\phi(\epsilon)$ from~\eqref{eq:phi_eps}.
   Suppose Praos 
   remains $(\EpsP, k, s)$-secure 
   inside any epoch 
-  whose characteristic string is sampled 
-  according to the distribution $\mathcal{L}(\alpha)$.
-  Let $\rho$ be the min-entropy loss in 
-  the beacon output after $L$ epochs. 
-  \begin{itemize}
-    \item If $\alpha \leq 0.095$ then 
-    $\rho \leq 1/2 \cdot \log_2(1/\EpsP) + \log_2(s) + 0.14 - \alpha$ 
-    except with probability $L \cdot (2 \EpsP + s \sqrt{\EpsP} )$.
-
-    \item Otherwise, there is a positive constant $c = c(\alpha, s)$ so that 
-    $\rho \leq 1/2 \cdot \log_2(1/\EpsP) + c \alpha s
-    % + s/2 \cdot \log_2(1+3\alpha)
-    $ 
-    except with probability $L \cdot (2 \EpsP + (1.1 - 0.8 \alpha) s (1+3\alpha)^s \sqrt{\EpsP} )$. 
-    We can take $c = 3$ for $\alpha \geq 1/3$ and $s \geq 4$.
-  \end{itemize}
+  whose characteristic string has the distribution $\mathcal{L}((1-\epsilon)/2)$. 
+  Let 
+  $$
+    m = s^2 \left( (5/3) \phi(\epsilon) \right)^s
+  $$
+  and $L \in \NN$ so that $L \sqrt{m \EpsP} \leq 1$. 
+  Then 
+  the min-entropy loss in 
+  the beacon output after $L$ epochs is at most 
+  $$
+    (1/2) \log_2 (m/\EpsP)
+  $$
+  except with probability $L \sqrt{m \EpsP}$.
 \end{theorem}
 
 The proof of Theorem~\ref{thm:minentropy-loss-praos} 
 is presented in Section~\ref{sec:proof-praos-theorem}. 
 
 \begin{remark*}
-  If $0.095 < \alpha < 1/3$, we can obtain tighter upper bounds on both $\ell$ and the bad probability 
-  by using relevant upper bounds from~\eqref{eq:grinding-praos-second-moment} 
-  in the proof of Theorem~\ref{thm:minentropy-loss-praos}. 
   The $\log_2(1/\EpsP)$ term in the min-entropy loss $\ell$ 
   is inevitable if we want 
   the bad probability to be at most $\EpsP^\delta$ 
   for some positive real constant $\delta \in (0, 1)$. 
   The factor $1/2$ in front of the $\log_2(1/\EpsP)$ term 
-  is an artifact of the tail bound using the second-moment method.
-  Finally, when $\alpha \geq 0.1$, 
-  both the number of adversarial resets $R_L$
-  and the bad probability 
-  grow exponentially in $s$.
+  arises since we used the second-moment method 
+  for bounding the grinding power.
 \end{remark*}
 
 

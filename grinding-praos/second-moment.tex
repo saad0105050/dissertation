@@ -164,7 +164,11 @@ would give us a tail bound on $g(W)$.
   $\Blockchain$ remains $(\EpsP, k, s)$-secure during 
   the $n$ slots represented by $W$. 
   Let $m(W)$ be an upper bound on $\Exp[ g(W)^2 \mid E]$.
-  Let $\gamma = (m(W)/\EpsP)^{1/2}$.
+  Let 
+  \begin{equation}\label{eq:praos-gamma-general-second-moment}
+    \gamma \geq (m(W)/\EpsP)^{1/2}
+    \,.
+  \end{equation}
   Then 
   $
       \Pr\left[g(W) \geq \gamma\right] \leq 2 \EpsP
@@ -173,19 +177,24 @@ would give us a tail bound on $g(W)$.
 \end{lemma}
 \begin{proof}
   % Recall the event $E$ defined in Lemma~\ref{lemma:grinding-praos-second-moment}.
-  Let $\gamma \in \NN$. 
-  Since $g(W)$ is non-negative, 
-  $$
-    % p_\gamma 
+  Let $\gamma \in \NN$ whose value will be chosen later. 
+  Since $g(W)$ is non-negative, observe that 
+  $\Pr[g(W) = t] = \Pr[g(W) = t^2]$ for any non-negative $t$. 
+  Furthermore, 
+  \begin{align*}
     \Pr[g(W) \geq \gamma]
-    \leq (1 - \Pr[E]) + \Pr[g(W)^2 \geq \gamma^2 \mid E] 
-    \leq \EpsP + m(W)/\gamma^2
-  $$ 
-  by Markov's inequality on the non-negative random variable $g(W)^2$. 
-  We set $\gamma$ to be large enough so that the above quantity is at most $2 \EpsP$. 
-  Equivalently, 
-  $m(W)/\gamma^2$ would be at most $\EpsP$, 
-  or $\gamma$ is at least $\sqrt{m(W)/\EpsP}$. 
+    &= \Pr[g(W) \geq \gamma \mid \overline{E}] \cdot \Pr[\overline{E}] 
+      + \Pr[g(W)^2 \geq \gamma^2 \mid E] \cdot \Pr[E]\\
+    &\leq 1 \cdot \Pr[\overline{E}] + \Pr[g(W) \geq \gamma \mid E] \cdot 1 \\
+    &\leq \EpsP + \Pr[g(W)^2 \geq \gamma^2 \mid E] \\
+    &\leq \EpsP + \Exp g(W)^2/\gamma^2 \qquad \text{(by Markov's inequality)} \\
+    &\leq \EpsP + m(W)/\gamma^2 
+  \end{align*}
+  by assumption. Since we can control $\gamma$,
+  we can make it large enough so that the above quantity is at most $2 \EpsP$. 
+  Equivalently, we would want 
+  $m(W)/\gamma^2$ to be at most $\EpsP$; 
+  this yields~\eqref{eq:praos-gamma-general-second-moment}.
 \end{proof}
 
 
@@ -273,7 +282,7 @@ whose proofs will be presented later.
   the blockchain protocol $\Blockchain$ 
   remains $(\EpsP, k, s)$-secure throughout 
   the $n$ slots represented by $W$. 
-  Then
+  Recall $\phi(\epsilon)$ from \eqref{eq:phi_eps}.  
   \begin{equation}\label{eq:grinding-praos-second-moment}
     \Exp[ g(W)^2 \mid E] 
     \leq 
@@ -285,11 +294,14 @@ whose proofs will be presented later.
       \cdot \begin{cases}
       \left( (5-3 \epsilon)/2 \right)^s & \text{if}\quad 0 < \epsilon \leq 1/3\,, \\
       \left( 2^{2/3} \phi(\epsilon) \right)^s & \text{if}\quad 1/3 < \epsilon \leq 3/5\,, \\
-      \left( (5/3) \phi(\epsilon) \right)^s & \text{if}\quad 3/5 < \epsilon \leq 0.81\,, \\
-      1,  & \text{if}\quad 0.81 < \epsilon \leq 1\,,
+      \left( (5/3) \phi(\epsilon) \right)^s & \text{otherwise}\,. 
     \end{cases}    
   \end{equation}
-  where $\phi(\epsilon)$ is defined in (\ref{eq:phi_eps}).
+  In particular, 
+  $$
+    \Exp [g(W)^2 \mid E] \leq 1
+    \qquad \text{if $\epsilon \geq 0.809$}\,.
+  $$
 \end{lemma}
 \begin{proof}
   Conditioned on the event $E$, 
