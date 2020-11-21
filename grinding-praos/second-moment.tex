@@ -247,12 +247,7 @@ whose proofs will be presented later.
         1/3 \leq \epsilon < 1 \, ,
     \end{dcases}
   \end{align*}
-  where
-  \begin{align}
-    \phi(\epsilon) 
-    &\triangleq \frac{3}{2} (1+\epsilon)^{1/3} (1-\epsilon)^{2/3}\label{eq:phi_eps} 
-    \,.
-  \end{align}
+  where $\phi$ is defined in~\eqref{eq:phi_eps}.
 \end{claim}
 
 \begin{claim}\label{claim:t2star-variance-exact}
@@ -286,10 +281,6 @@ whose proofs will be presented later.
   \begin{equation}\label{eq:grinding-praos-second-moment}
     \Exp[ g(W)^2 \mid E] 
     \leq 
-      % s^2/2 
-      % s^2 
-      % 2^{- 1.3 + 1.85 \epsilon} 
-      % A(\epsilon,2)
       0.4 s^2 (1 + 2\epsilon)
       \cdot \begin{cases}
       \left( (5-3 \epsilon)/2 \right)^s & \text{if}\quad 0 < \epsilon \leq 1/3\,, \\

@@ -15,7 +15,7 @@
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
         xlabel={$\epsilon$, honest bias},
-        title={$\rho^*$, upper bound on the min-entropy loss (\# bits)},
+        title={$\rho^*$, upper bound on the min-entropy loss $\rho$},
         xmin=0,xmax=1%,ymin=-100%,ymax=2.5
         ]
         \addplot +[ultra thick,red] { PraosMinEntropyLossSingleEpoch(\x, 1200) };
@@ -25,9 +25,8 @@
         \addplot +[ultra thick,blue] { PraosMinEntropyLossSingleEpoch(\x, 600) };
         \addlegendentry{$k = 600$};
       \end{axis}
-    \end{tikzpicture}
-
-    \vspace{1em}
+    \end{tikzpicture}%
+    % \vspace{1em}
     \begin{tikzpicture}[trim axis left,
       ]
       \begin{axis}[domain=0:1, 
@@ -43,7 +42,7 @@
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
         xlabel={$\epsilon$, honest bias},
-        title={$-\log_2\, \Pr[ \text{min-entropy loss } > \rho^* ]$},
+        title={$-\log_2\, \Pr[ \rho > \rho^* ]$},
         xmin=0,xmax=1,ymin=0%,ymax=2.5
         ]
         \addplot +[ultra thick,red] { -1 - LnPraosEpsP(\x, 1200) / ln(2) };
@@ -54,10 +53,8 @@
         \addlegendentry{$k = 600$};
       \end{axis}
     \end{tikzpicture}
-
-
   \caption{
-    (\textbf{Top}) The upper bound $\rho^*$ on $\rho$, 
+    (\textbf{Left}) The upper bound $\rho^*$ on $\rho$, 
     Praos beacon's min-entropy loss over a single epoch, 
     expressed in \#bits.  
     Recall that $\rho$ is the logarithm of the grinding power in an epoch.     
@@ -73,7 +70,7 @@
     The probability of a consistency violation in an epoch in Praos is 
     $\EpsP = R \exp(1-\epsilon^3 (1-\epsilon)k/2) $. 
     See~\citet[Theorem 9]{Praos} for justification of these parameters. 
-    (\textbf{Bottom}) The probabilities that the grinding power is larger than $2^{\rho^*}$.
+    (\textbf{Right}) The probability that $\rho > \rho^*$.
   }
   \label{fig:praos-beacon-single-epoch}
 \end{figure}
