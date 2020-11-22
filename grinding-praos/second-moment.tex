@@ -63,12 +63,9 @@ On the other hand, for any $0 \leq t < N/2$
 &\leq 
 2^{H(t/N)N} \, , 
 \end{align}
-where $H : [0, 1] \rightarrow [0, 1]$ is the binary entropy function defined as
-\begin{align*}
-    H(0) &= H(1) = 0\, , \\
-    H(\alpha) &= -\alpha \log_2(\alpha) - (1-\alpha) \log_2(1-\alpha)\,, 
-        \qquad \text{if}\quad 0 < \alpha < 1\, .
-\end{align*}
+where $H : [0, 1] \rightarrow [0, 1]$ is the binary entropy function defined 
+in~\eqref{eq:binary-entropy}.
+
 Thus we can bound $S(d,z)$ using (\ref{eq:binomial-sum-bound}) as follows:
 \begin{equation} \label{eq:S_d_z_large}
     \frac{2^{(d-z)H(z/(d-z))}(d-z)}{\sqrt{8 z(d-2z) }}

@@ -6,185 +6,170 @@
 
 
 
-\section{Collective coin-flipping}
+% \section{Collective coin-flipping}
 
-    A \emph{coin-flipping protocol $\Pi$ of dimension $\kappa$} 
-    takes, as input, a uniformly random $\kappa$-bit string $\eta_0$
-    and outputs a $\kappa$-bit string $\eta$. 
-    The goal of the protocol is to make the distribution of $\eta$ 
-    as close to uniform as possible.
+%     A \emph{coin-flipping protocol $\Pi$ of dimension $\kappa$} 
+%     takes, as input, a uniformly random $\kappa$-bit string $\eta_0$
+%     and outputs a $\kappa$-bit string $\eta$. 
+%     The goal of the protocol is to make the distribution of $\eta$ 
+%     as close to uniform as possible.
     
-    \begin{definition}[Coin-flipping with $(\epsilon, \rho)$-security]\label{def:coin-flipping-security}
-        Let $\kappa \in \NN, \rho, \epsilon \in \RR, \rho \in [0, \kappa]$, and $\epsilon \in (0,1)$.
-        Let $\Pi$ be an coin-flipping protocol with dimension $\kappa$ 
-        and output $\eta$. 
-        We say that \emph{$\Pi$ is $(\epsilon, \rho)$-secure} if 
-        $\MinEntropy(\eta) \geq \kappa - \rho$ 
-        except with probability $\epsilon$. 
-        Here, $\MinEntropy$ is the min-entropy function.
-    \end{definition}
+%     \begin{definition}[Coin-flipping with $(\epsilon, \rho)$-security]\label{def:coin-flipping-security}
+%         Let $\kappa \in \NN, \rho, \epsilon \in \RR, \rho \in [0, \kappa]$, and $\epsilon \in (0,1)$.
+%         Let $\Pi$ be an coin-flipping protocol with dimension $\kappa$ 
+%         and output $\eta$. 
+%         We say that \emph{$\Pi$ is $(\epsilon, \rho)$-secure} if 
+%         $\MinEntropy(\eta) \geq \kappa - \rho$ 
+%         except with probability $\epsilon$. 
+%         Here, $\MinEntropy$ is the min-entropy function.
+%     \end{definition}
     
-    Suppose a coin-flipping protocol $\Pi$ is $(\epsilon, \rho)$-secure. 
-    Then 
-    the min-entropy loss of its output distribution is at most $\rho$. 
-    On the other hand, let $T$ be an arbitrary set of $\kappa$-bit Boolean strings. 
-    The probability that $\eta \in T$ is at most $2^\rho \cdot |T| \cdot 2^{-\kappa}$. 
-    The amplification factor $2^\rho$ can be interpreted as 
-    the adversarial participants 
-    choosing the designated output $\eta$ from 
-    a set containing $2^\rho$ uniformly random strings; 
-    {\color{red} strings in this set may be correlated with each other}. 
-    An unbiased protocol will necessarily have $\rho = 0$.
+%     Suppose a coin-flipping protocol $\Pi$ is $(\epsilon, \rho)$-secure. 
+%     Then 
+%     the min-entropy loss of its output distribution is at most $\rho$. 
+%     On the other hand, let $T$ be an arbitrary set of $\kappa$-bit Boolean strings. 
+%     The probability that $\eta \in T$ is at most $2^\rho \cdot |T| \cdot 2^{-\kappa}$. 
+%     The amplification factor $2^\rho$ can be interpreted as 
+%     the adversarial participants 
+%     choosing the designated output $\eta$ from 
+%     a set containing $2^\rho$ uniformly random strings; 
+%     {\color{red} strings in this set may be correlated with each other}. 
+%     An unbiased protocol will necessarily have $\rho = 0$.
 
 
-    \paragraph{Protocol participants.} 
-    Let $\Players$ be the set of protocol participants. 
-    With each party $u \in \Players$ is associated a positive real $\sigma_u \in [0, 1]$ 
-    so that $\sum_{u \in \Players} \sigma_u = 1$. 
+%     \paragraph{Protocol participants.} 
+%     Let $\Players$ be the set of protocol participants. 
+%     With each party $u \in \Players$ is associated a positive real $\sigma_u \in [0, 1]$ 
+%     so that $\sum_{u \in \Players} \sigma_u = 1$. 
 
-    \paragraph{The adversary.} 
-    Let $\alpha \in [0,1]$. 
-    The adversary can corrupt any player instantly subject to 
-    a budget $\alpha$: that is, 
-    at any moment, the set of players $A \subset \Players$ controlled by the adversary 
-    always satisfy $\sum_{u \in A} \sigma_u \leq \alpha$. 
-    This adversary is called an \emph{$\alpha$-dominated adversary}. 
-    If a player is ever corrupted by the adversary, 
-    he remains under his control for the rest of the protocol. 
-    The adversary is Byzantine: 
-    once he controls a player, he can send arbitrary messages on behalf of the player.
+%     \paragraph{The adversary.} 
+%     Let $\alpha \in [0,1]$. 
+%     The adversary can corrupt any player instantly subject to 
+%     a budget $\alpha$: that is, 
+%     at any moment, the set of players $A \subset \Players$ controlled by the adversary 
+%     always satisfy $\sum_{u \in A} \sigma_u \leq \alpha$. 
+%     This adversary is called an \emph{$\alpha$-dominated adversary}. 
+%     If a player is ever corrupted by the adversary, 
+%     he remains under his control for the rest of the protocol. 
+%     The adversary is Byzantine: 
+%     once he controls a player, he can send arbitrary messages on behalf of the player.
 
-    \paragraph{Communication model.} 
-    We assume a synchronous communication where 
-    the adversary is responsible for delivering messages in any order he chooses.
+%     \paragraph{Communication model.} 
+%     We assume a synchronous communication where 
+%     the adversary is responsible for delivering messages in any order he chooses.
 
-    \begin{definition}[$(\ell, n)$-coin-flipping with dimension $\kappa$]\label{def:coin-flipping}
-        Let $\ell, n, \kappa \in \NN$ and 
-        let $\eta_0 \in \{0,1\}^\kappa$ be a uniformly random \emph{initial value}. 
-        The protocol has $r = \ell + n$ rounds. 
-        \begin{itemize}
-            \item (Committees.) 
-            With every round $i \in [r]$ is associated 
-            a \emph{committee} $C_i$ of players. 
-            (The committee election scheme is left unspecified at this moment. 
-            See Figure~\ref{fig:leader-election-schemes} below.)
-            The committee membership is private unless 
-            a member discloses it. 
+%     \begin{definition}[$(\ell, n)$-coin-flipping with dimension $\kappa$]\label{def:coin-flipping}
+%         Let $\ell, n, \kappa \in \NN$ and 
+%         let $\eta_0 \in \{0,1\}^\kappa$ be a uniformly random \emph{initial value}. 
+%         The protocol has $r = \ell + n$ rounds. 
+%         \begin{itemize}
+%             \item (Committees.) 
+%             With every round $i \in [r]$ is associated 
+%             a \emph{committee} $C_i$ of players. 
+%             (The committee election scheme is left unspecified at this moment. 
+%             See Figure~\ref{fig:leader-election-schemes} below.)
+%             The committee membership is private unless 
+%             a member discloses it. 
 
-            \item (Nonces.) 
-            Before the protocol commences, 
-            for every $i \in [r]$, 
-            each member $u \in C_i$ is given a \emph{nonce} $y_{i,u} \in \{0,1\}^\kappa$. 
-            The nonces of the honest members are uniformly random. 
-            The adversarial members may choose their nonces arbitrarily at this point 
-            but once the protocol commences, 
-            they cannot change the value of their nonces. 
+%             \item (Nonces.) 
+%             Before the protocol commences, 
+%             for every $i \in [r]$, 
+%             each member $u \in C_i$ is given a \emph{nonce} $y_{i,u} \in \{0,1\}^\kappa$. 
+%             The nonces of the honest members are uniformly random. 
+%             The adversarial members may choose their nonces arbitrarily at this point 
+%             but once the protocol commences, 
+%             they cannot change the value of their nonces. 
 
-            \item (Adversarial knowledge and the lookahead.) 
-            The adversarial players know, in advance, 
-            about all adversarial committe members and 
-            their nonces across all rounds.  
-            They also know which rounds contain an honest committee member.
-            Furthermore, at round $i$, 
-            adversarial players can see 
-            the honest nonces for rounds $i, i+1, \ldots, \min\{i + \ell - 1, r\}$.
+%             \item (Adversarial knowledge and the lookahead.) 
+%             The adversarial players know, in advance, 
+%             about all adversarial committe members and 
+%             their nonces across all rounds.  
+%             They also know which rounds contain an honest committee member.
+%             Furthermore, at round $i$, 
+%             adversarial players can see 
+%             the honest nonces for rounds $i, i+1, \ldots, \min\{i + \ell - 1, r\}$.
 
-            \item (Announcement.)
-            With each round $i$ is associated 
-            a publicly visible set $Y_i$, initially empty. 
-            At round $i$, 
-            an honest committee member inserts his nonce into $Y_i$. 
-            An adversarial committee member $u$ may strategically choose to insert or not. 
+%             \item (Announcement.)
+%             With each round $i$ is associated 
+%             a publicly visible set $Y_i$, initially empty. 
+%             At round $i$, 
+%             an honest committee member inserts his nonce into $Y_i$. 
+%             An adversarial committee member $u$ may strategically choose to insert or not. 
 
-            \item (Output.)
-            At the end of round $r$, 
-            let $m_i$ 
-            be the lexicographic minimum of all strings recorded in $Y_i, i \in [r]$.
-            (If $Y_i$ is empty then set $m_i = 0^\kappa$.)
-            The \emph{output} of the protocol is 
-            $
-                \eta = \eta_0 \oplus m_1 \oplus \cdots m_{\ell + n}
-                % \,.
-            $. 
-        \end{itemize}
-    \end{definition}
+%             \item (Output.)
+%             At the end of round $r$, 
+%             let $m_i$ 
+%             be the lexicographic minimum of all strings recorded in $Y_i, i \in [r]$.
+%             (If $Y_i$ is empty then set $m_i = 0^\kappa$.)
+%             The \emph{output} of the protocol is 
+%             $
+%                 \eta = \eta_0 \oplus m_1 \oplus \cdots m_{\ell + n}
+%                 % \,.
+%             $. 
+%         \end{itemize}
+%     \end{definition}
 
-    Since the adversary cannot change the nonces, 
-    all he can do to bias the output 
-    is to strategically vary the size of the sets $Y_i, i \in [\ell + n]$.
+%     Since the adversary cannot change the nonces, 
+%     all he can do to bias the output 
+%     is to strategically vary the size of the sets $Y_i, i \in [\ell + n]$.
 
-    \begin{figure}[h]
-        \begin{framed}
-            \begin{center}
-                Two committee election schemes                
-            \end{center}
-            \begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=6em]
-                \item \label{lottery:public}
-                (\textbf{Singleton committee.})
-                All players use a common random string to 
-                publicly sample, 
-                independently for each round $i \in [\ell + n]$, 
-                a single player $u_i \in \Players$ and  
-                set $C_i = \{u_i\}$. 
-                For all players $u \in \Players$, 
-                the probability that $u = u_i$ is $\sigma_u$.
+%     \begin{figure}[h]
+%         \begin{framed}
+%             \begin{center}
+%                 Two committee election schemes                
+%             \end{center}
+%             \begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=6em]
+%                 \item \label{lottery:public}
+%                 (\textbf{Singleton committee.})
+%                 All players use a common random string to 
+%                 publicly sample, 
+%                 independently for each round $i \in [\ell + n]$, 
+%                 a single player $u_i \in \Players$ and  
+%                 set $C_i = \{u_i\}$. 
+%                 For all players $u \in \Players$, 
+%                 the probability that $u = u_i$ is $\sigma_u$.
 
-                \item \label{lottery:private}
-                (\textbf{Private lottery.})
-                Independently for each round $i \in [\ell + n]$, 
-                player $u \in \Players$ 
-                independently inserts himself 
-                into the committee $C_i$ 
-                with probability $\sigma_u$. 
-            \end{enumerate}
-        \end{framed}
-        \caption{Two committee election schemes for an $(\ell, n)$-coin-flipping protocol}
-        \label{fig:leader-election-schemes}
-    \end{figure}
+%                 \item \label{lottery:private}
+%                 (\textbf{Private lottery.})
+%                 Independently for each round $i \in [\ell + n]$, 
+%                 player $u \in \Players$ 
+%                 independently inserts himself 
+%                 into the committee $C_i$ 
+%                 with probability $\sigma_u$. 
+%             \end{enumerate}
+%         \end{framed}
+%         \caption{Two committee election schemes for an $(\ell, n)$-coin-flipping protocol}
+%         \label{fig:leader-election-schemes}
+%     \end{figure}
 
 
-    \begin{theorem}[Main theorem]
-        Let $\kappa, \gamma, \ell, n \in \NN$ and $\epsilon \in (0,1)$.
-        Let $\Pi$ be an $(\ell, n)$-coin-flipping protocol with dimension $\kappa$ 
-        and output $\eta$ whose committees are elected using Scheme A.
-        Then $\Pi$ is $(\EpsP, \gamma)$-secure where {\color{red} to do}.
-    \end{theorem}
+%     \begin{theorem}[Main theorem]
+%         Let $\kappa, \gamma, \ell, n \in \NN$ and $\epsilon \in (0,1)$.
+%         Let $\Pi$ be an $(\ell, n)$-coin-flipping protocol with dimension $\kappa$ 
+%         and output $\eta$ whose committees are elected using Scheme A.
+%         Then $\Pi$ is $(\EpsP, \gamma)$-secure where {\color{red} to do}.
+%     \end{theorem}
 
 \section{Eventual consensus PoS blockchains using the longest-chain rule}
     Let $\Blockchain$ be an eventual consensus PoS blockchain protocol 
-    under the longest-chain rule. 
+    under the longest-chain rule, 
+    as in \Section~\ref{sec:model-multihonest}. 
     The protocol $\Blockchain$ advances in discrete rounds 
     which we call \emph{slots}.
     Every participant $u$ in $\Blockchain$ 
     maintains a blockchain $\Chain_u$ 
     and updates it at every slot using the following simple rule: 
     \begin{enumerate}
-      \item If a longer blockchain $\Chain$ is available, 
-      $u$ sets $\Chain_u \leftarrow \Chain$.
+      \item If a longer blockchain is available in his view, 
+      $u$ sets $\Chain_u \leftarrow \Chain$ where 
+      $\Chain$ is a longest blockchains. 
+      (There could be multiple longest chains.)
 
-      \item If $u$ is assigned to create a block at this slot, 
+      \item If $u$ is assigned to create a block at this slot 
+      (i.e., he is a \emph{leader}),
       $u$ adds a new block to $\Chain_u$ and broadcasts immediately.
     \end{enumerate}
-%     \paragraph{Time, slots, and synchrony}
 
-%     \paragraph{Transaction ledger properties.} 
-%     A blockchain can implement a \emph{transaction ledger} in which ``transactions'' 
-%     can be divided into linearly ordered ``blocks,'' giving a partial order in the transactions. 
-%     A ledger must satisfy the following properties:
-%     \begin{description}[labelindent=0.5cm]
-%         \item[Persistence with parameter $k \in \NN$:] A block is declared \emph{stable} 
-%         if it is at least $k$ blocks deep from the end of the ledger. 
-%         If an honest node (at slot $t$) reports a block $B$ at slot $b$ to be stable, 
-%         all honest nodes, queried at any slot $t^\prime \geq t$, must also report $B$ to be stable at slot $b$.
-
-%         \item[Liveness with parameters $u,k \in \NN$:] Suppose a transaction is issued at slot $t$ and 
-%         all honest nodes attempt to include it in the ledger for $u$ consecutive slots. 
-%         Then the transaction will be stable in the views of all honest nodes at slot $t^\prime > t+u + 1$.
-%     \end{description}
-
-%     The above properties can be derived from the followoing elementary properties of the blockchain 
-%     that implements the ledger.
-%     However, it would be convenient for us to lay down some notation first. 
     Consider a blockchain $\Chain$ and suppose its most recent block is issued from some slot $s \in \NN$. 
     The ``trimmed chain'' $\Chain\TrimSlot{k}$ is defined as 
     the blockchain obtained from $\Chain$ by deleting all blocks (from $\Chain$) 
@@ -195,14 +180,10 @@
     $\Chain[t_1 : t_2]$ denotes the chain segment containing all blocks from $\Chain$ 
     that are issued from slots $t \in [t_1, t_2]$.
 
-    \begin{definition}[Common Prefix property with parameter $k \in \NN$]\label{def:cp}        
-        Let $\Chain_1$ and $\Chain_2$ be two blockchains adopted by two honest players 
-        at the onset of rounds (i.e., slots) $r_1$ and $r_2$, respectively, with $r_1 \leq r_2$. 
-        Then $\Chain_1\TrimSlot{k} \Prefix \Chain_2$. 
-    \end{definition}
-    We use the shorthand $\kSlotCP$ for referring to the Common Prefix property defined above. 
-    Observe that we defined this property in terms of elapsed time, i.e., slots; 
-    traditionally (cf. \cite{C:GarKiaLeo17}), it has been defined in terms of the number of deleted blocks. 
+    Recall the common prefix property (CP) (in particular, the $\kSlotCP$ property) 
+    from Definition~\ref{def:cp-slot-mh}. 
+    Below, we mention another important property, 
+    the \emph{existential honest chain quality property}: 
 
 
     \begin{definition}[Existential Chain Quality property with parameter $s \in \NN$]\label{def:ECQ}        
@@ -212,23 +193,80 @@
         honestly gneerated block.
     \end{definition}
     We use the shorthand $\sECQ$ for referring to the ECQ property defined above. 
+    Next, we can quantify the security of the blockchain protocol in terms of these two properties:
 
-    \begin{definition}[Blockchain protocol with $(\EpsP, k,s)$-security]\label{def:blockchain-security}
+    \begin{definition}[$(\EpsP, k,s)$-security]\label{def:blockchain-security}
         Let $\EpsP \in \RR$ and $k, s \in \NN$. 
-        A PoS blockchain protocol is $(\epsilon, k, s)$-secure if 
+        A PoS blockchain protocol is $(\EpsP, k, s)$-secure if 
         it satisfies $\kSlotCP$ and $\sECQ$ property 
-        except with probability at most $\epsilon$.
+        except with probability at most $\EpsP$.
     \end{definition}
 
 
-\section{Verifiable Random Functions}
-% \paragraph{Verifiable Random Functions.}
+
+\section{Leader election schemes and static/adaptive adversaries}\label{sec:leader-election-public-private}\label{sec:static-dynamic-adversary}
+
+One can consider two types of adversaries in terms of 
+how fast they can corrupt an honest player. the so-called \emph{static adversary} 
+Suppose that an epoch is $R$ slots long. 
+and the \emph{dynamic (or adaptive) adversary}. 
+A \emph{static adversary} takes at least $R$ slots to corrupt an honest player 
+but an \emph{adaptive adversary} can instantly corrupt an honest player. 
+Ouroboros~\cite {Ouroboros} is secure against a static adversary 
+while Praos~\cite {Praos} and SnowWhite~\cite{SnowWhite} 
+are secure against an adaptive adversary.
+The adversarial model critically depends on how a slot-leader is elected. 
+
+In every slot, 
+one or more participants are elected as a ``leader'' who can add block to a chain. 
+We consider two types of leader election schemes: 
+\begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=6em]
+    \item \label{lottery:public}
+    (\textbf{Publicly elect a single leader per slot.})
+    All players use a common random string to 
+    publicly sample, 
+    independently for each round $i \in [\ell + n]$, 
+    a single player $u_i \in \Players$ and  
+    set $C_i = \{u_i\}$. 
+    For all players $u \in \Players$, 
+    the probability that $u = u_i$ is $\sigma_u$.
+
+    \item \label{lottery:private}
+    (\textbf{Privately elect zero or more leaders per slot.})
+    Independently for each round $i \in [\ell + n]$, 
+    player $u \in \Players$ 
+    independently inserts himself 
+    into the committee $C_i$ 
+    with probability $\sigma_u$. 
+\end{enumerate}
+\noindent
+Ouroboros~\cite{Ouroboros} uses a public leader election 
+at the outset of an epoch 
+and, therefore, it is secure only against a static adversary. 
+SnowWhtie and Praos (and Bitcoin as well) uses a private leader election 
+and therefore, must prove security against an adaptive adversary. 
+
+
+\section{The grinding problem for resettable randomness beacons}\label{beacon-model}
+Before an epoch (say, epoch $t$) commences, 
+all participants collectively agree on a random string $\eta_{t-1}$; 
+this is called the output of the \emph{beacon protocol}, $\Pi_\Beacon$, 
+for epoch $t - 1$. 
+In particular, $\Pi_\Beacon$ is initialized with a fresh random string $\eta_0$ 
+(called the \emph{initial value})
+and it periodically outputs, for each epoch $t = 1, 2, \ldots$\,, 
+a random string $\eta_t$. 
+The common, public random string $\eta_{t-1}$ 
+is used in various computations in epoch $t$. 
+But none is more important than the leader election process 
+based on VRFs.
+
 \newcommand{\Gen}{\mathsf{gen}}
 \newcommand{\Prove}{\mathsf{prove}}
 \newcommand{\Verify}{\mathsf{verify}}
 % \newcommand{\pk}{\mathsf{pk}}
 % \newcommand{\sk}{\mathsf{sk}}
-\begin{definition}[Verifiable Random Function]\label{def:VRF}
+\begin{definition}[Verifiable Random Function (VRF)]\label{def:VRF}
   A family $\mathcal{F}$ 
   of functions $F : \{0,1\}^\ell \rightarrow \{0,\}^k$ 
   is a family of VRFs if there exist algorithms 
@@ -262,3 +300,131 @@
   \end{enumerate}
 
 \end{definition}
+
+Specifically, $\eta_{t-1}$ is used by all participants in epoch $t$ 
+(in combination with their respective private keys) 
+to randomly select a player-specific VRF (see below) 
+and use it to elect leaders from among themselves.
+Therefore, the ``randomness''
+of $\eta_1, \eta_2, \ldots$ is critical factor underlying 
+the security of the blockchain protocol; 
+we explore this next.
+
+\section{The quality of the beacon output; the grinding problem}
+
+Let $n \in \NN$ and let $A$ be the set of $n$-bit Boolean strings.
+Suppose a random variable $X$ takes values from $A$
+and its probability distribution is $\mathcal{X}$. 
+One way to measure how ``random'' the outcomes of $X$ are 
+is to measure the \emph{min-entropy} of $X$:
+
+\begin{definition}[Entropy and Min-entropy]
+    Let $X$ be a random variable (taking values from set $A$) 
+    and let $\mathcal{X} : A \rightarrow [0,1]$ be its probability distribution.
+    The \emph{entropy} of $X$ is defined as 
+    \begin{equation}\label{def:entropy}
+        H(X) = \sum_{x \in A} \mathcal{X}(x) \log_2 (1/\mathcal{X}(x))
+        \,.
+    \end{equation}
+    The \emph{min-entropy} of $X$ is defined as 
+    \begin{equation}\label{def:min-entropy}
+        H_\infty(X) = - \log_2 \max_{x \in A} \mathcal{X}(x)
+        \,.
+    \end{equation}
+    We also write $H_\infty(\mathcal{X})$ to denote the min-entropy of $X$.
+\end{definition}
+\noindent
+
+In the above definition, 
+if $A = \{0,1\}$ and $X$ is a Boolean random variable with expectation $\alpha \in (0,1)$, 
+the entropy of $X$ is given by 
+the \emph{binary entropy function} $H: [0,1] \rightarrow [0,1]$ defined as 
+\begin{align}\label{eq:binary-entropy}
+    H(\alpha) &= -\alpha \log_2(\alpha) - (1-\alpha) \log_2(1-\alpha)
+\end{align}
+where, By convention, we set $H(0) = H(1) = 0$. 
+Since $H$ is a linear combination of logarithms, it is concave. 
+
+Let $U$ be a uniformly distributed random variable on $A$; 
+notice that $H_\infty(X) \leq H_\infty(U) = \log_2(|A|)$. 
+If $X$ has a low min-entropy, 
+it indicates that the distribution of $X$ is ``far'' from being uniformly random. 
+Specifically, \emph{the min-entropy loss in $X$} 
+is defined as the difference between $H_\infty(X)$ and $H_\infty(U) = \log_2(|A|)$.
+
+
+\subsection{The grinding problem}
+In eventual consensus PoS, 
+it takes some time for the blockchains to settle. 
+Recall that the beacon protocol is also carried out through the blockchains 
+and the adversary has the power to force an honest player 
+to select any particular chain (see Section~\ref{sec:lcr-model}).
+Thus, in principle, 
+the adversary has some choice over the final value of the beacon output.
+In particular, he can essentially \emph{reset} the beacon value: 
+He could test multiple potential beacon outputs to see if one is favorable for him, 
+e.g., whether it would make the upcoming leader election (in the next epoch) 
+more favorable to him. 
+If a potential beacon output is not favorable then he can, in principle, reset the beacon, 
+i.e., try over and over again before settling for a beacon output 
+(by making the corresponding blockchain to prevail). 
+The maximum number of potential resets is called his \emph{grinding power}.
+
+Specifically, let $n \in \NN$ and $A \subseteq \{0,1\}^n$.
+Let $\eta_0$ be uniformly random in $\{0,1\}^n$ 
+and it is used as the initial value for the beacon protocol. 
+Let $X_t \in A$ be the random variable 
+representing the beacon output at epoch $t$, 
+i.e., $X_t = \eta_t, t \in 1, 2, \ldots$\,. 
+Let $\mathcal{X}_t$ be the distribution of $X_t$. 
+
+\begin{definition}[Grinding power, informal]
+The \emph{grinding power} $g$ of the adversary $\Adversary$ 
+for the beacon output $\eta$
+is the number of choices $\Adversary$ has for $\eta$. 
+The grinding power of $\Adversary$ over 
+the lifetime of the beacon protocol
+is the maximum over all beacon outputs.
+\end{definition}
+
+Consider a simple one-round game played by the adversary $\Adversary$. 
+Assume that $\Adversary$ has a \emph{target} $\eta^* \in \{0,1\}^n$. 
+$\Adversary$ wins if $X = \eta^*$; he loses otherwise. 
+Let $p_\Adversary$ be his winning probability. 
+If $X$ were uniform in $\{0,1\}^n$, 
+$p_\Adversary$ would have been $2^{-n}$. 
+If the grinding power $g$ is larger than one, 
+$X$ is not uniform since 
+$\Adversary$ can reset it $g$ times 
+and inflate his winning probability to $g 2^{-n}$. 
+Thus, 
+$$ 
+    \max_{\eta \in \{0,1\}^n} \mathcal{X}(\eta) \geq \mathcal{X}(\eta^*) = g 2^{-n}
+$$ 
+and, consequently, 
+$$
+    H_\infty(X) \geq -\log_2 (g 2^{-n}) = n - \log_2 g
+    \,.
+$$
+The min-entropy loss in the beacon output is, therefore, 
+at most $\log_2 g$. 
+
+\begin{definition}[Grinding insecurity]\label{def:grinding-insecurity}
+    Let $n, k, s \in \NN, \rho \in \RR_+$ and $\EpsP, \varepsilon \in (0,1)$.
+    Let $\Pi_\Beacon$ be a beacon protocol for $n$-bit Boolean strings 
+    used in conjunction with a blockchain protocol $\Pi$. 
+    Let $\mathcal{B}$ be the distribution of the beacon outputs.
+    Condition on the event $E$ that $\Pi$ remains $(\EpsP, k, s)$-secure over the lifetime of the protocol. 
+    We say that $\Pi_\Beacon$ is \emph{$(\rho, \varepsilon)$-secure} 
+    if, except with probability $\varepsilon$, 
+    $H_\infty(\mathcal{B} \mid E) \geq n - \rho$.    
+\end{definition}
+
+
+In \Section~\ref{sec:praos}, we characterize the grinding power 
+for the beacon protocol of Ouroboros Praos~\cite{Praos} and Snow White~\cite{SnowWhite}.
+
+
+
+
+
