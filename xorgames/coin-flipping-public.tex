@@ -176,187 +176,242 @@
     \end{proof}
 
 
+\section{ {\color{red}Composing Bernoulli games} }
 
-\section{When a slot has exactly one nonce leader}\label{sec:coin-tossing-single-leader}
-\newcommand{\CoinTossingPublic}{\Pi_\mathsf{public}^{\Players(\alpha),k,s,d}}
+% \begin{theorem}[Composing $(\ell, n, \alpha)$-Bernoulli games]\label{thm:xor-game-beacon-bernoulli}
+%   Let $\EpsP, \delta \in (0,1), \alpha \in (0, 1/2)$, 
+%   and $L, \kappa \in \NN$ be arbitrary parameters. 
+%   Set
+%   % $\lambda = \log_2(1/\alpha)$, 
+%   \begin{align*}
+%     q &= \log_2(1/\EpsP)\,, \quad
+%     n = \frac{q}{\log_2(1/\alpha)}\,, \quad\text{and}\quad  
+%     \ell \leq q\left(1 - \delta \right) - n - \log_2 n - 3
+%     \,.
+%   \end{align*}
+%   % $\ell \leq q(1 - \delta - 1/\lambda) - 3 - \log_2(q/\lambda)$,
+%   Let $U$ be an $(\ell, n, \alpha)$-Bernoulli game 
+%   with 
+%   % a uniformly random value and 
+%   parameter $\kappa$. 
+%   With probability at least $1 - L \EpsP^\delta$,
+%   the min-entropy loss in 
+%   an $(L, \ell, n)$-composition of $U$ 
+%   % (cf. Definition~\ref{def:composition}) 
+%   is at most 
+%   $$
+%     \ell + n + 1 + \log_2(n)
+%     \,.
+%   $$
+%   % \] 
+%   % In particular, $\delta \in (0,1)$ if $\ell < q - 3 - n - \log_2(L n)$.
+% \end{theorem}
+% \begin{proof}
+%   First, we claim that the prerequisite $\Pr[A_1] \leq \EpsP$ 
+%   in Lemma~\ref{lemma:composition} holds. 
+%   This is because (i.) $\EpsA = \alpha^{n+\ell} \leq \alpha^n$ by 
+%   the independence of the Bernoulli random variables $Z_i$s, and 
+%   (ii.) since $n = q/\log_2(1/\alpha)$, we have $\alpha^n = \EpsP$.  
 
-% \begin{minipage}[t]{\textwidth}
-\begin{figure}
-  \begin{framed}    
-    \begin{center}
-        \textbf{Coin-tosssing protocol $\CoinTossingPublic$}
-    \end{center}
-    \begin{enumerate}
-      \item 
-      (Nonce leaders.) 
-      For each nonce-emitting slot $t$, use $\eta_0$ to 
-      select a single player $u \in \Players$ 
-      with probability $\sigma_{u}$. 
-      Set $u_t = u$ and call $u_t$ the \emph{nonce leader at slot $t$}.
+%   Next, observe that the expression of $\delta$ in~\eqref{eq:delta-composition-generic} stays the same 
+%   even if we use the base-$2$ logarithm instead of the natural logarithm. 
+%   Thus we will have $\delta = 1 - (n + \ell + 1 + \log_2(3 n))/q$. 
+%   However, we can change the order of choosing $\hat{\delta}$ and $\ell$. 
+%   Namely, the above choice of $\hat{\delta}$ and $\ell$ is equivalent to first choosing 
+%   an arbitrary $\delta \in (0, 1)$ and then choosing an $\ell \in \NN$, 
+%   as a function of $n, q$, and $\delta$, 
+%   satisfying $\ell \leq q(1 - \delta) - (n + \log_2(3 n) + 1)$. 
+%   % It follows that the failure probability $\EpsP^{\delta^\prime}$ is at most $\EpsP^\delta$. 
+%   This bound on $\ell$ means it suffices to take 
+%   $\ell \leq  q(1 - \delta) - (n + \log_2(n) + 3)$ 
+%   since $1 + \log_2(3) < 3$.
+
+%   The min-entropy bound in the claim follows from using 
+%   the expression of $\gamma$ from~\eqref{eq:bernoulli-game-gamma}
+%   into Corollary~\ref{coro:composition-min-entropy}. 
+% \end{proof}
+
+
+
+% \section{When a slot has exactly one nonce leader}\label{sec:coin-tossing-single-leader}
+
+% % \begin{minipage}[t]{\textwidth}
+% \begin{figure}
+%   \begin{framed}    
+%     \begin{center}
+%         \textbf{Coin-tosssing protocol $\CoinTossingPublic$}
+%     \end{center}
+%     \begin{enumerate}
+%       \item 
+%       (Nonce leaders.) 
+%       For each nonce-emitting slot $t$, use $\eta_0$ to 
+%       select a single player $u \in \Players$ 
+%       with probability $\sigma_{u}$. 
+%       Set $u_t = u$ and call $u_t$ the \emph{nonce leader at slot $t$}.
       
-      \item 
-      (Nonce announcement.)
-      At a nonce-emitting slot $t$, the designated nonce leader 
-      broadcasts a random string $y_t \in \{0,1\}^\kappa$ 
-      to all nonce players and inserts $y_t$ in $Q$. 
+%       \item 
+%       (Nonce announcement.)
+%       At a nonce-emitting slot $t$, the designated nonce leader 
+%       broadcasts a random string $y_t \in \{0,1\}^\kappa$ 
+%       to all nonce players and inserts $y_t$ in $Q$. 
 
-      \item 
-      (Nonce relay.) 
-      At slot $r$, suppose there is a nonce player $u$ who 
-      has previously heard about a nonce $y$, 
-      emitted from some slot $t \geq r - k$, 
-      which appears neither in $Q$ nor in his view of $\Chain$. 
-      Then $u$ re-inserts $y$ in $Q$ with timestamp $r$.
+%       \item 
+%       (Nonce relay.) 
+%       At slot $r$, suppose there is a nonce player $u$ who 
+%       has previously heard about a nonce $y$, 
+%       emitted from some slot $t \geq r - k$, 
+%       which appears neither in $Q$ nor in his view of $\Chain$. 
+%       Then $u$ re-inserts $y$ in $Q$ with timestamp $r$.
 
       
-      % \item 
-      % % (Nonce recording.) 
-      % At any slot $r$, 
-      % a designated slot leader in $\Pi$ 
-      % favors a new chain $\Chain$ over his currently-held chain $\Chain'$ 
-      % and appends a block $B$ on top of $\Chain$. 
-      % (It is possible that $\Chain = \Chain'$.) 
-      % In $B$, he includes every nonce $y \not \in \Chain$ 
-      % that satisfies one of the following: 
-      % \begin{enumerate*}[label=(\textit{\roman*})]
-      %   \item $y \in \Chain'$, or 
-      %   \item $y$ was emitted from a slot $t \geq s - k$.
-      % \end{enumerate*}
+%       % \item 
+%       % % (Nonce recording.) 
+%       % At any slot $r$, 
+%       % a designated slot leader in $\Pi$ 
+%       % favors a new chain $\Chain$ over his currently-held chain $\Chain'$ 
+%       % and appends a block $B$ on top of $\Chain$. 
+%       % (It is possible that $\Chain = \Chain'$.) 
+%       % In $B$, he includes every nonce $y \not \in \Chain$ 
+%       % that satisfies one of the following: 
+%       % \begin{enumerate*}[label=(\textit{\roman*})]
+%       %   \item $y \in \Chain'$, or 
+%       %   \item $y$ was emitted from a slot $t \geq s - k$.
+%       % \end{enumerate*}
       
-      \item 
-      (Output.)
-      At any slot $\tau \geq T + 2k$, 
-      every user $u \in \Players$ examines $\Chain_u$ 
-      and computes the \emph{output} $\displaystyle \eta = \eta_0 \oplus \bigoplus_{y \in \Chain_u} y$ 
-      where the exclusive-OR runs over 
-      all nonces $y$ recorded in $\Chain_u$. 
-    \end{enumerate}
-  \end{framed}
-  \caption{Coin tossing with a single nonce leader per slot}
-  \label{alg:coin-tossing-single-leader}
-\end{figure}
-% \end{minipage}
+%       \item 
+%       (Output.)
+%       At any slot $\tau \geq T + 2k$, 
+%       every user $u \in \Players$ examines $\Chain_u$ 
+%       and computes the \emph{output} $\displaystyle \eta = \eta_0 \oplus \bigoplus_{y \in \Chain_u} y$ 
+%       where the exclusive-OR runs over 
+%       all nonces $y$ recorded in $\Chain_u$. 
+%     \end{enumerate}
+%   \end{framed}
+%   \caption{Coin tossing with a single nonce leader per slot}
+%   \label{alg:coin-tossing-single-leader}
+% \end{figure}
+% % \end{minipage}
 
-\begin{proposition}\label{prop:coin-tossing-security-public}
-  Let $\alpha \in (0, 1/2)$ and $d, k, s, T, \tau \in \NN$ 
-  so that 
-  $s \leq k$ and 
-  $d$ divides both $k$ and $T$. 
-  Let $n = (T - k)/d$ and $\ell = k/d$. 
-  Suppose that the coin-flipping protocol $\Pi = \CoinTossingPublic$ 
-  uses an $(2^{-\tau}, k, s)$-secure ledger protocol $\Blockchain$.
-  Then $\Pi$ is $(\alpha^n + 2^{-\tau + 1}, \rho)$-secure 
-  where 
-  \begin{equation}\label{eq:minentropy-loss-Bernoulli}
-    % \rho = 1 + \ell + \log_2 n + \frac{\log_2(1/\EpsP)}{\log_2(1/\alpha)}
-    % \rho = \ell + \log_2 n + \tau/\log_2 (1/\alpha) + 1
-    \rho = \ell + \frac{\tau + \log_2 n - \log_2 (1 + \alpha)}{\log_2 (1/\alpha)}    \,.
-  \end{equation}
-\end{proposition}
-\begin{proof}
-  Let $\EpsP = 2^{-\tau}$. 
-  Recall the $(\ell, n, \alpha)$-Bernoulli game from Definition~\ref{def:Bernoulli-game}.
-  \begin{claim}\label{claim:correspondence-Bernoulli-game}
-    Let $k, d, T, \kappa \in \NN$ and set $\ell = k/d$ and $n = (T - k)/d$. 
-    Let $\alpha \in (0, 1/2)$ and  
-    let $\Players = \Players(\alpha)$ be the set of nonce players 
-    participating in protocol $\Pi = \CoinTossingPublic$. 
-    Then the output distribution of $\Pi$ 
-    is identical to 
-    the output distribution of 
-    an $(\ell, n, \alpha)$-Bernoulli game $U$ with dimension $\kappa$.
-  \end{claim}
+% \begin{proposition}\label{prop:coin-tossing-security-public}
+%   Let $\alpha \in (0, 1/2)$ and $d, k, s, T, \tau \in \NN$ 
+%   so that 
+%   $s \leq k$ and 
+%   $d$ divides both $k$ and $T$. 
+%   Let $n = (T - k)/d$ and $\ell = k/d$. 
+%   Suppose that the coin-flipping protocol $\Pi = \CoinTossingPublic$ 
+%   uses an $(2^{-\tau}, k, s)$-secure ledger protocol $\Blockchain$.
+%   Then $\Pi$ is $(\alpha^n + 2^{-\tau + 1}, \rho)$-secure 
+%   where 
+%   \begin{equation}\label{eq:minentropy-loss-Bernoulli}
+%     % \rho = 1 + \ell + \log_2 n + \frac{\log_2(1/\EpsP)}{\log_2(1/\alpha)}
+%     % \rho = \ell + \log_2 n + \tau/\log_2 (1/\alpha) + 1
+%     \rho = \ell + \frac{\tau + \log_2 n - \log_2 (1 + \alpha)}{\log_2 (1/\alpha)}    \,.
+%   \end{equation}
+% \end{proposition}
+% \begin{proof}
+%   Let $\EpsP = 2^{-\tau}$. 
+%   Recall the $(\ell, n, \alpha)$-Bernoulli game from Definition~\ref{def:Bernoulli-game}.
+%   \begin{claim}\label{claim:correspondence-Bernoulli-game}
+%     Let $k, d, T, \kappa \in \NN$ and set $\ell = k/d$ and $n = (T - k)/d$. 
+%     Let $\alpha \in (0, 1/2)$ and  
+%     let $\Players = \Players(\alpha)$ be the set of nonce players 
+%     participating in protocol $\Pi = \CoinTossingPublic$. 
+%     Then the output distribution of $\Pi$ 
+%     is identical to 
+%     the output distribution of 
+%     an $(\ell, n, \alpha)$-Bernoulli game $U$ with dimension $\kappa$.
+%   \end{claim}
 
-  Assume the claim for the moment. 
-  It follows 
-  that the 
-  min-entropy of the output distribution of 
-  protocol $\Pi$ 
-  is equal to 
-  the min-entropy of the output distribution of $U$. 
-  However, 
-  Lemma~\ref{lemma:xor-game-Bernoulli-gamma} and 
-  Lemma~\ref{lemma:xor-game-minentropy} together 
-  states that 
-  except with probability $\EpsP  +\alpha^n$, 
-  the latter quantity is at least $\kappa - \log_2 \gamma$ 
-  where $\gamma = n\,2^{\ell + 1} (1/\EpsP)^{1/\log_2(1/\alpha)}$.
-  Since the game $U$ is played on top of 
-  the ledger protocol $\Blockchain$, 
-  any guarantee provided by $U$ is 
-  further conditioned on the (external) event that 
-  $\Blockchain$ is $(\EpsP, k, s)$-secure. 
-  Using Definition~\ref{def:coin-flipping-security}, 
-  it follows that $\Pi$ is $(\alpha^n + 2 \EpsP, \rho)$-secure 
-  where $\rho = \log_2 \gamma$; 
-  this $\rho$ is given in~\eqref{eq:minentropy-loss-Bernoulli}. 
-  It remains to prove Claim~\ref{claim:correspondence-Bernoulli-game}.
+%   Assume the claim for the moment. 
+%   It follows 
+%   that the 
+%   min-entropy of the output distribution of 
+%   protocol $\Pi$ 
+%   is equal to 
+%   the min-entropy of the output distribution of $U$. 
+%   However, 
+%   Lemma~\ref{lemma:xor-game-Bernoulli-gamma} and 
+%   Lemma~\ref{lemma:xor-game-minentropy} together 
+%   states that 
+%   except with probability $\EpsP  +\alpha^n$, 
+%   the latter quantity is at least $\kappa - \log_2 \gamma$ 
+%   where $\gamma = n\,2^{\ell + 1} (1/\EpsP)^{1/\log_2(1/\alpha)}$.
+%   Since the game $U$ is played on top of 
+%   the ledger protocol $\Blockchain$, 
+%   any guarantee provided by $U$ is 
+%   further conditioned on the (external) event that 
+%   $\Blockchain$ is $(\EpsP, k, s)$-secure. 
+%   Using Definition~\ref{def:coin-flipping-security}, 
+%   it follows that $\Pi$ is $(\alpha^n + 2 \EpsP, \rho)$-secure 
+%   where $\rho = \log_2 \gamma$; 
+%   this $\rho$ is given in~\eqref{eq:minentropy-loss-Bernoulli}. 
+%   It remains to prove Claim~\ref{claim:correspondence-Bernoulli-game}.
 
-  \paragraph{Proof of Claim~\ref{claim:correspondence-Bernoulli-game}.}
+%   \paragraph{Proof of Claim~\ref{claim:correspondence-Bernoulli-game}.}
 
-    Consider the protocol $\Pi$. 
-    First, observe that every honest nonce will 
-    appear in the output calculation of $\Pi$. 
-    {\color{red}Why?}
-    % Specifically, 
-    % the nonce relay step in $\Pi$ 
-    % guarantees that an honestly-emitted nonce w
-    % suppose a nonce $y_t$ is announced by an honest player at slot $t \in [T]$. 
-    % Let $r \geq t + 1$ be the first slot after $t$ 
-    % so that $r$ is an honest slot in the ledger protocol $\Blockchain$. 
-    % Let $u$ be an honest nonce player and let $\Chain_u$ 
-    % be his view of the ledger at slot $r$. 
-    % % $r \geq T + 2k + 1$. 
-    % Then either $y_t \in \Chain_u$, 
-    % Since $\Blockchain$ is $(\EpsP, k, s)$-secure, 
-    % it follows that $r - t \leq s \leq k$ except with probability $\EpsP$. 
-    % Hence, at slot $r$, 
-    % either $y_$is announced no later than slot $t + k - 1$, 
-    % it would appear in the calculation of the output $\eta$. 
-
-
-    % Spcifically, 
-    % consider a nonce player $u$ and his view of the ledger $\Chain_u$ 
-    % at some slot $r \geq T + 2k + 1$. 
-    % % Let $\Chain_u[0:T]$ denote the prefix of $\Chain_u$ 
-    % % corresponding to slots $0, 1, \ldots, T$. 
-    % If a nonce $y$ does not appear in $\Chain_u[0:T]$ 
-    % then the nonce relaying step ensures that 
-    % it will be in $Q$ at slot $T$. 
-    % Due to the $\sECQ[k]$ and $\kSlotCP$ properties, 
-    % it is guaranteed to appear in $\Chain_u[0: T + 2k]$. 
+%     Consider the protocol $\Pi$. 
+%     First, observe that every honest nonce will 
+%     appear in the output calculation of $\Pi$. 
+%     {\color{red}Why?}
+%     % Specifically, 
+%     % the nonce relay step in $\Pi$ 
+%     % guarantees that an honestly-emitted nonce w
+%     % suppose a nonce $y_t$ is announced by an honest player at slot $t \in [T]$. 
+%     % Let $r \geq t + 1$ be the first slot after $t$ 
+%     % so that $r$ is an honest slot in the ledger protocol $\Blockchain$. 
+%     % Let $u$ be an honest nonce player and let $\Chain_u$ 
+%     % be his view of the ledger at slot $r$. 
+%     % % $r \geq T + 2k + 1$. 
+%     % Then either $y_t \in \Chain_u$, 
+%     % Since $\Blockchain$ is $(\EpsP, k, s)$-secure, 
+%     % it follows that $r - t \leq s \leq k$ except with probability $\EpsP$. 
+%     % Hence, at slot $r$, 
+%     % either $y_$is announced no later than slot $t + k - 1$, 
+%     % it would appear in the calculation of the output $\eta$. 
 
 
-    Every nonce-emitting slot $t$ yields an option set $P_t$, 
-    for the nonce leader $u_t$, 
-    which contains all possible values for the nonce $y_t$ 
-    including a uniformly random string $\eta_t$. 
-    \begin{description}[font=\normalfont\itshape\space]
-      \item[If the nonce-leader at slot $t$ is honest,] 
-      he will immediately announce his only option $y_t = \eta_t$; 
-      this corresponds to the case $P_t = \{\star\}$. 
-      The symbol $\star \in P_{\ell + 1}$ hides 
-      $\eta_{\ell  + 1}$ 
-      from the view of the adversarial players 
-      before it is announced. 
-      When the $\star$ in the game 
-      is converted into a uniformly random lookahead string $x$, 
-      it mimics the situation that the adversary gets to see 
-      $\eta_{\ell + 1}$ for the first time. 
-
-      \item[If the nonce-leader $u_t$ at slot $t$ is dishonest,] 
-      his option set $P_t$ equals $\{\eta_t, 0^\kappa\}$. 
-      The lookahead parameter $\ell$ in the XOR target game 
-      corresponds to the number of nonce-messages that 
-      $u_t$ may observe before deciding 
-      which option $y_t \in P_t = \{\eta_t, 0^\kappa\}$ to announce. 
-      Here, the option $y_t = 0^\kappa$ corresponds to the situation 
-      that $u_t$ does not announce at all (or announces late). 
-    \end{description}
+%     % Spcifically, 
+%     % consider a nonce player $u$ and his view of the ledger $\Chain_u$ 
+%     % at some slot $r \geq T + 2k + 1$. 
+%     % % Let $\Chain_u[0:T]$ denote the prefix of $\Chain_u$ 
+%     % % corresponding to slots $0, 1, \ldots, T$. 
+%     % If a nonce $y$ does not appear in $\Chain_u[0:T]$ 
+%     % then the nonce relaying step ensures that 
+%     % it will be in $Q$ at slot $T$. 
+%     % Due to the $\sECQ[k]$ and $\kSlotCP$ properties, 
+%     % it is guaranteed to appear in $\Chain_u[0: T + 2k]$. 
 
 
-    Thus the output distribution of $\Pi$ is identical to the output distribution of $U$.
-\end{proof}
+%     Every nonce-emitting slot $t$ yields an option set $P_t$, 
+%     for the nonce leader $u_t$, 
+%     which contains all possible values for the nonce $y_t$ 
+%     including a uniformly random string $\eta_t$. 
+%     \begin{description}[font=\normalfont\itshape\space]
+%       \item[If the nonce-leader at slot $t$ is honest,] 
+%       he will immediately announce his only option $y_t = \eta_t$; 
+%       this corresponds to the case $P_t = \{\star\}$. 
+%       The symbol $\star \in P_{\ell + 1}$ hides 
+%       $\eta_{\ell  + 1}$ 
+%       from the view of the adversarial players 
+%       before it is announced. 
+%       When the $\star$ in the game 
+%       is converted into a uniformly random lookahead string $x$, 
+%       it mimics the situation that the adversary gets to see 
+%       $\eta_{\ell + 1}$ for the first time. 
+
+%       \item[If the nonce-leader $u_t$ at slot $t$ is dishonest,] 
+%       his option set $P_t$ equals $\{\eta_t, 0^\kappa\}$. 
+%       The lookahead parameter $\ell$ in the XOR target game 
+%       corresponds to the number of nonce-messages that 
+%       $u_t$ may observe before deciding 
+%       which option $y_t \in P_t = \{\eta_t, 0^\kappa\}$ to announce. 
+%       Here, the option $y_t = 0^\kappa$ corresponds to the situation 
+%       that $u_t$ does not announce at all (or announces late). 
+%     \end{description}
+
+
+%     Thus the output distribution of $\Pi$ is identical to the output distribution of $U$.
+% \end{proof}
 
 
 %==========================================================
@@ -388,8 +443,8 @@
   % $ and 
   % $\rho = \ell + \log_2 n + \tau/a + 1$.
 \end{corollary}
-\begin{proof}
+\begin{proof}[(Sketch)]
   Apply  
-  Lemma~\ref{prop:coin-tossing-security-public} into 
+  Lemma~\ref{lemma:xor-game-Bernoulli-gamma} into 
   Lemma~\ref{lemma:composition}.
 \end{proof}

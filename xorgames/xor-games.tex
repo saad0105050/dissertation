@@ -181,7 +181,7 @@ Anticipating our applications,
 we are interested in XOR target games where the initial value $\eta_0$ is uniformly random. 
 \begin{definition}[Uniform XOR target games]
     \label{def:xor-game-uniform}
-    An explicit XOR target game $G(\eta_0,T\,;\, \Sfull \,;\, \Pfull)$ 
+    An explicit XOR target game $$G(\eta_0,T\,;\, \Sfull \,;\, \Pfull)$$ 
     is called 
     an \emph{uniform XOR target game}
     \[
@@ -329,7 +329,7 @@ The theorem below obtains a tighter bound on $g(U)$.
 % \subsection{Grinding power determines the winning probability}
 
 
-\subsection{Proof of Theorem~\ref{thm:xor-game-lookahead}}
+\section{Proof of Theorem~\ref{thm:xor-game-lookahead}}
 
 % \begin{proof}[Proof of Theorem~\ref{thm:xor-game-lookahead}]
 
@@ -964,237 +964,74 @@ The theorem below obtains a tighter bound on $g(U)$.
 %
 
 
-    \begin{definition}[$(\ell, n, \alpha)$-game]\label{def:xor-game-poisson}
-        Let $\ell, n, m \in \NN, \alpha \in (0, 1/2)$ and 
-        $\sigma \in \RR^m$ so that $\sigma_i \in (0, 1)$ and $\sum_{i=1}^m \sigma_i = \alpha$. 
-        Let $X_1, \ldots, X_m \in \{0,1\}$ be independent Bernoulli random variables with 
-        $\Pr[X_i = 1] = \sigma_i$. 
-        Define $S = \sum_{i = 1}^m X_i$ 
-        and let $\Distribution$ be the distribution of $S$.
-        Then an $(\ell, n, \Distribution)$-game is called an 
-        \emph{$(\ell, n, \alpha)$-game}.
+
+
+
+
+\section{Sequential composition of XOR target games}
+
+    The candidate outputs of a uniform XOR target game 
+    are close to uniform. 
+    (The loss in the min-entropy is due to the grinding power, 
+    i.e., the number of possible outputs.) 
+    In this section, 
+    we study the grinding power of 
+    a series of XOR target games where 
+    the output of any game in the sequence is 
+    the initial string of the next game.
+
+    % \subsection{The composition lemma}\label{sec:composition-lemma}
+    \newcommand{\ExplicitPi}[1][x]{^{#1 \rightarrow}\Pi}
+    \begin{definition}[$(L, \Pi)$-composition]
+        Let $\kappa \in \NN$, $\epsilon \in (0,1)$ and 
+        let $\rho$ be a non-negative real at most $\kappa$.
+        Let $\Pi$ be an $(\epsilon, \rho)$-secure coin-flipping protocol 
+        with dimension $\kappa$ from Definition~\ref{def:coin-flipping}. 
+        Let $\ExplicitPi[\eta]$ be an explicit version of $\Pi$ 
+        which uses a given initial string $\eta$.
+        Let $L \in \NN$. 
+        An $(L, \Pi)$-composition is a tuple $(\Pi_1, \ldots, \Pi_L)$ 
+        of protocol instances where
+        \begin{enumerate}
+            \item $\Pi_1 = \Pi$ and its output is $\eta_1$. 
+
+            \item If $t \geq 2$,        
+                $\Pi_t$ is an independent instance of $\ExplicitPi[\eta_{t-1}]$. 
+                Furthermore, $\Pi_t$ commences after $\Pi_{t-1}$ terminates.
+            
+        \end{enumerate} 
+        $\eta_L$ is called the \emph{output of the composition}. 
+        We say that this composition is $(\epsilon, \rho)$-secure 
+        if every $\Pi_t$ is $(\epsilon, \rho)$-secure.
     \end{definition}
 
-
-    \begin{theorem}\label{thm:xor-game-private-election}
-        Let $\ell, n \in \NN, n \geq 2$ and $\alpha \in (0, 1/2)$. 
-        Let
-        \begin{equation}\label{eq:lambda-star-poisson}
-            \lambda = \begin{cases}
-                2 & \quad\text{if $\alpha \leq 0.41$\,,}\\
-                \frac{2 \ln(1/\alpha)}{\ln(1+3\alpha+\alpha^2)} &\quad\text{otherwise\,.}
-            \end{cases}
-        \end{equation}
-        Let $U$ be an $(\ell, n, \alpha)$-game with grinding power $g$. 
-        Let $A$ be the event that 
-        at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$; 
-        condition on $A$. 
-        Then 
-        $$
-            \Exp[g^\lambda \mid A] 
-            \leq \frac{n^{1 + \lambda} }{1+\alpha} 
-            \cdot \begin{cases}
-                (1 + 3 \alpha + \alpha^2)^{\ell} &\quad\text{if $\alpha \leq 0.41$\,,} \\
-                (1/\alpha)^\ell &\quad\text{otherwise\,.}
-            \end{cases}
-            \,.
-        $$
-        % \begin{align*}
-        %     \Exp[g^2 \mid A] &\leq n^3 \cdot 
-        %         (1 + 3 \alpha + \alpha^2)^\ell 
-        %         &\qquad\text{if\quad $\alpha \in (0, 0.41]$, }\\
-        %     \Exp[g^{1.37} \mid A] &\leq n^{2.37} \cdot 
-        %         (1 + 3 \alpha + \alpha^2)^{0.685 \ell }
-        %         &\qquad\text{if\quad $\alpha \in (0.41, 0.5)$}
-        %         \,.
-        % \end{align*}
-    \end{theorem}
-    We postpone a proof for the moment.
+    Since $\Pi_2$ commences after $\Pi_1$ terminates, 
+    the explicit initial value $\eta_1$ given to $\Pi_2$ is uniform 
+    and, therefore, each $\Pi_t$ is an independent instance of $\Pi$.
 
 
 
-    \begin{lemma}\label{lemma:xor-game-poisson-gamma}
-        Let $\EpsP \in (0, 1), \alpha \in (0, 1/2), \ell, n \in \NN$ and $n \geq \ell$. 
-        Let $\lambda$ be defined in~\eqref{eq:lambda-star-poisson}.
-        Let 
-        \begin{equation}
-            \label{eq:xor-poisson-tail-gamma}
-            % \gamma = (1 + 3 \alpha + \alpha^2)^{\ell/2} \cdot \begin{dcases}            
-            %     n^{1.50} \EpsP^{-0.50} \,,&\quad\text{if}\quad\alpha \in (0, 0.41]\,, \\
-            %     n^{1.73} \EpsP^{-0.73} \,,  &\quad\text{if}\quad\alpha \in (0.41, 0.50)\,.
-            % \end{dcases}
-            \gamma = \left(\frac{n^{1 + \lambda} }{ (1+\alpha) \EpsP} \right)^{1/\lambda}
-                \cdot \begin{cases}
-                    (1 + 3 \alpha + \alpha^2)^{\ell/\lambda} &\quad\text{if $\alpha \leq 0.41$\,,} \\
-                    (1/\alpha)^{\ell/\lambda} &\quad\text{otherwise\,.}
-                \end{cases}
-        \end{equation}
-        % and $\beta = 5/(12 - 14 \alpha)$.
-        Let $g$ be the grinding power in an $(\ell, n, \alpha)$-game. 
-        Then $\Pr[g \geq \gamma] \leq \alpha^n + \EpsP$.
+
+    \begin{lemma}\label{lemma:composition}
+    Let $\Pi$ be an $(\epsilon, \rho)$-secure coin-flipping protocol. 
+    An $(L, \Pi)$-composition is 
+    % $\left(L\epsilon^{1 - \rho/\log_2(1/\epsilon)}, \rho\right)$-secure.
+    $\left(2^\rho \epsilon L, \rho\right)$-secure.
     \end{lemma}
     \begin{proof}
-        Let $g$ be the grinding power of an $(\ell, n, \alpha)$-game $U$.
-        Let $A$ be the event that 
-        at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$. 
-        Recall the random variable $S$ from Definition~\ref{def:xor-game-poisson}. 
-        Recall that in the proof of Theorem~\ref{thm:xor-game-private-election}, 
-        we established that $\Pr[S \geq 1] \leq \alpha$. 
-        It follows that $\Pr[\overline{A}] = (\Pr[S \geq 1])^n \leq \alpha^n$. 
-        Thus, for any non-negative real $\gamma$, 
-        we have 
-        $
-        \Pr[g \geq \gamma] 
-        \leq 1 \cdot \Pr[\overline{A}] + \Pr[g \geq \gamma \mid A] \cdot 1
-        = \alpha^n + \Pr[g \geq \gamma \mid A]
-        $. 
-        The rest of the proof focuses on finding a $\gamma$ so that 
-        for a given $\EpsP$, 
-        $\Pr[g \geq \gamma \mid A]$ is at most $\EpsP$. 
-
-        The bound in~\eqref{eq:xor-poisson-tail-gamma} follows from 
-        Theorem~\ref{thm:xor-game-private-election} and the following fact.
-
-        \begin{fact}\label{fact:grinding-max}
-            Let $\GrindingPower$ be an arbitrary non-negative random variable, 
-            $\EpsP \in (0, 1)$ and 
-            $\GrindingMax, \lambda$ be arbitrary positive reals. 
-            If $
-            % \begin{equation}\label{eq:grinding-max}
-                \GrindingMax \geq \left( \Exp[g^\lambda]/\EpsP \right)^{1/\lambda}
-            % \end{equation}
-            $
-            then $\Pr[\GrindingPower \geq \GrindingMax] \leq \EpsP$.    
-        \end{fact}
-        \begin{proof}
-            We can use Markov's inequality to write 
-            $
-            % \begin{equation}\label{eq:grinding-markov}
-                \Pr[\GrindingPower \geq \GrindingMax] \leq \Exp[\GrindingPower^\lambda]/\GrindingMax^\lambda
-            $.
-            % \end{equation}
-            If we require $\Pr[\GrindingPower \geq \GrindingMax] \leq \EpsP$, 
-            it suffices to require 
-            $\Exp[\GrindingPower^\lambda]/\GrindingMax^\lambda \leq \EpsP$, or
-            $\GrindingMax^\lambda \geq \Exp[\GrindingPower^\lambda]/\EpsP$. 
-            Taking the $\lambda$th root gives the lower bound on $\gamma$.
-        \end{proof}
-        This completes the proof of Lemma~\ref{lemma:xor-game-poisson-gamma}.
+        We will prove the claim by an induction on $t \in [L]$. 
+        % As we have argued at the beginning of Section~\ref{sec:composition-lemma}, 
+        % the grinding power of the games $G_1, \ldots, G_L$ in the composition is 
+        % an independent copy of $g$, the grinding power of $G_1$. 
+        As we mentioned before, each protocol instance $\Pi_t$ 
+        in the composition is an independent instance of $\Pi$. 
+        Our inductive hypothesis is that for $t \in [L]$, 
+        $\Pi_\tau$ is $(\epsilon, \rho)$-secure for $\tau = 1, 2, \ldots, t-1$. 
+        Thus there are at most $2^\rho$ choices for $\eta_{t - 1}$. 
+        By a union bound on these choices, $\Pi_t$ is $(2^\rho \epsilon, \rho)$-secure. 
+        A union bound shows that 
+        the probability that 
+        except with probability at most $L\cdot 2^\rho \epsilon$, 
+        every $\Pi_t, t \in [L]$ is $(2^\rho \epsilon, \rho)$-secure.
     \end{proof}
-
-
-    \paragraph{Proof of Theorem~\ref{thm:xor-game-private-election}.}
-    % \begin{proof}
-        % First, note that 
-        % $\ln(\Pr[S \geq 0]) 
-        % = \ln\left(\prod_{i = 1}^m (1 - \sigma_i) \right) 
-        % = \sum_{i = 1}^m \ln (1 - \sigma_i)$. 
-        % Since the function $x \mapsto \ln(1 -x)$ is concave and super-additive for $x \in (0, 1)$, 
-        % it follows that $\ln(\Pr[S \geq 0]) \geq \ln (1 - \sum_i \sigma_i) = \ln (1 - \alpha)$. 
-        % Since logarithm is a monotone function, $\Pr[S \geq 0] \geq 1 - \alpha$ and, 
-        % consequently, $$\Pr[S \geq 1] \leq \alpha\,.$$
-        Recall the definition of an $(\ell, n, \alpha)$-game from Definition~\ref{def:xor-game-poisson}
-        and 
-        the random variable $S$ therein. 
-        By Markov's inequality,
-        $$
-            \Pr[S \geq 1] \leq \frac{\Exp S}{1} = \alpha \,.
-        $$
-
-        \paragraph{Case: $\alpha \in (0, 0.41]$.}
-        Let $X'_i \in \{0,1\}, i \in [m]$ be i.i.d. Bernoulli random variables 
-        with $\Pr[X'_i] = \alpha/m$. 
-        Define $S' = \sum_{i=1}^m X'_i$ 
-        so that $S'\sim \Binomial(m, \alpha/m)$. 
-        Fact~\ref{fact:second-moment-equal-unequal-stake} states that 
-        $\Exp S^2 \leq \Exp {S'}^2 \leq \alpha + \alpha^2$. 
-        Since $\Exp S = \alpha$, it follows that 
-        $$
-        \Exp (1 + S)^2 
-        \leq 1 + 2 \Exp S + \Exp S^2
-        \leq 1 + 3 \alpha + \alpha^2
-        \,.
-        $$
-        Since $\alpha < 1/2$, the quantity 
-        $\Pr[S \geq 1] \cdot \Exp (1 + S)^2$ is at most $\alpha\cdot (1 + 3.5 \alpha)$. 
-        This quantity is convex and increasing in $\alpha$. 
-        The unique solution to the quadratic equation $3.5 \alpha^2 + \alpha - 1 = 0$ 
-        for $\alpha \in (0, 1/2)$ 
-        is $\alpha = (-1 + \sqrt{1 + 14})/7 = 0.4104$. 
-        Therefore, for any $\alpha \leq 0.41$, 
-        the random variable $S$ satisfies~\eqref{eq:lambda-S-requirement} 
-        with $\lambda = 2$.
-        By Lemma~\ref{lemma:adaptive-moment}, we conclude that 
-        $\Exp[g^2 \mid A] \leq n^3 (1 + 3 \alpha + \alpha^2)^\ell$ 
-        for $\alpha \in (0, 0.41]$.
-        
-        \paragraph{Case: $\alpha \in (0.41, 0.5)$.}
-        In this case, we use Holder's inequality for any $\lambda \in (1,2)$ 
-        and observe that 
-        $$
-            \Exp (1+S)^\lambda 
-            \leq \left( \Exp (1+S)^2 \right)^{\lambda/2} 
-            = (1 + 3\alpha +\alpha^2)^{\lambda/2}
-            \,.
-        $$
-        Recalling~\eqref{eq:lambda-S-requirement}, 
-        we want to find the maximal $\lambda \in (1, 2)$ 
-        which satisfies $\alpha(1 + 3\alpha +\alpha^2)^{\lambda/2} \leq 1$ or, 
-        equivalently, setting $\lambda$ as in~\eqref{eq:lambda-star-poisson}. 
-        Note that this implies $\Exp (1+S)^\lambda \leq 1 + 3\alpha +\alpha^2)^{\lambda/2} \leq 1/\alpha$.
-        The claim follows from applying Lemma~\ref{lemma:adaptive-moment} 
-        with $\lambda$ from~\eqref{eq:lambda-star-poisson}. 
-        % Since the quantity at the right-hand side increases monotonically in $\alpha$, 
-        % it suffices to use $\alpha = 1/2$; that is, 
-        % $$
-        %     \lambda 
-        %     \leq \frac{2 \log_2(1/\alpha)}{\log_2(1 + 3\alpha +\alpha^2)}
-        %     \leq \frac{2}{\log_2(1 + 3/2 + 1/4)}
-        %     < 1.37
-        %     \,.
-        % $$
-
-        % Let $\lambda \in (1, 2)$ and $\alpha \in (0.41, 0.5)$. 
-        % Define 
-        % $$f(\lambda) = \Exp (1 + S)^\lambda
-        % \quad \text{and} \quad
-        % h(\lambda) = \Exp (1 + S')^\lambda
-        % $$
-        % and note that since $S, S'$ are non-negative, 
-        % both $f$ and $h$ are convex combinations of 
-        % convex and increasing functions in $\lambda$; 
-        % hence both $f(\lambda), h(\lambda)$ are convex and increasing in $\lambda$. 
-        % Moreover, $f(1) = h(1) = \alpha$ and $f(2) \leq h(2) = \alpha + \alpha^2$. 
-        % It follows that $f(\lambda) \leq h(\lambda)$ for $\lambda \in (1, 2]$ or, 
-        % equivalently, $\Exp (1 + S)^\lambda \leq \Exp (1 + S')^\lambda$.
-
-        % It is a known fact (and easy to check) that $\Binomial(m, \alpha/m) \DominatedBy \Poisson(\alpha)$. 
-        % Let $P \sim \Poisson(\alpha)$ and note that $S' \sim \Binomial(m, \alpha/m)$. 
-        % Hence $$\Exp (1 + S)^\lambda \leq \Exp (1 + P)^\lambda\,.$$ 
-    \hfill\qed
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
