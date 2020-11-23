@@ -1,0 +1,238 @@
+
+\section{Grinding power in a single epoch}
+
+\subsection*{Proof of Theorem~\ref{thm:beacon-bernoulli-single-epoch}}
+% \begin{proof}  
+  Consider Lemma~\ref{lemma:xor-game-Bernoulli-gamma} 
+  with $\ell = k/d$ and $n = (T-k)/d$. 
+  The min-entropy loss, 
+  \begin{align*}
+    \rho &= \log_2(\gamma) \\
+        &= \log_2 \left[  2^{\ell + 1} \left(
+                \frac{n}{(1+\alpha)\EpsP}
+            \right)^{1/\log_2(1/\alpha)}\right] \\
+        &= \ell + 1 + f(\alpha) \log_2\left(\frac{n}{(1+\alpha)\EpsP}\right)
+        \,.
+  \end{align*}
+  The total failure probability, 
+  considering both $\Pr[g \geq \gamma]$ and 
+  the $(\EpsP, k, s)$-secure protocol $\Blockchain$, 
+  is $(\alpha^n + \EpsP) + \EpsP$. 
+  Since we assume~\eqref{eq:alphatothen-epsp}, it is at most $3 \EpsP$.
+% \end{proof}
+\hfill\qed
+
+\subsection*{Proof of Theorem~\ref{thm:beacon-poisson-single-epoch}}
+% \begin{proof}  
+  Consider Lemma~\ref{lemma:xor-game-poisson-gamma} 
+  with $\ell = k/d$ and $n = (T-k)/d$. 
+          % \gamma = \left(\frac{n^{1 + \lambda} }{ (1+\alpha) \EpsP} \right)^{1/\lambda}
+          %     \cdot \begin{cases}
+          %         (1 + 3 \alpha + \alpha^2)^{\ell/\lambda} &\quad\text{if $\alpha \leq 0.41$\,,} \\
+          %         (1/\alpha)^{\ell/\lambda} &\quad\text{otherwise\,.}
+          %     \end{cases}
+  The total failure probability, 
+  considering both $\Pr[g \geq \gamma]$ and 
+  the $(\EpsP, k, s)$-secure protocol $\Blockchain$, 
+  is $(\alpha^n + \EpsP) + \EpsP$. 
+  Since we assume~\eqref{eq:alphatothen-epsp}, it is at most $3 \EpsP$.
+
+  Let us focus on the min-entropy loss.
+
+  \paragraph{Case: $\alpha \leq 0.41$.}
+  In this case, $\lambda = 2$ and 
+  the min-entropy loss, 
+  \begin{align*}
+    \rho &= \log_2(\gamma) \\
+        &= \log_2 \left[  \left(\frac{n^{1 + \lambda} }{ (1+\alpha) \EpsP} \right)^{1/\lambda}
+          \cdot (1 + 3 \alpha + \alpha^2)^{\ell/\lambda}
+        \right] \\
+        &= (1/2)\log_2 \left(\frac{n^3}{ (1+\alpha) \EpsP} \right) 
+          + (\ell/2) \log_2(1 + 3 \alpha + \alpha^2)
+        \,.
+  \end{align*}
+  
+  \paragraph{Case: $\alpha > 0.41$.}
+  In this case, $\lambda = 2 \ln(1/\alpha)/\ln(1+3\alpha+\alpha^2) = 2/f(\alpha)$ and 
+  the min-entropy loss, 
+  \begin{align*}
+    \rho &= \log_2(\gamma) \\
+        &= \log_2 \left[  \left(\frac{n^{1 + \lambda} }{ (1+\alpha) \EpsP} \right)^{1/\lambda}
+          \cdot (1/\alpha)^{\ell/\lambda}
+        \right] \\
+        &= (1/\lambda) \log_2 \left(\frac{n^{1 + \lambda} }{ (1+\alpha) \EpsP} \right)
+          + (\ell/\lambda) \log_2(1/\alpha)
+        \\
+        &= (f(\alpha)/2)\log_2 \left(\frac{n^{(1 + 2/f(\alpha))} }{ (1+\alpha) \EpsP} \right) 
+          + (\ell f(\alpha)/2) \log_2(1/\alpha)
+          \\
+        &= (f(\alpha)/2)\log_2 \left(\frac{n^{1 + 2/f(\alpha)} }{ (1+\alpha) \EpsP} \right) 
+          + (\ell/2) \log_2(1 + 3\alpha + \alpha^2)
+        \,.
+  \end{align*}
+% \end{proof}
+\hfill\qed
+
+
+
+
+
+\section{Grinding power over multiple epochs}
+
+\subsection*{Proof of Theorem~\ref{thm:beacon-bernoulli-multi-epoch}}
+% \begin{proof}
+  Consider Lemma~\ref{lemma:xor-game-Bernoulli-gamma}, 
+  with $\ell = k/d$ and $n = (T-k)/d$, 
+  in conjunction with Lemma~\ref{lemma:beacon-composition}.
+  It follows that the min-entropy loss, $\rho$, 
+  would be same as in the single-epoch case, 
+  given by Theorem~\ref{thm:beacon-bernoulli-single-epoch}.
+
+  The failure probability, however, would be 
+  \begin{align*}
+    3 L 2^\rho \EpsP
+    &= 3 L 2^{\ell + 1} 
+      \left(\frac{n}{1+\alpha}\right)^{f(\alpha)} 
+      \EpsP^{1 - f(\alpha)}
+      \,.
+  \end{align*}
+  
+% \end{proof}
+\hfill\qed
+
+
+\subsection*{Proof of Theorem~\ref{thm:beacon-poisson-multi-epoch}}
+% \begin{proof}
+  Consider Lemma~\ref{lemma:xor-game-poisson-gamma}, 
+  with $\ell = k/d$ and $n = (T-k)/d$, 
+  in conjunction with Lemma~\ref{lemma:beacon-composition}.
+  It follows that the min-entropy loss, $\rho$, 
+  would be same as in the single-epoch case, 
+  given by Theorem~\ref{thm:beacon-poisson-single-epoch} 
+  for $\alpha \leq 0.41$.
+
+  % The failure probability, however, would be 
+  % \begin{align*}
+  %   3 L 2^\rho \EpsP
+  %   &= 3 L (1+3\alpha+\alpha^2)^{k/2d}
+  %     \left(\frac{n}{1+\alpha}\right)^{f(\alpha)} 
+  %     \EpsP^{1/2}
+  %     \,.
+  % \end{align*}
+
+
+
+
+
+
+
+
+  Notice that $\lambda = 2$ since $\alpha \leq 0.41$.
+  Let $\tau = \log_2(1/\EpsP), a = 1 + 3 \alpha + \alpha^2$,
+  % $$
+ %    a = 
+ %      % \begin{cases}
+ %        1 + 3 \alpha + \alpha^2 &\quad\text{if $\alpha \leq 0.41$\,,} \\
+ %        1/\alpha &\quad\text{otherwise\,,}
+ %    \end{cases}
+  % $$
+  and 
+  $$
+    p(d) = n^{1+1/\lambda} \EpsP^{1 - 1/\lambda} a^{\ell/\lambda}
+    \,.
+  $$
+  Then, according to Lemma~\ref{lemma:composition}, 
+  the min-entropy loss is at most $\log_2(\gamma)$ 
+  except with probability at most $3 L p(d)$. 
+  Let $\delta \in (0, 1)$ so that $p(d) \leq \EpsP^\delta$; 
+  the value of $\delta$ will be determined later. 
+  We wish to select a $d$ so that $\delta$ is maximized.
+
+  First, we require that 
+  \begin{align*}
+    &\alpha^n \leq \EpsP\,,\\
+    \text{or}\quad &
+      1/\EpsP \leq (1/\alpha)^{(T - k)/d}\,,\\
+    \text{or}\quad &
+      \log_2(1/\EpsP) \leq ((T - k)/d)\log_2(1/\alpha)\,,\\
+    \text{or}\quad &
+      d \leq \dMax \triangleq \frac{(T - k)\log_2(1/\alpha)}{\log_2(1/\EpsP)}
+      \,.
+  \end{align*}
+
+  We also want 
+  \begin{align*}
+    &p(d) \leq \EpsP^{\delta}\,,\\
+    \text{or}\quad &
+      n^{1+1/\lambda} \EpsP^{1 - 1/\lambda} a^{\ell/\lambda} \leq \EpsP^\delta \,,\\
+    \text{or}\quad &
+      (1+1/\lambda)\log_2(n)
+      + (1/\lambda - 1)\log_2(1/\EpsP) 
+      + (\ell/\lambda) \log_2(a) \leq -\delta \log_2(1/\EpsP) \,,\\
+    \text{or}\quad &      
+      (\ell/\lambda) \log_2(a) \leq (1-\delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda)\log_2(n)\,,\\
+    \text{or}\quad &      
+      (k/d\lambda) \log_2(a) \leq (1-\delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda)\log_2((T-k)/d)\,,\\
+    \text{or}\quad &      
+      \frac{(k/\lambda) \log_2(a)}{(1-\delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda)\log_2((T-k)/d)} \leq d
+      \,.
+  \end{align*}
+  
+  For the above inequality to hold, 
+  it suffices to take $d \geq \dMin(\delta)$ where 
+  $$
+    \dMin(\delta) = \frac{(k/\lambda) \log_2 a}{(1 - \delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda) \log_2(T - k)}
+    \,.
+  $$
+  An admissible $d$ must satisfy
+  \begin{align*}
+    &\dMin(\delta) \leq \dMax \,,\\
+    \text{or}\quad &      
+      \frac{(k/\lambda) \log_2 a}{(1 - \delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda) \log_2(T - k)}
+        \leq (T - k) \log_2(1/\alpha)/\log_2(1/\EpsP) \,,\\
+    \text{or}\quad &      
+      \frac{(k/\lambda) \log_2 a}{(T - k) \log_2(1/\alpha)/\log_2(1/\EpsP)} 
+        \leq (1 - \delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda) \log_2(T - k) \,,\\
+    \text{or}\quad &      
+      \frac{(k/\lambda) \log_2 a}{(T - k) \log_2(1/\alpha)} + \frac{(1+1/\lambda) \log_2(T - k)}{\log_2(1/\EpsP)}
+        \leq 1 - \delta - 1/\lambda  \,,\\
+    \text{or}\quad &      
+      \frac{k}{T-k}\cdot \frac{f(\alpha)}{\lambda} + (1+1/\lambda) \frac{ \log_2(T - k)}{\log_2(1/\EpsP)}
+        \leq 1 - \delta - 1/\lambda  \,,
+  %       \\
+    % \text{or}\quad &      
+    %   \frac{(1/\lambda) \log_2 a}{(R - 1) \log_2(1/\alpha)} + \frac{(1+1/\lambda) \log_2(k(R-1))}{\log_2(1/\EpsP)}
+    %     \leq 1 - \delta - 1/\lambda  
+        \,.
+  \end{align*}
+  where we used $f(\alpha) = \log_2(a)/\log_2(1/\alpha)$. 
+  Thus, if we take $d = \lfloor \dMax \rfloor$, we can achieve  $p(d) \leq \EpsP^{\delta}$ 
+  where 
+  \begin{align}
+    \delta
+      % &\leq \leq 1 - 1/\lambda - \frac{(1/\lambda) \log_2 a}{(R-1) \log_2(1/\alpha)} - \frac{(1+1/\lambda) \log_2(k(R-1))}{\log_2(1/\EpsP)}  \\
+      &\leq 1 - 1/\lambda - \frac{k}{T-k}\cdot \frac{f(\alpha)}{\lambda} - (1+1/\lambda) \frac{ \log_2(T - k)}{\log_2(1/\EpsP)}\,. \label{eq:delta}    
+  \end{align}
+
+
+  \begin{fact*}
+    If $x,y \in \RR$ satisfy $y = x^{-1/\log_2(1/x)}$ then $y = 2$.
+  \end{fact*}
+  \noindent
+  For further simplification, let us use the assumption that $\alpha \leq 0.41$ 
+  and write $c = k/(T-k)$; 
+  this implies $\lambda = 2, a = 1 + \alpha + \alpha^2$, 
+  \begin{align*}
+    \delta
+      &\leq \frac{1}{2} - \frac{c f(\alpha)}{2} - \frac{3}{2} \frac{ \log_2(T - k)}{\log_2(1/\EpsP)}\,, 
+      \qquad \text{and}\\
+    \EpsP^\delta  
+      &\leq \EpsP^{1/2 - c f(\alpha)/2} \cdot \left[ \EpsP^{-1/\log_2(1/\EpsP)} \right]^{(3/2)\log_2(T - k)} \\
+      &= \EpsP^{1/2 - c f(\alpha)/2} \cdot 2^{(3/2)\log_2(T - k)} \\
+      &= \EpsP^{1/2 - (k/(T-k)) f(\alpha)/2} \cdot (T - k)^{3/2} 
+      \,,
+  \end{align*}
+  as claimed in the theorem statement. 
+  Here, we used the above fact with $x = \EpsP$.  
+% \end{proof}
+\hfill\qed

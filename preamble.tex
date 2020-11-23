@@ -84,11 +84,6 @@
     \newcommand{\InThisPaper}{paper}
 }
 
-\newtoggle{drawfigs}
-% \toggletrue{drawfigs}
-\togglefalse{drawfigs}
-
-
 %%%%%%%%%%%%%%%%%%
 % \usepackage{stix2}
 
@@ -257,6 +252,8 @@
 \newcommand{\LeaderElection}{\mathrm{LE}}
 \newcommand{\PublicLeaderElection}{\LeaderElection_\mathsf{public}}
 \newcommand{\PrivateLeaderElection}{\LeaderElection_\mathsf{private}}
+\newcommand{\dMin}{d_\mathrm{min}}
+\newcommand{\dMax}{d_\mathrm{max}}
 
 
 
@@ -270,6 +267,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Plotting/drawing-related functions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtoggle{drawfigs}
+\toggletrue{drawfigs}
+% \togglefalse{drawfigs}
+
 \usepackage{tikz}
 \usetikzlibrary{automata,arrows,positioning,calc,math}
 \usepackage{pgfplots}
