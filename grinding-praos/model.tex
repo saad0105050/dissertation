@@ -409,16 +409,55 @@ $$
 The min-entropy loss in the beacon output is, therefore, 
 at most $\log_2 g$. 
 
-\begin{definition}[Grinding insecurity]\label{def:grinding-insecurity}
-    Let $n, k, s \in \NN, \rho \in \RR_+$ and $\EpsP, \varepsilon \in (0,1)$.
+\begin{definition}[Beacon security]\label{def:beacon-security}
+    Let $n,k,s \in \NN, \rho \in \RR_+$ and $\EpsP, \EpsG \in (0,1)$.
     Let $\Pi_\Beacon$ be a beacon protocol for $n$-bit Boolean strings 
     used in conjunction with a blockchain protocol $\Pi$. 
-    Let $\mathcal{B}$ be the distribution of the beacon outputs.
-    Condition on the event $E$ that $\Pi$ remains $(\EpsP, k, s)$-secure over the lifetime of the protocol. 
-    We say that $\Pi_\Beacon$ is \emph{$(\rho, \varepsilon)$-secure} 
-    if, except with probability $\varepsilon$, 
-    $H_\infty(\mathcal{B} \mid E) \geq n - \rho$.    
+    Let $\mathcal{B}$ be the distribution of the beacon output.
+    Let $E$ be the event that $\Pi$ remains $(\EpsP, k, s)$-secure over the lifetime of the protocol. 
+    Condition on $E$. 
+    Suppose that except with probability $\EpsG$, 
+    the (conditional) min-entropy 
+    $H_\infty(\mathcal{B} \mid E)$ is at least $n - \rho$. 
+    Then we say that $\Pi_\Beacon$ is \emph{$(\EpsP + \EpsG, \rho)$-secure}.
 \end{definition}
+
+
+
+Note that the output of the beacon at epoch $L = 2, 3, \ldots$  
+is a sequential composition of $L$ independent instances of $\Pi_\Beacon$; 
+the output from an epoch is used as the initial value for the next epoch. 
+Specifically, 
+the beacon output for epoch $t \in [L]$ is 
+\begin{align}\label{eq:beacon-iterated}
+    \eta_t = \Pi_\Beacon(\eta_{t-1}) = \Pi_\Beacon^t(\eta_0)\,.
+\end{align}
+where $\eta_0$ is the uniformly random initial value for the first epoch.
+
+
+\begin{lemma}[Beacon security over multiple epochs]\label{lemma:beacon-composition}
+Let $\EpsP \in (0,1)$ and $\rho \in \RR_+$.
+Suppose $\Pi_\Beacon$ remains $(\EpsP, \rho)$-secure over a single epoch. 
+When it is iterated $L$ times as in~\eqref{eq:beacon-iterated}, 
+it remains $\left(L 2^\rho \EpsP, \rho\right)$-secure 
+over the $L$ epochs.
+\end{lemma}
+\begin{proof}
+    Let $\Pi_t$ be the instance of $\Pi_\Beacon$ at epoch $t$. 
+    We will prove the claim by an induction on $t \in [L]$. 
+
+    Each protocol instance $\Pi_t, t \in [L]$ 
+    is an independent instance of $\Pi_\Beacon$. 
+    Our inductive hypothesis is that for $t \in [L]$, 
+    all previous instances 
+    $\Pi_\tau, \tau \in [t-1]$ remain $(\EpsP, \rho)$-secure in epoch $\tau$. 
+    Thus, there are at most $2^\rho$ choices for $\eta_{t - 1}$, 
+    resulting from the grinding in epoch $t-1$.
+    By a union bound on these choices, $\Pi_t$ is $(2^\rho \EpsP, \rho)$-secure. 
+    A union bound over $t \in [L]$ shows that 
+    except with probability at most $L\cdot 2^\rho \EpsP$, 
+    every $\Pi_t, t \in [L]$ is $(2^\rho \EpsP, \rho)$-secure.
+\end{proof}
 
 
 In \Section~\ref{sec:praos}, we characterize the grinding power 

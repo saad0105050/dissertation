@@ -530,8 +530,8 @@ The theorem below obtains a tighter bound on $g(U)$.
             \mu(T\,;\,P_2, \ldots, P_{\ell+1} \,;\, \PP{2})\,,
                 &\quad\text{if $\star \not \in P_{\ell + 1}$}\,,
                 \\
-            \lambda(T\,;\,\SS{1}\,;\, \PP{2}) 
-            + \mu(T\,;\,\SS{2}, \hat{P}_{\ell + 1} \,;\, \PP{2})\,,
+            \lambda(T\,;\,\SS{1}\,;\, \PP{2}) \\
+            \quad + \mu(T\,;\,\SS{2}, \hat{P}_{\ell + 1} \,;\, \PP{2})\,,
                 &\quad\text{otherwise}
             \,.
         \end{dcases} \nonumber \\
@@ -728,7 +728,7 @@ The theorem below obtains a tighter bound on $g(U)$.
         Let $g$ be the grinding power of $U$. 
         Let $A$ be the event that 
         at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$; 
-        {\color{red}condition on $A$.}
+        condition on $A$.
         Then 
         $$
             \Exp[g^\lambda \mid A] \leq 
@@ -968,70 +968,5 @@ The theorem below obtains a tighter bound on $g(U)$.
 
 
 
-\section{Sequential composition of XOR target games}
 
-    The candidate outputs of a uniform XOR target game 
-    are close to uniform. 
-    (The loss in the min-entropy is due to the grinding power, 
-    i.e., the number of possible outputs.) 
-    In this section, 
-    we study the grinding power of 
-    a series of XOR target games where 
-    the output of any game in the sequence is 
-    the initial string of the next game.
-
-    % \subsection{The composition lemma}\label{sec:composition-lemma}
-    \newcommand{\ExplicitPi}[1][x]{^{#1 \rightarrow}\Pi}
-    \begin{definition}[$(L, \Pi)$-composition]
-        Let $\kappa \in \NN$, $\epsilon \in (0,1)$ and 
-        let $\rho$ be a non-negative real at most $\kappa$.
-        Let $\Pi$ be an $(\epsilon, \rho)$-secure coin-flipping protocol 
-        with dimension $\kappa$ from Definition~\ref{def:coin-flipping}. 
-        Let $\ExplicitPi[\eta]$ be an explicit version of $\Pi$ 
-        which uses a given initial string $\eta$.
-        Let $L \in \NN$. 
-        An $(L, \Pi)$-composition is a tuple $(\Pi_1, \ldots, \Pi_L)$ 
-        of protocol instances where
-        \begin{enumerate}
-            \item $\Pi_1 = \Pi$ and its output is $\eta_1$. 
-
-            \item If $t \geq 2$,        
-                $\Pi_t$ is an independent instance of $\ExplicitPi[\eta_{t-1}]$. 
-                Furthermore, $\Pi_t$ commences after $\Pi_{t-1}$ terminates.
-            
-        \end{enumerate} 
-        $\eta_L$ is called the \emph{output of the composition}. 
-        We say that this composition is $(\epsilon, \rho)$-secure 
-        if every $\Pi_t$ is $(\epsilon, \rho)$-secure.
-    \end{definition}
-
-    Since $\Pi_2$ commences after $\Pi_1$ terminates, 
-    the explicit initial value $\eta_1$ given to $\Pi_2$ is uniform 
-    and, therefore, each $\Pi_t$ is an independent instance of $\Pi$.
-
-
-
-
-    \begin{lemma}\label{lemma:composition}
-    Let $\Pi$ be an $(\epsilon, \rho)$-secure coin-flipping protocol. 
-    An $(L, \Pi)$-composition is 
-    % $\left(L\epsilon^{1 - \rho/\log_2(1/\epsilon)}, \rho\right)$-secure.
-    $\left(2^\rho \epsilon L, \rho\right)$-secure.
-    \end{lemma}
-    \begin{proof}
-        We will prove the claim by an induction on $t \in [L]$. 
-        % As we have argued at the beginning of Section~\ref{sec:composition-lemma}, 
-        % the grinding power of the games $G_1, \ldots, G_L$ in the composition is 
-        % an independent copy of $g$, the grinding power of $G_1$. 
-        As we mentioned before, each protocol instance $\Pi_t$ 
-        in the composition is an independent instance of $\Pi$. 
-        Our inductive hypothesis is that for $t \in [L]$, 
-        $\Pi_\tau$ is $(\epsilon, \rho)$-secure for $\tau = 1, 2, \ldots, t-1$. 
-        Thus there are at most $2^\rho$ choices for $\eta_{t - 1}$. 
-        By a union bound on these choices, $\Pi_t$ is $(2^\rho \epsilon, \rho)$-secure. 
-        A union bound shows that 
-        the probability that 
-        except with probability at most $L\cdot 2^\rho \epsilon$, 
-        every $\Pi_t, t \in [L]$ is $(2^\rho \epsilon, \rho)$-secure.
-    \end{proof}
 

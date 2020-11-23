@@ -12,7 +12,7 @@
   \end{definition}
 
 
-  \begin{theorem}\label{thm:xor-game-private-election}
+  \begin{theorem}[Moment bound, Poisson game]\label{thm:xor-game-private-election}
       Let $\ell, n \in \NN, n \geq 2$ and $\alpha \in (0, 1/2)$. 
       Let
       \begin{equation}\label{eq:lambda-star-poisson}
@@ -45,11 +45,71 @@
       %         \,.
       % \end{align*}
   \end{theorem}
-  We postpone a proof for the moment.
+  \begin{proof}
+    % First, note that 
+    % $\ln(\Pr[S \geq 0]) 
+    % = \ln\left(\prod_{i = 1}^m (1 - \sigma_i) \right) 
+    % = \sum_{i = 1}^m \ln (1 - \sigma_i)$. 
+    % Since the function $x \mapsto \ln(1 -x)$ is concave and super-additive for $x \in (0, 1)$, 
+    % it follows that $\ln(\Pr[S \geq 0]) \geq \ln (1 - \sum_i \sigma_i) = \ln (1 - \alpha)$. 
+    % Since logarithm is a monotone function, $\Pr[S \geq 0] \geq 1 - \alpha$ and, 
+    % consequently, $$\Pr[S \geq 1] \leq \alpha\,.$$
+    Recall the definition of an $(\ell, n, \alpha)$-game from Definition~\ref{def:xor-game-poisson}
+    and 
+    the random variable $S$ therein. 
+    By Markov's inequality,
+    $$
+        \Pr[S \geq 1] \leq \frac{\Exp S}{1} = \alpha \,.
+    $$
+
+    \paragraph{Case: $\alpha \in (0, 0.41]$.}
+    Let $X'_i \in \{0,1\}, i \in [m]$ be i.i.d. Bernoulli random variables 
+    with $\Pr[X'_i] = \alpha/m$. 
+    Define $S' = \sum_{i=1}^m X'_i$ 
+    so that $S'\sim \Binomial(m, \alpha/m)$. 
+    Fact~\ref{fact:second-moment-equal-unequal-stake} states that 
+    $\Exp S^2 \leq \Exp {S'}^2 \leq \alpha + \alpha^2$. 
+    Since $\Exp S = \alpha$, it follows that 
+    $$
+    \Exp (1 + S)^2 
+    \leq 1 + 2 \Exp S + \Exp S^2
+    \leq 1 + 3 \alpha + \alpha^2
+    \,.
+    $$
+    Since $\alpha < 1/2$, the quantity 
+    $\Pr[S \geq 1] \cdot \Exp (1 + S)^2$ is at most $\alpha\cdot (1 + 3.5 \alpha)$. 
+    This quantity is convex and increasing in $\alpha$. 
+    The unique solution to the quadratic equation $3.5 \alpha^2 + \alpha - 1 = 0$ 
+    for $\alpha \in (0, 1/2)$ 
+    is $\alpha = (-1 + \sqrt{1 + 14})/7 = 0.4104$. 
+    Therefore, for any $\alpha \leq 0.41$, 
+    the random variable $S$ satisfies~\eqref{eq:lambda-S-requirement} 
+    with $\lambda = 2$.
+    By Lemma~\ref{lemma:adaptive-moment}, we conclude that 
+    $\Exp[g^2 \mid A] \leq n^3 (1 + 3 \alpha + \alpha^2)^\ell$ 
+    for $\alpha \in (0, 0.41]$.
+    
+    \paragraph{Case: $\alpha \in (0.41, 0.5)$.}
+    In this case, we use Holder's inequality for any $\lambda \in (1,2)$ 
+    and observe that 
+    $$
+        \Exp (1+S)^\lambda 
+        \leq \left( \Exp (1+S)^2 \right)^{\lambda/2} 
+        = (1 + 3\alpha +\alpha^2)^{\lambda/2}
+        \,.
+    $$
+    Recalling~\eqref{eq:lambda-S-requirement}, 
+    we want to find the maximal $\lambda \in (1, 2)$ 
+    which satisfies $\alpha(1 + 3\alpha +\alpha^2)^{\lambda/2} \leq 1$ or, 
+    equivalently, setting $\lambda$ as in~\eqref{eq:lambda-star-poisson}. 
+    Note that this implies $\Exp (1+S)^\lambda \leq 1 + 3\alpha +\alpha^2)^{\lambda/2} \leq 1/\alpha$.
+    The claim follows from applying Lemma~\ref{lemma:adaptive-moment} 
+    with $\lambda$ from~\eqref{eq:lambda-star-poisson}. 
+  \end{proof}
+  % \hfill\qed
 
 
-
-  \begin{lemma}\label{lemma:xor-game-poisson-gamma}
+  \begin{lemma}[Tail bound, Poisson game]\label{lemma:xor-game-poisson-gamma}
       Let $\EpsP \in (0, 1), \alpha \in (0, 1/2), \ell, n \in \NN$ and $n \geq \ell$. 
       Let $\lambda$ be defined in~\eqref{eq:lambda-star-poisson}.
       Let 
@@ -91,7 +151,7 @@
       The bound in~\eqref{eq:xor-poisson-tail-gamma} follows from 
       Theorem~\ref{thm:xor-game-private-election} and the following fact.
 
-      \begin{fact}\label{fact:grinding-max}
+      \begin{fact}[Tail bound from moment bound]\label{fact:grinding-max}
           Let $\GrindingPower$ be an arbitrary non-negative random variable, 
           $\EpsP \in (0, 1)$ and 
           $\GrindingMax, \lambda$ be arbitrary positive reals. 
@@ -115,99 +175,16 @@
           $\GrindingMax^\lambda \geq \Exp[\GrindingPower^\lambda]/\EpsP$. 
           Taking the $\lambda$th root gives the lower bound on $\gamma$.
       \end{proof}
+      \noindent
+      (Note that Lemma~\ref{lemma:praos-tail-gamma} uses Fact~\ref{fact:grinding-max} 
+      with $\lambda = 2$.)
+
       This completes the proof of Lemma~\ref{lemma:xor-game-poisson-gamma}.
   \end{proof}
 
 
-  \subsection{Proof of Theorem~\ref{thm:xor-game-private-election}.}
-  % \begin{proof}
-      % First, note that 
-      % $\ln(\Pr[S \geq 0]) 
-      % = \ln\left(\prod_{i = 1}^m (1 - \sigma_i) \right) 
-      % = \sum_{i = 1}^m \ln (1 - \sigma_i)$. 
-      % Since the function $x \mapsto \ln(1 -x)$ is concave and super-additive for $x \in (0, 1)$, 
-      % it follows that $\ln(\Pr[S \geq 0]) \geq \ln (1 - \sum_i \sigma_i) = \ln (1 - \alpha)$. 
-      % Since logarithm is a monotone function, $\Pr[S \geq 0] \geq 1 - \alpha$ and, 
-      % consequently, $$\Pr[S \geq 1] \leq \alpha\,.$$
-      Recall the definition of an $(\ell, n, \alpha)$-game from Definition~\ref{def:xor-game-poisson}
-      and 
-      the random variable $S$ therein. 
-      By Markov's inequality,
-      $$
-          \Pr[S \geq 1] \leq \frac{\Exp S}{1} = \alpha \,.
-      $$
+  % \subsection{Proof of Theorem~\ref{thm:xor-game-private-election}.}
 
-      \paragraph{Case: $\alpha \in (0, 0.41]$.}
-      Let $X'_i \in \{0,1\}, i \in [m]$ be i.i.d. Bernoulli random variables 
-      with $\Pr[X'_i] = \alpha/m$. 
-      Define $S' = \sum_{i=1}^m X'_i$ 
-      so that $S'\sim \Binomial(m, \alpha/m)$. 
-      Fact~\ref{fact:second-moment-equal-unequal-stake} states that 
-      $\Exp S^2 \leq \Exp {S'}^2 \leq \alpha + \alpha^2$. 
-      Since $\Exp S = \alpha$, it follows that 
-      $$
-      \Exp (1 + S)^2 
-      \leq 1 + 2 \Exp S + \Exp S^2
-      \leq 1 + 3 \alpha + \alpha^2
-      \,.
-      $$
-      Since $\alpha < 1/2$, the quantity 
-      $\Pr[S \geq 1] \cdot \Exp (1 + S)^2$ is at most $\alpha\cdot (1 + 3.5 \alpha)$. 
-      This quantity is convex and increasing in $\alpha$. 
-      The unique solution to the quadratic equation $3.5 \alpha^2 + \alpha - 1 = 0$ 
-      for $\alpha \in (0, 1/2)$ 
-      is $\alpha = (-1 + \sqrt{1 + 14})/7 = 0.4104$. 
-      Therefore, for any $\alpha \leq 0.41$, 
-      the random variable $S$ satisfies~\eqref{eq:lambda-S-requirement} 
-      with $\lambda = 2$.
-      By Lemma~\ref{lemma:adaptive-moment}, we conclude that 
-      $\Exp[g^2 \mid A] \leq n^3 (1 + 3 \alpha + \alpha^2)^\ell$ 
-      for $\alpha \in (0, 0.41]$.
-      
-      \paragraph{Case: $\alpha \in (0.41, 0.5)$.}
-      In this case, we use Holder's inequality for any $\lambda \in (1,2)$ 
-      and observe that 
-      $$
-          \Exp (1+S)^\lambda 
-          \leq \left( \Exp (1+S)^2 \right)^{\lambda/2} 
-          = (1 + 3\alpha +\alpha^2)^{\lambda/2}
-          \,.
-      $$
-      Recalling~\eqref{eq:lambda-S-requirement}, 
-      we want to find the maximal $\lambda \in (1, 2)$ 
-      which satisfies $\alpha(1 + 3\alpha +\alpha^2)^{\lambda/2} \leq 1$ or, 
-      equivalently, setting $\lambda$ as in~\eqref{eq:lambda-star-poisson}. 
-      Note that this implies $\Exp (1+S)^\lambda \leq 1 + 3\alpha +\alpha^2)^{\lambda/2} \leq 1/\alpha$.
-      The claim follows from applying Lemma~\ref{lemma:adaptive-moment} 
-      with $\lambda$ from~\eqref{eq:lambda-star-poisson}. 
-      % Since the quantity at the right-hand side increases monotonically in $\alpha$, 
-      % it suffices to use $\alpha = 1/2$; that is, 
-      % $$
-      %     \lambda 
-      %     \leq \frac{2 \log_2(1/\alpha)}{\log_2(1 + 3\alpha +\alpha^2)}
-      %     \leq \frac{2}{\log_2(1 + 3/2 + 1/4)}
-      %     < 1.37
-      %     \,.
-      % $$
-
-      % Let $\lambda \in (1, 2)$ and $\alpha \in (0.41, 0.5)$. 
-      % Define 
-      % $$f(\lambda) = \Exp (1 + S)^\lambda
-      % \quad \text{and} \quad
-      % h(\lambda) = \Exp (1 + S')^\lambda
-      % $$
-      % and note that since $S, S'$ are non-negative, 
-      % both $f$ and $h$ are convex combinations of 
-      % convex and increasing functions in $\lambda$; 
-      % hence both $f(\lambda), h(\lambda)$ are convex and increasing in $\lambda$. 
-      % Moreover, $f(1) = h(1) = \alpha$ and $f(2) \leq h(2) = \alpha + \alpha^2$. 
-      % It follows that $f(\lambda) \leq h(\lambda)$ for $\lambda \in (1, 2]$ or, 
-      % equivalently, $\Exp (1 + S)^\lambda \leq \Exp (1 + S')^\lambda$.
-
-      % It is a known fact (and easy to check) that $\Binomial(m, \alpha/m) \DominatedBy \Poisson(\alpha)$. 
-      % Let $P \sim \Poisson(\alpha)$ and note that $S' \sim \Binomial(m, \alpha/m)$. 
-      % Hence $$\Exp (1 + S)^\lambda \leq \Exp (1 + P)^\lambda\,.$$ 
-  \hfill\qed
 
 
 
@@ -252,6 +229,7 @@
 % If we wish to give a strong guarantee we have to use a large $\tau$, 
 % but the min-entropy loss $\rho$ depends linearly on $\tau$. 
 
+\paragraph{The setup.} 
 Let $\tau > 0$ and $\alpha \in (0, 1/2)$ be two reals. 
  % and $\EpsP = 2^{-\tau}$. 
 Let $\EpsP \in (0, 1)$. 
@@ -271,31 +249,31 @@ The parameter $d$ of $\Pi$ is given below.
 Let the coin-flipping outcome after $L$ epochs of $\Blockchain$ is $\eta$.
 
 \begin{theorem}\label{thm:beacon-poisson}
-	Let $\alpha \in (0, 0.41)$. 
+	Let $\alpha \in (0, 0.41)$ and $T, s, k, \EpsP, L$ as above. 
 	Let $\lambda$ be defined in~\eqref{eq:lambda-star-poisson} and 
 	let $\gamma$ be defined in~\eqref{eq:xor-poisson-tail-gamma}. 
 	Let 
-	$$
-			d = \lfloor (T - k) \log_2(1/\alpha)/\log_2(1/\EpsP)\rfloor
-			\,,\quad
-			f(\alpha) = \frac{\ln(1 + 3 \alpha + \alpha^2)}{\ln(1/\alpha)}
-			\,,\text{and}
-	$$
-	% and
-	\begin{equation}\label{eq:delta-prob-loss-multiepoch}
-		\delta 
-		= 
-			1/2 - \frac{(3/2) \log_2(T - k)}{\tau} 
-			- \frac{k \alpha}{0.82 (T - k)}
+  \begin{align*}
+      \lambda &\ \text{be defined in~\eqref{eq:lambda-star-poisson}}
+      \,, \\
+      \gamma &\ \text{be defined in~\eqref{eq:xor-poisson-tail-gamma}}
+      \,, \\
+      d &= \lfloor (T - k) \log_2(1/\alpha)/\log_2(1/\EpsP)\rfloor
+      \,,\quad\text{and}\\
+      f(\alpha) &= \frac{\ln(1 + 3 \alpha + \alpha^2)}{\ln(1/\alpha)}
       \,.
-	\end{equation}
+  \end{align*}
 	Then 
 	$$
-		\Pr\left[\MinEntropy(\eta) \geq \kappa - \log_2(\gamma)\right] \geq 1 -  3 L \EpsP^\delta
+		\MinEntropy(\eta) \geq \kappa - \log_2(\gamma)
+  $$
+  except with probability 
+  $$ 
+      3 L (T - k)^{3/2} \EpsP^{1/2 \left( 1 - f(\alpha)k/(T-k) \right)}
 		\,.
 	$$
-	% where the probability is taken over 
-	% the leader election mechanism.
+	Here, the probability is taken over 
+	the leader election mechanism.
 \end{theorem}
 
 % \iftoggle{drawfigs}{
@@ -397,7 +375,7 @@ Let the coin-flipping outcome after $L$ epochs of $\Blockchain$ is $\eta$.
 \newcommand{\dMin}{d_\mathrm{min}}
 \newcommand{\dMax}{d_\mathrm{max}}
 
-\subsection{Proof of Theorem~\ref{thm:beacon-poisson}}
+\section{Proof of Theorem~\ref{thm:beacon-poisson}}
 	% Suppose $\Pi$ is $(p, \rho)$-secure. 
 	% Since the ledger protocol $\Blockchain$ is $(2^{-\tau}, k)$-secure, 
 	% Lemma~\ref{prop:coin-tossing-security-private} states that 
@@ -411,19 +389,22 @@ Let the coin-flipping outcome after $L$ epochs of $\Blockchain$ is $\eta$.
 
 	Let $\ell = k/d$ and $n = (T - k)/d$. 
 	Let $\tau = \log_2(1/\EpsP)$. 
-	Let 
-	$$
-    a = \begin{cases}
-        1 + 3 \alpha + \alpha^2 &\quad\text{if $\alpha \leq 0.41$\,,} \\
-        1/\alpha &\quad\text{otherwise\,,}
-    \end{cases}
-	$$
+	Let $a = 1 + 3 \alpha + \alpha^2$
+	% $$
+ %    a = 
+ %      % \begin{cases}
+ %        1 + 3 \alpha + \alpha^2 &\quad\text{if $\alpha \leq 0.41$\,,} \\
+ %        1/\alpha &\quad\text{otherwise\,,}
+ %    \end{cases}
+	% $$
 	and 
 	$$
 		p(d) = n^{1+1/\lambda} \EpsP^{1 - 1/\lambda} a^{\ell/\lambda}
 		\,.
 	$$
-	Then the total failure probability in Lemma~\ref{lemma:composition} is at most $3 L p(d)$.	
+	Then, according to Lemma~\ref{lemma:composition}, 
+  the min-entropy loss is at most $\log_2(\gamma)$ 
+  except with probability at most $3 L p(d)$.	
 	Let $\delta \in (0, 1)$ so that $p(d) \leq \EpsP^\delta$; 
 	the value of $\delta$ will be determined later. 
 	We wish to select a $d$ so that $\delta$ is maximized.
@@ -473,55 +454,48 @@ Let the coin-flipping outcome after $L$ epochs of $\Blockchain$ is $\eta$.
 		\text{or}\quad &			
 			\frac{(k/\lambda) \log_2 a}{(T - k) \log_2(1/\alpha)/\log_2(1/\EpsP)} 
 				\leq (1 - \delta - 1/\lambda) \log_2(1/\EpsP) - (1+1/\lambda) \log_2(T - k) \,,\\
-		\text{or}\quad &			
-			\frac{(k/\lambda) \log_2 a}{(T - k) \log_2(1/\alpha)} + \frac{(1+1/\lambda) \log_2(T - k)}{\log_2(1/\EpsP)}
-				\leq 1 - \delta - 1/\lambda  \,,\\
-		\text{or}\quad &			
-			\frac{(1/\lambda) \log_2 a}{(R - 1) \log_2(1/\alpha)} + \frac{(1+1/\lambda) \log_2(k(R-1))}{\log_2(1/\EpsP)}
-				\leq 1 - \delta - 1/\lambda  
+    \text{or}\quad &      
+      \frac{(k/\lambda) \log_2 a}{(T - k) \log_2(1/\alpha)} + \frac{(1+1/\lambda) \log_2(T - k)}{\log_2(1/\EpsP)}
+        \leq 1 - \delta - 1/\lambda  \,,\\
+    \text{or}\quad &      
+      \frac{k}{T-k}\cdot \frac{f(\alpha)}{\lambda} + (1+1/\lambda) \frac{ \log_2(T - k)}{\log_2(1/\EpsP)}
+        \leq 1 - \delta - 1/\lambda  \,,
+  %       \\
+		% \text{or}\quad &			
+		% 	\frac{(1/\lambda) \log_2 a}{(R - 1) \log_2(1/\alpha)} + \frac{(1+1/\lambda) \log_2(k(R-1))}{\log_2(1/\EpsP)}
+		% 		\leq 1 - \delta - 1/\lambda  
 				\,.
 	\end{align*}
-	Therefore, if we take $d = \lfloor \dMax \rfloor$ we can achieve  $p(d) \leq \EpsP^{\delta}$ 
+  where we used $f(\alpha) = \log_2(a)/\log_2(1/\alpha)$. 
+	Thus, if we take $d = \lfloor \dMax \rfloor$, we can achieve  $p(d) \leq \EpsP^{\delta}$ 
 	where 
-	\begin{equation}\label{eq:delta}
+	\begin{align}
 		\delta
-			\leq 1 - 1/\lambda - \frac{(1/\lambda) \log_2 a}{(R-1) \log_2(1/\alpha)} - \frac{(1+1/\lambda) \log_2(k(R-1))}{\log_2(1/\EpsP)}  
-	\end{equation}
+			% &\leq \leq 1 - 1/\lambda - \frac{(1/\lambda) \log_2 a}{(R-1) \log_2(1/\alpha)} - \frac{(1+1/\lambda) \log_2(k(R-1))}{\log_2(1/\EpsP)}  \\
+      &\leq \leq 1 - 1/\lambda - \frac{k}{T-k}\cdot \frac{f(\alpha)}{\lambda} - (1+1/\lambda) \frac{ \log_2(T - k)}{\log_2(1/\EpsP)}\,. \label{eq:delta}    
+	\end{align}
 
-	\paragraph{Case: $\alpha \leq 0.41$.} 
-	We use $a = 1 + \alpha + \alpha^2, \lambda = 2$, and 
-	$$ 
-		f(\alpha) = \ln(1 + \alpha + \alpha^2)/\ln(1/\alpha)
-	$$
-	to get 
-	$$
-	\delta = 
-		1/2 
-			- \frac{f(\alpha)/2}{R - 1} 
-			- \frac{(3/2) \log_2(k(R-1))}{\log_2(1/\EpsP)}
-			\,.
-		% = 1 - \frac{\ln(1+3\alpha+\alpha^2)}{2 \ln(1/\alpha)} 
-		% 		- \left(1 + \frac{\ln(1+3\alpha+\alpha^2)}{2 \ln(1/\alpha)}\right) \log_2(T - k)/\tau 
-		% 		- \frac{k\ln(1+3\alpha+\alpha^2)}{2 (T - k) \ln(1/\alpha)} 
-		% 			&\quad\text{otherwise\,.}
-	$$
-	{\color{blue}We can check that }
-	$f(\alpha)$ is convex and increasing for $\alpha \in (0, 0.41]$; 
-	hence the linear upper bound 
-	$f(\alpha) \leq \alpha/0.41$ holds. 
-	Therefore, it is sufficient to take 
-	\begin{align*}
-		&\delta 
-			\leq 
-			\frac{1}{2} 
-				- \frac{\alpha}{0.82 (R - 1)} 
-				- \frac{(3/2) \log_2(k(R-1))}{\log_2(1/\EpsP)} 
-				\,, \\
-		\text{or}\quad&\delta \leq \frac{1}{2} 
-				- \frac{1.22 \alpha}{R - 1} 
-				- \frac{(3/2)\log_2(k(R-1))}{\log_2(1/\EpsP)} 
-				\,.		
-	\end{align*}
+
+  Recall that 
+  \begin{fact*}
+    If $x,y \in \RR$ satisfy $y = x^{-1/\log_2(1/x)}$ then $y = 2$.
+  \end{fact*}
+  \noindent
+  For further simplification, let us use the assumption that $\alpha \leq 0.41$ 
+  and write $c = k/(T-k)$; 
+  this implies $\lambda = 2, a = 1 + \alpha + \alpha^2$, 
+  \begin{align*}
+    \delta
+      &\leq \frac{1}{2} - \frac{c f(\alpha)}{2} - \frac{3}{2} \frac{ \log_2(T - k)}{\log_2(1/\EpsP)}\,, 
+      \qquad \text{and}\\
+    \EpsP^\delta  
+      &\leq \EpsP^{1/2 - c f(\alpha)/2} \cdot \left[ \EpsP^{-1/\log_2(1/\EpsP)} \right]^{(3/2)\log_2(T - k)} \\
+      &= \EpsP^{1/2 - c f(\alpha)/2} \cdot 2^{(3/2)\log_2(T - k)} \\
+      &= \EpsP^{1/2 - (k/(T-k)) f(\alpha)/2} \cdot (T - k)^{3/2} 
+      \,,
+  \end{align*}
+  as claimed in the theorem statement. 
+  Here, we used the above fact with $x = \EpsP$.
 
 	\hfill\qed
 

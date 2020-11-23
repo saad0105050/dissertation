@@ -1,0 +1,227 @@
+
+\paragraph{The nonce channel}
+To do
+
+\paragraph{Leader election distributions}
+Private election --> $\mathcal{L}(\alpha)$. 
+Public election --> $\hat{\mathcal{L}}(\alpha)$. 
+
+\newcommand{\PublicElectionDistribution}{\hat{\mathcal{L}}}
+\newcommand{\PrivateElectionDistribution}{\mathcal{L}}
+
+\section{New beacon protocols}
+
+
+
+\begin{definition}[$(T, k, s, d, \mathcal{E},\EpsP)$-Beacon]
+  Let $T, k, s,d \in \NN$ and $\EpsP \in (0,1)$ 
+  so that $k$ divides $T$.
+  Let $\mathcal{E}$ be a given leader election mechanism.
+  Let $\Blockchain$ be an $(\EpsP, k, s)$-secure blockchain protocol 
+  with epoch length at least $T + s + k$. 
+  Consider the following simple beacon protocol on $\{0,1\}^\kappa$ 
+  that takes place inside every epoch of $\Blockchain$. 
+  $\Pi_\Beacon$ operates inside an epoch of $\Blockchain$ 
+  and it computes a function 
+  $\Pi_\Beacon : \{0,1\}^\kappa \rightarrow \{0,1\}^\kappa$. 
+  Given an initial value $x$ before an epoch, 
+  it outputs $\Pi_\Beacon(x)$ 
+  after the epoch, as follows:
+  \begin{itemize}
+    \item The first $T$ slots of the epoch participate in $\Pi_\Beacon$. 
+    Of these, only one in every $d$ slots is a \emph{nonce-emitting slot}. 
+
+    \item In a nonce-emitting slot, one or more players are elected as a \emph{nonce leader} 
+    according to the leader election mechanism $\mathcal{E}$.
+    A nonce leader can emit a uniformly random $\kappa$-bit Boolean string, called a \emph{nonce}. 
+    This nonce is recorded in the nonce channel. 
+    An honest nonce leader always emits his nonce right away, 
+    but a dishonest leader may emit it later, or not at all.
+
+    \item 
+    Let $S$ be the set of all nonce-emitting slots in epoch $t$.
+    After th epoch is finished, the output $\eta$ is calculated as follows:
+    Let $C_i$ be the set of nonces recorded from slot $i$ in this epoch. 
+    Let $y_i$ be the lexicographically smallest item in $C_i$.
+    Finally, we set $\Pi_\Beacon(x) = x \oplus_{i \in S} y_s$.
+  \end{itemize}
+  Let $\eta_0$ be a uniformly random string in $\{0,1\}^\kappa$. 
+  When the beacon is executed for $L$ epochs, 
+  the output is a sequential composition of 
+  $L$ independent instances of $\Pi_\Beacon$; 
+  the output of after epoch $t$ is the initial value used in epoch $(t+1)$. 
+  Specifically, 
+  the beacon output for epoch $t \in [L]$ is 
+  \begin{align}\label{eq:beacon-iterated}
+    \eta_t = \Pi_\Beacon(\eta_{t-1}) = \Pi_\Beacon^t(\eta_0)\,.
+  \end{align}
+\end{definition}
+
+
+% \section{Sequential composition of XOR target games}
+
+  %     The candidate outputs of a uniform XOR target game 
+  %     are close to uniform. 
+  %     (The loss in the min-entropy is due to the grinding power, 
+  %     i.e., the number of possible outputs.) 
+  %     In this section, 
+  %     we study the grinding power of 
+  %     a series of XOR target games where 
+  %     the output of any game in the sequence is 
+  %     the initial string of the next game.
+
+  %     % \subsection{The composition lemma}\label{sec:composition-lemma}
+  %     \newcommand{\ExplicitPi}[1][x]{^{#1 \rightarrow}\Pi}
+  %     \begin{definition}[$(L, \Pi)$-composition]
+  %         Let $\kappa \in \NN$, $\epsilon \in (0,1)$ and 
+  %         let $\rho$ be a non-negative real at most $\kappa$.
+  %         Let $\Pi$ be an $(\EpsP, \rho)$-secure coin-flipping protocol 
+  %         with dimension $\kappa$ (seem Definition~\ref{def:beacon-security}).
+  %         Let $\ExplicitPi[\eta]$ be an explicit version of $\Pi$ 
+  %         which uses a given initial string $\eta$.
+  %         Let $L \in \NN$. 
+  %         An $(L, \Pi)$-composition is a tuple $(\Pi_1, \ldots, \Pi_L)$ 
+  %         of protocol instances where
+  %         \begin{enumerate}
+  %             \item $\Pi_1 = \Pi$ and its output is $\eta_1$. 
+
+  %             \item If $t \geq 2$,        
+  %                 $\Pi_t$ is an independent instance of $\ExplicitPi[\eta_{t-1}]$. 
+  %                 Furthermore, $\Pi_t$ commences after $\Pi_{t-1}$ terminates.
+              
+  %         \end{enumerate} 
+  %         $\eta_L$ is called the \emph{output of the composition}. 
+  %         We say that this composition is $(\epsilon, \rho)$-secure 
+  %         if every $\Pi_t$ is $(\epsilon, \rho)$-secure.
+  %     \end{definition}
+
+  %     Since $\Pi_2$ commences after $\Pi_1$ terminates, 
+  %     the explicit initial value $\eta_1$ given to $\Pi_2$ is uniform 
+  %     and, therefore, each $\Pi_t$ is an independent instance of $\Pi$.
+
+
+\section{Beacons against a static adversary}
+
+Let $\alpha \in (0, 1/2), \EpsP \in (0, 1)$ and $T, k, s, d \in \NN$.
+Suppose the above parameters satisfy 
+\begin{align}\label{eq:alphatothen-epsp}
+  \alpha^{(T-k)/d} \leq \EpsP
+  \,.
+\end{align}
+Define 
+\begin{align}
+  f(\alpha)&= 1/\log_2(1/\alpha)\,, \label{eq:f-bernoulli} \\
+  \rho &= \frac{k}{d} + 1 + f(\alpha) \log_2 \left(\frac{T-k}{d (1+\alpha) \EpsP } \right)
+  \,. \label{eq:rho-bernoulli}
+\end{align}
+
+\begin{theorem}[Static adversary, single epoch]\label{thm:beacon-bernoulli-single-epoch}
+  Let $\alpha \in (0, 0.41)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
+  Let $f(\alpha)$ and $\rho$ be as in \eqref{eq:f-bernoulli} and \eqref{eq:rho-bernoulli}.
+  Recall the public leader election distribution $\PublicElectionDistribution(\alpha)$.
+  Let $\Pi_\Beacon$ be a $(T,k,s,d,\PublicElectionDistribution(\alpha), \EpsP)$-beacon.
+  Let $\eta$ be the beacon output after the first epoch. 
+  Then 
+  \begin{equation}\label{eq:security-bernoulli-single-epoch}
+    \Pr\left[\MinEntropy(\eta) \geq \kappa - \rho \right] \geq 1 - 3 \EpsP
+    \,.
+  \end{equation}
+  Here, the probability is taken according to $\PublicElectionDistribution(\alpha)$.
+\end{theorem}
+
+
+\begin{theorem}[Static adversary, multiple epochs]\label{thm:beacon-bernoulli-multi-epoch}
+  Let $\alpha \in (0, 0.41)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
+  Let $f(\alpha)$ and $\rho$ be as in \eqref{eq:f-bernoulli} and \eqref{eq:rho-bernoulli}.
+  Recall the public leader election distribution $\PublicElectionDistribution(\alpha)$.
+  Let $\Pi_\Beacon$ be a $(T,k,s,d,\PublicElectionDistribution(\alpha), \EpsP)$-beacon.
+  Let $\eta$ be the beacon output after $L$ epochs. 
+  Then 
+  \begin{equation}\label{eq:security-bernoulli-multi-epoch}
+    \Pr\left[\MinEntropy(\eta) \geq \kappa - \rho \right] 
+      \geq 1 - 3 L
+        \left( \frac{T-k}{d(1+\alpha)}\right)^{f(\alpha)}
+        \EpsP^{1-f(\alpha)}
+    \,.
+  \end{equation}
+  Here, the probability is taken according to $\PublicElectionDistribution(\alpha)$.
+\end{theorem}
+\noindent
+Note that $c(\alpha) \in (0,1)$ for $\alpha \in (0,1/2)$.
+
+
+% Let $\tau \in \RR_+$.
+
+
+% \begin{theorem}[Beacon security, static adversary]\label{thm:beacon-Bernoulli}
+%   Let $\tau, a \in \RR_+, a > 1, \tau \in (0, \infty)$. 
+%    % and $\EpsP = 2^{-\tau}$. 
+%   Let $d, k, T \in \NN$ 
+%   so that $d$ divides both $k$ and $T$ and, 
+%   writing $n = (T - k)/d$ and $\ell = k/d$, 
+%   satisfy $a n \geq \tau$.
+%   Set $\alpha = 2^{-a}$ and 
+%   suppose that the coin-flipping protocol $\Pi = \CoinTossingPublic$ 
+%   uses a $(2^{-\tau}, k)$-secure ledger protocol $\Blockchain$.
+%   An $(L, \Pi)$-composition is $(3 L n \epsilon, \rho)$-secure where
+%   $$
+%     \epsilon = 2^{- \tau(1 - 1/a) + \ell + 1}
+%     \quad\text{and} \quad
+%     \rho = \ell + \log_2 n + \tau/a + 1
+%     \,.
+%   $$
+% \end{theorem}
+
+
+
+\section{Beacons against an adaptive adversary}
+
+Let $\alpha \in (0, 1/2), \EpsP \in (0, 1)$ and $T, k, s, d \in \NN$.
+Define 
+\begin{align}
+    f(\alpha) &= \log_2(1 + 3 \alpha + \alpha^2)/\log_2(1/\alpha) \label{eq:f-poisson} \\
+  \rho &= \frac{k}{2 d} \log_2(1+3\alpha+\alpha^2) + \begin{cases}
+     \frac{1}{2} \log_2 \left[ \frac{((T-k)/d)^3}{(1+\alpha) \EpsP } \right] 
+      & \quad\text{if $\alpha \leq 0.41$}\,, \\
+    \log_2 \left(\frac{T-k}{d} \right)
+      + \frac{f(\alpha)}{2} \log_2 \left(\frac{T-k}{d (1+\alpha) \EpsP} \right) 
+      &\quad\text{otherwise\,.}\label{eq:rho-poisson}
+  \end{cases}
+\end{align}
+
+
+\begin{theorem}[Adaptive adversary, single epoch]\label{thm:beacon-poisson-single-epoch}
+  Let $\alpha \in (0, 0.41)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
+  Let $f(\alpha)$ and $\rho$ be as in \eqref{eq:f-poisson} and \eqref{eq:rho-poisson}.
+  Recall the private leader election distribution $\PrivateElectionDistribution(\alpha)$.
+  Let $\Pi_\Beacon$ be a $(T,k,s,d,\PrivateElectionDistribution(\alpha), \EpsP)$-beacon.
+  Let $\eta$ be the beacon output after the first epoch. 
+  Then 
+  \begin{equation}\label{eq:security-bernoulli-single-epoch}
+    \Pr\left[\MinEntropy(\eta) \geq \kappa - \rho \right] \geq 1 - 3 \EpsP
+    \,.
+  \end{equation}
+  Here, the probability is taken according to $\PrivateElectionDistribution(\alpha)$.
+\end{theorem}
+
+
+
+\begin{theorem}[Adaptive adversary, multiple epochs]\label{thm:beacon-poisson-multi-epoch}
+  Let $\alpha \in (0, 0.41)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
+  % Let $\alpha \in (0, 0.41)$ and $T, s, k, \EpsP, L$ as above. 
+  % Let $\lambda$ be defined in~\eqref{eq:lambda-star-poisson} and 
+  % let $\gamma$ be defined in~\eqref{eq:xor-poisson-tail-gamma}. 
+  Let $f(\alpha)$ and $\rho$ be as in \eqref{eq:f-poisson} and \eqref{eq:rho-poisson}.
+  Recall the private leader election distribution $\PrivateElectionDistribution(\alpha)$.
+  Let $\Pi_\Beacon$ be a $(T,k,s,d,\PrivateElectionDistribution(\alpha), \EpsP)$-beacon.
+  Let $\eta$ be the beacon output after $L$ epochs. 
+  Then 
+  $$
+    \Pr[\MinEntropy(\eta) \geq \kappa - \rho ] \geq 
+      1 -  3 L (T - k)^{3/2} \EpsP^{ (1/2) \cdot \left( 1 - f(\alpha)k/(T-k) \right)}
+    \,.
+  $$
+  Here, the probability is taken according to $\PrivateElectionDistribution(\alpha)$.
+\end{theorem}
+\noindent
+Note that in the above theorem, $\alpha \in (0, 0.41)$.
