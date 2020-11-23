@@ -217,30 +217,58 @@ while Praos~\cite {Praos} and SnowWhite~\cite{SnowWhite}
 are secure against an adaptive adversary.
 The adversarial model critically depends on how a slot-leader is elected. 
 
+Let
+$\Players$ be the set of participants 
+where each player $i \in \Players$ is associated with a positive real number 
+$\sigma_i \in [0,1]$, called his \emph{relative stake ratio}, or just \emph{stake} in short. 
+The stake ratios satisfy $\sum_{i \in \Players} \sigma_i = 1$ 
+and, for this analysis, remains constant over the course of the execution of the protocol. 
+(As is common in the literature (e.g., in \cite{Ouroboros,Praos,SnowWhite}), 
+we can handle a change in stake separately from this analysis and then hook these two together.)
+
+Let $H\HonestPlayers, \DishonestPlayers \subset \Players$ 
+denote the set of honest and dishonest players, respectively;
+these sets are disjoint and $\Players = \HonestPlayers \Union \DishonestPlayers$.
+Given a real $\alpha \in (0,1/2)$, 
+we use the notation $\Players(\alpha)$ 
+to denote the fact that the total dishonest stake bounded by $\alpha$: i.e., 
+$\sum_{i \in \DishonestPlayers} \sigma_i \leq \alpha$
+$\sum_{i \in \HonestPlayers} \sigma_i \geq 1 - \alpha$. 
+We do not, however, make any assumptions on the number of participants.
+
+
 In every slot, 
 one or more participants are elected as a ``leader'' who can add block to a chain. 
-We consider two types of leader election schemes: 
-\begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=6em]
-    \item \label{lottery:public}
-    (\textbf{Publicly elect a single leader per slot.})
-    All players use a common random string to 
+(The claim ``player $u$ won the leader election for slot $i$ at epoch $e$'' 
+can be proved using digital signatures and VRFs (Definition~\ref{def:VRF}.)
+Let $C_i$ be the set of leaders for slot $i$. 
+We consider two types of leader election schemes for an epoch: 
+% \begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=3em]
+\begin{description}
+    \item[\textbf{$\PublicLeaderElection(\alpha)$: Publicly elect a single leader per slot.}] \label{lottery:public}
+    At the onset of an epoch, 
+    all players use a common random string to 
     publicly sample, 
     independently for each round $i \in [\ell + n]$, 
-    a single player $u_i \in \Players$ and  
-    set $C_i = \{u_i\}$. 
+    a single player $\ell_i \in \Players$ and  
+    set $C_i = \{\ell_i\}$. 
     For all players $u \in \Players$, 
-    the probability that $u = u_i$ is $\sigma_u$.
+    the probability that $u = \ell_i$ is $\sigma_u$. 
+    Thus, the leader schedule for an epoch 
+    is public knowledge before an epoch commences. 
 
-    \item \label{lottery:private}
-    (\textbf{Privately elect zero or more leaders per slot.})
+    \item[\textbf{$\PrivateLeaderElection(\alpha)$: Privately elect zero or more leaders per slot.}] \label{lottery:private}
     Independently for each round $i \in [\ell + n]$, 
     player $u \in \Players$ 
-    independently inserts himself 
-    into the committee $C_i$ 
-    with probability $\sigma_u$. 
-\end{enumerate}
+    privately and independently 
+    evaluates a Boolean random variable $D$
+    which has expectation $\sigma_u$; 
+    if $D = 1$, $u$ 
+    inserts himself into the set $C_i$ 
+    and announces this fact during slot $i$. 
+\end{description}
 \noindent
-Ouroboros~\cite{Ouroboros} uses a public leader election 
+Ouroboros uses a public leader election 
 at the outset of an epoch 
 and, therefore, it is secure only against a static adversary. 
 SnowWhtie and Praos (and Bitcoin as well) uses a private leader election 
@@ -432,7 +460,8 @@ the beacon output for epoch $t \in [L]$ is
 \begin{align}\label{eq:beacon-iterated}
     \eta_t = \Pi_\Beacon(\eta_{t-1}) = \Pi_\Beacon^t(\eta_0)\,.
 \end{align}
-where $\eta_0$ is the uniformly random initial value for the first epoch.
+where $\eta_0$ is the uniformly random initial value for the first epoch 
+and the superscript $t$ denotes a $t$-fold sequential composition.
 
 
 \begin{lemma}[Beacon security over multiple epochs]\label{lemma:beacon-composition}
