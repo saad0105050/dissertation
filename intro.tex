@@ -35,7 +35,7 @@ a gargantuan amount of energy.
 
 In contrast, the \emph{Proof-of-Stake} (PoS) is a paradigm where 
 the lottery does not incur the steep cost of heavy computation. 
-If we can prove that the PoS blockchains can provide the same (or similar) level of 
+If PoS blockchains can provide the same (or similar) level of 
 functionality, security, performance, and scale as the PoW counterparts, 
 PoS could be a viable alternative to PoW blockchains 
 and may emerge as the right technology for an energy-efficient future.
@@ -46,25 +46,146 @@ and may emerge as the right technology for an energy-efficient future.
 % in the PoS model, a dishonest lottery winner may write 
 % multiple records with impunity. 
 
-In this dissertation, 
-we delve deep into the trade-off between the performance and the security of PoS blockchains 
-in the \emph{eventual consensus} model. 
-In this model, 
-the persistence happens over time: 
+
+Record settlement happens in a varying speed in 
+different families of blockchain protocols.
+In the \emph{eventual consensus} model, 
+the record persistence happens over time: 
 as time goes by and more and more records get written in the ledger, 
 the earlier records become less and less likely to be erased. 
 This comes in contrast to the ``exact consensus'' model 
 where a record achieves persistence as soon as it is written. 
-Examples of eventual consensus PoS protocols include Ouroboros, Praos, Genesis, SnowWhite, 
+
+In this dissertation, 
+we delve deep into the trade-off between the performance and the security of PoS blockchains 
+in the eventual consensus model. 
+We use ``PoS'' to mean the eventual consensus setting 
+unless otherwise specified.
+Examples of these protocols include Ouroboros, Praos, Genesis, SnowWhite, 
 and Sleepy Consensus.
 
 
+% A prevalent algorithm for eventual consensus blockchains 
+% (in both PoW and PoS) is \emph{the longest-chain rule}.
 
 
 
 
-\section{Background}
-To do
+\section{Background}\label{sec:background-intro}
+\InlineCases{
+  \item PoW \item PoS \item Consistency and Settlement
+  \item Epochs, slots
+  \item Leader election, honest majority
+  \item Probabilistic statements
+  \item Consistency problem; double spending attack
+  \item Informal k-CP
+  \item Importance of the consistency error bound
+
+  \item Abstraction
+  \item Honest majority assumptions
+
+  \item Beacons, nonce, aggregate
+  \item Grinding problem, grinding power
+  \item Ouroboros MPC, Praos beacon
+}
+
+
+
+
+\section{Research focus}\label{sec:intro-focus}
+This dissertation is focused on the consistency problem and the grinding problem in 
+eventual consensus PoS blockchains. 
+
+\Paragraph{Consistency error bounds.}
+In the previous section, 
+we have pointed out how important a consistency bound is. 
+Consider the $\kCP$ property.
+The first ever PoS consistency bounds, 
+put forth by~\citet{Ouroboros} and~\citet{SnowWhite}, 
+had the form $e^{-\Omega(\sqrt{k})}$. \footnote{
+  $\Omega(g(k))$ is the class of functions $f(k)$ 
+  which, loosely speaking, 
+  ``stay above $g(k)$'' for large inputs $k$.
+  Similarly, $O(g(k))$ is the class of functions $f(k)$ 
+  which, loosely speaking, 
+  ``stay below $g(k)$'' for large inputs $k$.
+}
+However, the $\kCP$ error bound in the PoW setting is $e^{-\Omega(k)}$. 
+Specifically, fix a positive integer $T$ and let $\varepsilon = e^{-\Omega(T)}$ 
+be the desired settlement error. 
+Then, settlement delay in the PoW would be $O(T)$ while 
+the same in the PoS would be $O(T^2$. 
+This quadratic gap in the settlement delays 
+was deeply problematic since, 
+at that time, 
+the community did not know whether this gap 
+was an inherent drawback of the PoS paradigm 
+or whether it was an artifact of the analysis. 
+Whatever it may be, 
+it was an urgent question to close this gap. 
+
+Furthermore, from a practitioner's point of view, 
+having only an asymptotic bound on the consistency error is a good start, 
+but it is not good enough; 
+we need to be able to exactly compute the consistency errors 
+(under various parameter regimes) 
+so that we can have the vantage point of setting 
+various system parameters. 
+It is also important to communicate these values 
+to the user community and investors 
+so that they can make informed decisions.
+
+
+\Paragraph{Slots with multiple honest leaders.}
+Recall that the leader election mechanism is a 
+critical component of any blockchain protocol. 
+In particular, 
+the security guarantees critically rely on the 
+statistical properties of the elected leaders 
+and, more precisely, 
+whether a slot is ``dishonest'' or ``honest'' 
+and, if honest, whether it has a single leader (\emph{uniquely honest}) 
+or multiple leaders (\emph{multihonest}).
+The existing analyses for PoS blockchains, 
+as it turns out, 
+put undue penalties on the event that a honest slot has multiple leaders. 
+That is, although intuition tells us that this should be a ``good event'' for the analysis, 
+in practice, it is treated as either an adversarial event~\cite{Ouroboros,Praos,Genesis} 
+or, at best, a neutral event~\cite{SnowWhite,Sleepy}. 
+Not only is this conservative modeling unintuitive, 
+but it also hamstrings the consistency error bounds 
+by effectively relinquishing honest stake. 
+As you can imagine, this conservative approach leads to weak consistency bounds 
+and, on top, it precludes a broad swath of leader election mechanisms 
+where a multihonest slot is a frequent outcome.
+
+
+\Paragraph{Grinding in Praos and SnowWhite.}
+Recall that important PoS protocols, including deployed ones such as Praos, 
+are susceptible to a grinding attack. 
+Although this risk is mitigated in respective security analyses, 
+this is done in a push-under-the-rug way. 
+Specifically, both Praos and SnowWhite's consistency error bounds look like 
+$\gamma e^{-\Omega(k)}$ where 
+$\gamma$ is a stand-in for the maximum number of resets 
+made to the beacon value in any epoch
+(i.e., the grinding power). 
+Note that when $\gamma$ is large, 
+it can seriously weaken the consistency error bound. 
+As you can imagine, this will have serious repercussions in all parts of the protocol design. 
+However, there are no analysis of the grinding power in the literature. 
+Thus, although we know that the consistency error bound is intertwined with 
+the grinding power, we do not know how much.
+
+
+% \Paragraph{Simple, secure beacons.} 
+% Recall that Ouroboros precludes grinding 
+% by employing a multi-party protocol which relies on heavy cryptography. 
+% In contrast, Praos and SnowWhite use simple beacon protocols 
+% but must withstand potential grinding. 
+% Algorand~\cite{Algorand} uses a non-MPC beacon 
+% but it is not an eventual consensus protocol 
+% (it is an expected constant-time BFT protocol).
 
 
 
@@ -73,31 +194,140 @@ To do
 
 
 
-\section{Research focus}
-To do
 
+\section{Research objectives}\label{sec:intro-objectives}
+The observations above can be congealed into the following objectives:
 
+\newcounter{ConsistencyObjectives}
+\begin{description}[font=\normalfont\itshape\space]
+  \item[Consistency Problem:]~
+  \begin{enumerate}
+    \item Derive tight asymptotic consistency bounds for PoS blockchains, 
+    treating multihonest slots as good events.
 
+    \item Compute explicit settlement error probabilities.
 
+    \setcounter{ConsistencyObjectives}{\value{enumi}}
+  \end{enumerate}
 
-\section{Research objectives}
-To do
+  \item[Grinding Problem:]~
+  \begin{enumerate}
+    \setcounter{enumi}{\value{ConsistencyObjectives}}
+
+    \item Quantify the grinding power in Praos and SnowWhite. 
+    Specifically, characterize how $\gamma$ grows 
+    as a function of the consistency parameter $k$ and the adversarial stake $\alpha$
+    
+    \item Propose and analyze new, simple, more secure beacons 
+    whose grinding power grows at a much slower rate than that in Praos.
+  \end{enumerate}
+\end{description}
+
 
 
 
 
 \section{The value of this research}
-To do
+\InlineCases{
+  \item Fast settlements
+  \item Reduce wasted efforts
+  \item Explicit probabilities
+  \item Cardano
+  \item Quantify grinding in deployed protocols
+  \item Trade-off between consistency and grinding
+  \item New simple beacons
+}
+
+
+This research adds some compelling value to the extant scientific knowledge. 
+
+For the first time in the literature, 
+this work shows that 
+PoS blockchains can achieve the same asymptotic dependence on $k$ 
+as in the PoW setting; namely, we improve the state-of-the-art bound 
+from $e^{-\Omega(\sqrt{k})}$ to $e^{-\Omega(k)}$~\cite{LinearConsistencySODA}. 
+As discussed before, this immediately implies that 
+PoS blockchains settle much faster than what we thought before. 
+Thus, deployed protocols can safely select stronger security parameters. 
+We also provide algorithms and software tools 
+for practitioners to explicitly compute consistency error probabilities. 
+A leading PoS cryptocurrency technology company, \emph{Cardano}~\cite{Cardano}, 
+is actively using the results and recommendation from this dissertation.
+
+In addition, our results in the ``simple honest stake majority'' setting~\cite{Multihonest}. 
+This readily improves the guarantees of several existing analyses, 
+namely Praos, Genesis, and SnowWhite. 
+These results allow for leader election schemes 
+for which a uniquely honest slot, on average, is less likely than 
+an adversarial slot. 
+No previous analysis can handle this parameter regime.
+We also introduce new combinatorial notions which 
+greatly simplifies consistency proofs.
+Moreover, this work establishes connections between 
+combinatorial notions and ideas from two 
+different schools of PoS analysis.
+
+Shifting focus to PoS beacons, 
+our analysis of the Praos beacon is a first in the literature.
+Importantly, we characterize the growth of the grinding power 
+by studying its first two moments. 
+Our results show that when the adversarial stake ratio is below $9\%$, 
+this grinding power is, in fact, $\Poly(k, \alpha)$. 
+On the flip side, this means the quality of the beacon degrades fast 
+as the adversarial stake ratio increases beyond $9\%$. 
+
+Thus, we need more secure yet simple PoS beacons. 
+The current work delivers in this front by 
+analyzing two new beacons. 
+The first one works with a Praos-like private leader election; 
+it is secure for $\alpha \leq 0.41$. 
+The second one works with Ouroboros-like public leader election 
+and it is secure for as long as $\alpha \in (0, 1/2)$. 
+
+
+\ParagraphBf{Some insights and highlights from this dissertation.}
+\begin{enumerate}
+  \item Longest-chain PoS protocols have the same asymptotic 
+  consistency error bounds, namely $e^{-\Omega(k)}$. 
+  The constants hidden by the $\Omega$ notation differs, though: 
+  let $\epsilon \in (0,1)$ so that 
+  the adversarial stake is $\alpha = (1-\epsilon)/2$. 
+  Then longest-chain PoW incurs a $\kCP$ violation with probability $e^{-\Omega(\epsilon^2)k}$, 
+  whereas the error probability for longest-chain PoS is $e^{-\Omega(\epsilon^3)k}$.
+
+  \item There is a program to explicitly compute these probabilities.
+
+  \item Longest-chain PoS can operate securely as long as on average, an honest slot 
+  (i.e., the said slot is associated with only honest leaders) 
+  is more likely than an adversarial slot.
+
+  \item For longest-chain PoS blockchains, 
+  there is an optimal adversarial strategy 
+  which can produce an execution 
+  where all slots are \emph{maximally unsettled}, meaning that 
+  if it is possible to unsettle a slot -- any slot -- 
+  this adversary \emph{will} unsettle this slot. 
+  We prove our security against this adversary.
+
+  \item If we are willing to adopt a \emph{consistent} 
+  longest-chain tie-breaking rule (see Section~\ref{sec:lcr-model}), 
+  we can allow $\Pr[\text{uniquely honest slot}] = 0$ 
+  and still remain secure.
+
+  \item The consistency guarantee for Praos is valid 
+  as long as the adversarial stake $\alpha < 0.0955$; 
+  in that regime, the grinding power is $\Poly(k)$ 
+  where $k$ comes from the $\kCP$ property of Praos. 
+  Beyond that, the grinding power of the adversary grows exponentially in $k$.
+
+  \item There are simple beacon protocols 
+  whose grinding power grows at a much slower rate than that of Praos.
+\end{enumerate}
 
 
 
 
-\section{Contributions}
-To do
-
-
-
-\section{Outline of this \Dissertation}
+\section{Outline of this dissertation}
 To do
 
 

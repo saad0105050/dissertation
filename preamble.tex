@@ -262,14 +262,16 @@
   \begin{enumerate*}[label=(\textit{\roman*})]
     #1
   \end{enumerate*}}
+\newcommand{\Paragraph}[1]{\vspace{1em}\noindent\emph{#1}\ }
+\newcommand{\ParagraphBf}[1]{\vspace{1em}\noindent\textbf{#1}\ }
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Plotting/drawing-related functions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newtoggle{drawfigs}
-\toggletrue{drawfigs}
-% \togglefalse{drawfigs}
+% \toggletrue{drawfigs}
+\togglefalse{drawfigs}
 
 \usepackage{tikz}
 \usetikzlibrary{automata,arrows,positioning,calc,math}
