@@ -1,0 +1,105 @@
+Let us start by deconstructing the title of this work, 
+\emph{Security of Proof-of-Stake Blockchains.}
+
+The term \emph{blockchains} refers to a family of technology, systems, and algorithms 
+in distributed computing 
+that enable 
+many participants to reach agreement without needing to trust each other. 
+As an algorithmic black-box, blockchains can be used to implement an immutable ledger: 
+If all honest scribes attempt to write a given data into the ledger then, within a stipulated period of time, 
+it indeed gets written; this is called \emph{liveness}. 
+If something is ever written in the ledger, it will remain there (i.e., become ``settled'') with overwhelming probability; 
+this is \emph{persistence}. 
+There are many important theoretical and practical applications of blockchains 
+in decentralized computing, including cryptocurrencies such as Bitcoin.
+Like any distributed computing paradigm, 
+a central goal of blockchains is to provide liveness and persistence 
+while simultaneously achieving 
+performance (e.g., how long to settle?), 
+scale (e.g., how many users?), and 
+security (e.g., how likely is an error?). 
+
+Since blockchain algorithms make it unnecessary 
+for the participants to trust one another, 
+it relies heavily on how one can prove any claims. 
+For example, if I attempt to write a record on the ledger, 
+I should supply a proof that I have the privilege to write. 
+These privileges are, by design, a rare commodity. 
+In fact, the participants continually perform a lottery to determine 
+who has this authority. 
+In blockchains in the \emph{Proof-of-Work} (PoW) paradigm, 
+the participants need to 
+perform heavy computation to participate in the lottery. 
+Thus, a PoW network, as a whole, consumes 
+a gargantuan amount of energy.
+
+In contrast, the \emph{Proof-of-Stake} (PoS) is a paradigm where 
+the lottery does not incur the steep cost of heavy computation. 
+If we can prove that the PoS blockchains can provide the same (or similar) level of 
+functionality, security, performance, and scale as the PoW counterparts, 
+PoS could be a viable alternative to PoW blockchains 
+and may emerge as the right technology for an energy-efficient future.
+% But there is a difficulty: 
+% in the PoW model, 
+% a lottery winner can write at most one record 
+% but 
+% in the PoS model, a dishonest lottery winner may write 
+% multiple records with impunity. 
+
+In this dissertation, 
+we delve deep into the trade-off between the performance and the security of PoS blockchains 
+in the \emph{eventual consensus} model. 
+In this model, 
+the persistence happens over time: 
+as time goes by and more and more records get written in the ledger, 
+the earlier records become less and less likely to be erased. 
+This comes in contrast to the ``exact consensus'' model 
+where a record achieves persistence as soon as it is written. 
+Examples of eventual consensus PoS protocols include Ouroboros, Praos, Genesis, SnowWhite, 
+and Sleepy Consensus.
+
+
+
+
+
+
+\section{Background}
+To do
+
+
+
+
+
+
+
+
+\section{Research focus}
+To do
+
+
+
+
+
+\section{Research objectives}
+To do
+
+
+
+
+\section{The value of this research}
+To do
+
+
+
+
+\section{Contributions}
+To do
+
+
+
+\section{Outline of this \Dissertation}
+To do
+
+
+
+
