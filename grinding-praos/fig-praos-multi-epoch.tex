@@ -4,12 +4,13 @@
     \centering
     \begin{tikzpicture}[trim axis left,
       ]
-      \begin{axis}[domain=0.6:1, 
-        restrict x to domain=0.6:0.98
+      \begin{axis}[domain=0:1, 
+        xmin=0,xmax=1,%,%ymin=-100%,ymax=2.5
+        restrict x to domain=0.02:0.98,
         samples=500,
         enlarge x limits=false,
         grid=both,
-        no markers,
+        no markers, 
         % legend pos=outer north east,
         legend pos=north east,
         legend cell align=left,
@@ -17,7 +18,6 @@
         % y label style={at={(axis description cs:-0.1,.5)},anchor=south},
         xlabel={$\epsilon$, honest bias},
         title={$\rho^*$, upper bound on the min-entropy loss $\rho$},
-        xmin=0.6,xmax=1%,%ymin=-100%,ymax=2.5
         ]
         \addplot +[ultra thick,red] { PraosMinEntropyLossMultiEpoch(\x, 1200, 2) };
         \addlegendentry{$k = 1200$};

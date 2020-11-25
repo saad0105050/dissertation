@@ -1,8 +1,18 @@
 
 \section{Grinding power in a single epoch}
 
-\subsection*{Proof of Theorem~\ref{thm:beacon-bernoulli-single-epoch}}
-% \begin{proof}  
+\begin{theorem}[Static adversary, single epoch]\label{thm:beacon-bernoulli-single-epoch}
+  Let $\alpha \in (0, 0.41)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
+  Let $f(\alpha)$ and $\rho$ be as in \eqref{eq:f-bernoulli} and \eqref{eq:rho-bernoulli}.
+  Let $\Pi_\Beacon$ be a $(T,k,s,d,\PublicLeaderElection(\alpha), \EpsP)$-beacon.
+  Let $\eta$ be the beacon output after the first epoch. 
+  Then 
+  \begin{equation}\label{eq:security-bernoulli-single-epoch}
+    \Pr_{\PublicLeaderElection{\alpha}}\left[\MinEntropy(\eta) \geq \kappa - \rho \right] \geq 1 - 3 \EpsP
+    \,.
+  \end{equation}
+\end{theorem}
+\begin{proof}  
   Consider Lemma~\ref{lemma:xor-game-Bernoulli-gamma} 
   with $\ell = k/d$ and $n = (T-k)/d$. 
   The min-entropy loss, 
@@ -19,11 +29,23 @@
   the $(\EpsP, k, s)$-secure protocol $\Blockchain$, 
   is $(\alpha^n + \EpsP) + \EpsP$. 
   Since we assume~\eqref{eq:alphatothen-epsp}, it is at most $3 \EpsP$.
-% \end{proof}
-\hfill\qed
+\end{proof}
+% \hfill\qed
 
-\subsection*{Proof of Theorem~\ref{thm:beacon-poisson-single-epoch}}
-% \begin{proof}  
+\begin{theorem}[Adaptive adversary, single epoch]\label{thm:beacon-poisson-single-epoch}
+  Let $\alpha \in (0, 0.41)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
+  Let $f(\alpha)$ and $\rho$ be as in \eqref{eq:f-poisson} and \eqref{eq:rho-poisson}.
+  Let $\Pi_\Beacon$ be a $(T,k,s,d,\PrivateLeaderElection(\alpha), \EpsP)$-beacon 
+  where $d$ is from~\eqref{eq:d-multiepoch}.
+  Let $\eta$ be the beacon output after the first epoch. 
+  Then 
+  \begin{equation}\label{eq:security-bernoulli-single-epoch}
+    \Pr_{\PrivateLeaderElection{\alpha}}\left[\MinEntropy(\eta) \geq \kappa - \rho \right] \geq 1 - 3 \EpsP
+    \,.
+  \end{equation}
+\end{theorem}
+
+\begin{proof}  
   Consider Lemma~\ref{lemma:xor-game-poisson-gamma} 
   with $\ell = k/d$ and $n = (T-k)/d$. 
           % \gamma = \left(\frac{n^{1 + \lambda} }{ (1+\alpha) \EpsP} \right)^{1/\lambda}
@@ -76,8 +98,8 @@
   (\ell/2) \log_2(1+3\alpha + \alpha^2) = \frac{k}{T-k} \cdot \frac{f(\alpha)}{2}\cdot \log_2(1/\EpsP)
   $$
   using $\ell = k/d$ and taking $d$ from~\eqref{eq:d-multiepoch}.
-% \end{proof}
-\hfill\qed
+\end{proof}
+% \hfill\qed
 
 
 

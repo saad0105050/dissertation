@@ -335,11 +335,11 @@
     };
     % Epoch length
     function R(\e, \k) {
-        return 16 * \k  / (1 + \e) ; 
+        return floor(16 * \k  / (1 + \e)) ; 
     };
     % Number of nonce-generating slots
     function PraosN(\e, \k) {
-        return R(\e, \k) * 2 / 3 ; 
+        return floor(R(\e, \k) * 2 / 3) ; 
     };
     % Consistency error prob
     function PraosEpsP(\e, \k) {
@@ -391,32 +391,75 @@
             return 0 ;
         };
     };
-    function PraosMinEntropyLossMultiEpoch (\e, \k, \L) {
-        if (\e >= 0.6) then {
-            if (\e >= 0.809) then {
-                return 0 ;
-            }
-            else {
-            	return 0.5 * (LnPraosV(\e, \k) - LnPraosEpsP(\e, \k)) / ln(2) ;
-            };
-        } else {
-            return 0 ;
+    function PraosMinEntropyLossMultiEpoch (\e, \k) {
+        % Probability cannot be larget than 1
+        \lnepsp = LnPraosEpsP(\e, \k) ;
+        \lnepsp = min(0, \lnepsp ) ;
+        % Logarithm of the grinding power
+        \actual = 0.5 * (LnPraosV(\e, \k) - \lnepsp) / ln(2) ;
+        return max(\actual, 0) ; % Can't be negative
+    };
+    function PraosPrBadMultiEpoch (\e, \k, \L) {
+        % Probability cannot be larget than 1
+        \epsp = min(1, PraosEpsP(\e, \k) );
+        \epsp = max(0, \epsp) ;
+        if (\epsp < 1) then {
+            \Rho = PraosMinEntropyLossMultiEpoch(\e, \k) ;
+            return 3 * \L * 2^\Rho \epsp ;
+        } else 
+        {
+            return 1 ;
         };
     };
     function LnPraosPrBadMultiEpoch (\e, \k, \L) {
-        if (\e >= 0.809) then {
-            return ln(\L) + 0.5 * ( LnPraosV(\e, \k) + LnPraosEpsP(\e, \k) ) ;
+        \epsp = min(1, PraosEpsP(\e, \k) );
+        \epsp = max(0, \epsp) ;
+        if (\epsp < 1) then {
+            \Rho = PraosMinEntropyLossMultiEpoch(\e, \k) ;
+            return ln(3) + ln(\L) + \Rho * ln(2) + ln(\epsp);
         } else {
             return 0 ;
         };
     };
-    function PraosPrBadMultiEpoch (\e, \k, \L) {
-        if (\e >= 0.6) then {
-            \epsp = PraosEpsP(\e, \k) ;
-            % return \L * ( sqrt( PraosV(\e) * \epsp ) + 2*\epsp ) ;
-            return \L * ( sqrt( PraosV(\e, \k) * \epsp ) ) ;
-        } else {
+    % XOR target games: Poisson
+    function PoissonBeaconMinEntropyLoss (\e, \k, \epsp) {
+        \common = 0 ;
+        \extra = 0 ;
+        if (\epsp < 1) then {
+            \a = Alpha(\e) ;
+            \f = ln(1 + 3 * \a + \a^2) / ln(1/\a);
+            \T = PraosN(\e, \k);
+            \dmax = floor((\T-\k) * ln(1/\a)/ln(1/\epsp)) ;
+            % d cannot be less than 1
+            \d = max(1,\dmax) ; 
+            \Tkd = (\T-\k)/\d;
+            \kr=\k/(\T-\k);
+            \common = (\f/2) * \kr * ln(1/\epsp)/ln(2) ;
+            if (\a <= 0.41 ) then {
+                \extra = (1/2) * ln(\Tkd^3/((1+\a) * \epsp) )/ln(2);
+            }
+            else {
+                \extra = (\f/2) * ln(\Tkd^(1+2/\f)/((1+\a) *\epsp) )/ln(2) ;
+            };
+        };
+        return \common + \extra ;
+    };
+    function PoissonBeaconPrBadMultiEpoch (\e, \k, \L, \epsp) {
+        if (\epsp < 1) then {
+            \Rho = PraosMinEntropyLossMultiEpoch(\e, \k) ;
+            return 3 * \L * 2^\Rho * \epsp ;
+        } 
+        else 
+        {
             return 1 ;
+        };
+    };
+    function LnPoissonBeaconPrBadMultiEpoch (\e, \k, \L, \epsp) {
+        if (\epsp < 1) then {
+            \Rho = PraosMinEntropyLossMultiEpoch(\e, \k) ;
+            return ln(3) + ln(\L) + \Rho * ln(2) + ln(\epsp);
+        } else {
+            return 0 ;
         };
     };
 }%
