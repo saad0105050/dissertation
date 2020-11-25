@@ -270,8 +270,8 @@
 %%% Plotting/drawing-related functions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newtoggle{drawfigs}
-% \toggletrue{drawfigs}
-\togglefalse{drawfigs}
+\toggletrue{drawfigs}
+% \togglefalse{drawfigs}
 
 \usepackage{tikz}
 \usetikzlibrary{automata,arrows,positioning,calc,math}
@@ -460,6 +460,23 @@
             return ln(3) + ln(\L) + \Rho * ln(2) + ln(\epsp);
         } else {
             return 0 ;
+        };
+    };
+    %
+    %
+    % XOR target games: Bernoulli
+    function BernoulliBeaconMinEntropyLoss (\e, \k, \epsp) {
+        if (\epsp < 1) then {
+            \a = Alpha(\e) ;
+            \f = ln(2) / ln(1/\a) ;
+            \T = PraosN(\e, \k);
+            \dmax = floor((\T-\k) * ln(1/\a)/ln(1/\epsp)) ;
+            % d cannot be less than 1
+            \d = max(1,\dmax) ; 
+            \Tkd = (\T-\k)/\d ;
+            return \k/\d + 1 + \f * ln( (\Tkd/\epsp) / (1+\a) )/ln(2) ;
+        } else {
+            return -1;
         };
     };
 }%
