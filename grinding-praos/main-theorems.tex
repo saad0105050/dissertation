@@ -1,14 +1,54 @@
-\section{Proof of Theorem~\ref{thm:minentropy-loss-praos-single-epoch}}
-Let $\epsilon \in (0,1)$ and $\alpha = (1-\epsilon)/2$ be the adversarial stake.
-Suppose that $\Blockchain$ is $(\EpsP, k, s)$-secure in an epoch 
-where first $n$ slots, 
-which correspond to a characteristic string $W \sim \mathcal{L}_n(\alpha)$, 
-contribute to the beacon output.
-Recall $g(n,\epsilon)$ defined in ~\eqref{eq:praos-gneps}.
-Using Lemma~\ref{lemma:grinding-praos-second-moment} and~\ref{lemma:praos-tail-gamma}, 
-we can see that except with probability $2\EpsP$, $g(n,\epsilon)$ is at most $\sqrt{m/\EpsP}$ 
-where $m$ is the right-hand-side of~\eqref{eq:grinding-praos-second-moment}.
-\hfill\qed
+
+
+\section{Praos beacon for a single epoch}
+\begin{theorem}[Praos beacon, single epoch]\label{thm:minentropy-loss-praos-single-epoch}  
+  Let $\epsilon \in (0,1)$. 
+  Suppose Praos 
+  remains $(\EpsP, k, s)$-secure 
+  inside any epoch 
+  whose characteristic string $W$ has the distribution $\mathcal{L}((1-\epsilon)/2)$. 
+  Let $\rho$ be the min-entropy loss in 
+  the beacon output, $\eta$, after an epoch. 
+  Recall $\phi(\epsilon)$ from~\eqref{eq:phi_eps} 
+  and $V(\epsilon)$ from~\eqref{eq:V-eps-praos}.
+  Let 
+  $$
+    m \defeq 0.4 (1+2\epsilon) s^2 V(\epsilon)
+    \,.
+  $$
+  Then $$
+    \Pr_{W \sim \mathcal{L}((1-\epsilon)/2)}[g(n,\epsilon) > \sqrt{m/\EpsP}] \leq 2 \EpsP
+  $$ 
+  and, consequently, 
+  $$
+    \Pr_{W \sim \mathcal{L}((1-\epsilon)/2)}[\rho > 0.5 \log_2(m/\EpsP)] \leq 2 \EpsP\,.
+  $$
+  In particular, for $\epsilon > 0.809$, 
+  $g(n, \epsilon) = O(s)$ and $\rho = O(\log_2 s)$ 
+  except with probability $2 \EpsP$.
+\end{theorem}
+\noindent
+Note that if $\epsilon < 0.809$, 
+$\rho = \Omega(s)$ 
+except with probability $2 \EpsP$.
+
+
+\iftoggle{drawfigs}{
+  \input{grinding-praos/fig-praos-single-epoch}
+}
+% \section{Proof of Theorem~\ref{thm:minentropy-loss-praos-single-epoch}}
+\begin{proof}  
+  Let $\epsilon \in (0,1)$ and $\alpha = (1-\epsilon)/2$ be the adversarial stake.
+  Suppose that $\Blockchain$ is $(\EpsP, k, s)$-secure in an epoch 
+  where first $n$ slots, 
+  which correspond to a characteristic string $W \sim \mathcal{L}_n(\alpha)$, 
+  contribute to the beacon output.
+  Recall $g(n,\epsilon)$ defined in ~\eqref{eq:praos-gneps}.
+  Using Lemma~\ref{lemma:grinding-praos-second-moment} and~\ref{lemma:praos-tail-gamma}, 
+  we can see that except with probability $2\EpsP$, $g(n,\epsilon)$ is at most $\sqrt{m/\EpsP}$ 
+  where $m$ is the right-hand-side of~\eqref{eq:grinding-praos-second-moment}.
+\end{proof}
+% \hfill\qed
 
 
 

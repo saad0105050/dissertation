@@ -1,3 +1,94 @@
 
+Recall that in Part~\ref{part:praos}, 
+we analyzed the randomness beacon in Ouroboros Praos\cite{Praos} and Snow White~\cite{SnowWhite} 
+in the synchronous setting. 
+We showed 
+that the min-entropy loss in the beacon output 
+is logarithmic in the security parameter if the adversarial stake is below $9\%$; 
+otherwise, it grows linearly in the security parameter.
+As Praos is deployed in practice (since August 2020), 
+it remains an open question to design simple PoS beacons for Praos 
+which can withstand large adversarial stakes.
+
+In this part of the dissertation, 
+we present PoS beacons 
+whose most salient feature is simplicity and high quality.
+In the private leader election setting (e.g., Praos and Snow White), 
+our beacon has a superior output quality 
+(compared to Praos) 
+as long as the adversarial bias is at most $41\%$. 
+Although this beacon does not cover adversarial stakes $\alpha$ above $41\%$, 
+the regime $\alpha \in (0, 0.41)$ is nonetheless practical: 
+for practical values for the consistency parameter $k$, 
+Praos' consistency error bound 
+starts to degrade when the adversarial stake goes above $40\%$.) 
+As an immediate application, it would improve the grinding tolerance in Praos; 
+see Figure~\ref{fig:rho-poisson-beacon} for a comparison.
+
+\iftoggle{drawfigs}{
+
+\begin{figure}[!htb]
+    \centering
+    \begin{tikzpicture}[trim axis left,
+      ]
+      \begin{axis}[domain=0:1, 
+        xmin=0,xmax=1,%,%ymin=-100%,ymax=2.5
+        restrict x to domain=0.18:0.99,
+        samples=500,
+        enlarge x limits=false,
+        grid=both,
+        no markers, 
+        % legend pos=outer north east,
+        legend pos=outer north east,
+        legend cell align=left,
+        x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+        y label style={at={(axis description cs:-0.1,.5)},anchor=south},
+        xlabel={$\epsilon$, honest bias},
+        title={$\rho^*$, upper bound on the min-entropy loss $\rho$}
+        ]
+        \addplot +[ultra thick,red] { PraosMinEntropyLossMultiEpoch(\x, 900 ) };
+        \addlegendentry{Praos, $k = 900$};
+        \addplot +[ultra thick,black] { PoissonBeaconMinEntropyLoss(\x, 900, PraosEpsP(\x, 900)) };
+        \addlegendentry{New, $k = 900$};
+        \addplot +[ultra thick,blue] { PraosMinEntropyLossMultiEpoch(\x, 1200) };
+        \addlegendentry{Praos, $k = 1200$};
+        \addplot +[ultra thick,orange,dashed] { PoissonBeaconMinEntropyLoss(\x, 1200, PraosEpsP(\x, 1200)) };
+        \addlegendentry{New, $k = 1200$};
+      \end{axis}
+    \end{tikzpicture}%
+    \caption{Min-entropy loss in Poisson beacon}
+    \label{fig:rho-poisson-beacon}
+\end{figure}
+
+}
+
+
+We also design a PoS beacon in the public leader election setting 
+which can work with Ouroboros classic~\cite{Ouroboros}. 
+Recall that Ouroboros classic uses an MPC-based beacon protocol 
+which precludes any grinding. 
+Implementing this protocol in practice, however, is not palatable. 
+We believe that this beacon will be valuable for 
+PoS protocols 
+that do not have the means to use/implement the MPC-based beacon 
+and, in exchange, are willing to tolerate a very low min-entropy loss 
+in the beacon. 
+See Figure~\ref{fig:rho-bernoulli-beacon}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+% Related Work
+\input{grinding-praos/related-work}
+
+
+\section{A technical overview}
 To do
+
+
+
+\section{Outline of the exposition}
+To do
+
+
+
 

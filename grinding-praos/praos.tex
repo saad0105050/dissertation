@@ -319,8 +319,8 @@ Our goal is to derive tail bounds on $g(n,\epsilon)$.
 
 
 
-\section{Moment bounds for GP}
 
+\section{Praos beacon over multiple epochs}
 Define 
 \begin{align}
   \phi(\epsilon) &\triangleq \frac{3}{2} \left( (1-\epsilon^2) (1-\epsilon) \right)^{1/3}\label{eq:phi_eps} \\
@@ -334,104 +334,62 @@ Define
 \noindent
 
 
-Our bounds on $g(n,\epsilon)$ 
-follow from our estimates of its first and second moments.
-Let $\epsilon \in (0,1), \alpha = (1-\epsilon)/2, n \in \NN$, and $W \sim \mathcal{L}_n(\alpha)$. 
+Let $\epsilon \in (0,1), \alpha = (1-\epsilon)/2, n \in \NN$. 
+We can prove that 
+conditioned on an $(\EpsP, k, s)$-secure execution of Praos in an epoch of length $n$ 
+and characteristic string $W \sim \mathcal{L}_n(\alpha)$, 
+$\Exp[g(n,\epsilon)^2] = O(s^2) V(\epsilon)$.
 In Figure~\ref{fig:praos-gp-moments}, 
-we have plotted various moment bounds on the grinding power $g(n,\epsilon)$; 
+we have plotted various moment bounds on $g(n,\epsilon)$; 
 we will prove these bounds next in this exposition.
 
 \iftoggle{drawfigs}{
   \input{grinding-praos/fig-praos-gp-moment-bounds}
 }
 
+We can derive tail bounds on $g(n,\epsilon)$ using the second moment bound.
 
-
-
-
-
-
-
-
-\section{Praos beacon over a single epoch}
-
-\begin{theorem}[Praos beacon, single epoch]\label{thm:minentropy-loss-praos-single-epoch}  
-  Let $\epsilon \in (0,1)$. 
-  Suppose Praos 
-  remains $(\EpsP, k, s)$-secure 
-  inside any epoch 
-  whose characteristic string has the distribution $\mathcal{L}((1-\epsilon)/2)$. 
-  Recall $\phi(\epsilon)$ from~\eqref{eq:phi_eps} 
-  and $V(\epsilon)$ from~\eqref{eq:V-eps-praos}.
-  Let 
-  $$
-    m \defeq 0.4 (1+2\epsilon) s^2 V(\epsilon)
-    \,.
-  $$
-  Then $$
-    g(n,\epsilon) \leq \sqrt{m/\EpsP} \quad \text{except with probability}\quad 2 \EpsP\,.
-  $$ 
-  In particular, 
-  except with probability $2 \EpsP$,
-  $g(n, \epsilon) = \Poly(s) = O(k)$ for $\epsilon > 0.809$. 
-  As a consequence,
-  except with probability $2 \EpsP$,
-  the min-entropy loss in 
-  the beacon output, $\rho$, is at most
-  $$
-    (1/2) \log_2 (m/\EpsP) = O(s)
-  $$ after an epoch 
-  and, in particular, it is $O(\log_2 s)$ for $\epsilon > 0.809$.
-\end{theorem}
-
-The proof of Theorem~\ref{thm:minentropy-loss-praos-single-epoch} 
-is presented in Section~\ref{sec:proof-praos-theorem}. 
-
-\iftoggle{drawfigs}{
-  \input{grinding-praos/fig-praos-single-epoch}
-}
-
-
-
-
-
-
-
-
-\section{Praos beacon over multiple epochs}
-
-\begin{theorem}[Praos beacon over multiple epochs]\label{thm:minentropy-loss-praos-muliti-epochs}  
-  Let $\epsilon \in (0.6, 1)$. 
+\begin{theorem}[Praos beacon]\label{thm:minentropy-loss-praos-multi-epochs}  
+  Let $\epsilon \in (0, 1)$ and $L,\kappa \in \NN$. 
   Recall $\phi(\epsilon)$ from~\eqref{eq:phi_eps}.
   Suppose Praos 
   remains $(\EpsP, k, s)$-secure 
   inside any epoch 
-  whose characteristic string has the distribution $\mathcal{L}((1-\epsilon)/2)$. 
+  with a characteristic string $W \sim \mathcal{L}((1-\epsilon)/2)$. 
   Let 
-  $$
-    m = s^2 \left( (5/3) \phi(\epsilon) \right)^s
-  $$
-  and $L \in \NN$ so that $L \sqrt{m \EpsP} \leq 1$. 
-  Then 
-  the min-entropy loss in 
-  the beacon output after $L$ epochs, $\rho$, is at most 
-  $$
-    (1/2) \log_2 (m/\EpsP) = O(s)
-  $$
-  except with probability $L \sqrt{m \EpsP}$.
-\end{theorem}
+  \begin{align*}
+    \rho &= \begin{cases}
+      % Ignoring the additive factor \log_2(0.4 (1+2\epsilon) )/2
+      s/2 \cdot \log_2\left( (5-3 \epsilon)/2 \right) + \log_2(s)  & \text{if}\quad 0 < \epsilon \leq 1/3\,, \\
+      s/2 \cdot \log_2\left( 2^{2/3} \phi(\epsilon) \right) + \log_2(s) & \text{if}\quad 1/3 < \epsilon \leq 3/5\,, \\
+      s/2 \cdot \log_2\left( (5/3) \phi(\epsilon) \right) + \log_2(s) + 0.14 & \text{otherwise}\,. 
+    \end{cases}
+  \end{align*}
 
-The proof of Theorem~\ref{thm:minentropy-loss-praos-muliti-epochs} 
+  Let $\eta \in \{0,1\}^\kappa$ be the output of the beacon after $L$ epochs.
+  % and $L \in \NN$ so that $L \sqrt{m \EpsP} \leq 1$. 
+  Then $g(n,\epsilon) \leq 2^\rho$ except with probability at most $3 L s \EpsP^{1/2} V(\epsilon)^{1/2}$.
+  Equivalently,
+  $$
+    \Pr_{W \sim \mathcal{L}((1-\epsilon)/2)}[H_\infty(\eta) \geq \kappa - \rho] 
+      \leq 1 - 3 L s \EpsP^{1/2} V(\epsilon)^{1/2} \,.
+  $$
+  In particular, for $\epsilon > 0.809$, 
+  $\rho = \Poly(\log_2 s)$ and $g(n,\epsilon) = O(s)$ 
+  except with probability at most $3Ls \EpsP^{1/2}$.
+\end{theorem}
+\noindent
+The proof of Theorem~\ref{thm:minentropy-loss-praos-multi-epochs} 
 is presented in Section~\ref{sec:proof-praos-theorem}. 
 
 \begin{remark*}
-  The $\log_2(1/\EpsP)$ term in the min-entropy loss $\ell$ 
-  is inevitable if we want 
-  the bad probability to be at most $\EpsP^\delta$ 
-  for some positive real constant $\delta \in (0, 1)$. 
-  The factor $1/2$ in front of the $\log_2(1/\EpsP)$ term 
-  arises since we used the second-moment method 
-  for bounding the grinding power.
+  When $\epsilon < 0.809$, 
+  the $O(s)$ term in the min-entropy loss $\rho$ 
+  is inevitable sine, at this region, 
+  $g(n,\epsilon) = e^{\Omega(s)}$.
+  The factor $1/2$ in the leading term in $\rho$ 
+  is the result of using the second-moment method 
+  to derive the tail bound.
 \end{remark*}
 \iftoggle{drawfigs}{
   \input{grinding-praos/fig-praos-multi-epoch}

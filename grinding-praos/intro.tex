@@ -18,49 +18,34 @@ which means the periodic outputs must be statistically close to the uniform dist
 The beacon must be \emph{unpredictable} as well, which means no one can predict the outcomes except with a negligible probability. 
 In addition, it has to be \emph{publicly verifiable}, 
 which means anyone can use publicly available information to verify each step of the computation. 
-Finally, it must provide \emph{liveness}, which means (i.) that the beacon always produces its periodic output 
-and (ii.) everyone receives the same output. 
+Finally, it must provide \emph{liveness}, which means 
+\InlineCases{
+    \item that the beacon always produces its periodic output 
+    and 
+    \item everyone receives the same output. 
+}
 
-Consider a proof-of-stake (PoS) blockchain protocol [reference] 
-where it is practically ``free'' to query the random oracle 
-which is often implemented as a verifiable cryptographic hash function (VRF).
-A malicious coalition in the beacon sub-protocol can evaluate the VRF multiple times (say, $q$ times) 
-before committing to their ``favorite'' VRF outputs. 
-Indeed, this increases the probability that the resulting beacon value sways the future events in the adversary's favor. 
-This is the \emph{grinding attack} against the protocol and it is easy to see that 
-it is in fact an attack against the bias-resistance property of the beacon. 
-The quantity $q$ is called the grinding power of the adversary.
+Consider a proof-of-stake (PoS) blockchain protocol 
+where an adversary can query the potential beacon output for the next epoch 
+before settling for a beacon value that would sway the future events in his favor. 
+(He can do so by forcing a specific blockchain prefix to become consistent for this epoch.)
+If he can make at most $q$ queries, 
+he can inflate the failure probability for the next epoch by at most a factor of $q$. 
+This is the so-called \emph{grinding attack}. In fact,  
+it is an attack against the bias-resistance property of the beacon. 
+The quantity $q$ is called the \emph{grinding power} of the adversary.
 
-The security analysis of the state-of-the-art PoS blockchain protocols [reference] 
-\emph{assumes} that the grinding power $q$ is bounded by $\Poly(k)$ 
-where $k$ is a security parameter of the blockchain protocol. 
-% A decentralized randomness beacon [reference] is typically used in conjunction with an ambient decentralized protocol.
-% Naturally, any security guarantee for the ambient protocol hinges on the security of the beacon 
-% since an attack against the beacon can be converted, in principle, as an attack against the ambient protocol.
-% For example, consider the \emph{grinding attack} on the eventual consensus-based proof-of-stake blockchain protocol [where?].
-% Under the hood, this attack is actually performed on the bias-resistance property of the randomness beacon.
-% The security proofs of the state-of-the-art PoS protocols [Ouroboros, Snow White], however, do not 
-% quantify the ``grinding power'' (i.e., the number of random oracle queries) of a malicious coalition. 
-% Instead, these proofs assume that this number is bounded by a polynomial in the security parameter. 
-This leaves us with some open questions. For example, 
-\emph{how does the grinding power grow as a function of the adversarial stake? 
+The security guarantees of many state-of-the-art PoS blockchain protocols, 
+such as Ouroboros Praos~\cite{Praos} and Snow White~\cite{SnowWhite}, 
+requires that $q$ be bounded by $\Poly(k)$ 
+where $k$ is the security parameter of the blockchain protocol. 
+However, we have an open question: 
+\emph{how does $q$ grow as a function of the adversarial stake $\alpha$ and the security parameter $k$? 
 When is it indeed $\Poly(k)$?}
 
-\paragraph{Our contributions.} 
-\begin{itemize}
-    \item We design a randomness beacon with a guaranteed min-entropy. 
-    Specifically, given an arbitrary failure probability $\EpsP$, 
-    we describe a function $\gamma$ which gives an upper bound on the quantity $q$ above, i.e., 
-    it captures the grinding power of the the adversary.
-    The loss in the min-entropy of our beacon in a single period is at most $\log_2 \gamma$ except with probability $\EpsP$. 
-    
-    \item As an immediate application, we use this beacon to design a PoS blockchain protocol 
-    which has a public leader-schedule (like Ouroboros) and a simple-to-describe VRF-based beacon (like Praos).
-    
-    \item At last but not the least, we provide, for the first time, a rigorous analysis of the grinding attack 
-    against Praos. 
-    Our analysis shows that the grinding power in Praos is indeed $\Poly(k)$ if the adversarial stake is at most $10\%$.
-\end{itemize}
+In this work, we put forth a rigorous analysis of the grinding attack against Praos and Snow White. 
+Our analysis shows that it is indeed $\Poly(k)$ if the adversarial stake is at most $10\%$; 
+see Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}.
 
 % Or equivalently, what is the min-entropy of the underlying randomness beacon as a function of the adversarial stake?
 % What is the quantitative relationship between the security properties (e.g., the min-entropy) of a beacon 
@@ -73,22 +58,9 @@ When is it indeed $\Poly(k)$?}
 
 
 
+\section{A technical overview}
+To do
 
 
-\paragraph{The problem.} 
-Can a set of mistrustful parties agree on a random string that is unbiased, unpredictable, 
-
-\subsection{Overview of this work}
-\begin{enumerate}
-    \item What do we bring to the table? How do we define security and how do we meet it?
-    \item How does it complement the landscape? What are the assumptions?
-    \item What are some immediate applications?
-    \item What are some interesting things under the hood?
-\end{enumerate}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-% Related Work
-\input{grinding-praos/related-work}
-
-\subsection{Organization of this paper}
+\section{Outline of the exposition}
+To do
