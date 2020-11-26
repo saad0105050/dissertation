@@ -20,11 +20,11 @@
         xlabel={$\epsilon$, honest bias},
         title={$\rho^*$, upper bound on the min-entropy loss $\rho$},
         ]
-        \addplot +[ultra thick,red] { PraosMinEntropyLossMultiEpoch(\x, 1200, 2) };
+        \addplot +[ultra thick,red] { PraosMinEntropyLossMultiEpoch(\x, 1200) };
         \addlegendentry{$k = 1200$};
-        \addplot +[ultra thick,black] { PraosMinEntropyLossMultiEpoch(\x, 900, 2) };
+        \addplot +[ultra thick,black] { PraosMinEntropyLossMultiEpoch(\x, 900) };
         \addlegendentry{$k = 900$};
-        \addplot +[ultra thick,blue] { PraosMinEntropyLossMultiEpoch(\x, 600, 2) };
+        \addplot +[ultra thick,blue] { PraosMinEntropyLossMultiEpoch(\x, 600) };
         \addlegendentry{$k = 600$};
       \end{axis}
     \end{tikzpicture}%

@@ -1,76 +1,79 @@
 
 
-\begin{figure}[!htb]
-    \centering
-    \tikzsetnextfilename{rho-single-epoch}
-    \begin{tikzpicture}[trim axis left,
-      ]
-      \begin{axis}[domain=0:1, restrict x to domain=0.001:0.999
-        samples=500,
-        enlarge x limits=false,
-        grid=both,
-        no markers,
-        % legend pos=outer north east,
-        legend pos=south west,
-        legend cell align=left,
-        x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
-        y label style={at={(axis description cs:-0.1,.5)},anchor=south},
-        xlabel={$\epsilon$, honest bias},
-        title={Upper bound on GP for a single epoch},
-        xmin=0,xmax=1%,ymin=-100%,ymax=2.5
-        ]
-        \addplot +[ultra thick,red] { 2^( PraosMinEntropyLossSingleEpoch(\x, 1200) ) };
-        \addlegendentry{$k = 1200$};
-        \addplot +[ultra thick,black] { 2^( PraosMinEntropyLossSingleEpoch(\x, 900) ) };
-        \addlegendentry{$k = 900$};
-        \addplot +[ultra thick,blue] { 2^( PraosMinEntropyLossSingleEpoch(\x, 600) ) };
-        \addlegendentry{$k = 600$};
-      \end{axis}
-    \caption[Grinding power]{
-        The grinding power upper bound $\gamma$ from~\eqref{eq:gamma-expression-praos}, 
-        as a function of honest bias $\epsilon \in (0,1)$. 
-        (See Theorem~\ref{thm:minentropy-loss-praos-single-epoch} 
-        and Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}.)
-        Praos execution's parameters are selected according to Figure~\ref{fig:rho-praos-beacon}.
-        Note that $\gamma = O(\log_2 s)$ for $\epsilon > 0.809$.
-    }
-    \label{fig:rho-praos-beacon-single-epoch}
-\end{figure}
-\begin{figure}[!htb]
-    \centering
-    \tikzsetnextfilename{prbad-single-epoch}
-    \begin{tikzpicture}[trim axis left,
-      ]
-      \begin{axis}[domain=0:1, 
-        restrict x to domain=0.001:0.999,
-        % restrict y to domain=0:100,
-        samples=500,
-        enlarge x limits=false,
-        grid=both,
-        no markers,
-        % legend pos=outer north east,
-        legend pos=north west,
-        legend cell align=left,
-        x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
-        y label style={at={(axis description cs:-0.1,.5)},anchor=south},
-        xlabel={$\epsilon$, honest bias},
-        title={$-\log_2\, \Pr[ g > \gamma ]$},
-        xmin=0,xmax=1,ymin=0%,ymax=2.5
-        ]
-        \addplot +[ultra thick,red] { -1 - LnPraosEpsP(\x, 1200) / ln(2) };
-        \addlegendentry{$k = 1200$};
-        \addplot +[ultra thick,black] { -1 - LnPraosEpsP(\x, 900) / ln(2) };
-        \addlegendentry{$k = 900$};
-        \addplot +[ultra thick,blue] { -1 - LnPraosEpsP(\x, 600) / ln(2) };
-        \addlegendentry{$k = 600$};
-      \end{axis}
-    \end{tikzpicture}
-  \caption[Probability of a grinding violation, single epoch]{
-        Consider a single-epoch execution of Praos 
-        using the same parameters as in Figure~\ref{fig:rho-praos-beacon}.
-        Let $g$ be the maximum, actual grinding power 
-        and let $\gamma$ be the upper bound in~\eqref{eq:gamma-expression-praos}. 
-        Above, we plot $\log_2(\Pr[g > \gamma])$.
-      }
-  \label{fig:prbad-praos-beacon-single-epoch}
-\end{figure}
+% \begin{figure}[!htb]
+%     \centering
+%     \tikzsetnextfilename{rho-single-epoch}
+%     \begin{tikzpicture}[trim axis left,
+%       ]
+%       \begin{axis}[domain=0:1, restrict x to domain=0.001:0.999,
+%         samples=500,
+%         enlarge x limits=false,
+%         grid=both,
+%         no markers,
+%         % legend pos=outer north east,
+%         legend pos=south west,
+%         legend cell align=left,
+%         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+%         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
+%         xlabel={$\epsilon$, honest bias},
+%         title={Upper bound on GP for a single epoch},
+%         xmin=0,xmax=1%,ymin=-100%,ymax=2.5
+%         ]
+%         \addplot +[ultra thick,red] { 2^( PraosMinEntropyLossSingleEpoch(\x, 1200) ) };
+%         \addlegendentry{$k = 1200$};
+%         \addplot +[ultra thick,black] { 2^( PraosMinEntropyLossSingleEpoch(\x, 900) ) };
+%         \addlegendentry{$k = 900$};
+%         \addplot +[ultra thick,blue] { 2^( PraosMinEntropyLossSingleEpoch(\x, 600) ) };
+%         \addlegendentry{$k = 600$};
+%       \end{axis}
+%      \end{tikzpicture}
+%     \caption[Grinding power]{
+%         The grinding power upper bound $\gamma$ from~\eqref{eq:gamma-expression-praos}, 
+%         as a function of honest bias $\epsilon \in (0,1)$. 
+%         (See Theorem~\ref{thm:minentropy-loss-praos-single-epoch} 
+%         and Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}.)
+%         Praos execution's parameters are selected according to Figure~\ref{fig:rho-praos-beacon}.
+%         Note that $\gamma = O(\log_2 s)$ for $\epsilon > 0.809$.
+%     }
+%     \label{fig:rho-praos-beacon-single-epoch}
+% \end{figure}
+
+
+% \begin{figure}[!htb]
+%     \centering
+%     \tikzsetnextfilename{prbad-single-epoch}
+%     \begin{tikzpicture}[trim axis left,
+%       ]
+%       \begin{axis}[domain=0:1, 
+%         restrict x to domain=0.001:0.999,
+%         % restrict y to domain=0:100,
+%         samples=500,
+%         enlarge x limits=false,
+%         grid=both,
+%         no markers,
+%         % legend pos=outer north east,
+%         legend pos=north west,
+%         legend cell align=left,
+%         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+%         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
+%         xlabel={$\epsilon$, honest bias},
+%         title={$-\log_2\, \Pr[ g > \gamma ]$},
+%         xmin=0,xmax=1,ymin=0%,ymax=2.5
+%         ]
+%         \addplot +[ultra thick,red] { -1 - LnPraosEpsP(\x, 1200) / ln(2) };
+%         \addlegendentry{$k = 1200$};
+%         \addplot +[ultra thick,black] { -1 - LnPraosEpsP(\x, 900) / ln(2) };
+%         \addlegendentry{$k = 900$};
+%         \addplot +[ultra thick,blue] { -1 - LnPraosEpsP(\x, 600) / ln(2) };
+%         \addlegendentry{$k = 600$};
+%       \end{axis}
+%     \end{tikzpicture}
+%   \caption[Probability of a grinding violation, single epoch]{
+%         Consider a single-epoch execution of Praos 
+%         using the same parameters as in Figure~\ref{fig:rho-praos-beacon}.
+%         Let $g$ be the maximum, actual grinding power 
+%         and let $\gamma$ be the upper bound in~\eqref{eq:gamma-expression-praos}. 
+%         Above, we plot $\log_2(\Pr[g > \gamma])$.
+%       }
+%   \label{fig:prbad-praos-beacon-single-epoch}
+% \end{figure}
