@@ -12,16 +12,16 @@
   Recall $\phi(\epsilon)$ from~\eqref{eq:phi_eps} 
   and $V(\epsilon)$ from~\eqref{eq:V-eps-praos}.
   Let 
-  $$
-    m \defeq 0.4 (1+2\epsilon) s^2 V(\epsilon)
+  \begin{align}\label{eq:gamma-expression-praos}
+    \gamma = \left( 0.4 (1+2\epsilon) \right)^{1/2} s \cdot V(\epsilon)^{1/2} \EpsP^{-1/2}
     \,.
-  $$
+  \end{align}
   Then $$
-    \Pr_{W \sim \mathcal{L}((1-\epsilon)/2)}[g(n,\epsilon) > \sqrt{m/\EpsP}] \leq 2 \EpsP
+    \Pr_{W \sim \mathcal{L}((1-\epsilon)/2)}[g(n,\epsilon) > \gamma] \leq 2 \EpsP
   $$ 
   and, consequently, 
   $$
-    \Pr_{W \sim \mathcal{L}((1-\epsilon)/2)}[\rho > 0.5 \log_2(m/\EpsP)] \leq 2 \EpsP\,.
+    \Pr_{W \sim \mathcal{L}((1-\epsilon)/2)}[\rho > 0.5 \log_2 \gamma ] \leq 2 \EpsP\,.
   $$
   In particular, for $\epsilon > 0.809$, 
   $g(n, \epsilon) = O(s)$ and $\rho = O(\log_2 s)$ 

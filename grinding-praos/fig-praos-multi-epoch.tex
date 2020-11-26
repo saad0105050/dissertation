@@ -2,6 +2,7 @@
 
 \begin{figure}[!htb]
     \centering
+    \tikzsetnextfilename{rho}
     \begin{tikzpicture}[trim axis left,
       ]
       \begin{axis}[domain=0:1, 
@@ -27,6 +28,29 @@
         \addlegendentry{$k = 600$};
       \end{axis}
     \end{tikzpicture}%
+    \caption[Praos beacon]{
+        The upper bound $\rho^*$ on $\rho$, 
+        Praos beacon's min-entropy loss (in bits), 
+        as a function of the honest bias, $\epsilon$. 
+        Recall that $\rho$ is the logarithm of the grinding power.     
+        Praos' parameters are selected according to Theorem~\ref{thm:praos-beacon-multi-epoch} 
+        and~\citet[Theorem 9]{Praos}, as follows.
+        (Note that the current analysis is in the synchronous model.)
+        We take the common prefix parameter $k = 900$ since 
+        this is used by \emph{Cardano}, a deployed implementation of Praos. 
+        The adversarial stake is $(1-\epsilon)/2$ where $\epsilon \in (0,1)$ is the honest bias.
+        An epoch contains $R = 16 k/(1+\epsilon)$ slots and the first $2R/3$ slots are used for the beacon. 
+        We used the $\ECQ$ parameter $s = 8 k/(1+\epsilon)$; 
+        this value is the same as the liveness parameter of Praos. 
+        The probability of a consistency violation in an execution of $L$ epochs is 
+        $\EpsP = R L \exp(1-\epsilon^3 (1-\epsilon)k/2) $. 
+        Note that $\rho^* = O(\log_2 s)$ for $\epsilon > 0.809$.
+    }
+    \label{fig:rho-praos-beacon}
+\end{figure}
+\begin{figure}[!htb]
+    \centering
+    \tikzsetnextfilename{prbad}
     \begin{tikzpicture}[trim axis left,
       ]
       \begin{axis}[domain=0.6:1, 
@@ -42,28 +66,24 @@
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
         xlabel={$\epsilon$, honest bias},
-        title={$\log_2\, \Pr[ \rho > \rho^* ]$},
+        title={$\log_2\,\big(\Pr[ \text{min-entropy loss } > \rho^* ]/L\big)$},
         xmin=0.6,xmax=1%,ymin=0%,ymax=2.5
         ]
-        \addplot +[ultra thick,red] { LnPraosPrBadMultiEpoch(\x, 900, 2)/ln(2) } ;
-        \addlegendentry{$L=2, k = 900$};
-        \addplot +[ultra thick,black] {  LnPraosPrBadMultiEpoch(\x, 900, 2000)/ln(2)  };
-        \addlegendentry{$L = 2000, k = 900$};
-        \addplot +[ultra thick,blue] {  LnPraosPrBadMultiEpoch(\x, 900, 200000)/ln(2) };
-        \addlegendentry{$L = 200000, k = 900$};
+        \addplot +[ultra thick,red] { LnPraosPrBadMultiEpoch(\x, 900, 1)/ln(2) } ;
+        \addlegendentry{$k = 900$};
+        % \addplot +[ultra thick,black] {  LnPraosPrBadMultiEpoch(\x, 900, 1)/ln(2)  };
+        % \addlegendentry{$k = 900$};
+        % \addplot +[ultra thick,blue] {  LnPraosPrBadMultiEpoch(\x, 900, 1)/ln(2) };
+        % \addlegendentry{$k = 900$};
       \end{axis}
     \end{tikzpicture}
-    \caption[Praos beacon]{
-        (\textbf{Left}) The upper bound $\rho^*$ on $\rho)$, 
-        Praos beacon's min-entropy loss (in bits) over $L$ epochs, 
-        as a function of the honest bias, $\epsilon$. 
-        Note that the loss does not depend on $L$ and that 
-        it is zero for $\epsilon > 0.809$.
-        The Praos protocol parameters are the same as in Fig~\ref{fig:praos-beacon-single-epoch}. 
-        (\textbf{Right}) The probability that $\rho > \rho^*$; 
-        this probability is zero when $\epsilon < 0.809$.
-        Although the probability depends linearly on $L$, 
-        the effect is dwarfed by the fast-decaying $\EpsP$. 
+    \caption[Praos beacon]{        
+        Consider an $L$-epoch execution of Praos 
+        using the same parameter setting as in Figure~\ref{fig:rho-praos-beacon}.
+        Let $\rho$ be the maximum, actual min-entropy loss in any of the $L$ epochs 
+        and let $\rho^*$ be the upper bound in~\eqref{eq:rho-praos-multiepoch}. 
+        Let $\mathrm{Bad}$ be the event that $\rho > \rho^*$. 
+        Above, we plot $\log_2(\Pr[\rho > \rho^*]/L)$.
     }
-    \label{fig:praos-beacon}
+    \label{fig:prbad-praos-beacon}
 \end{figure}

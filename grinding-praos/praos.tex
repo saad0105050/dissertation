@@ -357,14 +357,15 @@ We can derive tail bounds on $g(n,\epsilon)$ using the second moment bound.
   inside any epoch 
   with a characteristic string $W \sim \mathcal{L}((1-\epsilon)/2)$. 
   Let 
-  \begin{align*}
+  \begin{align}
     \rho &= \begin{cases}
       % Ignoring the additive factor \log_2(0.4 (1+2\epsilon) )/2
       s/2 \cdot \log_2\left( (5-3 \epsilon)/2 \right) + \log_2(s)  & \text{if}\quad 0 < \epsilon \leq 1/3\,, \\
       s/2 \cdot \log_2\left( 2^{2/3} \phi(\epsilon) \right) + \log_2(s) & \text{if}\quad 1/3 < \epsilon \leq 3/5\,, \\
       s/2 \cdot \log_2\left( (5/3) \phi(\epsilon) \right) + \log_2(s) + 0.14 & \text{otherwise}\,. 
     \end{cases}
-  \end{align*}
+    \label{eq:rho-praos-multiepoch}
+  \end{align}
 
   Let $\eta \in \{0,1\}^\kappa$ be the output of the beacon after $L$ epochs.
   % and $L \in \NN$ so that $L \sqrt{m \EpsP} \leq 1$. 

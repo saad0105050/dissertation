@@ -2,6 +2,7 @@
 
 \begin{figure}[!htb]
     \centering
+    \tikzsetnextfilename{rho-single-epoch}
     \begin{tikzpicture}[trim axis left,
       ]
       \begin{axis}[domain=0:1, restrict x to domain=0.001:0.999
@@ -15,18 +16,29 @@
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
         xlabel={$\epsilon$, honest bias},
-        title={$\rho^*$, upper bound on the min-entropy loss $\rho$},
+        title={Upper bound on GP for a single epoch},
         xmin=0,xmax=1%,ymin=-100%,ymax=2.5
         ]
-        \addplot +[ultra thick,red] { PraosMinEntropyLossSingleEpoch(\x, 1200) };
+        \addplot +[ultra thick,red] { 2^( PraosMinEntropyLossSingleEpoch(\x, 1200) ) };
         \addlegendentry{$k = 1200$};
-        \addplot +[ultra thick,black] { PraosMinEntropyLossSingleEpoch(\x, 900) };
+        \addplot +[ultra thick,black] { 2^( PraosMinEntropyLossSingleEpoch(\x, 900) ) };
         \addlegendentry{$k = 900$};
-        \addplot +[ultra thick,blue] { PraosMinEntropyLossSingleEpoch(\x, 600) };
+        \addplot +[ultra thick,blue] { 2^( PraosMinEntropyLossSingleEpoch(\x, 600) ) };
         \addlegendentry{$k = 600$};
       \end{axis}
-    \end{tikzpicture}%
-    % \vspace{1em}
+    \caption[Grinding power]{
+        The grinding power upper bound $\gamma$ from~\eqref{eq:gamma-expression-praos}, 
+        as a function of honest bias $\epsilon \in (0,1)$. 
+        (See Theorem~\ref{thm:minentropy-loss-praos-single-epoch} 
+        and Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}.)
+        Praos execution's parameters are selected according to Figure~\ref{fig:rho-praos-beacon}.
+        Note that $\gamma = O(\log_2 s)$ for $\epsilon > 0.809$.
+    }
+    \label{fig:rho-praos-beacon-single-epoch}
+\end{figure}
+\begin{figure}[!htb]
+    \centering
+    \tikzsetnextfilename{prbad-single-epoch}
     \begin{tikzpicture}[trim axis left,
       ]
       \begin{axis}[domain=0:1, 
@@ -42,7 +54,7 @@
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
         xlabel={$\epsilon$, honest bias},
-        title={$-\log_2\, \Pr[ \rho > \rho^* ]$},
+        title={$-\log_2\, \Pr[ g > \gamma ]$},
         xmin=0,xmax=1,ymin=0%,ymax=2.5
         ]
         \addplot +[ultra thick,red] { -1 - LnPraosEpsP(\x, 1200) / ln(2) };
@@ -53,24 +65,12 @@
         \addlegendentry{$k = 600$};
       \end{axis}
     \end{tikzpicture}
-  \caption[Quality of the Praos beacon in a single epoch]{
-    (\textbf{Left}) The upper bound $\rho^*$ on $\rho$, 
-    Praos beacon's min-entropy loss over a single epoch, 
-    expressed in \#bits.  
-    Recall that $\rho$ is the logarithm of the grinding power in an epoch.     
-    Praos' parameters are selected according to Theorem~\ref{thm:praos-gp-single-epoch}, 
-    as follows.
-    (Note that the current analysis is in the synchronous model.)
-    $k$ is the common prefix parameter. 
-    (Cardano, an implementation of Praos, uses $k = 900$.) 
-    The adversarial stake is $(1-\epsilon)/2$.
-    An epoch contains $R = 16 k/(1+\epsilon)$ slots and the first $2R/3$ slots are used for the beacon. 
-    We used the $\ECQ$ parameter $s = 8 k/(1+\epsilon)$; 
-    this value is the same as the liveness parameter of Praos. 
-    The probability of a consistency violation in an epoch in Praos is 
-    $\EpsP = R \exp(1-\epsilon^3 (1-\epsilon)k/2) $. 
-    See~\citet[Theorem 9]{Praos} for justification of these parameters. 
-    (\textbf{Right}) The probability that $\rho > \rho^*$.
-  }
-  \label{fig:praos-beacon-single-epoch}
+  \caption[Probability of a grinding violation, single epoch]{
+        Consider a single-epoch execution of Praos 
+        using the same parameters as in Figure~\ref{fig:rho-praos-beacon}.
+        Let $g$ be the maximum, actual grinding power 
+        and let $\gamma$ be the upper bound in~\eqref{eq:gamma-expression-praos}. 
+        Above, we plot $\log_2(\Pr[g > \gamma])$.
+      }
+  \label{fig:prbad-praos-beacon-single-epoch}
 \end{figure}

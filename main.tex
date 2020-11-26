@@ -1,5 +1,6 @@
 %%%---- Do not adjust ----%%%
-\documentclass[11pt,oneside,draft]{book}
+\documentclass[11pt,oneside]{book}
+% \documentclass[11pt,oneside,draft]{book}
 \input{preamble.tex}
 %%%-----------------------%%%
 
@@ -41,17 +42,20 @@
 
 %%%---- Input content ----%%%
 
-% \chapter{Introduction}
-% \input{intro}
+\chapter{Introduction}
+\input{intro}
 
-% \part{The Consistency Problem}\label{part:multihonest}
-% \input{multihonest}
+\renewcommand{\PartPrefix}{multihonest}
+\part{The Consistency Problem}\label{part:multihonest}
+\input{multihonest}
 
-% \part{The Grinding Problem}\label{part:praos}
-% \input{grinding-praos}
+\renewcommand{\PartPrefix}{praos}
+\part{The Grinding Problem}\label{part:praos}
+\input{grinding-praos}
 
-\part{Simple PoS Beacons}\label{part:xorgames}
-\input{xorgames}
+% \renewcommand{\PartPrefix}{xorgames}
+% \part{Simple PoS Beacons}\label{part:xorgames}
+% \input{xorgames}
 
 
 %... etc.
