@@ -1,12 +1,24 @@
 %=======================
 
+In this section, 
+we treat the XOR target games where 
+the size of the option sets are likely to be small. 
+Looking at the big picture, 
+we will devise leader election schemes in beacon protocols 
+whose dynamic can be mapped to this XOR target game.
+Then, if we can prove that the grinding power of this game is small, 
+we can prove that the resulting beacons have high min-entropy as well.
+
+
+
+\Paragraph{Leader election schemes and the size of option sets.}
 Let $\Distribution$ be an arbitrary distribution on $\NN$ 
 and let $S \sim \Distribution$.
 Consider a uniform XOR target game where 
 the sizes of its option sets are distributed as $1 + S$. 
 In Lemma~\ref{lemma:xorgame-moment}, 
 we derived a moment bound for the grinding power of this game using moment bounds on $1 + S$. 
-In this section, we treat to specific incarnations of $\Distribution$, 
+In this section, we treat two specific incarnations of $\Distribution$, 
 namely, the Poisson binomial distribution and 
 the Bernoulli distribution.
 
@@ -14,6 +26,11 @@ The rationale for the Poisson binomial distribution (Definition~\ref{def:poisson
 for $S$ 
 comes from private leader elections (see Section~\ref{sec:leader-election-public-private});
 these elections are necessary for thwarting an adaptive adversary.
+Similarly, the rationale for a binomial distribution for $S$ stems from 
+public leader elections; 
+these elections suffice against a static adversary.
+
+\Paragraph{The Poisson game captures the private leader election setting in eventual consensus PoS.}
 Consider the set of dishonest players with total (dishonest) stake $\alpha$ 
 participating 
 in a private leader election scheme 
@@ -27,7 +44,7 @@ The adversarial players can strategically emit nonces
 to force any of these $c_\Adversary$ nonces to become the winning nonce.
 Thus, the size of the option set for this slot is $1 + c_\Adversary$; 
 the ``plus one'' represents the choice for the adversary where 
-he strategically allows an honest input to become the winning nonce.
+he strategically allows an honest input to become the winning nonce. 
 
 Notice that the distribution of $c_\Adversary$ is somewhat exotic 
 whereas $w_\Adversary$ has the Poisson binomial distribution with parameter $\alpha$.
@@ -35,8 +52,13 @@ Moreover, $c_\Adversary$ is clearly upper bounded by $w_\Adversary$.
 Thus, we can derive moment bounds on $1 + c_\Adversary$ from 
 the moment bounds on $1 + w_\Adversary$ 
 and then arguing stochastic dominance.
+The corresponding XOR target game, called the $(\ell, n, \alpha)$-Poisson game, 
+is treated in Section~\ref{sec:poisson}. 
+The resulting beacon (cf. Theorem~\ref{thm:beacon-poisson-multi-epoch}) 
+is a superior replacement for the Praos beacon (cf. Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}).
 
 
+\Paragraph{The Bernoulli game captures the public leader election setting in eventual consensus PoS.}
 The rationale for a binomial distribution for $S$ is similar.
 When the leader election is a public one (see Section~\ref{sec:leader-election-public-private}), 
 there is exactly one winner for a slot. 
@@ -45,6 +67,17 @@ An adversarial winner, in contrast, has two options:
 either submit it soon, or not submit at all. 
 It follows that the size of the option set for this slot is $1+S$ where 
 $S \in \{0,1\}, \Pr[S = 1] = \alpha$ and $\Pr[S = 0] = 1 - \alpha$.
+The corresponding XOR target game, called the $(\ell, n, \alpha)$-Poisson game, 
+is treated in Section~\ref{sec:poisson}.
+The resulting beacon (cf. Theorem~\ref{thm:beacon-bernoulli-multi-epoch}) 
+can be an alternative to the Ouroboros classic beacon~\cite{Ouroboros}.
+
+
+The goal of this section is to derive tail bounds on 
+the grinding powers in the $(\ell,n,\alpha)$-Poisson game 
+(Lemma~\ref{lemma:xor-game-poisson-gamma})
+and the $(\ell, n, \alpha)$-Bernoulli game 
+(Lemma~\ref{lemma:xor-game-bernoulli-gamma}).
 
 
 
@@ -56,47 +89,49 @@ $S \in \{0,1\}, \Pr[S = 1] = \alpha$ and $\Pr[S = 0] = 1 - \alpha$.
 \section{The Poisson game}\label{sec:poisson}
 
   In this section, 
-  we treat option sets whose size has the Poisson binomial distribution, 
-  defined below. 
-  Specifically, 
+  we treat option sets whose size has the Poisson binomial distribution.
 
 
   \begin{definition}[Poisson binomial distribution]\label{def:poisson-binomial-distribution}
     Let $m \in \NN, \alpha \in (0, 1/2)$ and 
     $\sigma_i \in (0, 1), i \in[m]$ so that $\sum_{i=1}^m \sigma_i = \alpha$.
-    $\sigma = (\sigma_1, \ldots, \sigma_m), \sigma_i \in (0, 1)$, and . 
     Let $X_1, \ldots, X_m \in \{0,1\}$ be independent Bernoulli random variables with 
     $\Pr[X_i = 1] = \sigma_i$. 
     Define $S = \sum_{i = 1}^m X_i$ 
-    and let $\Distribution$ be the distribution of $S$. 
-    Then $\Distribution$ is called the \emph{Poisson binomial distribution}.
+    and let $\PoissonBinomial(\alpha; \sigma_1, \ldots \sigma_m)$ be the distribution of $S$. 
+    Then $\PoissonBinomial(\alpha)$ is called the \emph{Poisson binomial distribution} 
+    with parameters $\alpha$ and $\sigma_1, \ldots, \sigma_m$. 
+    
+    When $\sigma_1, \sigma_2, \ldots$ or the number $m$ are not specified, 
+    we consider the family of distributions where $\alpha$ is fixed but the breakdown 
+    $\{\sigma_1, \sigma_2, \ldots, \}$ is arbitrary; 
+    then $\PoissonBinomial(\alpha)$ denotes an arbitrary distribution 
+    from this family.
   \end{definition}
-
-
-
+  \noindent
+  The name ``Poisson binomial'' has the following rationale. 
   Let $\Poisson(\alpha)$ be the Poisson distribution with parameter $\alpha$.
   That is, for $k \in \NN$, 
   $$
     \Pr_{T \sim \Poisson(\alpha)}[T = k] = \frac{\alpha^k k^\alpha}{k!}\,.
   $$
-  LeCam's theorem (below) states that $\Distribution$ is ``statistically close'' to $\Poisson(\alpha)$.
+  LeCam's theorem (below) states that $\PoissonBinomial(\alpha)$ is ``statistically close'' to $\Poisson(\alpha)$.
   \begin{theorem*}[LeCam 1960]
   $$
     \sum_k \left\vert \Pr[S = k] - \frac{\alpha^k k^\alpha}{k!} \right\vert < \sum_{k=1}^n \sigma_k^2
   $$
   \end{theorem*}
-  This is why $\Distribution$ is sometimes called the \emph{Poisson binomial distribution}. 
 
+  As we mentioned before, 
+  we are interested in the grinding power in an $(\ell, n, \PoissonBinomial(\alpha))$-game, 
+  or $(\ell, n, \alpha)$-Poisson game in short. 
+  
 
-  \begin{definition}[$(\ell, n, \alpha)$-game]\label{def:xor-game-poisson}
-      Let $\ell, n, m \in \NN, \alpha \in (0, 1/2)$ and 
-      $\sigma \in \RR^m$ so that $\sigma_i \in (0, 1)$ and $\sum_{i=1}^m \sigma_i = \alpha$. 
-      Let $X_1, \ldots, X_m \in \{0,1\}$ be independent Bernoulli random variables with 
-      $\Pr[X_i = 1] = \sigma_i$. 
-      Define $S = \sum_{i = 1}^m X_i$ 
-      and let $\Distribution$ be the distribution of $S$.
-      Then an $(\ell, n, \Distribution)$-game is called an 
-      \emph{$(\ell, n, \alpha)$-game}.
+  \begin{definition}[$(\ell, n, \alpha)$-Poisson game]\label{def:xor-game-poisson}
+      Let $\ell, n \in \NN$ and $\alpha \in (0, 1/2)$.
+      Then an $(\ell, n, \PoissonBinomial(\alpha) )$-game (see Definition~\ref{def:ell-n-dist-game})
+      is called an 
+      \emph{$(\ell, n, \alpha)$-Poisson game}.
   \end{definition}
 
 
@@ -109,7 +144,7 @@ $S \in \{0,1\}, \Pr[S = 1] = \alpha$ and $\Pr[S = 0] = 1 - \alpha$.
               \frac{2 \ln(1/\alpha)}{\ln(1+3\alpha+\alpha^2)} &\quad\text{otherwise\,.}
           \end{cases}
       \end{equation}
-      Let $U$ be an $(\ell, n, \alpha)$-game with grinding power $g$. 
+      Let $U$ be an $(\ell, n, \alpha)$-Poisson game with grinding power $g$. 
       Let $A$ be the event that 
       at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$; 
       condition on $A$. 
@@ -142,9 +177,15 @@ $S \in \{0,1\}, \Pr[S = 1] = \alpha$ and $\Pr[S = 0] = 1 - \alpha$.
     % it follows that $\ln(\Pr[S \geq 0]) \geq \ln (1 - \sum_i \sigma_i) = \ln (1 - \alpha)$. 
     % Since logarithm is a monotone function, $\Pr[S \geq 0] \geq 1 - \alpha$ and, 
     % consequently, $$\Pr[S \geq 1] \leq \alpha\,.$$
-    Recall the definition of an $(\ell, n, \alpha)$-game from Definition~\ref{def:xor-game-poisson}
+    Recall the definition of an $(\ell, n, \alpha)$-Poisson game from Definition~\ref{def:xor-game-poisson}.
     and 
-    the random variable $S$ therein. 
+    the random variable $S$ therein.
+    Specifically, let $m \in \NN$ and 
+    let $\sigma_i \in (0, 1), i \in [m]$ so that $\sum_{i=1}^m \sigma_i = \alpha$.
+    Let $X_1, \ldots, X_m \in \{0,1\}$ be independent Bernoulli random variables with 
+    $\Pr[X_i = 1] = \sigma_i, i \in [m]$. 
+    Let $S = \sum_i X_i$ 
+    and note that $S \sim \PoissonBinomial(\alpha; \sigma_1, \ldots, \sigma_m)$.
     By Markov's inequality,
     $$
         \Pr[S \geq 1] \leq \frac{\Exp S}{1} = \alpha \,.
@@ -214,11 +255,11 @@ $S \in \{0,1\}, \Pr[S = 1] = \alpha$ and $\Pr[S = 0] = 1 - \alpha$.
               \end{cases}
       \end{equation}
       % and $\beta = 5/(12 - 14 \alpha)$.
-      Let $g$ be the grinding power in an $(\ell, n, \alpha)$-game. 
+      Let $g$ be the grinding power in an $(\ell, n, \alpha)$-Poisson game. 
       Then $\Pr[g \geq \gamma] \leq \alpha^n + \EpsP$.
   \end{lemma}
   \begin{proof}
-      Let $g$ be the grinding power of an $(\ell, n, \alpha)$-game $U$.
+      Let $g$ be the grinding power of an $(\ell, n, \alpha)$-Poisson game $U$.
       Let $A$ be the event that 
       at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$. 
       Recall the random variable $S$ from Definition~\ref{def:xor-game-poisson}. 
