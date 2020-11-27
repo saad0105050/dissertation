@@ -1,30 +1,16 @@
-\section{Related work}\label{sec:related-work}
+\section{Related work}\label{sec:praos-related-work}
 
 
-Below, we survey the coin-flipping and beacon literature in more detail.
+Below, we survey the coin-flipping and beacon literature in more detail. 
+In general, a beacon protocol works as follows: 
+A group of $n$ players participate in the beacon protocol 
+and each submit a $\kappa$-bit random string (called an \emph{input} or a \emph{nonce}). 
+The output of the beacon is computed by applying 
+a $\kappa$-dimensional Boolean function to these inputs. 
+In our brief survey below, we first focus on schemes that use cryptography, 
+before surveying a more general problem called collective coin-flipping.
 
-\paragraph{Collective coin-flipping as a Boolean function.} 
-The (single round) collective coin-flipping in the full information
-model is a classic problem introduced in the seminal work
-of~\citet{BL85}.  In this problem, $n$-players communicate over a
-single broadcast channel.  First, each honest player submits a
-uniformly random bit, and then each adversarial player (strategically)
-submits an arbitrary bit.  The output of the protocol is a single bit,
-computed as a Boolean function $F$ applied to the submitted bits.  If
-$F$ is the majority function, an adversarial coalition of size
-$O(\sqrt{n})$ can arbitrarily influence the output of the
-protocol~\cite{BL85}.  Later,~\citet*{KKL} showed that for
-\emph{every} Boolean function $F$ in this setting, there is an
-adversarial coalition of size $O(n/(\log n))$ that can bias the
-output.  It was conjectured by~\citet{Friedgut} that Boolean functions
-on the continuous cube $[0,1]^n$ (or equivalently, the discrete cube
-$[n]^n$) can be biased by a coalition of size $o(n)$.
-See~\cite{Hatami} and~\cite{Kalai} for advances on this line of
-research.  As for multi-round coin-flipping protocols, \citet*{RSZ}
-showed that any $o(\log^* n)$-round coin-flipping protocol can be
-biased by a coalition of size $o(n)$.
 
-Cryptography is a powerful tool for collective coin-flipping. While the most directly relevant related work is AlgoRand---which uses a mechanism similar to ours---we survey some other work first to set the stage. 
 
 \paragraph{PVSS-based beacons.} 
 Publicly verifiable secret sharing (PVSS) techniques have been
@@ -43,6 +29,37 @@ practice. A standard technique to mitigate this is to first elect a small
 committee of players which then carry out the full PVSS. Of course,
 such a procedure is immediately subject to attacks by an adaptive
 adversary who can corrupt the committee once it is determined.
+
+A further consideration is that it is difficult to implement 
+these heavy-weight multi-party computation (MPC) protocols in practice. 
+This is why many blockchain protocols, 
+such as Praos (see below), 
+has moved away from PVSS-based beacons and instead 
+have opted for simple beacons.
+
+
+
+\paragraph{VRF-based eventual consensus Proof-of-Stake blockchains.}
+Many proof-of-stake blockchain
+protocols, such as Ouroboros Praos~\cite{Praos}, 
+Genesis~\cite{Genesis}, and Snow White~\cite {SnowWhite}, 
+use VRFs 
+in their coin-flipping protocols. 
+This is a multi-round protocol 
+where each ``block'' contains a nonce.  
+The coin-flipping output is a cryptographic hash 
+of the XOR of the nonces 
+recorded in the ``common prefix'' of all 
+blockchains held by the honest players 
+at the end of the epoch. 
+(Thus, these protocols do not use a broadcast channel.)
+As we show in Section~\ref{sec:praos}, 
+the min-entropy loss for this beacon 
+is linear in the security parameter 
+for an adversarial stake $10\%$ or higher.
+Note that our analysis of this beacon 
+is a first in the literature. 
+
 
 \paragraph{VDF-based beacons.} 
 Verifiable Delay Functions (VDF)
@@ -96,42 +113,60 @@ The main disadvantage with respect to our techniques is of course
 the complexity of the group setup which requires $\Omega(n^2)$ communication
 for a single distributed key generation process between $n$ players.
 
-\paragraph{Algorand.} 
-Algorand~\cite{Algorand} uses a Byzantine Agreement-based multi-round
-coin-flipping protocol where the players are equipped with verifiable
-random functions (VRF).  While the multi-round beacon output is
-uniform except with a negligible probability, the beacon output of a
-single-round is uniform with only constant probability---thus
-conditional min entopy is small. As mentioned above, our protocol can
-be viewed as a parallelization of the AlgoRand technique; indeed, a
-single-round of AlgoRand coin-flipping is equivalent to setting
-$k = 1$ in our protocol.  In contrast, our one-round protocol
-guarantees a ``small'' loss in min-entropy except with a negligible
-probability.
 
 
-\paragraph{VRF-based eventual consensus Proof-of-Stake blockchains.}
-Many proof-of-stake blockchain
-protocols, such as Ouroboros Praos~\cite{Praos}, 
-Genesis~\cite{Genesis}, and Snow White~\cite {SnowWhite}, 
-use VRFs 
-in their coin-flipping protocols. 
-This is a multi-round protocol 
-where each ``block'' contains a nonce.  
-The coin-flipping output is a cryptographic hash 
-of the XOR of the nonces 
-recorded in the ``common prefix'' of all 
-blockchains held by the honest players 
-at the end of the epoch. 
-(Thus, these protocols do not use a broadcast channel.)
-As we show in Appendix~\ref{sec:praos}, 
-the min-entropy loss for this beacon 
-is linear in the security parameter 
-for an adversarial stake $10\%$ or higher.
-Our treatment of this beacon 
-is a first in the literature. 
+\paragraph{Byzantine Agreement-based beacons.} 
+In Algorand~\cite{Algorand}, the players are equipped with verifiable
+random functions (VRF, see Definition~\ref{def:VRF}) 
+and they participate in a Byzantine Agreement (BA)-based multi-round
+coin-flipping protocol. 
+Note that this setting is completely different from 
+the eventual consensus setting: 
+in eventual consensus, blockchains take some time to settle 
+but in BA-based protocols, each block is ``confirmed'' before the next round begins. 
+Later, in \Section~\ref{part:xorgames}, 
+we show how to design stronger eventual consensus PoS beacons 
+by using ideas also present in Algorand's beacon.
+
+Like Praos, Algorand's beacon output is taken as 
+the XOR of the nonce inputs on the blockchain and then applying a cryptographic hash.
+Its analysis guarantees that the beacon output 
+is uniform with high probability, i.e., 
+the beacon output incurs only a small loss in min-entropy. 
+
+
 
 \paragraph{Nakamoto-style PoW beacons.} 
 \citet{ZuckermanBeacon} establish a lower bound for a class of
 Nakamoto-style proof-of-work based beacons and discuss approaches for
 a game-theoretic analysis of beacon protocols.
+
+
+\paragraph{Collective coin-flipping as a Boolean function.} 
+The (single round) collective coin-flipping in the full information
+model is a classic problem introduced in the seminal work
+of~\citet{BL85}.  In this problem, $n$-players communicate over a
+single broadcast channel.  First, each honest player submits a
+uniformly random bit, and then each adversarial player (strategically)
+submits an arbitrary bit.  The output of the protocol is a single bit,
+computed as a Boolean function $F$ applied to the submitted bits.  If
+$F$ is the majority function, an adversarial coalition of size
+$O(\sqrt{n})$ can arbitrarily influence the output of the
+protocol~\cite{BL85}.  Later,~\citet*{KKL} showed that for
+\emph{every} Boolean function $F$ in this setting, there is an
+adversarial coalition of size $O(n/(\log n))$ that can bias the
+output.  It was conjectured by~\citet{Friedgut} that Boolean functions
+on the continuous cube $[0,1]^n$ (or equivalently, the discrete cube
+$[n]^n$) can be biased by a coalition of size $o(n)$.
+See~\cite{Hatami} and~\cite{Kalai} for advances on this line of
+research.  As for multi-round coin-flipping protocols, \citet*{RSZ}
+showed that any $o(\log^* n)$-round coin-flipping protocol can be
+biased by a coalition of size $o(n)$.
+
+
+
+In summary, both Praos and SnowWhite have chosen beacon simplicity 
+over beacon quality. 
+However, the trade-off between these two things, 
+i.e., how the beacon quality degrades as a function of protocol parameters, 
+is yet unknown.

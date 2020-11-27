@@ -53,12 +53,12 @@ Then
 \newcommand{\PublicElectionDistribution}{\hat{\mathcal{L}}}
 \newcommand{\PrivateElectionDistribution}{\mathcal{L}}
 
-\section{New beacon protocols}
+\section{The beacon}
 
 
 
 
-\begin{definition}[$(T, k, s, d, \LeaderElection,\EpsP)$-Beacon]
+\begin{definition}[$(T, k, s, d, \LeaderElection,\EpsP)$-Beacon]\label{def:new-beacon}
   Let $T, k, s,d \in \NN$ and $\EpsP \in (0,1)$ 
   so that $k$ divides $T$.
   Let $\LeaderElection$ be a given leader election mechanism 
@@ -168,12 +168,10 @@ There will be $T/d$ nonce-emitting slots in an epoch of $\Pi_\Beacon$.
 See Figure~\ref{fig:rho-poisson-beacon} for a comparison between 
 this beacon and Praos beacon.
 
-
-
-
-
 \iftoggle{drawfigs}{
-  \input{xorgames/fig-poisson-beacon}  
+
+\input{xorgames/fig-poisson-beacon}  
+
 }
 
 
@@ -209,5 +207,43 @@ Define
     \,.
   \end{equation}
 \end{theorem}
+
+
+% \iftoggle{drawfigs}{
+
+% \input{xorgames/fig-bernoulli-beacon}  
+
+% }
+\begin{figure}[!htb]
+    \centering
+    \tikzsetnextfilename{rho-bernoulli}
+    \begin{tikzpicture}[trim axis left,
+      ]
+      \begin{axis}[domain=0:1, 
+        xmin=0,xmax=1,ymin=0,%,ymax=2.5
+        restrict x to domain=0.01:0.99,
+        samples=500,
+        enlarge x limits=false,
+        grid=both,
+        no markers, 
+        % legend pos=outer north east,
+        legend pos=outer north east,
+        legend cell align=left,
+        x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+        y label style={at={(axis description cs:-0.1,.5)},anchor=south},
+        xlabel={$\epsilon$, honest bias},
+        title={$\rho^*$, upper bound on the min-entropy loss $\rho$}
+        ]
+        \addplot +[ultra thick,red] { BernoulliBeaconMinEntropyLoss(\x, 900, PraosEpsP(\x, 900) ) };
+        \addlegendentry{Bernoulli, $k = 900$};
+        \addplot +[ultra thick,black] { BernoulliBeaconMinEntropyLoss(\x, 900, PraosEpsP(\x, 1200) ) };
+        \addlegendentry{Bernoulli, $k = 1200$};
+      \end{axis}
+    \end{tikzpicture}%
+    \caption{Min-entropy loss in Bernoulli beacon}
+    \label{fig:rho-bernoulli-beacon}
+\end{figure}
+
+
 
 

@@ -1,7 +1,279 @@
 %=======================
 
-\section{The Bernoulli game}
-% \section{Option sets of size at most two\texorpdfstring{; the $(\ell, n, \alpha)$-Bernoulli game}{}}
+Let $\Distribution$ be an arbitrary distribution on $\NN$ 
+and let $S \sim \Distribution$.
+Consider a uniform XOR target game where 
+the sizes of its option sets are distributed as $1 + S$. 
+In Lemma~\ref{lemma:xorgame-moment}, 
+we derived a moment bound for the grinding power of this game using moment bounds on $1 + S$. 
+In this section, we treat to specific incarnations of $\Distribution$, 
+namely, the Poisson binomial distribution and 
+the Bernoulli distribution.
+
+The rationale for the Poisson binomial distribution (Definition~\ref{def:poisson-binomial-distribution}) 
+for $S$ 
+comes from private leader elections (see Section~\ref{sec:leader-election-public-private});
+these elections are necessary for thwarting an adaptive adversary.
+Consider the set of dishonest players with total (dishonest) stake $\alpha$ 
+participating 
+in a private leader election scheme 
+at a given slot. 
+Let $w_\Adversary$ be the number of adversarial winners for this slot.
+Suppose the beacon protocol chooses an arbitrary ``winning nonce'' for this slot from the set of all submitted nonces.  
+(For example, in the protocol in Definition~\ref{def:new-beacon}, this is the lexicographically smallest nonce.)
+Out of the $w_\Adversary$ adversarial winners, 
+suppose $c_\Adversary$ nonces are candidates for the winning nonce. 
+The adversarial players can strategically emit nonces 
+to force any of these $c_\Adversary$ nonces to become the winning nonce.
+Thus, the size of the option set for this slot is $1 + c_\Adversary$; 
+the ``plus one'' represents the choice for the adversary where 
+he strategically allows an honest input to become the winning nonce.
+
+Notice that the distribution of $c_\Adversary$ is somewhat exotic 
+whereas $w_\Adversary$ has the Poisson binomial distribution with parameter $\alpha$.
+Moreover, $c_\Adversary$ is clearly upper bounded by $w_\Adversary$. 
+Thus, we can derive moment bounds on $1 + c_\Adversary$ from 
+the moment bounds on $1 + w_\Adversary$ 
+and then arguing stochastic dominance.
+
+
+The rationale for a binomial distribution for $S$ is similar.
+When the leader election is a public one (see Section~\ref{sec:leader-election-public-private}), 
+there is exactly one winner for a slot. 
+If this winner is honest, he has just one option for his nonce: always submit it.
+An adversarial winner, in contrast, has two options: 
+either submit it soon, or not submit at all. 
+It follows that the size of the option set for this slot is $1+S$ where 
+$S \in \{0,1\}, \Pr[S = 1] = \alpha$ and $\Pr[S = 0] = 1 - \alpha$.
+
+
+
+
+
+
+%
+
+\section{The Poisson game}\label{sec:poisson}
+
+  In this section, 
+  we treat option sets whose size has the Poisson binomial distribution, 
+  defined below. 
+  Specifically, 
+
+
+  \begin{definition}[Poisson binomial distribution]\label{def:poisson-binomial-distribution}
+    Let $m \in \NN, \alpha \in (0, 1/2)$ and 
+    $\sigma_i \in (0, 1), i \in[m]$ so that $\sum_{i=1}^m \sigma_i = \alpha$.
+    $\sigma = (\sigma_1, \ldots, \sigma_m), \sigma_i \in (0, 1)$, and . 
+    Let $X_1, \ldots, X_m \in \{0,1\}$ be independent Bernoulli random variables with 
+    $\Pr[X_i = 1] = \sigma_i$. 
+    Define $S = \sum_{i = 1}^m X_i$ 
+    and let $\Distribution$ be the distribution of $S$. 
+    Then $\Distribution$ is called the \emph{Poisson binomial distribution}.
+  \end{definition}
+
+
+
+  Let $\Poisson(\alpha)$ be the Poisson distribution with parameter $\alpha$.
+  That is, for $k \in \NN$, 
+  $$
+    \Pr_{T \sim \Poisson(\alpha)}[T = k] = \frac{\alpha^k k^\alpha}{k!}\,.
+  $$
+  LeCam's theorem (below) states that $\Distribution$ is ``statistically close'' to $\Poisson(\alpha)$.
+  \begin{theorem*}[LeCam 1960]
+  $$
+    \sum_k \left\vert \Pr[S = k] - \frac{\alpha^k k^\alpha}{k!} \right\vert < \sum_{k=1}^n \sigma_k^2
+  $$
+  \end{theorem*}
+  This is why $\Distribution$ is sometimes called the \emph{Poisson binomial distribution}. 
+
+
+  \begin{definition}[$(\ell, n, \alpha)$-game]\label{def:xor-game-poisson}
+      Let $\ell, n, m \in \NN, \alpha \in (0, 1/2)$ and 
+      $\sigma \in \RR^m$ so that $\sigma_i \in (0, 1)$ and $\sum_{i=1}^m \sigma_i = \alpha$. 
+      Let $X_1, \ldots, X_m \in \{0,1\}$ be independent Bernoulli random variables with 
+      $\Pr[X_i = 1] = \sigma_i$. 
+      Define $S = \sum_{i = 1}^m X_i$ 
+      and let $\Distribution$ be the distribution of $S$.
+      Then an $(\ell, n, \Distribution)$-game is called an 
+      \emph{$(\ell, n, \alpha)$-game}.
+  \end{definition}
+
+
+  \begin{theorem}[Moment bound, Poisson game]\label{thm:xor-game-private-election}
+      Let $\ell, n \in \NN, n \geq 2$ and $\alpha \in (0, 1/2)$. 
+      Let
+      \begin{equation}\label{eq:lambda-star-poisson}
+          \lambda = \begin{cases}
+              2 & \quad\text{if $\alpha \leq 0.41$\,,}\\
+              \frac{2 \ln(1/\alpha)}{\ln(1+3\alpha+\alpha^2)} &\quad\text{otherwise\,.}
+          \end{cases}
+      \end{equation}
+      Let $U$ be an $(\ell, n, \alpha)$-game with grinding power $g$. 
+      Let $A$ be the event that 
+      at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$; 
+      condition on $A$. 
+      Then 
+      $$
+          \Exp[g^\lambda \mid A] 
+          \leq \frac{n^{1 + \lambda} }{1+\alpha} 
+          \cdot \begin{cases}
+              (1 + 3 \alpha + \alpha^2)^{\ell} &\quad\text{if $\alpha \leq 0.41$\,,} \\
+              (1/\alpha)^\ell &\quad\text{otherwise\,.}
+          \end{cases}
+          \,.
+      $$
+      % \begin{align*}
+      %     \Exp[g^2 \mid A] &\leq n^3 \cdot 
+      %         (1 + 3 \alpha + \alpha^2)^\ell 
+      %         &\qquad\text{if\quad $\alpha \in (0, 0.41]$, }\\
+      %     \Exp[g^{1.37} \mid A] &\leq n^{2.37} \cdot 
+      %         (1 + 3 \alpha + \alpha^2)^{0.685 \ell }
+      %         &\qquad\text{if\quad $\alpha \in (0.41, 0.5)$}
+      %         \,.
+      % \end{align*}
+  \end{theorem}
+  \begin{proof}
+    % First, note that 
+    % $\ln(\Pr[S \geq 0]) 
+    % = \ln\left(\prod_{i = 1}^m (1 - \sigma_i) \right) 
+    % = \sum_{i = 1}^m \ln (1 - \sigma_i)$. 
+    % Since the function $x \mapsto \ln(1 -x)$ is concave and super-additive for $x \in (0, 1)$, 
+    % it follows that $\ln(\Pr[S \geq 0]) \geq \ln (1 - \sum_i \sigma_i) = \ln (1 - \alpha)$. 
+    % Since logarithm is a monotone function, $\Pr[S \geq 0] \geq 1 - \alpha$ and, 
+    % consequently, $$\Pr[S \geq 1] \leq \alpha\,.$$
+    Recall the definition of an $(\ell, n, \alpha)$-game from Definition~\ref{def:xor-game-poisson}
+    and 
+    the random variable $S$ therein. 
+    By Markov's inequality,
+    $$
+        \Pr[S \geq 1] \leq \frac{\Exp S}{1} = \alpha \,.
+    $$
+
+    \paragraph{Case: $\alpha \in (0, 0.41]$.}
+    Let $X'_i \in \{0,1\}, i \in [m]$ be i.i.d. Bernoulli random variables 
+    with $\Pr[X'_i] = \alpha/m$. 
+    Define $S' = \sum_{i=1}^m X'_i$ 
+    so that $S'\sim \Binomial(m, \alpha/m)$. 
+    Fact~\ref{fact:second-moment-equal-unequal-stake} states that 
+    $\Exp S^2 \leq \Exp {S'}^2 \leq \alpha + \alpha^2$. 
+    Since $\Exp S = \alpha$, it follows that 
+    $$
+    \Exp (1 + S)^2 
+    \leq 1 + 2 \Exp S + \Exp S^2
+    \leq 1 + 3 \alpha + \alpha^2
+    \,.
+    $$
+    Since $\alpha < 1/2$, the quantity 
+    $\Pr[S \geq 1] \cdot \Exp (1 + S)^2$ is at most $\alpha\cdot (1 + 3.5 \alpha)$. 
+    This quantity is convex and increasing in $\alpha$. 
+    The unique solution to the quadratic equation $3.5 \alpha^2 + \alpha - 1 = 0$ 
+    for $\alpha \in (0, 1/2)$ 
+    is $\alpha = (-1 + \sqrt{1 + 14})/7 = 0.4104$. 
+    Therefore, for any $\alpha \leq 0.41$, 
+    the random variable $S$ satisfies~\eqref{eq:lambda-S-requirement} 
+    with $\lambda = 2$.
+    By Lemma~\ref{lemma:xorgame-moment}, we conclude that 
+    $\Exp[g^2 \mid A] \leq n^3 (1 + 3 \alpha + \alpha^2)^\ell$ 
+    for $\alpha \in (0, 0.41]$.
+    
+    \paragraph{Case: $\alpha \in (0.41, 0.5)$.}
+    In this case, we use Holder's inequality for any $\lambda \in (1,2)$ 
+    and observe that 
+    $$
+        \Exp (1+S)^\lambda 
+        \leq \left( \Exp (1+S)^2 \right)^{\lambda/2} 
+        = (1 + 3\alpha +\alpha^2)^{\lambda/2}
+        \,.
+    $$
+    Recalling~\eqref{eq:lambda-S-requirement}, 
+    we want to find the maximal $\lambda \in (1, 2)$ 
+    which satisfies $\alpha(1 + 3\alpha +\alpha^2)^{\lambda/2} \leq 1$ or, 
+    equivalently, setting $\lambda$ as in~\eqref{eq:lambda-star-poisson}. 
+    Note that this implies $\Exp (1+S)^\lambda \leq 1 + 3\alpha +\alpha^2)^{\lambda/2} \leq 1/\alpha$.
+    The claim follows from applying Lemma~\ref{lemma:xorgame-moment} 
+    with $\lambda$ from~\eqref{eq:lambda-star-poisson}. 
+  \end{proof}
+  % \hfill\qed
+
+
+  \begin{lemma}[Tail bound, Poisson game]\label{lemma:xor-game-poisson-gamma}
+      Let $\EpsP \in (0, 1), \alpha \in (0, 1/2), \ell, n \in \NN$ and $n \geq \ell$. 
+      Let $\lambda$ be defined in~\eqref{eq:lambda-star-poisson}.
+      Let 
+      \begin{equation}
+          \label{eq:xor-poisson-tail-gamma}
+          % \gamma = (1 + 3 \alpha + \alpha^2)^{\ell/2} \cdot \begin{dcases}            
+          %     n^{1.50} \EpsP^{-0.50} \,,&\quad\text{if}\quad\alpha \in (0, 0.41]\,, \\
+          %     n^{1.73} \EpsP^{-0.73} \,,  &\quad\text{if}\quad\alpha \in (0.41, 0.50)\,.
+          % \end{dcases}
+          \gamma = \left(\frac{n^{1 + \lambda} }{ (1+\alpha) \EpsP} \right)^{1/\lambda}
+              \cdot \begin{cases}
+                  (1 + 3 \alpha + \alpha^2)^{\ell/\lambda} &\quad\text{if $\alpha \leq 0.41$\,,} \\
+                  (1/\alpha)^{\ell/\lambda} &\quad\text{otherwise\,.}
+              \end{cases}
+      \end{equation}
+      % and $\beta = 5/(12 - 14 \alpha)$.
+      Let $g$ be the grinding power in an $(\ell, n, \alpha)$-game. 
+      Then $\Pr[g \geq \gamma] \leq \alpha^n + \EpsP$.
+  \end{lemma}
+  \begin{proof}
+      Let $g$ be the grinding power of an $(\ell, n, \alpha)$-game $U$.
+      Let $A$ be the event that 
+      at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$. 
+      Recall the random variable $S$ from Definition~\ref{def:xor-game-poisson}. 
+      Recall that in the proof of Theorem~\ref{thm:xor-game-private-election}, 
+      we established that $\Pr[S \geq 1] \leq \alpha$. 
+      It follows that $\Pr[\overline{A}] = (\Pr[S \geq 1])^n \leq \alpha^n$. 
+      Thus, for any non-negative real $\gamma$, 
+      we have 
+      $
+      \Pr[g \geq \gamma] 
+      \leq 1 \cdot \Pr[\overline{A}] + \Pr[g \geq \gamma \mid A] \cdot 1
+      = \alpha^n + \Pr[g \geq \gamma \mid A]
+      $. 
+      The rest of the proof focuses on finding a $\gamma$ so that 
+      for a given $\EpsP$, 
+      $\Pr[g \geq \gamma \mid A]$ is at most $\EpsP$. 
+
+      The bound in~\eqref{eq:xor-poisson-tail-gamma} follows from 
+      Theorem~\ref{thm:xor-game-private-election} and the following fact.
+
+      \begin{fact}[Tail bound from moment bound]\label{fact:grinding-max}\label{fact:tail-bound-from-moment-bound}
+          Let $\GrindingPower$ be an arbitrary non-negative random variable, 
+          $\EpsP \in (0, 1)$ and 
+          $\GrindingMax, \lambda$ be arbitrary positive reals. 
+          If $
+          % \begin{equation}\label{eq:grinding-max}
+              \GrindingMax \geq \left( \Exp[g^\lambda]/\EpsP \right)^{1/\lambda}
+          % \end{equation}
+          $
+          then $\Pr[\GrindingPower \geq \GrindingMax] \leq \EpsP$.    
+      \end{fact}
+      \begin{proof}
+          We can use Markov's inequality to write 
+          $
+          % \begin{equation}\label{eq:grinding-markov}
+              \Pr[\GrindingPower \geq \GrindingMax] \leq \Exp[\GrindingPower^\lambda]/\GrindingMax^\lambda
+          $.
+          % \end{equation}
+          If we require $\Pr[\GrindingPower \geq \GrindingMax] \leq \EpsP$, 
+          it suffices to require 
+          $\Exp[\GrindingPower^\lambda]/\GrindingMax^\lambda \leq \EpsP$, or
+          $\GrindingMax^\lambda \geq \Exp[\GrindingPower^\lambda]/\EpsP$. 
+          Taking the $\lambda$th root gives the lower bound on $\gamma$.
+      \end{proof}
+      \noindent
+      % (Note that Lemma~\ref{lemma:praos-tail-gamma} uses Fact~\ref{fact:grinding-max} 
+      % with $\lambda = 2$.)
+
+      This completes the proof of Lemma~\ref{lemma:xor-game-poisson-gamma}.
+  \end{proof}
+
+
+
+\section{The Bernoulli game}\label{sec:bernoulli}
+  % \section{Option sets of size at most two\texorpdfstring{; the $(\ell, n, \alpha)$-Bernoulli game}{}}
 
     Let us consider a uniform XOR target game where an option set 
     contains at most two elements. 
@@ -9,13 +281,14 @@
     we conclude that in this case, 
     an option set is either $\{\star\}$ 
     or $\{0^\kappa, s\}$ where $s$ is uniform in $\{0,1\}^\kappa$.
+    For $\alpha \in (0,1)$, 
+    let $\Bernoulli(\alpha)$ denote the distribution of a Bernoulli random variable 
+    $B \in \{0,1\}$ where $\Pr[B = 1] = \alpha$.
 
 
     \begin{definition}[$(\ell, n, \alpha)$-Bernoulli game]
         \label{def:static-game}\label{def:Bernoulli-game}
         Let $\alpha \in (0, 1/2)$. 
-        Let $\Bernoulli(\alpha)$ denote the distribution of a Bernoulli random variable 
-        $B \in \{0,1\}$ where $\Pr[B = 1] = \alpha$.
         An $(\ell, n, \Bernoulli(\alpha))$-game 
         is called the \emph{$(\ell, n, \alpha)$-Bernoulli game}.
     \end{definition}
@@ -39,7 +312,7 @@
     % \label{lemma:xor-game-bernoulli-moment}
     % \end{lemma}
     \begin{proof}
-        We retrace the proof of Lemma~\ref{lemma:adaptive-moment} 
+        We retrace the proof of Lemma~\ref{lemma:xorgame-moment} 
         using $S = B$ and $r_i = 1 - B_i, i \in [\ell + n]$; 
         hence $|P_i| = 1 + B, i \in [\ell + n]$. 
         In particular, the random variables $H, r_i, i \in [\ell + n]$ 
@@ -176,224 +449,3 @@
         It follows that $\Pr[g \geq \gamma] \leq \alpha^n + \EpsP$.
     \end{proof}
 
-
-% \section{Proof of Theorem~\ref{thm:beacon-Bernoulli} }
-
-% \begin{theorem}\label{thm:beacon-Bernoulli}
-%   Let $\tau, a \in \RR_+, a > 1, \tau \in (0, \infty)$. 
-%    % and $\EpsP = 2^{-\tau}$. 
-%   Let $d, k, T \in \NN$ 
-%   so that $d$ divides both $k$ and $T$ and, 
-%   writing $n = (T - k)/d$ and $\ell = k/d$, 
-%   satisfy $a n \geq \tau$.
-%   Set $\alpha = 2^{-a}$ and 
-%   suppose that the coin-flipping protocol $\Pi = \CoinTossingPublic$ 
-%   uses a $(2^{-\tau}, k)$-secure ledger protocol $\Blockchain$.
-%   An $(L, \Pi)$-composition is $(3 L n \epsilon, \rho)$-secure where
-%   $$
-%     \epsilon = 2^{- \tau(1 - 1/a) + \ell + 1}
-%     \quad\text{and} \quad
-%     \rho = \ell + \log_2 n + \tau/a + 1
-%     \,.
-%   $$
-%   % $
-%   %   p 
-%   %   % = 3 L \EpsP 2^\rho
-%   %   % = 3 L 2^{\rho - \tau}
-%   %   = 3 L 2^{- \tau(1 - 1/a) + \ell + \log_2 n + 1}
-%   %   % \,.
-%   % $ and 
-%   % $\rho = \ell + \log_2 n + \tau/a + 1$.
-% \end{theorem}
-% \begin{proof}[(Proof sketch)]
-%   Apply  
-%   Lemma~\ref{lemma:xor-game-Bernoulli-gamma} into 
-%   Lemma~\ref{lemma:composition}.
-% \end{proof}
-
-
-
-
-
-\section{The Poisson game}
-  \begin{definition}[$(\ell, n, \alpha)$-game]\label{def:xor-game-poisson}
-      Let $\ell, n, m \in \NN, \alpha \in (0, 1/2)$ and 
-      $\sigma \in \RR^m$ so that $\sigma_i \in (0, 1)$ and $\sum_{i=1}^m \sigma_i = \alpha$. 
-      Let $X_1, \ldots, X_m \in \{0,1\}$ be independent Bernoulli random variables with 
-      $\Pr[X_i = 1] = \sigma_i$. 
-      Define $S = \sum_{i = 1}^m X_i$ 
-      and let $\Distribution$ be the distribution of $S$.
-      Then an $(\ell, n, \Distribution)$-game is called an 
-      \emph{$(\ell, n, \alpha)$-game}.
-  \end{definition}
-
-
-  \begin{theorem}[Moment bound, Poisson game]\label{thm:xor-game-private-election}
-      Let $\ell, n \in \NN, n \geq 2$ and $\alpha \in (0, 1/2)$. 
-      Let
-      \begin{equation}\label{eq:lambda-star-poisson}
-          \lambda = \begin{cases}
-              2 & \quad\text{if $\alpha \leq 0.41$\,,}\\
-              \frac{2 \ln(1/\alpha)}{\ln(1+3\alpha+\alpha^2)} &\quad\text{otherwise\,.}
-          \end{cases}
-      \end{equation}
-      Let $U$ be an $(\ell, n, \alpha)$-game with grinding power $g$. 
-      Let $A$ be the event that 
-      at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$; 
-      condition on $A$. 
-      Then 
-      $$
-          \Exp[g^\lambda \mid A] 
-          \leq \frac{n^{1 + \lambda} }{1+\alpha} 
-          \cdot \begin{cases}
-              (1 + 3 \alpha + \alpha^2)^{\ell} &\quad\text{if $\alpha \leq 0.41$\,,} \\
-              (1/\alpha)^\ell &\quad\text{otherwise\,.}
-          \end{cases}
-          \,.
-      $$
-      % \begin{align*}
-      %     \Exp[g^2 \mid A] &\leq n^3 \cdot 
-      %         (1 + 3 \alpha + \alpha^2)^\ell 
-      %         &\qquad\text{if\quad $\alpha \in (0, 0.41]$, }\\
-      %     \Exp[g^{1.37} \mid A] &\leq n^{2.37} \cdot 
-      %         (1 + 3 \alpha + \alpha^2)^{0.685 \ell }
-      %         &\qquad\text{if\quad $\alpha \in (0.41, 0.5)$}
-      %         \,.
-      % \end{align*}
-  \end{theorem}
-  \begin{proof}
-    % First, note that 
-    % $\ln(\Pr[S \geq 0]) 
-    % = \ln\left(\prod_{i = 1}^m (1 - \sigma_i) \right) 
-    % = \sum_{i = 1}^m \ln (1 - \sigma_i)$. 
-    % Since the function $x \mapsto \ln(1 -x)$ is concave and super-additive for $x \in (0, 1)$, 
-    % it follows that $\ln(\Pr[S \geq 0]) \geq \ln (1 - \sum_i \sigma_i) = \ln (1 - \alpha)$. 
-    % Since logarithm is a monotone function, $\Pr[S \geq 0] \geq 1 - \alpha$ and, 
-    % consequently, $$\Pr[S \geq 1] \leq \alpha\,.$$
-    Recall the definition of an $(\ell, n, \alpha)$-game from Definition~\ref{def:xor-game-poisson}
-    and 
-    the random variable $S$ therein. 
-    By Markov's inequality,
-    $$
-        \Pr[S \geq 1] \leq \frac{\Exp S}{1} = \alpha \,.
-    $$
-
-    \paragraph{Case: $\alpha \in (0, 0.41]$.}
-    Let $X'_i \in \{0,1\}, i \in [m]$ be i.i.d. Bernoulli random variables 
-    with $\Pr[X'_i] = \alpha/m$. 
-    Define $S' = \sum_{i=1}^m X'_i$ 
-    so that $S'\sim \Binomial(m, \alpha/m)$. 
-    Fact~\ref{fact:second-moment-equal-unequal-stake} states that 
-    $\Exp S^2 \leq \Exp {S'}^2 \leq \alpha + \alpha^2$. 
-    Since $\Exp S = \alpha$, it follows that 
-    $$
-    \Exp (1 + S)^2 
-    \leq 1 + 2 \Exp S + \Exp S^2
-    \leq 1 + 3 \alpha + \alpha^2
-    \,.
-    $$
-    Since $\alpha < 1/2$, the quantity 
-    $\Pr[S \geq 1] \cdot \Exp (1 + S)^2$ is at most $\alpha\cdot (1 + 3.5 \alpha)$. 
-    This quantity is convex and increasing in $\alpha$. 
-    The unique solution to the quadratic equation $3.5 \alpha^2 + \alpha - 1 = 0$ 
-    for $\alpha \in (0, 1/2)$ 
-    is $\alpha = (-1 + \sqrt{1 + 14})/7 = 0.4104$. 
-    Therefore, for any $\alpha \leq 0.41$, 
-    the random variable $S$ satisfies~\eqref{eq:lambda-S-requirement} 
-    with $\lambda = 2$.
-    By Lemma~\ref{lemma:adaptive-moment}, we conclude that 
-    $\Exp[g^2 \mid A] \leq n^3 (1 + 3 \alpha + \alpha^2)^\ell$ 
-    for $\alpha \in (0, 0.41]$.
-    
-    \paragraph{Case: $\alpha \in (0.41, 0.5)$.}
-    In this case, we use Holder's inequality for any $\lambda \in (1,2)$ 
-    and observe that 
-    $$
-        \Exp (1+S)^\lambda 
-        \leq \left( \Exp (1+S)^2 \right)^{\lambda/2} 
-        = (1 + 3\alpha +\alpha^2)^{\lambda/2}
-        \,.
-    $$
-    Recalling~\eqref{eq:lambda-S-requirement}, 
-    we want to find the maximal $\lambda \in (1, 2)$ 
-    which satisfies $\alpha(1 + 3\alpha +\alpha^2)^{\lambda/2} \leq 1$ or, 
-    equivalently, setting $\lambda$ as in~\eqref{eq:lambda-star-poisson}. 
-    Note that this implies $\Exp (1+S)^\lambda \leq 1 + 3\alpha +\alpha^2)^{\lambda/2} \leq 1/\alpha$.
-    The claim follows from applying Lemma~\ref{lemma:adaptive-moment} 
-    with $\lambda$ from~\eqref{eq:lambda-star-poisson}. 
-  \end{proof}
-  % \hfill\qed
-
-
-  \begin{lemma}[Tail bound, Poisson game]\label{lemma:xor-game-poisson-gamma}
-      Let $\EpsP \in (0, 1), \alpha \in (0, 1/2), \ell, n \in \NN$ and $n \geq \ell$. 
-      Let $\lambda$ be defined in~\eqref{eq:lambda-star-poisson}.
-      Let 
-      \begin{equation}
-          \label{eq:xor-poisson-tail-gamma}
-          % \gamma = (1 + 3 \alpha + \alpha^2)^{\ell/2} \cdot \begin{dcases}            
-          %     n^{1.50} \EpsP^{-0.50} \,,&\quad\text{if}\quad\alpha \in (0, 0.41]\,, \\
-          %     n^{1.73} \EpsP^{-0.73} \,,  &\quad\text{if}\quad\alpha \in (0.41, 0.50)\,.
-          % \end{dcases}
-          \gamma = \left(\frac{n^{1 + \lambda} }{ (1+\alpha) \EpsP} \right)^{1/\lambda}
-              \cdot \begin{cases}
-                  (1 + 3 \alpha + \alpha^2)^{\ell/\lambda} &\quad\text{if $\alpha \leq 0.41$\,,} \\
-                  (1/\alpha)^{\ell/\lambda} &\quad\text{otherwise\,.}
-              \end{cases}
-      \end{equation}
-      % and $\beta = 5/(12 - 14 \alpha)$.
-      Let $g$ be the grinding power in an $(\ell, n, \alpha)$-game. 
-      Then $\Pr[g \geq \gamma] \leq \alpha^n + \EpsP$.
-  \end{lemma}
-  \begin{proof}
-      Let $g$ be the grinding power of an $(\ell, n, \alpha)$-game $U$.
-      Let $A$ be the event that 
-      at least one of the option sets $P_{\ell + i}, i \in [n]$ in $U$ is $\{\star\}$. 
-      Recall the random variable $S$ from Definition~\ref{def:xor-game-poisson}. 
-      Recall that in the proof of Theorem~\ref{thm:xor-game-private-election}, 
-      we established that $\Pr[S \geq 1] \leq \alpha$. 
-      It follows that $\Pr[\overline{A}] = (\Pr[S \geq 1])^n \leq \alpha^n$. 
-      Thus, for any non-negative real $\gamma$, 
-      we have 
-      $
-      \Pr[g \geq \gamma] 
-      \leq 1 \cdot \Pr[\overline{A}] + \Pr[g \geq \gamma \mid A] \cdot 1
-      = \alpha^n + \Pr[g \geq \gamma \mid A]
-      $. 
-      The rest of the proof focuses on finding a $\gamma$ so that 
-      for a given $\EpsP$, 
-      $\Pr[g \geq \gamma \mid A]$ is at most $\EpsP$. 
-
-      The bound in~\eqref{eq:xor-poisson-tail-gamma} follows from 
-      Theorem~\ref{thm:xor-game-private-election} and the following fact.
-
-      \begin{fact}[Tail bound from moment bound]\label{fact:grinding-max}
-          Let $\GrindingPower$ be an arbitrary non-negative random variable, 
-          $\EpsP \in (0, 1)$ and 
-          $\GrindingMax, \lambda$ be arbitrary positive reals. 
-          If $
-          % \begin{equation}\label{eq:grinding-max}
-              \GrindingMax \geq \left( \Exp[g^\lambda]/\EpsP \right)^{1/\lambda}
-          % \end{equation}
-          $
-          then $\Pr[\GrindingPower \geq \GrindingMax] \leq \EpsP$.    
-      \end{fact}
-      \begin{proof}
-          We can use Markov's inequality to write 
-          $
-          % \begin{equation}\label{eq:grinding-markov}
-              \Pr[\GrindingPower \geq \GrindingMax] \leq \Exp[\GrindingPower^\lambda]/\GrindingMax^\lambda
-          $.
-          % \end{equation}
-          If we require $\Pr[\GrindingPower \geq \GrindingMax] \leq \EpsP$, 
-          it suffices to require 
-          $\Exp[\GrindingPower^\lambda]/\GrindingMax^\lambda \leq \EpsP$, or
-          $\GrindingMax^\lambda \geq \Exp[\GrindingPower^\lambda]/\EpsP$. 
-          Taking the $\lambda$th root gives the lower bound on $\gamma$.
-      \end{proof}
-      \noindent
-      (Note that Lemma~\ref{lemma:praos-tail-gamma} uses Fact~\ref{fact:grinding-max} 
-      with $\lambda = 2$.)
-
-      This completes the proof of Lemma~\ref{lemma:xor-game-poisson-gamma}.
-  \end{proof}

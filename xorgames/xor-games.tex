@@ -705,10 +705,7 @@ The theorem below obtains a tighter bound on $g(U)$.
         Then $U$ is an \emph{$(\ell, n, \Distribution)$-game}.
     \end{definition}
 
-    \begin{lemma}
-        % [Moment bound for the grinding power in the $(\ell, n, \Distribution)$-game]
-        % \label{lemma:xor-game-lookahead-moment} 
-        \label{lemma:adaptive-moment}
+    \begin{lemma}\label{lemma:xorgame-moment}
         % Let $m \in [n]$.
         % Let $U$ be an $(\ell, n, \Distribution)$-game where 
         % $
@@ -721,7 +718,7 @@ The theorem below obtains a tighter bound on $g(U)$.
         Let $S$ be a non-negative integer random variable with distribution $\Distribution$ 
         and let $\lambda$ be a positive real such that 
         \begin{equation}\label{eq:lambda-S-requirement}
-            \Pr[S \geq 1]\,\Exp (1 + S)^\lambda \leq 1  
+            \Pr[S \geq 1] \cdot \Exp (1 + S)^\lambda \leq 1  
             \,.
         \end{equation}
         Let $U$ be an $(\ell, n, \Distribution)$-game.

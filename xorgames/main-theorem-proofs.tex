@@ -1,7 +1,7 @@
 
 \section{Grinding power in a single epoch}
 
-\begin{theorem}[Static adversary, single epoch]\label{thm:beacon-bernoulli-single-epoch}
+\begin{lemma}[Static adversary, single epoch]\label{lemma:beacon-bernoulli-single-epoch}
   Let $\alpha \in (0, 0.41)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
   Let $f(\alpha)$ and $\rho$ be as in \eqref{eq:f-bernoulli} and \eqref{eq:rho-bernoulli}.
   Let $\Pi_\Beacon$ be a $(T,k,s,d,\PublicLeaderElection(\alpha), \EpsP)$-beacon.
@@ -11,7 +11,7 @@
     \Pr_{\PublicLeaderElection{\alpha}}\left[\MinEntropy(\eta) \geq \kappa - \rho \right] \geq 1 - 3 \EpsP
     \,.
   \end{equation}
-\end{theorem}
+\end{lemma}
 \begin{proof}  
   Consider Lemma~\ref{lemma:xor-game-Bernoulli-gamma} 
   with $\ell = k/d$ and $n = (T-k)/d$. 
@@ -32,8 +32,8 @@
 \end{proof}
 % \hfill\qed
 
-\begin{theorem}[Adaptive adversary, single epoch]\label{thm:beacon-poisson-single-epoch}
-  Let $\alpha \in (0, 0.41)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
+\begin{lemma}[Adaptive adversary, single epoch]\label{lemma:beacon-poisson-single-epoch}
+  Let $\alpha \in (0, 1)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
   Let $f(\alpha)$ and $\rho$ be as in \eqref{eq:f-poisson} and \eqref{eq:rho-poisson}.
   Let $\Pi_\Beacon$ be a $(T,k,s,d,\PrivateLeaderElection(\alpha), \EpsP)$-beacon 
   where $d$ is from~\eqref{eq:d-multiepoch}.
@@ -43,7 +43,7 @@
     \Pr_{\PrivateLeaderElection{\alpha}}\left[\MinEntropy(\eta) \geq \kappa - \rho \right] \geq 1 - 3 \EpsP
     \,.
   \end{equation}
-\end{theorem}
+\end{lemma}
 
 \begin{proof}  
   Consider Lemma~\ref{lemma:xor-game-poisson-gamma} 
@@ -59,7 +59,7 @@
   is $(\alpha^n + \EpsP) + \EpsP$. 
   Since we assume~\eqref{eq:alphatothen-epsp}, it is at most $3 \EpsP$.
 
-  Let us focus on the min-entropy loss.
+  Recall $\lambda$ from~\eqref{eq:lambda-star-poisson} and $\gamma$ from~\eqref{eq:xor-poisson-tail-gamma}.
 
   \paragraph{Case: $\alpha \leq 0.41$.}
   In this case, $\lambda = 2$ and 
@@ -114,9 +114,9 @@
   in conjunction with Lemma~\ref{lemma:beacon-composition}.
   It follows that the min-entropy loss, $\rho$, 
   would be same as in the single-epoch case, 
-  given by Theorem~\ref{thm:beacon-bernoulli-single-epoch}.
+  given by Lemma~\ref{lemma:beacon-bernoulli-single-epoch}.
 
-  The failure probability, however, would be 
+  The failure probability, however, would be at most
   \begin{align*}
     3 L 2^\rho \EpsP
     &= 3 L 2^{\ell + 1} 
@@ -136,27 +136,12 @@
   in conjunction with Lemma~\ref{lemma:beacon-composition}.
   It follows that the min-entropy loss, $\rho$, 
   would be same as in the single-epoch case, 
-  given by Theorem~\ref{thm:beacon-poisson-single-epoch} 
-  for $\alpha \leq 0.41$.
-
-  % The failure probability, however, would be 
-  % \begin{align*}
-  %   3 L 2^\rho \EpsP
-  %   &= 3 L (1+3\alpha+\alpha^2)^{k/2d}
-  %     \left(\frac{n}{1+\alpha}\right)^{f(\alpha)} 
-  %     \EpsP^{1/2}
-  %     \,.
-  % \end{align*}
-
-
-
-
-
-
-
-
-  Notice that $\lambda = 2$ since $\alpha \leq 0.41$.
-  Let $\tau = \log_2(1/\EpsP), a = 1 + 3 \alpha + \alpha^2$,
+  given by Lemma~\ref{lemma:beacon-poisson-single-epoch} 
+  for $\alpha \leq 0.41$. 
+  Recall $\lambda$ from~\eqref{eq:lambda-star-poisson} and $\gamma$ from~\eqref{eq:xor-poisson-tail-gamma}.
+  Since $\alpha \leq 0.41$, $\lambda = 2$.
+  
+  Let us write $a = 1 + 3 \alpha + \alpha^2$ 
   % $$
  %    a = 
  %      % \begin{cases}
@@ -169,7 +154,7 @@
     p(d) = n^{1+1/\lambda} \EpsP^{1 - 1/\lambda} a^{\ell/\lambda}
     \,.
   $$
-  Then, according to Lemma~\ref{lemma:composition}, 
+  Then, according to Lemma~\ref{lemma:beacon-composition}, 
   the min-entropy loss is at most $\log_2(\gamma)$ 
   except with probability at most $3 L p(d)$. 
   Let $\delta \in (0, 1)$ so that $p(d) \leq \EpsP^\delta$; 
@@ -249,18 +234,17 @@
   \noindent
   For further simplification, let us use the assumption that $\alpha \leq 0.41$ 
   and write $c = k/(T-k)$; 
-  this implies $\lambda = 2, a = 1 + \alpha + \alpha^2$, 
+  this implies $\lambda = 2$, 
   \begin{align*}
     \delta
       &\leq \frac{1}{2} - \frac{c f(\alpha)}{2} - \frac{3}{2} \frac{ \log_2(T - k)}{\log_2(1/\EpsP)}\,, 
       \qquad \text{and}\\
     \EpsP^\delta  
       &\leq \EpsP^{1/2 - c f(\alpha)/2} \cdot \left[ \EpsP^{-1/\log_2(1/\EpsP)} \right]^{(3/2)\log_2(T - k)} \\
-      &= \EpsP^{1/2 - c f(\alpha)/2} \cdot 2^{(3/2)\log_2(T - k)} \\
+      &= \EpsP^{1/2 - c f(\alpha)/2} \cdot 2^{(3/2)\log_2(T - k)} \qquad\text{Using above Fact with $x = \EpsP$}\\
       &= \EpsP^{1/2 - (k/(T-k)) f(\alpha)/2} \cdot (T - k)^{3/2} 
       \,,
   \end{align*}
   as claimed in the theorem statement. 
-  Here, we used the above fact with $x = \EpsP$.  
 % \end{proof}
 \hfill\qed

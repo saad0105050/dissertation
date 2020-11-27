@@ -12,7 +12,7 @@ which can withstand large adversarial stakes.
 
 In this part of the dissertation, 
 we present PoS beacons 
-whose most salient feature is simplicity and high quality.
+whose two salient features are simplicity and high quality.
 In the private leader election setting (e.g., Praos and Snow White), 
 our beacon has a superior output quality 
 (compared to Praos) 
@@ -25,43 +25,7 @@ starts to degrade when the adversarial stake goes above $40\%$.)
 As an immediate application, it would improve the grinding tolerance in Praos; 
 see Figure~\ref{fig:rho-poisson-beacon} for a comparison.
 
-\iftoggle{drawfigs}{
 
-\begin{figure}[!htb]
-    \centering
-    \tikzsetnextfilename{rho-poisson}
-    \begin{tikzpicture}[trim axis left,
-      ]
-      \begin{axis}[domain=0:1, 
-        xmin=0,xmax=1,%,%ymin=-100%,ymax=2.5
-        restrict x to domain=0.18:0.99,
-        samples=500,
-        enlarge x limits=false,
-        grid=both,
-        no markers, 
-        % legend pos=outer north east,
-        legend pos=outer north east,
-        legend cell align=left,
-        x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
-        y label style={at={(axis description cs:-0.1,.5)},anchor=south},
-        xlabel={$\epsilon$, honest bias},
-        title={$\rho^*$, upper bound on the min-entropy loss $\rho$}
-        ]
-        \addplot +[ultra thick,red] { PraosMinEntropyLossMultiEpoch(\x, 900 ) };
-        \addlegendentry{Praos, $k = 900$};
-        \addplot +[ultra thick,black] { PoissonBeaconMinEntropyLoss(\x, 900, PraosEpsP(\x, 900)) };
-        \addlegendentry{New, $k = 900$};
-        \addplot +[ultra thick,blue] { PraosMinEntropyLossMultiEpoch(\x, 1200) };
-        \addlegendentry{Praos, $k = 1200$};
-        \addplot +[ultra thick,orange,dashed] { PoissonBeaconMinEntropyLoss(\x, 1200, PraosEpsP(\x, 1200)) };
-        \addlegendentry{New, $k = 1200$};
-      \end{axis}
-    \end{tikzpicture}%
-    \caption{Min-entropy loss in Poisson beacon}
-    \label{fig:rho-poisson-beacon}
-\end{figure}
-
-}
 
 
 We also design a PoS beacon in the public leader election setting 
@@ -75,6 +39,37 @@ that do not have the means to use/implement the MPC-based beacon
 and, in exchange, are willing to tolerate a very low min-entropy loss 
 in the beacon. 
 See Figure~\ref{fig:rho-bernoulli-beacon}.
+
+
+\section{Related work}
+Our new beacons are closely related to the Algorand beacon~\cite{Algorand}. 
+In both protocols, 
+the players are equipped with verifiable
+random functions (VRF, see Definition~\ref{def:VRF}) 
+From each round, multiple inputs are submitted 
+but the lexicographically smallest one is considered as the winning input for that round.
+Algorand obtains the beacon output by applying an XOR to a number of winning inputs. 
+Both protocols guarantee that the beacon output (which is based on past $R$ rounds, for some integer $R$) 
+is uniform with high probability, i.e., 
+the beacon output incurs only a small loss in min-entropy. 
+
+But the two analyses differ in whether the consensus is eventual or instant.
+In Algorand, each winning input is confirmed via 
+an expected constant-time Byzantine Agreement. 
+Therefore, 
+a player cannot delay his input and neither does he have any direct knowledge 
+about future inputs. 
+This is the dynamic of an ``instant consensus'' setting.
+
+In contrast, our analysis is tailored toward the the eventual consensus setting.
+The model allows a player at the current round to 
+submit his input after observing a number of future inputs 
+(called a \emph{lookahead}). 
+This lookahead captures the eventual consensus dynamic 
+where the blockchain takes some time to ``settle.'' 
+
+See Section~\ref{sec:praos-related-work} for 
+a more detailed survey of randomness beacon schemes.
 
 
 
