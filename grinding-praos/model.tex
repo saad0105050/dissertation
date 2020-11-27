@@ -434,8 +434,12 @@ $$
     H_\infty(X) \geq -\log_2 (g 2^{-n}) = n - \log_2 g
     \,.
 $$
-The min-entropy loss in the beacon output is, therefore, 
-at most $\log_2 g$. 
+Thus, we have proved the following fact:
+
+\begin{fact}\label{fact:min-entropy-grinding-power}
+  For any beacon with grinding power $g$, 
+  the min-entropy loss in its output is at most $\log_2 g$.
+\end{fact}
 
 \begin{definition}[Beacon security]\label{def:beacon-security}
     Let $n,k,s \in \NN, \rho \in \RR_+$ and $\EpsP, \EpsG \in (0,1)$.

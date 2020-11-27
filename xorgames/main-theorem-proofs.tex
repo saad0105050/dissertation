@@ -1,4 +1,33 @@
 
+In \Section~\ref{sec:xor-games}, 
+we established the connection between 
+a uniform XOR target game 
+(Definition~\ref{def:xor-game-uniform})
+and a single epoch of our beacon protocol $\Pi_\Beacon$ 
+in Definition~\ref{def:new-beacon}.
+Then, in Section~\ref{sec:poisson-bernoulli}, 
+we established the connection between 
+$(\ell,n,\alpha)$-Poisson (resp. -Bernoulli) game 
+and the beacon protocol 
+under a private (resp. public) leader election scheme 
+(Section~\ref{sec:leader-election-public-private})
+where the total adversarial probability is $\alpha$. 
+Section~\ref{sec:poisson-bernoulli} 
+culminated in tail bounds 
+on the grinding power in those games; 
+see Lemma~\ref{lemma:xor-game-poisson-gamma} and ~\ref{lemma:xor-game-Bernoulli-gamma}. 
+Finally, recall from Fact~\ref{fact:min-entropy-grinding-power} 
+that the min-entropy loss in any beacon no more than the logarithm of its grinding power. 
+
+In this \Section, we connect these ideas
+to prove tail bounds for the min-entropy loss in the beacon output in a single epoch. 
+Then we use the iterative beacon lemma (Lemma~\ref{lemma:beacon-composition}) 
+to argue that over an execution spanning $L$ epochs, 
+the same upper bound holds but the failure probability is inflated by 
+a multiplicative factor of the grinding power.
+
+
+
 \section{Grinding power in a single epoch}
 
 \begin{lemma}[Static adversary, single epoch]\label{lemma:beacon-bernoulli-single-epoch}
@@ -105,7 +134,7 @@
 
 
 
-\section{Grinding power over multiple epochs}
+\section{Grinding power over multiple epochs; proof of main theorems}
 
 \subsection*{Proof of Theorem~\ref{thm:beacon-bernoulli-multi-epoch}}
 % \begin{proof}
