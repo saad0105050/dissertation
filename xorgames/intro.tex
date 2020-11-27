@@ -1,85 +1,215 @@
 
-Recall that in Part~\ref{part:praos}, 
-we analyzed the randomness beacon in Ouroboros Praos\cite{Praos} and Snow White~\cite{SnowWhite} 
+In a grinding attack, 
+the adversary tries to reduce the output quality 
+of a randomness beacon protocol.
+One way to characterize the severity of a grinding attack 
+is to analyze the so-called ``grinding power;'' 
+this is the number of \emph{potential} outputs 
+from which the adversary effectively selects the beacon output.
+
+The goal of Part~\ref{part:praos} of this dissertation was to understand the grinding power in 
+eventual consensus PoS blockchains such as 
+Ouroboros Praos~\cite{Praos} and SnowWhite~\cite{SnowWhite} 
 in the synchronous setting. 
-We showed 
-that the min-entropy loss in the beacon output 
-is logarithmic in the security parameter if the adversarial stake is below $9\%$; 
-otherwise, it grows linearly in the security parameter.
-As Praos is deployed in practice (since August 2020), 
-it remains an open question to design simple PoS beacons for Praos 
-which can withstand large adversarial stakes.
+In Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}, 
+we showed that the min-entropy loss in these beacons  
+is logarithmic in the security parameter if the adversarial stake is below $9.55\%$; 
+otherwise, it grows linearly in the security parameter. 
+As of now, there does not exist a simple eventual consensus PoS beacon (i.e., without using MPC or special hardware) 
+which can withstand an adversarial stake above $10\%$. 
+In addition, as Praos is deployed in the real-world cryptocurrency Cardano~\cite{Cardano,CardanoPraos} 
+designing such a secure beacon is a pressing issue.
 
-In this part of the dissertation, 
-we present PoS beacons 
-whose two salient features are simplicity and high quality.
-In the private leader election setting (e.g., Praos and Snow White), 
-our beacon has a superior output quality 
-(compared to Praos) 
-as long as the adversarial bias is at most $41\%$. 
-Although this beacon does not cover adversarial stakes $\alpha$ above $41\%$, 
-the regime $\alpha \in (0, 0.41)$ is nonetheless practical: 
-for practical values for the consistency parameter $k$, 
-Praos' consistency error bound 
-starts to degrade when the adversarial stake goes above $40\%$.) 
-As an immediate application, it would improve the grinding tolerance in Praos; 
-see Figure~\ref{fig:rho-poisson-beacon} for a comparison.
+Our goal in Part~\ref{part:xorgames} of this dissertation is 
+to design such beacons.
 
 
 
 
-We also design a PoS beacon in the public leader election setting 
-which can work with Ouroboros classic~\cite{Ouroboros}. 
-Recall that Ouroboros classic uses an MPC-based beacon protocol 
-which precludes any grinding. 
-Implementing this protocol in practice, however, is not palatable. 
-We believe that this beacon will be valuable for 
-PoS protocols 
-that do not have the means to use/implement the MPC-based beacon 
-and, in exchange, are willing to tolerate a very low min-entropy loss 
-in the beacon. 
-See Figure~\ref{fig:rho-bernoulli-beacon}.
-
-
-\section{Related work}
-Our new beacons are closely related to the Algorand beacon~\cite{Algorand}. 
-In both protocols, 
-the players are equipped with verifiable
-random functions (VRF, see Definition~\ref{def:VRF}) 
-From each round, multiple inputs are submitted 
-but the lexicographically smallest one is considered as the winning input for that round.
-Algorand obtains the beacon output by applying an XOR to a number of winning inputs. 
-Both protocols guarantee that the beacon output (which is based on past $R$ rounds, for some integer $R$) 
-is uniform with high probability, i.e., 
-the beacon output incurs only a small loss in min-entropy. 
-
-But the two analyses differ in whether the consensus is eventual or instant.
-In Algorand, each winning input is confirmed via 
-an expected constant-time Byzantine Agreement. 
-Therefore, 
-a player cannot delay his input and neither does he have any direct knowledge 
-about future inputs. 
-This is the dynamic of an ``instant consensus'' setting.
-
-In contrast, our analysis is tailored toward the the eventual consensus setting.
-The model allows a player at the current round to 
-submit his input after observing a number of future inputs 
-(called a \emph{lookahead}). 
-This lookahead captures the eventual consensus dynamic 
-where the blockchain takes some time to ``settle.'' 
-
-See Section~\ref{sec:praos-related-work} for 
-a more detailed survey of randomness beacon schemes.
 
 
 
-\section{A technical overview}
-To do
+\section{Drawbacks of existing eventual consensus PoS beacons}  
+    Below, we glean the insights into why the beacon protocol in Praos 
+    is prone to a high grinding power. 
+    In Praos, 
+    nonce inputs are contained within the blocks in the blockchain 
+    and, after an epoch is over, 
+    the beacon output is obtained by XORing the nonce inputs from a consistent chain prefix 
+    and then applying a hash.
+    While this is simple, 
+    it actually gives the adversary a formidable power. 
+    Specifically, he wields so large a grinding power in Praos 
+    because 
+    he can completely suppress the nonce inputs from an honest slot 
+    by creating a viable alternative blockchain (see Section~\ref{def:extension-mh}) 
+    that does not contain a block from this honest slot. 
+
+    Having the nonce inputs \emph{on-chain} (i.e., inside the blocks)
+    actually couples the grinding problem with the consistency problem. 
+    In the Praos beacon, a grinding attack is maximized in a time window 
+    if the adversary can maximize the number of viable blockchains emanating out of this window. 
+    However, this also maximizes a consistency attack. 
+    Thus the Praos beacon allows a consistency attack to 
+    become a grinding attack as well.
+
+    Another adverse effect of this coupling 
+    is highlighted by the opposite effect of the consistency parameter $k$ 
+    on the consistency problem and the grinding problem. 
+    In particular, taking $k$ large implies a low risk of consistency error, 
+    but it also increases the window in which the adversary can perform a grinding attack 
+    and thereby inflate the likelihood of causing a consistency violation in the next epoch. 
+    Such a compromise is inevitable, 
+    but perhaps its effect is magnified in Praos due to its ``nonces on the blockchain'' beacon.
+
+    One might think that we could just ``slow down the beacon'' in Praos 
+    by taking, for example, nonce inputs from every other slot. 
+    While this will reduce (by half) the number of nonce-emitting slots in a given window, 
+    it will \emph{not reduce the number of competing blockchains} emanating out of this window. 
+    Each of these blockchains will yield a different beacon value. 
+
+
+    See Section~\ref{sec:praos-related-work} for 
+    a more detailed survey of randomness beacon schemes.
+
+
+
+\section{Our contributions}
+    We design eventual consensus PoS beacons 
+    (Definition~\ref{def:new-beacon}) 
+    with two salient features: simplicity and high quality. 
+    The heart of our beacon algorithm has a one-line description: 
+    ``take the lexicographically smallest nonce at every slot and XOR them.'' 
+
+
+    In the private leader election setting (e.g., as in Praos and Snow White), 
+    our beacon has a superior min-entropy 
+    as long as the adversarial bias is at most $41\%$ (Theorem~\ref{thm:beacon-poisson-multi-epoch}). 
+    This regime---albeit short of the ``adversarial sub-majority'' model of Praos---is practical nonetheless: 
+    for practical values for the consistency parameter $k$, 
+    Praos' consistency error bound 
+    starts to degrade when the adversarial stake goes above $40\%$.) 
+    As an immediate application, it would improve the grinding tolerance in Praos; 
+    see Figure~\ref{fig:rho-poisson-beacon} for a comparison.
+
+
+    We also design a PoS beacon in the public leader election setting (Theorem~\ref{thm:beacon-bernoulli-multi-epoch})
+    which can work with Ouroboros classic~\cite{Ouroboros}. 
+    Recall that Ouroboros classic uses an MPC-based beacon protocol 
+    which precludes any grinding. 
+    Implementing this protocol in practice, however, is not palatable. 
+    We believe that this beacon will be valuable for 
+    PoS protocols 
+    that do not have the means to use/implement the MPC-based beacon 
+    and, in exchange, are willing to tolerate a very low min-entropy loss 
+    in the beacon. 
+    See Figure~\ref{fig:rho-bernoulli-beacon}.
+
+
+    Finally, for eventual consensus PoS blockchains, 
+    our analysis highlights 
+    how a grinding attack can weaken a tight guarantee on the consistency error. 
+    Such a cohesive treatment of both attacks is a first in the literature.
+    In addition, our technique for analyzing 
+    the foreknowledge afforded to the adversary in the eventual consensus setting 
+    may be of independent interest.
+
+
+
+
+\section{A technical overview}~
+    These insights will lead us to new, simple beacons. 
+    Some ideas in our beacon (e.g., min-then-XOR) can be dated back to Algorand (see below) 
+    whose beacon is in a different setting than ours.
+
+    \Paragraph{Main ideas for mitigating the shortcomings of the Praos beacon.}
+    It is clear that to design a better beacon, 
+    we must make it difficult for the adversary to 
+    bypass honest nonce submissions, 
+    and conduct both a consistency attack and a grinding attack using the same strategy. 
+    Above all, we should decouple the eventual consensus mechanism 
+    from the beacon mechanism.
+
+    In fact, it \emph{is} possible to decouple the nonce submission process from the eventual consensus process. 
+    As long as the blockchain protocol satisfies the consistency property (e.g., $\kSlotCP$, Definition~\ref{def:cp-slot-mh}), 
+    we can use its ledger functionality as a black-box for recording the nonce inputs. 
+    Moreover, we can use the liveness property (e.g., $\sECQ$, Definition~\ref{def:ECQ}) 
+    to make sure that \emph{every honest nonce input is recorded in the ledger.}\footnote{ 
+        An example of doing the latter is the ``input endorsing'' mechanism in Ouroboros~\cite{Ouroboros} 
+        or the ``fruitchains'' mechanism in Snow White~\cite{SnowWhite,Fruitchains}.
+    }
+    Furthermore, once the blockchain execution does not control the grinding power, 
+    we are able to ``slow down the beacon'' by reducing the number of nonce emitting slots 
+    and, thereby, reduce the (still) exponential dependence on $k$.
+
+    In XOR target games (\Section~\ref{sec:xor-games}), 
+    we deconstruct the eventual consensus blockchain dynamic 
+    to highlight the simply yet important phenomena: 
+    \begin{enumerate}
+        \item The adversary can observe the honest nonce inputs up to $k$ slots in future 
+        before announcing his nonce inputs from a given slot.
+        Here, $k$ is given by the blockchain protocols consistency property.
+
+        \item If he delays his announcement any further, the current slot will be ``settled'' 
+        and the ledger will never accept the yet-unannounced nonce.
+
+        \item If a slot has no adversarial winners but one or more honest winners, 
+        it effectively re-randomizes the future output distribution.
+    \end{enumerate}
+    In Theorem~\ref{thm:xor-game-lookahead}, 
+    we prove an upper bound on the grinding power of an XOR target game 
+    by harness these observations.
+
+
+
+    \Paragraph{Our new beacon and Algorand.}
+        Our new beacons are closely related to the Algorand beacon~\cite{Algorand}. 
+        In both protocols, 
+        the players are equipped with verifiable
+        random functions (VRF, see Definition~\ref{def:VRF}). 
+        From each round, multiple nonce inputs are submitted 
+        but the lexicographically smallest one is considered as the winning input for that round.
+        The beacon output is obtained by XORing all winning nonces and then applying a hash. 
+        Both protocols guarantee that the beacon output 
+        is uniform with high probability, i.e., 
+        it incurs only a small loss in min-entropy. 
+
+        But the two protocols (and respective analyses) differ in important ways. 
+        In Algorand, each winning input is confirmed via 
+        an expected constant-time Byzantine Agreement. 
+        Therefore, 
+        a player cannot delay his input and neither does he have any direct knowledge 
+        about future inputs. 
+        This is the dynamic of an ``instant consensus'' setting. 
+        This also means that honest inputs (contained within respective blocks) 
+        cannot be suppressed or bypassed.
+
+        In contrast, our analysis is tailored toward the the eventual consensus setting.
+        The model allows a player at the current round to 
+        submit his input after observing a number of future inputs 
+        (called a \emph{lookahead}). 
+        This lookahead captures the eventual consensus dynamic 
+        where the blockchain takes some time to ``settle.'' 
+
 
 
 
 \section{Outline of the exposition}
-To do
+In \Section~\ref{sec:xorgames-model}, 
+we define the new beacon (Definition~\ref{def:new-beacon}) and present our main theorems, 
+Theorem~\ref{thm:beacon-poisson-multi-epoch} 
+and~\ref{thm:beacon-bernoulli-multi-epoch}. 
+Then, \Section~\ref{sec:xor-games}, we develop an abstraction of this beacon 
+via a single-player multi-round game, called the XOR target game, 
+and derive moment bounds of its grinding power. 
+We decouple it from the leader election mechanism by taking,
+as a given parameter, 
+a certain distribution induced by different leader election mechanisms 
+(see Section~\ref{sec:leader-election-public-private}). 
+This decoupling allows us to separately analyze those leader election schemes 
+and, thus, develop fine-grained 
+tail bounds for the grinding power. 
+The proofs of the main theorems are given in \Section~\ref{sec:main-thm-proofs}.
 
 
 
