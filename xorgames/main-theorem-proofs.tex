@@ -30,36 +30,7 @@ a multiplicative factor of the grinding power.
 
 \section{Grinding power in a single epoch}
 
-\begin{lemma}[Static adversary, single epoch]\label{lemma:beacon-bernoulli-single-epoch}
-  Let $\alpha \in (0, 0.41)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
-  Let $f(\alpha)$ and $\rho$ be as in \eqref{eq:f-bernoulli} and \eqref{eq:rho-bernoulli}.
-  Let $\Pi_\Beacon$ be a $(T,k,s,d,\PublicLeaderElection(\alpha), \EpsP)$-beacon.
-  Let $\eta$ be the beacon output after the first epoch. 
-  Then 
-  \begin{equation}\label{eq:security-bernoulli-single-epoch}
-    \Pr_{\PublicLeaderElection{\alpha}}\left[\MinEntropy(\eta) \geq \kappa - \rho \right] \geq 1 - 3 \EpsP
-    \,.
-  \end{equation}
-\end{lemma}
-\begin{proof}  
-  Consider Lemma~\ref{lemma:xor-game-Bernoulli-gamma} 
-  with $\ell = k/d$ and $n = (T-k)/d$. 
-  The min-entropy loss, 
-  \begin{align*}
-    \rho &= \log_2(\gamma) \\
-        &= \log_2 \left[  2^{\ell + 1} \left(
-                \frac{n}{(1+\alpha)\EpsP}
-            \right)^{1/\log_2(1/\alpha)}\right] \\
-        &= \ell + 1 + f(\alpha) \log_2\left(\frac{n}{(1+\alpha)\EpsP}\right)
-        \,.
-  \end{align*}
-  The total failure probability, 
-  considering both $\Pr[g \geq \gamma]$ and 
-  the $(\EpsP, k, s)$-secure protocol $\Blockchain$, 
-  is $(\alpha^n + \EpsP) + \EpsP$. 
-  Since we assume~\eqref{eq:alphatothen-epsp}, it is at most $3 \EpsP$.
-\end{proof}
-% \hfill\qed
+
 
 \begin{lemma}[Adaptive adversary, single epoch]\label{lemma:beacon-poisson-single-epoch}
   Let $\alpha \in (0, 1)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
@@ -130,32 +101,45 @@ a multiplicative factor of the grinding power.
 \end{proof}
 % \hfill\qed
 
-
+\begin{lemma}[Static adversary, single epoch]\label{lemma:beacon-bernoulli-single-epoch}
+  Let $\alpha \in (0, 0.41)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
+  Let $f(\alpha)$ and $\rho$ be as in \eqref{eq:f-bernoulli} and \eqref{eq:rho-bernoulli}.
+  Let $\Pi_\Beacon$ be a $(T,k,s,d,\PublicLeaderElection(\alpha), \EpsP)$-beacon.
+  Let $\eta$ be the beacon output after the first epoch. 
+  Then 
+  \begin{equation}\label{eq:security-bernoulli-single-epoch}
+    \Pr_{\PublicLeaderElection{\alpha}}\left[\MinEntropy(\eta) \geq \kappa - \rho \right] \geq 1 - 3 \EpsP
+    \,.
+  \end{equation}
+\end{lemma}
+\begin{proof}  
+  Consider Lemma~\ref{lemma:xor-game-Bernoulli-gamma} 
+  with $\ell = k/d$ and $n = (T-k)/d$. 
+  The min-entropy loss, 
+  \begin{align*}
+    \rho &= \log_2(\gamma) \\
+        &= \log_2 \left[  2^{\ell + 1} \left(
+                \frac{n}{(1+\alpha)\EpsP}
+            \right)^{1/\log_2(1/\alpha)}\right] \\
+        &= \ell + 1 + f(\alpha) \log_2\left(\frac{n}{(1+\alpha)\EpsP}\right)
+        \,.
+  \end{align*}
+  The total failure probability, 
+  considering both $\Pr[g \geq \gamma]$ and 
+  the $(\EpsP, k, s)$-secure protocol $\Blockchain$, 
+  is $(\alpha^n + \EpsP) + \EpsP$. 
+  Since we assume~\eqref{eq:alphatothen-epsp}, it is at most $3 \EpsP$.
+\end{proof}
+% \hfill\qed
 
 
 
 \section{Grinding power over multiple epochs; proof of main theorems}
 
-\subsection*{Proof of Theorem~\ref{thm:beacon-bernoulli-multi-epoch}}
-% \begin{proof}
-  Consider Lemma~\ref{lemma:xor-game-Bernoulli-gamma}, 
-  with $\ell = k/d$ and $n = (T-k)/d$, 
-  in conjunction with Lemma~\ref{lemma:beacon-composition}.
-  It follows that the min-entropy loss, $\rho$, 
-  would be same as in the single-epoch case, 
-  given by Lemma~\ref{lemma:beacon-bernoulli-single-epoch}.
+In this section, we build upon the results of the previous section 
+and apply the composition lemma (Lemma~\ref{lemma:beacon-composition}). 
+This would give us tail bounds for an iterated beacon.
 
-  The failure probability, however, would be at most
-  \begin{align*}
-    3 L 2^\rho \EpsP
-    &= 3 L 2^{\ell + 1} 
-      \left(\frac{n}{1+\alpha}\right)^{f(\alpha)} 
-      \EpsP^{1 - f(\alpha)}
-      \,.
-  \end{align*}
-  
-% \end{proof}
-\hfill\qed
 
 
 \subsection*{Proof of Theorem~\ref{thm:beacon-poisson-multi-epoch}}
@@ -275,5 +259,27 @@ a multiplicative factor of the grinding power.
       \,,
   \end{align*}
   as claimed in the theorem statement. 
+% \end{proof}
+\hfill\qed
+
+
+\subsection*{Proof of Theorem~\ref{thm:beacon-bernoulli-multi-epoch}}
+% \begin{proof}
+  Consider Lemma~\ref{lemma:xor-game-Bernoulli-gamma}, 
+  with $\ell = k/d$ and $n = (T-k)/d$, 
+  in conjunction with Lemma~\ref{lemma:beacon-composition}.
+  It follows that the min-entropy loss, $\rho$, 
+  would be same as in the single-epoch case, 
+  given by Lemma~\ref{lemma:beacon-bernoulli-single-epoch}.
+
+  The failure probability, however, would be at most
+  \begin{align*}
+    3 L 2^\rho \EpsP
+    &= 3 L 2^{\ell + 1} 
+      \left(\frac{n}{1+\alpha}\right)^{f(\alpha)} 
+      \EpsP^{1 - f(\alpha)}
+      \,.
+  \end{align*}
+  
 % \end{proof}
 \hfill\qed

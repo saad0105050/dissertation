@@ -1,6 +1,105 @@
 
 
+In this section, 
+we present a rigorous abstraction of the 
+single-epoch eventual consensus beacon protocol $\Pi_\Beacon$ in Definition~\ref{def:new-beacon}. 
+This abstraction is called an ``XOR target game,'' 
+a single-player multi-round game where the player $\Adversary$ (i.e., the adversary) 
+has to make a selection at each round from a given set of random strings, 
+called an ``option set.''
+The output of the game, $\eta$, is the exclusive-OR of these selections; 
+$\Adversary$ wins if $\eta$ falls within 
+a predetermined set of his choice (called the target set). 
+This is why the game is called the XOR target game.
 
+Before we delve into the formal definition of an XOR target game 
+and define its grinding power, 
+we loosely describe the game and highlight the correspondence 
+between this game and $\Pi_\Beacon$. 
+This should convince the reader that 
+an upper bound on this grinding power will act as an upper bound on the grinding power of $\Pi_\Beacon$.
+Importantly, our abstraction does not model any explicit leader election mechanism. 
+Instead, it focuses on the size of the option sets 
+which, in turn, is the number of options that the adversary may have 
+for selecting the winning nonce for each slot. 
+
+
+
+\paragraph{Outline of this \Section.}
+In what follows, we start with a formal definition of the XOR target game 
+and prove an upper bound on its grinding power 
+in terms of the sizes of the option sets (Theorem~\ref{thm:xor-game-lookahead}). 
+Next, we consider XOR target games  
+where the sizes of the option sets follow a given distribution $\Distribution$. 
+This provides the link between this grinding power bound 
+and explicit leader election mechanisms (discussed in Section~\ref{sec:leader-election-public-private})
+that determine the sizes of these option sets. 
+Our exposition culminates in an upper bound 
+on the moments of the grinding power of these games (Lemma~\ref{lemma:xorgame-moment}). 
+Later on, in \Section~\ref{sec:poisson-bernoulli}, 
+we will use this moment bound to derive tail bounds for grinding power 
+for distributions induced by specific leader elections.
+
+
+
+\section{An informal view of XOR target games.}
+Below, we provide a bird's eye view of the XOR target game 
+highlight its correspondence with the eventual consensus beacon protocol $\Pi_\Beacon$. 
+\begin{enumerate}    
+
+
+    \item In $\Pi_\Beacon$, a nonce from slot $t$ is considered valid 
+    as long as it is announced before slot $t+k+1$. 
+    Correspondingly, in our game, $\Adversary$ must make a selection for slot $t$ 
+    before slot $t + k + 1$ commences. (Otherwise, he will forfeit his input for slot $t$.) 
+    This window of $k$ future slots is called his \emph{lookahead window}; 
+    it represents the unsettled portion of the eventual consensus blockchain.
+    Note, that we allow $\Adversary$ full knowledge of all his future inputs at the outset. 
+    This corresponds 
+
+    \item Consider a single slot in $\Pi_\Beacon$. 
+    If there are nonces submitted from this slot, 
+    at most one of these contributes in computing the beacon output; 
+    let us call this item the \emph{winning nonce} for this slot. 
+    In a slot of the XOR target game, $\Adversary$ 
+    must make a selection from a set of valid (random) input strings for this slot. 
+    Once he makes a selection, it is final and the game proceeds recursively.
+
+
+    \item If there are one or more honest winners in a slot, 
+    we use $\star$ to denote the lexicographically smallest honest nonce. 
+    Note that $\Adversary$ does not know a priori the content of $\star$; 
+    this corresponds to the assumption that VRFs are unbreakable.
+    However, $\Adversary$ can see the content of any $\star$ within the lookahead window; 
+    in $\Pi_\Beacon$, this means the adversary can make an informed selection at slot $t$ 
+    based on the future contents in the unsettled portion of the blockchain.
+    Note that $\Adversary$ knows, before the game begins, 
+    which slots have a $\star$ symbol in its option set; 
+    this actually makes $\Adversary$ stronger than the typical PoS adversary.
+
+
+    \item We also associate with each slot an ``option set'' 
+    containing the random input strings held by $\Adversary$ 
+    that are lexicographically smaller than the value of $\star$.
+    In the context of $\Pi_\Beacon$, the size of the option set 
+    is one minus the number of selections that the adversary has for 
+    the winning nonce. 
+    The remaining option for him is to not submit his nonces. 
+    This will force the protocol to pick, as the winning nonce, 
+    the $\star$ (if it is present) or the empty string; 
+    the latter scenario denotes the fact that there were no nonces submitted from this slot.
+    It is evident that the \emph{size of the option set} has a critical influence 
+    over the number of valid choices that $\Adversary$ has for $\eta$. 
+    According to Definition~\ref{def:grinding-power-num-choices}, 
+    this is the grinding power of the beacon.
+
+    \item Like $\Pi_\Beacon$, the game takes an initial value which is XORed during the output computation.
+    Like $\Pi_\Beacon$, the XOR target games can be iterated but 
+    feeding the output of one game as the initial value of the next. 
+    When the initial value is uniformly random (reflecting the first epoch of the beacon), 
+    we call the game a ``uniform XOR target game;'' 
+    otherwise, we call it an ``explicit XOR target game.''
+\end{enumerate}
 
 
 
