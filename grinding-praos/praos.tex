@@ -1,4 +1,28 @@
 
+
+Let $\kappa, n \in \NN$. 
+Recall the Praos beacon with parameters $\kappa$ and $n$ from Definition~\ref{def:praos-beacon}. 
+The goal of this \Section is to state our main results 
+about the quality of the Praos beacon 
+in terms of its min-entropy after multiple epochs (Definition~\ref{def:beacon-security}).
+
+As we have done in the modeling of the consistency problem 
+(\Section~\ref{sec:model-multihonest}), 
+we start by defining the so-called ``characteristic string'' $w$. 
+It captures the outcomes of the private leader election process $\PrivateLeaderElection$ 
+in these slots. 
+Next, we use the definition of the Praos beacon protocol to 
+derive an expression for its grinding power on $w$.
+Next, for some $\epsilon \in (0,1)$, 
+we define a distribution $\mathcal{L}((1-\epsilon)/2)$ on the set of characteristic strings of length $n$; 
+this represents the outcome of $\PrivateLeaderElection((1-\epsilon)/2)$, i.e., 
+a private leader election with an adversarial stake-minority.
+We finish this \Section by stating our main theorem about the min-entropy loss in the Praos beacon. 
+The proof of this theorem is presented in \Section~\ref{sec:praos-second-moment}.
+
+
+
+
 % \newcommand{\Suffix}[2]{ {#1}^{\overset{#2}{\leftarrow} } }
 % \newcommand{\Suffix}[2]{ {#1}[-{#2}:] }
 \newcommand{\Suffix}[2]{ \mathsf{suffix}({#1},{#2})}
@@ -6,68 +30,32 @@
 
 
 
-Let $\EpsP \in (0,1)$ and $s, k \in \NN$. 
-Let $\Blockchain$ be an $(\EpsP, k, s)$-secure eventual consensus PoS blockchain protocol 
-under the longest-chain rule, such as 
-Ouroboros Praos~\cite{Praos} and Snow White~\cite{SnowWhite}. 
-Let $\kappa, n$ be two positive integers.\footnote{\color{blue}In this section and the next, 
-the symbol $n$ denotes a certain number of rounds. 
-However, 
-in Section~\ref{sec:intro} and~\ref{sec:model}, 
-it denotes the number of participants in a protocol. 
-This should not bring confusion since 
-the two contexts do not overlap.}
-The protocol $\Blockchain$ 
-proceeds in epochs $e = 1, 2, \ldots$\,. 
-% The length of each epoch is $R \geq n + k$. 
-Inside each epoch $e$, 
-$\Blockchain$ uses 
-an $n$-round 
-coin-flipping protocol $\Pi$ 
-to generate the \emph{beacon output} $\eta_e$, as follows: 
-% which takes a ``seed'' $\eta_{e-1} \UniformIn \{0,1\}^\kappa$ 
-% as input and outputs a string $\eta_e \in \{0,1\}^\kappa$, as follows:
-\begin{enumerate}
-  \item Let $\eta_{e-1}$ be the 
-  beacon output from the previous epoch. 
-  A uniformly random string $\eta_0 \UniformIn \{0,1\}^\kappa$ is known to all participants at the onset of the first epoch. 
-
-  \item Every new block added during slots $i \in [n]$ contains 
-  a uniformly random Boolean string of length $\kappa$; 
-  it is called a \emph{nonce}.
-
-  \item Let $u$ be an honest observer at the onset of the next epoch. 
-  He computes the beacon output, $\eta_e$, 
-  by XORing all nonces recorded in his blockchain 
-  along with $\eta_{e-1}$ 
-  and then applying a cryptographic hash function to it.
-\end{enumerate}
-Note that the consistency property of the blockchain 
-would ensure that all honestly-held blockchains 
-at the onset of epoch $e + 1$ 
-will agree about the blocks issued from 
-the first $n$ slots of epoch $e$.
-
-Let $L \in \NN$ and suppose that 
-the blockchain protocol $\Blockchain$ is $(\EpsP, k, s)$-secure 
-inside an epoch. 
-Let $R_L$ be the number of ``resets'' 
-that the adversary can cause to the beacon, 
-i.e., 
-the number of candidate values for $\eta_L$ 
-is chosen (by the protocol) 
-from a set of size $R_L$. 
-Then the min-entropy loss 
-in the beacon output $\eta_L$ 
-is $\log_2(R_L)$. 
-We want to show that with high probability, 
-this quantity is bounded from above by 
-a suitable function. 
-The probability in the preceding statement 
-depends on 
-the randomness in $\eta_0$ and 
-the outcomes of the leader election inside the $\Blockchain$, 
-i.e., whether a block (and hence its nonce) is emitted by an honest player.
+% Let $\EpsP \in (0,1)$ and $s, k \in \NN$. 
+% Let $\Blockchain$ be an $(\EpsP, k, s)$-secure eventual consensus PoS blockchain protocol 
+% under the longest-chain rule, such as 
+% Ouroboros Praos~\cite{Praos} and Snow White~\cite{SnowWhite}. 
+% Let $\kappa, n$ be two positive integers. 
+% Recall the beacon protocol from Section~\ref{sec:praos-model-grindingpower-minentropy}.
+% Let $L \in \NN$ and suppose that 
+% the blockchain protocol $\Blockchain$ is $(\EpsP, k, s)$-secure 
+% inside an epoch. 
+% Let $R_L$ be the number of ``resets'' 
+% that the adversary can cause to the beacon, 
+% i.e., 
+% the number of candidate values for $\eta_L$ 
+% is chosen (by the protocol) 
+% from a set of size $R_L$. 
+% Then the min-entropy loss 
+% in the beacon output $\eta_L$ 
+% is $\log_2(R_L)$. 
+% We want to show that with high probability, 
+% this quantity is bounded from above by 
+% a suitable function. 
+% The probability in the preceding statement 
+% depends on 
+% the randomness in $\eta_0$ and 
+% the outcomes of the leader election inside the $\Blockchain$, 
+% i.e., whether a block (and hence its nonce) is emitted by an honest player.
 
 
 
@@ -137,7 +125,7 @@ i.e., whether a block (and hence its nonce) is emitted by an honest player.
 \section{The characteristic string}
 In Praos and Snow White, 
 during each slot, 
-each player determine privately and independently 
+each player determines privately and independently 
 whether he is a leader for this slot. 
 The probability that he succeeds is proportional to his stake. 
 Naturally, this means there are empty slots 
@@ -155,7 +143,7 @@ We can represent the outcome of this leader election scheme
 as a \emph{characteristic string}:
 
 
-\begin{definition}[Characteristic string]\label{def:char-string}
+\begin{definition}[Characteristic string]\label{def:char-string-praos}
   A \emph{characteristic string} $w \in \{\A, 1, 2, 3, \ldots \}^*$ 
   corresponds to a particular execution of $\Blockchain$.
   For each slot $t = 1, 2, \ldots$, 
@@ -163,6 +151,11 @@ as a \emph{characteristic string}:
   $w_t = k \in \{1,2,\ldots\}$ if $t$ is assigned to $k$ honest participants.
   By convention, $w_0 = 1$.
 \end{definition}
+
+Note that the above definition of characteristic strings 
+is a generalization of Definition~\ref{def:trivalent-char-string}
+in that it counts the number of honest leaders. 
+
 
 For two characteristic strings $x$ and $w$ on the same alphabet, 
 we write $x \Prefix w$ iff $x$ is a strict prefix of $w$. 
@@ -198,9 +191,10 @@ We use $w[i : j]$ to denote the substring $w_i w_{i+1}\ldots w_j$.
 
 
 
-\section{The grinding power (GP)}
+\section{Understanding the grinding power (GP)}
 
-% \paragraph{Blockchain execution as a ``fork.''} 
+We briefly recall some fork-theoretic concepts
+developed in Section~\ref{sec:viable-blockchains-adv-extensions}. 
 Consider an abstract execution of $\Blockchain$ 
 corresponding to the characteristic string $w$ 
 where 
@@ -264,6 +258,38 @@ We formalize this notion in the definition below.
 \end{definition}
 
 
+% \Paragraph{Grinding power of a characteristic string.}
+Let $w = xy$ be a characteristic string. 
+Define
+\begin{equation}\label{eq:S_y}
+    % S(d, z) 
+    % \defeq \sum_{i \geq z}^{d - z}{ \binom{d - z}{i} } 
+    S(y) 
+    \defeq \sum_{i \geq \#_\h(y)}^{\#_\A(y)}{ \binom{\#_\A(y)}{i} } 
+    % \,.
+\end{equation}
+and notice that it is the number of viable blockchains $\Chain$
+in an execution on $w$ 
+so that the last honest block in $\Chain$ occurs in slot $|x|$. 
+By summing over all honest slots, 
+the total number of viable blockchains for $w = w_1 w_2 \cdots w_n$,
+i.e., the grinding power for $w$, is 
+\begin{equation}\label{eq:g_praos}
+    % g(w) 
+    % = \sum_{\substack{
+    %     x,y : w = xy, \\ 
+    %     |x| \geq 0, \text{and}\\ 
+    %     \text{slot $|x|$ is honest} }
+    %   } w_{|x|}\, S(y)
+    % \,.  
+    g(w_1 w_2 \cdots w_n) 
+    = \sum_{ \text{$t \in [n] : w_t$ is honest} }
+      w_t\, S(w_{t+1} \cdots w_n)
+    \,.  
+\end{equation}
+
+
+
 
 
 \section{The distribution $\mathcal{L}(\alpha)$}
@@ -320,7 +346,7 @@ Our goal is to derive tail bounds on $g(n,\epsilon)$.
 
 
 
-\section{Praos beacon over multiple epochs}
+\section{Main theorem: Praos beacon}
 Define 
 \begin{align}
   \phi(\epsilon) &\triangleq \frac{3}{2} \left( (1-\epsilon^2) (1-\epsilon) \right)^{1/3}\label{eq:phi_eps} \\

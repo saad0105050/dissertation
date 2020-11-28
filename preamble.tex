@@ -63,7 +63,20 @@
 \usepackage{lscape}
 \usepackage{color}
 \usepackage{framed}
-
+\usepackage{xcolor}
+\newcommand{\quotebox}[1]{\begin{center}%
+    \vspace{1em}%
+    \fcolorbox{white}{blue!15!gray!15}{%
+        \begin{minipage}{0.9\linewidth}%
+            \vspace{10pt}\center%
+            \begin{minipage}{0.8\linewidth}%
+                {\space\Huge\hspace{-1em}``\vspace{-1em}}{#1}{\hspace{1.5em}\break\null\Huge\hfill''}%
+            \end{minipage}%
+            \smallbreak\end{minipage}%
+    }%
+    \end{center}%
+    \vspace{1em}%
+}%
 
 
 \usepackage[numbers,sectionbib]{natbib}
@@ -254,6 +267,8 @@
 \newcommand{\PrivateLeaderElection}{\LeaderElection_\mathsf{private}}
 \newcommand{\dMin}{d_\mathrm{min}}
 \newcommand{\dMax}{d_\mathrm{max}}
+\newcommand{\PrivateKey}{\mathsf{private\_key}}
+\newcommand{\PublicKey}{\mathsf{public\_key}}
 
 
 

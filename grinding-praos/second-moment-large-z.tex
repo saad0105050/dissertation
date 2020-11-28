@@ -1,4 +1,46 @@
 
+
+
+
+
+\Paragraph{Bounds on $S(d,z)$ from binomial coefficients.}
+Recall $S(d,z)$ from~\eqref{eq:S_d_z}. 
+When $z \leq d/3$, the sum $S(d,z)$
+will contain the central binomial coefficient $${d-z \choose (d-z)/2} = \Theta(2^{d-z}/\sqrt{d-z})\,.$$ 
+It follows that 
+\begin{equation} \label{eq:S_d_z_small}
+    2^{d-z-1} 
+    \leq 
+    S(d,z)
+    \leq 2^{d-z}\,, 
+    \qquad \text{if}\quad 0 \leq z \leq d/3 
+    \,.
+\end{equation}
+On the other hand, for any $0 \leq t < N/2$
+\begin{align}\label{eq:binomial-sum-bound}
+\frac{2^{H(t/N)N} }{\sqrt{8 (t/N) (1-t/N)} }
+\leq 
+\sum_{k=0}^t{ {N \choose k} } 
+&\leq 
+2^{H(t/N)N} \, , 
+\end{align}
+where $H : [0, 1] \rightarrow [0, 1]$ is the binary entropy function defined 
+in~\eqref{eq:binary-entropy}.
+
+Thus we can bound $S(d,z)$ using (\ref{eq:binomial-sum-bound}) as follows:
+\begin{equation} \label{eq:S_d_z_large}
+    \frac{2^{(d-z)H(z/(d-z))}(d-z)}{\sqrt{8 z(d-2z) }}
+    \leq
+    S(d, z) 
+    \leq
+    2^{(d-z)H(z/(d-z))}
+    \,,\qquad \text{if} \quad d/3 < z \leq d/2 
+    \,.
+\end{equation}
+
+
+
+\Paragraph{Proof of Claim~\ref{claim:t2star-variance-exact}.}
   We use $\log$ to denote the base-$2$ logarithm and $H()$ to denote the binary entropy function. 
   Define $\alpha \defeq z/d \in (1/3, 1/2)$ and $r \defeq (1+\epsilon)/(1-\epsilon)$.
   Recall that $\binom{d}{\alpha d} \leq 2^{d H(\alpha)}$ using~\eqref{eq:nck}.

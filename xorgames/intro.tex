@@ -53,15 +53,6 @@ to design such beacons.
     Thus the Praos beacon allows a consistency attack to 
     become a grinding attack as well.
 
-    Another adverse effect of this coupling 
-    is highlighted by the opposite effect of the consistency parameter $k$ 
-    on the consistency problem and the grinding problem. 
-    In particular, taking $k$ large implies a low risk of consistency error, 
-    but it also increases the window in which the adversary can perform a grinding attack 
-    and thereby inflate the likelihood of causing a consistency violation in the next epoch. 
-    Such a compromise is inevitable, 
-    but perhaps its effect is magnified in Praos due to its ``nonces on the blockchain'' beacon.
-
     One might think that we could just ``slow down the beacon'' in Praos 
     by taking, for example, nonce inputs from every other slot. 
     While this will reduce (by half) the number of nonce-emitting slots in a given window, 

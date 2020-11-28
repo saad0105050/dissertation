@@ -1,156 +1,22 @@
 
-\newcommand{\FuncBeacon}{\mathcal{F}_\mathsf{beacon}}
-\newcommand{\ProtocolBeacon}{\mathcal{\Pi}_\mathsf{beacon}}
-% \newcommand\Litem[1]{\item{\bfseries #1\enspace}}
+
+In this \Section, 
+we recall the eventual consensus PoS blockchains under the longest-chain rule 
+(see \Section~\ref{sec:model-multihonest}). 
+% We repeat the necessary components here for the sake of self-containment. 
+Recall the consistency property $\kSlotCP$. 
+In this section, we introduce a new security property, called the ``Existential Chain Quality Property'' ($\ECQ$), 
+which captures the desired behavior that a long enough segment of an honestly held blockchain 
+must contain an honest block. 
+We use these two properties to define a succinct vocabulary for blockchain security, 
+namely, the $(\EpsP, k, s)$-security; this is standard.
+
+Next, we shift our focus toward the leader election schemes. 
+Although Praos uses private leader elections, 
+we take the opportunity to define the public leader elections as well. 
 
 
-
-
-% \section{Collective coin-flipping}
-
-%     A \emph{coin-flipping protocol $\Pi$ of dimension $\kappa$} 
-%     takes, as input, a uniformly random $\kappa$-bit string $\eta_0$
-%     and outputs a $\kappa$-bit string $\eta$. 
-%     The goal of the protocol is to make the distribution of $\eta$ 
-%     as close to uniform as possible.
-    
-%     \begin{definition}[Coin-flipping with $(\epsilon, \rho)$-security]\label{def:coin-flipping-security}
-%         Let $\kappa \in \NN, \rho, \epsilon \in \RR, \rho \in [0, \kappa]$, and $\epsilon \in (0,1)$.
-%         Let $\Pi$ be an coin-flipping protocol with dimension $\kappa$ 
-%         and output $\eta$. 
-%         We say that \emph{$\Pi$ is $(\epsilon, \rho)$-secure} if 
-%         $\MinEntropy(\eta) \geq \kappa - \rho$ 
-%         except with probability $\epsilon$. 
-%         Here, $\MinEntropy$ is the min-entropy function.
-%     \end{definition}
-    
-%     Suppose a coin-flipping protocol $\Pi$ is $(\epsilon, \rho)$-secure. 
-%     Then 
-%     the min-entropy loss of its output distribution is at most $\rho$. 
-%     On the other hand, let $T$ be an arbitrary set of $\kappa$-bit Boolean strings. 
-%     The probability that $\eta \in T$ is at most $2^\rho \cdot |T| \cdot 2^{-\kappa}$. 
-%     The amplification factor $2^\rho$ can be interpreted as 
-%     the adversarial participants 
-%     choosing the designated output $\eta$ from 
-%     a set containing $2^\rho$ uniformly random strings; 
-%     {\color{red} strings in this set may be correlated with each other}. 
-%     An unbiased protocol will necessarily have $\rho = 0$.
-
-
-%     \paragraph{Protocol participants.} 
-%     Let $\Players$ be the set of protocol participants. 
-%     With each party $u \in \Players$ is associated a positive real $\sigma_u \in [0, 1]$ 
-%     so that $\sum_{u \in \Players} \sigma_u = 1$. 
-
-%     \paragraph{The adversary.} 
-%     Let $\alpha \in [0,1]$. 
-%     The adversary can corrupt any player instantly subject to 
-%     a budget $\alpha$: that is, 
-%     at any moment, the set of players $A \subset \Players$ controlled by the adversary 
-%     always satisfy $\sum_{u \in A} \sigma_u \leq \alpha$. 
-%     This adversary is called an \emph{$\alpha$-dominated adversary}. 
-%     If a player is ever corrupted by the adversary, 
-%     he remains under his control for the rest of the protocol. 
-%     The adversary is Byzantine: 
-%     once he controls a player, he can send arbitrary messages on behalf of the player.
-
-%     \paragraph{Communication model.} 
-%     We assume a synchronous communication where 
-%     the adversary is responsible for delivering messages in any order he chooses.
-
-%     \begin{definition}[$(\ell, n)$-coin-flipping with dimension $\kappa$]\label{def:coin-flipping}
-%         Let $\ell, n, \kappa \in \NN$ and 
-%         let $\eta_0 \in \{0,1\}^\kappa$ be a uniformly random \emph{initial value}. 
-%         The protocol has $r = \ell + n$ rounds. 
-%         \begin{itemize}
-%             \item (Committees.) 
-%             With every round $i \in [r]$ is associated 
-%             a \emph{committee} $C_i$ of players. 
-%             (The committee election scheme is left unspecified at this moment. 
-%             See Figure~\ref{fig:leader-election-schemes} below.)
-%             The committee membership is private unless 
-%             a member discloses it. 
-
-%             \item (Nonces.) 
-%             Before the protocol commences, 
-%             for every $i \in [r]$, 
-%             each member $u \in C_i$ is given a \emph{nonce} $y_{i,u} \in \{0,1\}^\kappa$. 
-%             The nonces of the honest members are uniformly random. 
-%             The adversarial members may choose their nonces arbitrarily at this point 
-%             but once the protocol commences, 
-%             they cannot change the value of their nonces. 
-
-%             \item (Adversarial knowledge and the lookahead.) 
-%             The adversarial players know, in advance, 
-%             about all adversarial committe members and 
-%             their nonces across all rounds.  
-%             They also know which rounds contain an honest committee member.
-%             Furthermore, at round $i$, 
-%             adversarial players can see 
-%             the honest nonces for rounds $i, i+1, \ldots, \min\{i + \ell - 1, r\}$.
-
-%             \item (Announcement.)
-%             With each round $i$ is associated 
-%             a publicly visible set $Y_i$, initially empty. 
-%             At round $i$, 
-%             an honest committee member inserts his nonce into $Y_i$. 
-%             An adversarial committee member $u$ may strategically choose to insert or not. 
-
-%             \item (Output.)
-%             At the end of round $r$, 
-%             let $m_i$ 
-%             be the lexicographic minimum of all strings recorded in $Y_i, i \in [r]$.
-%             (If $Y_i$ is empty then set $m_i = 0^\kappa$.)
-%             The \emph{output} of the protocol is 
-%             $
-%                 \eta = \eta_0 \oplus m_1 \oplus \cdots m_{\ell + n}
-%                 % \,.
-%             $. 
-%         \end{itemize}
-%     \end{definition}
-
-%     Since the adversary cannot change the nonces, 
-%     all he can do to bias the output 
-%     is to strategically vary the size of the sets $Y_i, i \in [\ell + n]$.
-
-%     \begin{figure}[h]
-%         \begin{framed}
-%             \begin{center}
-%                 Two committee election schemes                
-%             \end{center}
-%             \begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=6em]
-%                 \item \label{lottery:public}
-%                 (\textbf{Singleton committee.})
-%                 All players use a common random string to 
-%                 publicly sample, 
-%                 independently for each round $i \in [\ell + n]$, 
-%                 a single player $u_i \in \Players$ and  
-%                 set $C_i = \{u_i\}$. 
-%                 For all players $u \in \Players$, 
-%                 the probability that $u = u_i$ is $\sigma_u$.
-
-%                 \item \label{lottery:private}
-%                 (\textbf{Private lottery.})
-%                 Independently for each round $i \in [\ell + n]$, 
-%                 player $u \in \Players$ 
-%                 independently inserts himself 
-%                 into the committee $C_i$ 
-%                 with probability $\sigma_u$. 
-%             \end{enumerate}
-%         \end{framed}
-%         \caption{Two committee election schemes for an $(\ell, n)$-coin-flipping protocol}
-%         \label{fig:leader-election-schemes}
-%     \end{figure}
-
-
-%     \begin{theorem}[Main theorem]
-%         Let $\kappa, \gamma, \ell, n \in \NN$ and $\epsilon \in (0,1)$.
-%         Let $\Pi$ be an $(\ell, n)$-coin-flipping protocol with dimension $\kappa$ 
-%         and output $\eta$ whose committees are elected using Scheme A.
-%         Then $\Pi$ is $(\EpsP, \gamma)$-secure where {\color{red} to do}.
-%     \end{theorem}
-
-\section{Eventual consensus PoS blockchains using the longest-chain rule}
+% \section{Eventual consensus PoS blockchains using the longest-chain rule}
     Let $\Blockchain$ be an eventual consensus PoS blockchain protocol 
     under the longest-chain rule, 
     as in \Section~\ref{sec:model-multihonest}. 
@@ -192,7 +58,10 @@
         Then $\Chain[t_1:t_2]$ contains at least one 
         honestly gneerated block.
     \end{definition}
-    We use the shorthand $\sECQ$ for referring to the ECQ property defined above. 
+    We use the shorthand $\sECQ$ for referring to the $\ECQ$ property defined above. 
+    Although the analysis of Praos does not contain a proof of this property, 
+    the proof should be very similar to the one in Ouroboros Genesis~\cite{Genesis} 
+    which is built upon the Praos protocol.
     Next, we can quantify the security of the blockchain protocol in terms of these two properties:
 
     \begin{definition}[$(\EpsP, k,s)$-security]\label{def:blockchain-security}
@@ -275,59 +144,72 @@ SnowWhtie and Praos (and Bitcoin as well) uses a private leader election
 and therefore, must prove security against an adaptive adversary. 
 
 
-\section{The grinding problem for resettable randomness beacons}\label{beacon-model}
-Before an epoch (say, epoch $t$) commences, 
-all participants collectively agree on a random string $\eta_{t-1}$; 
-this is called the output of the \emph{beacon protocol}, $\Pi_\Beacon$, 
-for epoch $t - 1$. 
-In particular, $\Pi_\Beacon$ is initialized with a fresh random string $\eta_0$ 
-(called the \emph{initial value})
-and it periodically outputs, for each epoch $t = 1, 2, \ldots$\,, 
-a random string $\eta_t$. 
-The common, public random string $\eta_{t-1}$ 
-is used in various computations in epoch $t$. 
-But none is more important than the leader election process 
-based on VRFs.
+\section{Praos beacon}\label{sec:praos-beacon-def}\label{sec:praos-model-grindingpower-minentropy}
+The Praos blockchain protocol $\Blockchain$ 
+proceeds in epochs $t = 1, 2, \ldots$. 
+An epoch is long enough 
+so that after it is complete, 
+the first $n$ slots become settled 
+(in the sense of $\kSlotCP$).
 
-\newcommand{\Gen}{\mathsf{gen}}
-\newcommand{\Prove}{\mathsf{prove}}
-\newcommand{\Verify}{\mathsf{verify}}
-% \newcommand{\pk}{\mathsf{pk}}
-% \newcommand{\sk}{\mathsf{sk}}
-\begin{definition}[Verifiable Random Function (VRF)]\label{def:VRF}
-  A family $\mathcal{F}$ 
-  of functions $F : \{0,1\}^\ell \rightarrow \{0,\}^k$ 
-  is a family of VRFs if there exist algorithms 
-  $(\Gen, \Prove, \Verify)$ 
-  so that the following holds: 
-  $\Gen(1^k)$ outputs a pair of keys $(\pk, \sk)$; 
-  $\Prove_\sk(x)$ outputs a pair $(F_\sk(x), \pi_\sk(x))$ 
-  where 
-  $F_\sk \in \mathcal{F}$, $F_\sk(x)$ is the function value, and 
-  $\pi_\sk(x)$ is the proof of correctness; and 
-  $\Verify_\pk(x,y,\pi_\sk(x))$ efficiently verifies 
-  that $y = F_\sk(x)$ using the proof $\pi_\sk(x)$, 
-  outputting 1 if $y$ is valid and 0 otherwise. 
-  Additionally, we require the following properties:
 
+\begin{definition}[Praos beacon with parameter $\kappa, n \in \NN$]\label{def:praos-beacon}
+  Let $\eta_0 \in \{0,1\}^\kappa$ be a uniformly random string, known to all participants 
+  at the outset of the protocol.
+  After each epoch $t$, 
+  a \emph{beacon output} $\eta_t \in \{0,1\}^\kappa$ is computed, as follows: 
+  % which takes a ``seed'' $\eta_{e-1} \UniformIn \{0,1\}^\kappa$ 
+  % as input and outputs a string $\eta_e \in \{0,1\}^\kappa$, as follows:
   \begin{enumerate}
-    \item \emph{Uniqueness:} 
-    No values $(\pk, x, y, y', \pi, \pi')$  can satisfy both 
-    $\Verify_\pk(x,y,\pi) = 1$ and $\Verify_\pk(x,y',\pi') = 1$ 
-    unless $y = y'$.
+    \item $\eta_{t-1}$ is called the \emph{initial value} for epoch $t$.
 
-    \item \emph{Provability:} 
-    If $(y, \pi) = \Prove_\sk(x)$ then $\Verify_\pk(x,y, \pi) = 1$.
+    \item Every new block added during slots $i \in [n]$ in an epoch contains 
+    a uniformly random Boolean string of length $\kappa$; 
+    it is called a \emph{nonce}.
 
-    \item \emph{Pseudorandomness:} 
-    To all probabilistic polynomial-time (PPT) algorithm 
-    which runs $\Poly(k)$ steps when its first input is $1^k$ 
-    and does not query the $\Prove$ oracle on $x$, 
-    the distribution of $F_\sk(x)$ appears uniform in $\{0,1\}^k$, 
-    except with a probability negligible in $k$.
+    \item Let $u$ be an honest observer at the onset of the next epoch. 
+    He computes the beacon output for this epoch, $\eta_t$, 
+    by XORing all nonces recorded in his blockchain 
+    along with $\eta_{t-1}$ 
+    and then applying to it a cryptographic hash function.
   \end{enumerate}
-
+  Note that the consistency property of the blockchain 
+  would ensure that all honestly-held blockchains 
+  at the onset of epoch $e + 1$ 
+  will agree about the blocks issued from 
+  the first $n$ slots of epoch $e$.  
 \end{definition}
+
+% The length of each epoch is $R \geq n + k$. 
+
+% \begin{definition}[Praos beacon with dimension $\kappa$]\label{def:praos-beacon}~
+%   \begin{itemize}
+%     \item Before the protocol commences, 
+%     all participants are given a uniformly random string $\eta_0 \in \{0,\}^k$. 
+
+%     \item Before epoch $t = 1, 2, \ldots$ commences, 
+%     a string $\eta_{t-1}$ is given to all players; 
+%     this is called the \emph{initial value} for this epoch. 
+%     In fact, for $t \geq 2$, $\eta_{t-1}$ is the beacon output from the previous epoch; see below.
+
+%     \item Inside slot $i$ in epoch $t$, 
+%     when a slot leader $u$ issues a new block, 
+%     he also includes a \emph{nonce input} 
+%     $\VRF_{\PrivateKey(u)}(t \Vert i \Vert \eta_{t-1}) \in \{0,1\}^\kappa$. 
+%     Here, $\Vert$ denotes concatenation.
+    
+%     \item After the epoch is complete, 
+%     every honest participant computes the beacon output $\eta_t \in \{0,1\}^\kappa$ as follows: 
+%     he gathers all nonce inputs 
+%     from a specified prefix of his blockchain, 
+%     XORs them together, and then applies a cryptographic hash.
+%   \end{itemize}
+%   The strings $\eta_1, \eta_2, \ldots$ are called the beacon outputs.
+% \end{definition}
+
+The common, public random string $\eta_{t-1}$ 
+is used in various computations in epoch $t$, 
+including the leader election process.
 
 Specifically, $\eta_{t-1}$ is used by all participants in epoch $t$ 
 (in combination with their respective private keys) 
@@ -338,8 +220,7 @@ of $\eta_1, \eta_2, \ldots$ is critical factor underlying
 the security of the blockchain protocol; 
 we explore this next.
 
-\section{The quality of the beacon output; the grinding problem}
-
+\Paragraph{Beacon output quality.}
 Let $n \in \NN$ and let $A$ be the set of $n$-bit Boolean strings.
 Suppose a random variable $X$ takes values from $A$
 and its probability distribution is $\mathcal{X}$. 
@@ -381,24 +262,8 @@ Specifically, \emph{the min-entropy loss in $X$}
 is defined as the difference between $H_\infty(X)$ and $H_\infty(U) = \log_2(|A|)$.
 
 
-\subsection{The grinding problem}
-In eventual consensus PoS, 
-it takes some time for the blockchains to settle. 
-Recall that the beacon protocol is also carried out through the blockchains 
-and the adversary has the power to force an honest player 
-to select any particular chain (see Section~\ref{sec:lcr-model}).
-Thus, in principle, 
-the adversary has some choice over the final value of the beacon output.
-In particular, he can essentially \emph{reset} the beacon value: 
-He could test multiple potential beacon outputs to see if one is favorable for him, 
-e.g., whether it would make the upcoming leader election (in the next epoch) 
-more favorable to him. 
-If a potential beacon output is not favorable then he can, in principle, reset the beacon, 
-i.e., try over and over again before settling for a beacon output 
-(by making the corresponding blockchain to prevail). 
-The maximum number of potential resets is called his \emph{grinding power}.
-
-Specifically, let $n \in \NN$ and $A \subseteq \{0,1\}^n$.
+\Paragraph{Grinding power and beacon security}
+Let $n \in \NN$ and $A \subseteq \{0,1\}^n$.
 Let $\eta_0$ be uniformly random in $\{0,1\}^n$ 
 and it is used as the initial value for the beacon protocol. 
 Let $X_t \in A$ be the random variable 
@@ -468,7 +333,7 @@ where $\eta_0$ is the uniformly random initial value for the first epoch
 and the superscript $t$ denotes a $t$-fold sequential composition.
 
 
-\begin{lemma}[Iterated beacon]\label{lemma:beacon-composition}
+\begin{lemma}[Security, iterated beacon]\label{lemma:beacon-composition}
 Let $\EpsP \in (0,1)$ and $\rho \in \RR_+$.
 Suppose $\Pi_\Beacon$ remains $(\EpsP, \rho)$-secure over a single epoch. 
 When it is iterated $L$ times as in~\eqref{eq:beacon-iterated}, 
@@ -495,7 +360,47 @@ over the $L$ epochs.
 
 In \Section~\ref{sec:praos}, we characterize the grinding power 
 for the beacon protocol of Ouroboros Praos~\cite{Praos} and Snow White~\cite{SnowWhite}.
+We end the current section by giving a definition of VRF.
 
+\newcommand{\Gen}{\mathsf{gen}}
+\newcommand{\Prove}{\mathsf{prove}}
+\newcommand{\Verify}{\mathsf{verify}}
+% \newcommand{\pk}{\mathsf{pk}}
+% \newcommand{\sk}{\mathsf{sk}}
+\begin{definition}[Verifiable Random Function (VRF)]\label{def:VRF}
+  A family $\mathcal{F}$ 
+  of functions $F : \{0,1\}^\ell \rightarrow \{0,\}^k$ 
+  is a family of VRFs if there exist algorithms 
+  $(\Gen, \Prove, \Verify)$ 
+  so that the following holds: 
+  $\Gen(1^k)$ outputs a pair of keys $(\pk, \sk)$; 
+  $\Prove_\sk(x)$ outputs a pair $(F_\sk(x), \pi_\sk(x))$ 
+  where 
+  $F_\sk \in \mathcal{F}$, $F_\sk(x)$ is the function value, and 
+  $\pi_\sk(x)$ is the proof of correctness; and 
+  $\Verify_\pk(x,y,\pi_\sk(x))$ efficiently verifies 
+  that $y = F_\sk(x)$ using the proof $\pi_\sk(x)$, 
+  outputting 1 if $y$ is valid and 0 otherwise. 
+  Additionally, we require the following properties:
+
+  \begin{enumerate}
+    \item \emph{Uniqueness:} 
+    No values $(\pk, x, y, y', \pi, \pi')$  can satisfy both 
+    $\Verify_\pk(x,y,\pi) = 1$ and $\Verify_\pk(x,y',\pi') = 1$ 
+    unless $y = y'$.
+
+    \item \emph{Provability:} 
+    If $(y, \pi) = \Prove_\sk(x)$ then $\Verify_\pk(x,y, \pi) = 1$.
+
+    \item \emph{Pseudorandomness:} 
+    To all probabilistic polynomial-time (PPT) algorithm 
+    which runs $\Poly(k)$ steps when its first input is $1^k$ 
+    and does not query the $\Prove$ oracle on $x$, 
+    the distribution of $F_\sk(x)$ appears uniform in $\{0,1\}^k$, 
+    except with a probability negligible in $k$.
+  \end{enumerate}
+
+\end{definition}
 
 
 

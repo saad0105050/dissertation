@@ -10,7 +10,7 @@
 The heartbeat of a blockchain protocol is the periodic flashes from its \emph{randomness beacon}. 
 In every period, the players agree on a random string without resorting to any trust. 
 This random string fuels a flurry of activities, 
-culminating in the selection of another random string for the next period, ad infinitum. 
+culminating in the selection of another random string for the next period. Ad infinitum. 
 % In fact, any distributed protocol that periodically needs random strings must use a randomness beacon. 
 
 It is pivotal that the beacon is \emph{bias-resistant}, 
@@ -25,27 +25,120 @@ Finally, it must provide \emph{liveness}, which means
     \item everyone receives the same output. 
 }
 
+\Paragraph{The grinding attack against the beacon.}
 Consider a proof-of-stake (PoS) blockchain protocol 
-where an adversary can query the potential beacon output for the next epoch 
-before settling for a beacon value that would sway the future events in his favor. 
-(He can do so by forcing a specific blockchain prefix to become consistent for this epoch.)
-If he can make at most $q$ queries, 
-he can inflate the failure probability for the next epoch by at most a factor of $q$. 
-This is the so-called \emph{grinding attack}. In fact,  
-it is an attack against the bias-resistance property of the beacon. 
-The quantity $q$ is called the \emph{grinding power} of the adversary.
+where 
+\InlineCases{
+  \item in the middle of an epoch, the adversary can query the potential beacon output for this epoch;
+  \item if he does not like the output, he ``resets'' the beacon and query again; and   
+  \item he resets the beacon multiple times before settling for a beacon value that would sway the future events in his favor. 
+}
+Such a beacon is sometimes called a ``resettable leaky beacon;'' 
+quoting from~\citet{Praos}:
+\quotebox{\singlespacing
+  [The beacon's] leakiness stems from the fact that the adversary can complete the blockchain segment
+  that determines the beacon value before revealing it to the honest participants, while resettability
+  stems from the fact that the adversary can try a bounded number of different blockchain extensions
+  that will stabilize the final beacon value to a different preferred value.
+}  
 
-The security guarantees of many state-of-the-art PoS blockchain protocols, 
-such as Ouroboros Praos~\cite{Praos} and Snow White~\cite{SnowWhite}, 
-requires that $q$ be bounded by $\Poly(k)$ 
-where $k$ is the security parameter of the blockchain protocol. 
-However, we have an open question: 
-\emph{how does $q$ grow as a function of the adversarial stake $\alpha$ and the security parameter $k$? 
-When is it indeed $\Poly(k)$?}
 
-In this work, we put forth a rigorous analysis of the grinding attack against Praos and Snow White. 
-Our analysis shows that it is indeed $\Poly(k)$ if the adversarial stake is at most $10\%$; 
-see Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}.
+This is the so-called \emph{grinding attack}. 
+If the adversary can make $q$ queries in this process, 
+he can inflate the failure probability for the next epoch by a factor of $q$. 
+Thus, it is an attack against the bias-resistance property of the beacon. 
+The largest possible value of $q$ is called the \emph{grinding power} of the adversary.
+A grinding attack results in a loss of randomness in beacon output.
+It turns out that this loss, quantified as a loss in the min-entropy in the beacon output, 
+is just the base-2 logarithm of the grinding power.
+
+
+\Paragraph{The importance of quantifying the grinding power.}
+Praos is a successor to Ouroboros classic~\cite{Ouroboros} which uses 
+a complicated beacon protocol which is completely resistant against a grinding attack. 
+However, Praos opted to forgo this cumbersome protocol in favor of a simple, VRF-based beacon protocol. 
+Quoting~\cite{Praos}, 
+\quotebox{\singlespacing
+  Note that implementing the beacon via hashing VRF values will make feasible a type of ``grinding
+  attack'' where the adversary can trade hashing power for a slight bias of the protocol execution
+  to its advantage. We show how this bias can be controlled by suitably increasing the relevant
+  parameters depending on the hashing power that is available to the adversary.
+}
+
+
+There are some critical issues, however:
+\begin{enumerate}
+  \item In reality, the bias in the beacon remains ``slight'' as long as 
+  the hashing power available to the adversary is \emph{assumed} to be bounded.
+  But having a Proof-of-Work-like hashing power bound on the PoS guarantees is problematic 
+  as it goes against the Proof-of-Stake philosophy.
+
+  \item Suppose we want to make the grinding power $q$ \emph{not} depend on the adversary's hashing power. 
+  But this means $q$ should grow as a function of the adversarial power 
+  and the epoch length; 
+  a large enough $q$ could make the security bound meaningless. 
+
+  \item There is an ever-present tug-of-war between the consistency security and the grinding insecurity. 
+  Specifically, to reduce the risk of a consistency error, we take a large $k$. 
+  But a large $k$ also increases the window in which the adversary can perform a grinding attack 
+  and thereby inflate the likelihood of a consistency violation in the next epoch. 
+  Unfortunately, 
+  if we simply assume that the grinding power is ``bounded,'' 
+  as does Praos and SnowWhite, 
+  we cannot quantify this trade-off: 
+  as we do not understand the grinding power as a function of $k$ and the adversarial stake $\alpha$.
+  This puts the protocol designers in a handicapped position 
+  and keeps the users of the blockchain protocol ill-informed about the actual risk involved. 
+\end{enumerate}
+
+Therefore, an urgent open question for eventual consensus PoS blockchains is to understand 
+how the grinding power grows as a function of $\alpha$ and $k$. 
+
+
+\Paragraph{Our contributions and implications.}
+In this work, we answer the above question for ``eventual consensus longest-chain rule beacons'' such as those in 
+Ouroboros Praos~\cite{Praos} and Snow White~\cite{SnowWhite}. 
+
+
+In Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}, 
+we prove an upper bound on the grinding power 
+and show that it is small (i.e., $\Poly(k)$) if the adversarial stake is less $9.55\%$.
+However, it grows as $e^{ck}$, where $c \geq 1/2$, 
+highlighting the delicate balance between the consistency property 
+(i.e., taking a large $k$) 
+and the grinding power.
+
+Looking ahead, we would like to have a beacon which is less dependent on $k$. 
+We tackle this problem in Part~\ref{part:xorgames} of this Dissertation.
+
+
+
+\Paragraph{Outline of the exposition.}
+In \Section~\ref{sec:praos-related-work}, 
+we present a brief survey of various beacon protocols 
+and the closely related problem of collective coin-flipping. 
+Then, in \Section~\ref{sec:model-grinding}, 
+we formalize the notions of grinding power and the min-entropy loss in the beacon output. 
+In \Section~\ref{sec:praos}, 
+we analyze the grinding power $g$ in the Praos beacon, 
+describe an upper bound $\gamma$ on the grinding power, 
+and state tail bounds that say ``$\Pr[g > \gamma]$ is small.'' 
+This leads to our main theorem, Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}.
+The main workhorse for the proof of the above theorem is 
+a tight second-moment bound on $g$, derived in \Section~\ref{sec:praos-second-moment}. 
+The proof of three claims instrumental in the proof of the second moment 
+is given in {\Section}s~\ref{sec:praos-claim-multiple-honest-blocks}--\ref{sec:praos-claim-t2star-variance-exact}.
+
+Although it does not directly take part in the proof of the main theorem, 
+we present a tight upper and lower bound of the mean of the grinding power 
+in \Section~\ref{sec:praos-mean}. 
+We follow this up in \Section~\ref{sec:praos-higher-moments}by some tight asymptotic upper bounds on 
+integral higher moments of the grinding power. 
+We finish our exposition by proving some simple moment bounds for the grinding power 
+in \Section~\ref{sec:praos-simple-moments}. 
+Compared to the earlier, asymptotically tight moment bounds, 
+these latter moments are easier to obtain but 
+they have a worse dependence on the adversarial stake.
 
 % Or equivalently, what is the min-entropy of the underlying randomness beacon as a function of the adversarial stake?
 % What is the quantitative relationship between the security properties (e.g., the min-entropy) of a beacon 
@@ -61,9 +154,6 @@ see Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}.
 \input{grinding-praos/related-work}
 
 
-\section{A technical overview of our analysis}
-To do
+% \section{A technical overview of our analysis}
+% To do
 
-
-\section{Outline of the exposition}
-To do

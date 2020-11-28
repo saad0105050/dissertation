@@ -16,12 +16,13 @@
     \gamma = \left( 0.4 (1+2\epsilon) \right)^{1/2} s \cdot V(\epsilon)^{1/2} \EpsP^{-1/2}
     \,.
   \end{align}
+  Recall $g(n,\epsilon)$ defined in ~\eqref{eq:praos-gneps}.
   Then $$
-    \Pr_{W \sim \mathcal{L}((1-\epsilon)/2)}[g(n,\epsilon) > \gamma] \leq 2 \EpsP
+    \Pr_{W}[g(n,\epsilon) > \gamma] \leq 2 \EpsP
   $$ 
   and, consequently, 
   $$
-    \Pr_{W \sim \mathcal{L}((1-\epsilon)/2)}[\rho > 0.5 \log_2 \gamma ] \leq 2 \EpsP\,.
+    \Pr_{W}[\rho > 0.5 \log_2 \gamma ] \leq 2 \EpsP\,.
   $$
   In particular, for $\epsilon > 0.809$, 
   $g(n, \epsilon) = O(s)$ and $\rho = O(\log_2 s)$ 
@@ -39,12 +40,11 @@ except with probability $2 \EpsP$.
 
 % \section{Proof of Theorem~\ref{thm:minentropy-loss-praos-single-epoch}}
 \begin{proof}  
-  Let $\epsilon \in (0,1)$ and $\alpha = (1-\epsilon)/2$ be the adversarial stake.
+  Let $\alpha = (1-\epsilon)/2$ be the adversarial stake.
   Suppose that $\Blockchain$ is $(\EpsP, k, s)$-secure in an epoch 
   where first $n$ slots, 
   which correspond to a characteristic string $W \sim \mathcal{L}_n(\alpha)$, 
   contribute to the beacon output.
-  Recall $g(n,\epsilon)$ defined in ~\eqref{eq:praos-gneps}.
   Using Lemma~\ref{lemma:grinding-praos-second-moment} and~\ref{lemma:praos-tail-gamma}, 
   we can see that except with probability $2\EpsP$, $g(n,\epsilon)$ is at most $\sqrt{m/\EpsP}$ 
   where $m$ is the right-hand-side of~\eqref{eq:grinding-praos-second-moment}.
@@ -102,6 +102,14 @@ and~\ref{claim:t2star-variance-exact};
 These are given in \Section~\ref{sec:praos-claim-multiple-honest-blocks},~\ref{sec:praos-claim-t1star-variance-exact}, and~\ref{sec:praos-claim-t2star-variance-exact}, respectively. 
 
 \hfill\qed
+
+
+
+
+% Let $\alpha \in [0, 0.5), n \in \NN$, and $W \sim \mathcal{L}_n(\alpha)$.
+% We will derive tail bounds on $g(W)$ by bounding the second moment of $S(d,z)$ 
+% for $d \in [n]$ and $z \in [d]$.
+
 
 
 

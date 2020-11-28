@@ -1,110 +1,45 @@
 
-\section{An expression for the grinding power} 
-Let $w = xy$ be a characteristic string. 
-Define
-\begin{equation}\label{eq:S_y}
-    % S(d, z) 
-    % \defeq \sum_{i \geq z}^{d - z}{ \binom{d - z}{i} } 
-    S(y) 
-    \defeq \sum_{i \geq \#_\h(y)}^{\#_\A(y)}{ \binom{\#_\A(y)}{i} } 
-    % \,.
-\end{equation}
-and notice that it is the number of viable blockchains $\Chain$
-in an execution on $w$ 
-so that the last honest block in $\Chain$ occurs in slot $|x|$. 
-By summing over all honest slots, 
-the total number of viable blockchains for $w = w_1 w_2 \cdots w_n$,
-i.e., the grinding power for $w$, is 
-\begin{equation}\label{eq:g_praos}
-    % g(w) 
-    % = \sum_{\substack{
-    %     x,y : w = xy, \\ 
-    %     |x| \geq 0, \text{and}\\ 
-    %     \text{slot $|x|$ is honest} }
-    %   } w_{|x|}\, S(y)
-    % \,.  
-    g(w_1 w_2 \cdots w_n) 
-    = \sum_{ \text{$t \in [n] : w_t$ is honest} }
-      w_t\, S(w_{t+1} \cdots w_n)
-    \,.  
-\end{equation}
+
+Let $n \in \NN$ and $\epsilon \in (0,1)$.
+In this \Section,
+we first develop the expression of the moment generating function of the 
+grinding power $g(W)$ from~\eqref{eq:g_praos}
+where the characteristic string $W \sim \mathcal{L}_n((1-\epsilon)/2)$. 
+Then, assuming we have an upper bound on the second moment of $g(W)$, 
+we derive a tail bound on $g(W)$, 
+i.e., we upper bound $\Pr[g > \gamma]$ where $\gamma = \gamma(n, \epsilon)$
 
 
-In our exposition, a special role will be played by
-the number of characteristic strings, 
-of length $d$, containing $z$ honest indices.
-For the sake of convenience, 
-we overload the function $S(\cdot)$ as 
-\begin{equation}\label{eq:S_d_z}
-  S(d, z) 
-    \defeq \sum_{i \geq z}^{d-z}{ \binom{d-z}{i} } 
-    \quad\text{and}\quad
-  S(d) \defeq \sum_{z = 0}^{d/2} S(d,z)
-\end{equation}
-to denote this number.
-
-% \paragraph{Asymptotic bounds on $S(d,z)$.} 
-When $z \leq d/3$, the sum $S(d,z)$ in~\eqref{eq:S_d_z} 
-will contain the central binomial coefficient $${d-z \choose (d-z)/2} = \Theta(2^{d-z}/\sqrt{d-z})\,.$$ 
-It follows that 
-\begin{equation} \label{eq:S_d_z_small}
-    2^{d-z-1} 
-    \leq 
-    S(d,z)
-    \leq 2^{d-z}\,, 
-    \qquad \text{if}\quad 0 \leq z \leq d/3 
-    \,.
-\end{equation}
-On the other hand, for any $0 \leq t < N/2$
-\begin{align}\label{eq:binomial-sum-bound}
-\frac{2^{H(t/N)N} }{\sqrt{8 (t/N) (1-t/N)} }
-\leq 
-\sum_{k=0}^t{ {N \choose k} } 
-&\leq 
-2^{H(t/N)N} \, , 
-\end{align}
-where $H : [0, 1] \rightarrow [0, 1]$ is the binary entropy function defined 
-in~\eqref{eq:binary-entropy}.
-
-Thus we can bound $S(d,z)$ using (\ref{eq:binomial-sum-bound}) as follows:
-\begin{equation} \label{eq:S_d_z_large}
-    \frac{2^{(d-z)H(z/(d-z))}(d-z)}{\sqrt{8 z(d-2z) }}
-    \leq
-    S(d, z) 
-    \leq
-    2^{(d-z)H(z/(d-z))}
-    \,,\qquad \text{if} \quad d/3 < z \leq d/2 
-    \,.
-\end{equation}
-
-Let $\alpha \in [0, 0.5), n \in \NN$, and $W \sim \mathcal{L}_n(\alpha)$.
-We will derive tail bounds on $g(W)$ by bounding the second moment of $S(d,z)$ 
-for $d \in [n]$ and $z \in [d]$.
-
-
-
-
-\section{The Moment Generating Function of the grinding power}
-Let $\epsilon \in (0, 1)$ and write $\alpha = (1 - \epsilon)/2$, and 
-think of $\epsilon$ as the ``adversarial bias.'' 
+\section{The Moment Generating Function of the grinding power}\label{sec:praos-gp-mgf}
+Let $\epsilon \in (0, 1)$ and write $\alpha = (1 - \epsilon)/2$. 
+Here, $\epsilon$ is the ``honest bias'' and $\alpha$ is the adversarial stake ratio.
 Let $W \sim \mathcal{L}_n(\alpha)$ and 
-Define 
-\begin{align}\label{eq:suffix-prob-binomial}
+define 
+\begin{align}
     B_{n, \epsilon}(k) 
-    &= \Pr[ \#_\A(W_1 \ldots W_n) = k ]  
-    = 2^{-n}\binom{n}{k} (1-\epsilon)^k (1 + \epsilon)^{n-k} 
-    =  \binom{n}{k} 
+    &\defeq \Pr[ \#_\A(W_1 \ldots W_n) = k ]  
+    = 2^{-n}\binom{n}{k} (1-\epsilon)^k (1 + \epsilon)^{n-k} \nonumber\\
+    &=  \binom{n}{k} 
         \left(\frac{1-\epsilon}{2}\right)^n 
         \left(\frac{1 + \epsilon}{1-\epsilon} \right)^{n-k} 
-        \,.
+        \,, \label{eq:suffix-prob-binomial}\\
+  S(d, z) 
+    &\defeq \sum_{i \geq z}^{d-z}{ \binom{d-z}{i} } \label{eq:S_d_z}
+    \quad\text{and}\quad \\
+  S(d) &\defeq \sum_{z = 0}^{d/2} S(d,z) \label{eq:S_d}
+  \,.
 \end{align}
+Here, $S(d,z)$ is the number of characteristic strings 
+of length $d$ where each string contains $z$ honest indices. 
+Similarly, $S(d)$ is the number of 
+
 
 
 Recall that for any characteristic string $w = w_1 w_2 \ldots$, 
 we have $w_0 = 1$ by convention. 
 Let $\lambda$ be a positive real, $\lambda \geq 1$. 
-% (For our application, we would only use $\lamba = 2$.)
-We can express the $\lambda$th moment of the grinding power as
+Recalling~\eqref{eq:S_y} and~\eqref{eq:g_praos}, 
+we can express the $\lambda$th moment of the grinding power as
 \begin{align}\label{eq:grinding-power-moment-praos}
     \Exp\, g(W)^\lambda 
     &= \sum_{t = 0}^n \Pr[W_t \neq \A] \cdot \Exp (W_t\, S(W_{t+1}\ldots W_n))^\lambda \nonumber \\
@@ -129,6 +64,9 @@ and, by convention,
 the inner sum in~\eqref{eq:grinding-power-moment-praos} 
 runs for $z = 0, 1, \ldots, \lfloor d/2 \rfloor$.
 
+
+
+
 The first equality in the derivation of~\eqref{eq:grinding-power-moment-praos} follows from 
 % the subadditivity of the convex function 
 % $x \mapsto x^\lambda$ for $\lambda \geq 1, x \geq 0$,  
@@ -140,18 +78,17 @@ The third equality follows from rearranging the sums.
 The last equality follows from~\eqref{eq:suffix-prob-binomial} 
 and~\eqref{eq:S_d_z}.
 
-Our goal \footnote{
-It turns out that the the second moment of $g(W)$ grows 
-much faster than its first moment. In fact, 
-Chebyshev's inequality on $g(W)$ fares only marginally better 
-than what we get via Markov's inequality on $g(W)^2$. 
-% Thus we defer the analysis of the first moment in 
-% % Appendix~\ref{app:grinding-praos}.
-% the full version~\cite{GrindingFullVersion}.
-}
-is to develop a tight upper bound on $\Exp g(W)^2$ 
+Our goal is to develop tight tail bounds on $g(W)$; 
+we do so via tight upper bounds on $\Exp g(W)^2$ 
 which, when used in Markov's inequality, 
 would give us a tail bound on $g(W)$. 
+We remark that the second moment of $g(W)$ grows 
+much faster than its first moment. In fact, 
+Chebyshev's inequality on $g(W)$ 
+fares only marginally better 
+than what we get via Markov's inequality on $g(W)^2$. 
+This why we defer the analysis of the first moment in 
+\Section~\ref{sec:praos-mean}.
 
 \begin{lemma}[Tail bound on $g$]\label{lemma:praos-tail-gamma}
   Let $\epsilon, \EpsP \in (0, 1)$ and $n, k, s \in \NN$. 
@@ -195,8 +132,10 @@ would give us a tail bound on $g(W)$.
 \end{proof}
 
 
-\section{The second moment of \texorpdfstring{$g(W)$}{the grinding power}}
 
+
+
+\section{Three helpful claims}
 We begin by stating three helpful claims 
 whose proofs will be presented later.
 
@@ -266,6 +205,9 @@ whose proofs will be presented later.
 % We defer the proofs of these claims in the next subsection .
 
 
+\section{The second moment of the grinding power}
+The three claims above give the following upper bound on $\Exp g(W)^2$.
+
 
 \begin{lemma}[Second moment of $g$]\label{lemma:grinding-praos-second-moment}
   Let $\epsilon, \EpsP \in (0, 1)$ and $n, k, s \in \NN$. 
@@ -288,7 +230,7 @@ whose proofs will be presented later.
   In particular, 
   $$
     \Exp [g(W)^2 \mid E] \leq 1
-    \qquad \text{if $\epsilon \geq 0.809$}\,.
+    \qquad \text{if} \qquad \epsilon \geq 0.809\,.
   $$
 \end{lemma}
 \begin{proof}
