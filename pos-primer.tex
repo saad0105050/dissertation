@@ -1,0 +1,320 @@
+
+
+\Paragraph{Slots and epochs.}
+The execution of the protocol is divided into discrete time periods called \emph{slots}. 
+In practice, slots have to long enough so that 
+messages are actually delivered (via, e.g., gossip) 
+but they have to be short enough so that 
+not too many blocks are issued from the same slot.
+In there are multiple blocks in the same slot, 
+at most one of these blocks will appear in the settled blockchain 
+and, importantly, 
+the multiplicity of these blocks can be utilized by the adversary 
+in constructing two competing longest blockchains in the future.
+
+A predefined number of slots are grouped into an \emph{epoch}. 
+Some information, such as the stake ratio or the computational power, 
+is assumed to remain constant in an epoch. 
+Moreover, some computations taking place in an epoch 
+share some common information, such a common random string. 
+These common information are collectively recomputed 
+at the onset of every epoch. 
+The first epoch is bootstrapped with a special block of information, 
+called the ``genesis block'' which contains, e.g., a fresh random string to 
+initialize the computations in the first epoch.
+
+
+
+\Paragraph{Players and relative stakes.}
+Let
+$\Players$ be the set of participants 
+where each player $i \in \Players$ is associated with a positive real number 
+$\sigma_i \in [0,1]$, called his \emph{relative stake ratio}, or just \emph{stake} in short. 
+The stake ratios satisfy $\sum_{i \in \Players} \sigma_i = 1$ 
+and, for this analysis, remains constant over the course of the execution of the protocol. 
+(As is common in the literature (e.g., in \cite{Ouroboros,Praos,SnowWhite}), 
+we can handle a change in stake separately from this analysis and then hook these two together.)
+
+Let $\HonestPlayers, \DishonestPlayers \subseteq \Players$ 
+denote the set of honest and dishonest players, respectively;
+these sets are disjoint and $\Players = \HonestPlayers \Union \DishonestPlayers$.
+Given a real $\alpha \in (0,1/2)$, 
+we use the notation $\Players(\alpha)$ 
+to denote the fact that the total dishonest stake bounded by $\alpha$: i.e., 
+$\sum_{i \in \DishonestPlayers} \sigma_i \leq \alpha$
+$\sum_{i \in \HonestPlayers} \sigma_i \geq 1 - \alpha$. 
+We do not, however, make any assumptions on the number of participants.
+
+The upper bound $\alpha < 1/2$ can be thought of a variant of the ``adversarial minority'' condition 
+found in many places in the literature. 
+Such a condition stems from the nature of the security analysis of the protocol, 
+in particular, if it uses a biased random walk then the condition $\alpha < 1/2$ denotes the bias of the walk.
+
+
+
+\Paragraph{Synchronous vs. semi-synchronous communication model.}
+In the \emph{synchronous communication setting}, 
+all messages issued from a slot reach their destinations 
+before the onset of the next slot.
+In the \emph{$\Delta$-synchronous communication setting}, 
+these messages are delivered with at most a $\Delta$ delay. 
+While the $\Delta$-synchronous setting is closer to the practical applications 
+(e.g., communications over the Internet), 
+analyses of distributed systems in the semi-synchronous model 
+are more difficult than the synchronous setting. 
+While some analyses (e.g., \cite {SnowWhite,Sleepy,PSS}) 
+handles the semi-synchronous setting directly,
+other analyses (e.g., \cite{Praos}) handle the easier synchronous setting first, 
+before lifting the results into the semi-synchronous setting 
+by incurring some slack in the security guarantee. 
+In both cases, a \emph{rushing adversary} is assumed: 
+he can reorder the messages, but he must deliver the message before the maximum allowed delay. 
+Plus, he cannot modify or drop the messages.
+
+
+
+
+\Paragraph{Static vs. adaptive adversaries.}\label{sec:static-dynamic-adversary}
+One can consider two types of adversaries in terms of 
+how fast they can corrupt an honest player. the so-called \emph{static adversary} 
+Suppose that an epoch is $R$ slots long. 
+and the \emph{dynamic (or adaptive) adversary}. 
+A \emph{static adversary} takes at least $R$ slots to corrupt an honest player 
+but an \emph{adaptive adversary} can instantly corrupt an honest player. 
+Ouroboros~\cite {Ouroboros} is secure against a static adversary 
+while Praos~\cite {Praos} and SnowWhite~\cite{SnowWhite} 
+are secure against an adaptive adversary.
+The adversarial model critically depends on how a slot-leader is elected. 
+
+
+
+\Paragraph{Verifiable Random Functions (VRF).}
+VRFs are an important ingredient in many distributed algorithms. 
+Informally speaking, they act as a hash function $F$ which, when evaluated at a certain input $x$, 
+\InlineCases{
+  \item outputs a string $y = F(x)$ which is uniformly random with high probability, and
+  \item supplies a proof $\pi$ certifying that $y = F(x)$.
+}
+A precise description is as follows.
+
+\newcommand{\Gen}{\mathsf{gen}}
+\newcommand{\Prove}{\mathsf{prove}}
+\newcommand{\Verify}{\mathsf{verify}}
+% \newcommand{\pk}{\mathsf{pk}}
+% \newcommand{\sk}{\mathsf{sk}}
+\begin{definition}[Verifiable Random Function (VRF)]\label{def:VRF}
+  A family $\mathcal{F}$ 
+  of functions $F : \{0,1\}^\ell \rightarrow \{0,\}^k$ 
+  is a family of VRFs if there exist algorithms 
+  $(\Gen, \Prove, \Verify)$ 
+  so that the following holds: 
+  $\Gen(1^k)$ outputs a pair of keys $(\pk, \sk)$; 
+  $\Prove_\sk(x)$ outputs a pair $(F_\sk(x), \pi_\sk(x))$ 
+  where 
+  $F_\sk \in \mathcal{F}$, $F_\sk(x)$ is the function value, and 
+  $\pi_\sk(x)$ is the proof of correctness; and 
+  $\Verify_\pk(x,y,\pi_\sk(x))$ efficiently verifies 
+  that $y = F_\sk(x)$ using the proof $\pi_\sk(x)$, 
+  outputting 1 if $y$ is valid and 0 otherwise. 
+  Additionally, we require the following properties:
+
+  \begin{enumerate}
+    \item \emph{Uniqueness:} 
+    No values $(\pk, x, y, y', \pi, \pi')$  can satisfy both 
+    $\Verify_\pk(x,y,\pi) = 1$ and $\Verify_\pk(x,y',\pi') = 1$ 
+    unless $y = y'$.
+
+    \item \emph{Provability:} 
+    If $(y, \pi) = \Prove_\sk(x)$ then $\Verify_\pk(x,y, \pi) = 1$.
+
+    \item \emph{Pseudorandomness:} 
+    To all probabilistic polynomial-time (PPT) algorithm 
+    which runs $\Poly(k)$ steps when its first input is $1^k$ 
+    and does not query the $\Prove$ oracle on $x$, 
+    the distribution of $F_\sk(x)$ appears uniform in $\{0,1\}^k$, 
+    except with a probability negligible in $k$.
+  \end{enumerate}
+
+\end{definition}
+
+
+
+
+\section{Lottery-based leader election schemes}\label{sec:leader-election-public-private}
+Let $\alpha \in (0,1)$ and consider the players $\Players = \Players(\alpha)$
+In every slot, 
+one or more participants are elected as a ``leader'' who can add block to a chain. 
+(The claim ``player $u$ won the leader election for slot $i$ at epoch $e$'' 
+can be proved using digital signatures and VRFs (Definition~\ref{def:VRF}.)
+Let $C_i$ be the set of leaders for slot $i$. 
+We consider two types of leader election schemes for an epoch: 
+% \begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=3em]
+\begin{description}
+    \item[\textbf{$\PublicLeaderElection(\alpha)$: Publicly elect a single leader per slot.}] \label{lottery:public}
+    At the onset of an epoch, 
+    all players use a common random string to 
+    publicly sample, 
+    independently for each round $i \in [\ell + n]$, 
+    a single player $\ell_i \in \Players$ and  
+    set $C_i = \{\ell_i\}$. 
+    For all players $u \in \Players$, 
+    the probability that $u = \ell_i$ is $\sigma_u$. 
+    Thus, the leader schedule for an epoch 
+    is public knowledge before an epoch commences. 
+
+    \item[\textbf{$\PrivateLeaderElection(\alpha)$: Privately elect zero or more leaders per slot.}] \label{lottery:private}
+    Independently for each round $i \in [\ell + n]$, 
+    player $u \in \Players$ 
+    privately and independently 
+    evaluates a Boolean random variable $D$
+    which has expectation $\sigma_u$; 
+    if $D = 1$, $u$ 
+    inserts himself into the set $C_i$ 
+    and announces this fact during slot $i$. 
+\end{description}
+\noindent
+Ouroboros uses a public leader election 
+at the outset of an epoch 
+and, therefore, it is secure only against a static adversary. 
+SnowWhtie and Praos (and Bitcoin as well) uses a private leader election 
+and therefore, must prove security against an adaptive adversary. 
+
+
+\Paragraph{The idealized leader election outcomes.}\label{sec:leader-election-probs}
+Based on the outcome of the leader election, 
+we can annotate each slot using three qualitative tags: 
+\begin{itemize}
+\item \emph{uniquely honest}, having a single honest leader;
+\item \emph{multihonest}, having multiple, but honest,
+  leaders; and
+\item \emph{adversarial}, having at least one adversarial leader.
+\end{itemize}
+The leader election process is usually designed in a way so that 
+the elections across different slots are \emph{independent}, 
+meaning the outcomes of one slot does not impact the outcomes of any other slot.\footnote{
+  In some leader election schemes (e.g., Ouroboros Genesis~\cite{Genesis}), 
+  the model specifically allows 
+  the outcome distribution of a slot to depend on the outcomes of previous slots. 
+  In other cases, 
+  such a dependence on the history can be analyzed 
+  by instead analyzing a ``more adversarial'' outcome distribution 
+  coming from independent leader elections in different slots. 
+}
+Thus, for each slot, there are three probabilities of interest:
+\begin{itemize}
+\item $p_\h$, the probability that a slot is uniquely honest;
+\item $p_\H$, the probability that a slot is multihonest; and
+\item $p_\A$, the probability that a slot is adversarial.
+\end{itemize}
+
+The above probabilities play a critical part 
+in the analysis of blockchain protocols. 
+Specifically, 
+their security guarantee hinges upon conditions such as 
+$p_\h < p_\A$~\cite{SnowWhite}, 
+$p_\h - p_\H < p_\A$~\cite{Ouroboros,Praos,Genesis}, 
+or $p_\h + p_\H < p_\A$~\cite{Nakamoto2008,GKL,PSS}.
+These thresholds are analogs of the well known inequality 
+$n \geq 3f + 1$ in the Byzantine Fault Tolerance (BFT) protocols~\cite{BFT} 
+where $n$ is the total number of players and $f$ is the number of dishonest/faulty players.
+
+
+\Paragraph{Common Prefix (CP), Chain Quality (CQ), and Chain Growth(CG) properties.}
+An eventual consensus blockchain protocol 
+must satisfy a set of key properties. Informally speaking, these are as follows:
+\begin{description}[font=\normalfont\itshape\space]
+  \item[Common Prefix Property (CP) with parameter $k$:]
+  Consider two blockchains held by two honest observers and 
+  truncate, from these chains, any block from the last $k$ slots. 
+  Then one of the chains (after truncation) must be a prefix of the other. 
+  This property is called $\kSlotCP$ in short and is defined in Definition~\ref{def:cp-slot-mh}. 
+
+  \item[Chain Quality Property (CQ) with parameter $s$:]
+  Consider a blockchain held by an honest observer. 
+  Any segment of this chain 
+  corresponding to a time window of length $s$ slots or more, 
+  must contain at least one honest block.
+  This property is called $\sECQ$ 
+  and we define it rigorously in Definition~\ref{def:cp-slot-mh}. 
+
+  \item[Chain Growth Property (CG) with parameter $r$:]
+  Consider a blockchain held by an honest observer at some slot. 
+  Any past time window of length $r$ slots or more, 
+  contributes at least one block to this chain.
+\end{description}
+Please refer to~\cite{GKL,Ouroboros,Praos,Genesis,SnowWhite} for a precise description of these properties.
+
+
+The most important of these properties is the first one; 
+it determines how fast the blockchain achieves eventual consensus. 
+As shown in ~\cite{Ouroboros}, 
+the other two properties can be derived from (some version of) $\kSlotCP$.
+In some cases, such as in~\cite{GKL,Ouroboros,SnowWhite}, 
+the CP property is defined in terms of truncating $k$ blocks 
+(and the corresponding property is named $\kCP$); 
+but these differences are only superficial. 
+We prefer the slot truncation-based definition 
+as it is amenable to a better modeling and analysis.
+
+
+The entire Part~\ref{part:multihonest} of this dissertation, 
+is devoted to prove strong security bounds for the $\kSlotCP$ property. 
+The $\sECQ$ property is used in the analysis in 
+Part~\ref{part:praos} and Part~\ref{part:xorgames}.
+
+
+
+\Paragraph{Nakamoto-style eventual consensus; the longest-chain rule.}
+We study the behavior of the elementary \emph{longest-chain rule}
+algorithm, carried out by a collection of participants. 
+\begin{itemize}
+  \item In each round,
+  each participant collects all valid blockchains from the network; if a
+  participant is a leader in the round, he adds a block to the longest
+  chain and broadcasts the result.
+\end{itemize}
+Here, ``valid'' indicates that any block appearing in the
+chain was indeed issued by a leader from the associated slot; in the
+PoS setting, this property is guaranteed with digital
+signatures.
+Any active participant who is not a leader at a given slot, 
+is called an ``observer'' at that slot.
+
+Note that the above rule can be applied to both PoW and PoS blockchains. 
+Since the longest-chain rule was pioneered by \citet{Nakamoto} in the PoW setting, 
+any PoS protocol implementing this rule is called the \emph{Nakamoto-style PoS}.
+It is a remarkable fact that this simple chain-selection rule 
+can lead to eventual consensus, 
+
+
+
+
+\Paragraph{Nakamoto-style PoS blockchain axioms in the synchronous setting.}
+To model the dynamic of a Nakamoto-style PoS blockchain, 
+we adopt a set of axioms; see below for an informal description:
+
+\begin{description}[font=\normalfont\itshape\space]
+  \item[Message delivery.] 
+    Any message broadcast by an honest participant at the beginning of a
+    particular slot is received by the adversary first, who may decide
+    strategically and individually for each recipient in the network
+    whether to inject additional messages and in which order all messages
+    are to be delivered prior to the conclusion of the slot. 
+
+  \item[Genesis block.]
+  The blockchain begins with a fixed ``genesis'' block, assigned to slot $0$.
+  
+  \item[Block monotonicity] 
+  Each block is labeled by the index of the slot it was issued from. 
+  In a blockchain, the (slot) labels of the blocks are in strictly increasing order.
+
+  \item[Honest blocks.] 
+  An honest leader in a slot creates a single block.
+\end{description}
+These axioms are made formal in Section~\ref{sec:pos-axioms}.
+
+
+
+
+
+

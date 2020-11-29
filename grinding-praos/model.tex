@@ -73,75 +73,6 @@ we take the opportunity to define the public leader elections as well.
 
 
 
-\section{Leader election schemes and static/adaptive adversaries}\label{sec:leader-election-public-private}\label{sec:static-dynamic-adversary}
-
-One can consider two types of adversaries in terms of 
-how fast they can corrupt an honest player. the so-called \emph{static adversary} 
-Suppose that an epoch is $R$ slots long. 
-and the \emph{dynamic (or adaptive) adversary}. 
-A \emph{static adversary} takes at least $R$ slots to corrupt an honest player 
-but an \emph{adaptive adversary} can instantly corrupt an honest player. 
-Ouroboros~\cite {Ouroboros} is secure against a static adversary 
-while Praos~\cite {Praos} and SnowWhite~\cite{SnowWhite} 
-are secure against an adaptive adversary.
-The adversarial model critically depends on how a slot-leader is elected. 
-
-Let
-$\Players$ be the set of participants 
-where each player $i \in \Players$ is associated with a positive real number 
-$\sigma_i \in [0,1]$, called his \emph{relative stake ratio}, or just \emph{stake} in short. 
-The stake ratios satisfy $\sum_{i \in \Players} \sigma_i = 1$ 
-and, for this analysis, remains constant over the course of the execution of the protocol. 
-(As is common in the literature (e.g., in \cite{Ouroboros,Praos,SnowWhite}), 
-we can handle a change in stake separately from this analysis and then hook these two together.)
-
-Let $\HonestPlayers, \DishonestPlayers \subseteq \Players$ 
-denote the set of honest and dishonest players, respectively;
-these sets are disjoint and $\Players = \HonestPlayers \Union \DishonestPlayers$.
-Given a real $\alpha \in (0,1/2)$, 
-we use the notation $\Players(\alpha)$ 
-to denote the fact that the total dishonest stake bounded by $\alpha$: i.e., 
-$\sum_{i \in \DishonestPlayers} \sigma_i \leq \alpha$
-$\sum_{i \in \HonestPlayers} \sigma_i \geq 1 - \alpha$. 
-We do not, however, make any assumptions on the number of participants.
-
-
-In every slot, 
-one or more participants are elected as a ``leader'' who can add block to a chain. 
-(The claim ``player $u$ won the leader election for slot $i$ at epoch $e$'' 
-can be proved using digital signatures and VRFs (Definition~\ref{def:VRF}.)
-Let $C_i$ be the set of leaders for slot $i$. 
-We consider two types of leader election schemes for an epoch: 
-% \begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=3em]
-\begin{description}
-    \item[\textbf{$\PublicLeaderElection(\alpha)$: Publicly elect a single leader per slot.}] \label{lottery:public}
-    At the onset of an epoch, 
-    all players use a common random string to 
-    publicly sample, 
-    independently for each round $i \in [\ell + n]$, 
-    a single player $\ell_i \in \Players$ and  
-    set $C_i = \{\ell_i\}$. 
-    For all players $u \in \Players$, 
-    the probability that $u = \ell_i$ is $\sigma_u$. 
-    Thus, the leader schedule for an epoch 
-    is public knowledge before an epoch commences. 
-
-    \item[\textbf{$\PrivateLeaderElection(\alpha)$: Privately elect zero or more leaders per slot.}] \label{lottery:private}
-    Independently for each round $i \in [\ell + n]$, 
-    player $u \in \Players$ 
-    privately and independently 
-    evaluates a Boolean random variable $D$
-    which has expectation $\sigma_u$; 
-    if $D = 1$, $u$ 
-    inserts himself into the set $C_i$ 
-    and announces this fact during slot $i$. 
-\end{description}
-\noindent
-Ouroboros uses a public leader election 
-at the outset of an epoch 
-and, therefore, it is secure only against a static adversary. 
-SnowWhtie and Praos (and Bitcoin as well) uses a private leader election 
-and therefore, must prove security against an adaptive adversary. 
 
 
 \section{Praos beacon}\label{sec:praos-beacon-def}\label{sec:praos-model-grindingpower-minentropy}
@@ -360,48 +291,6 @@ over the $L$ epochs.
 
 In \Section~\ref{sec:praos}, we characterize the grinding power 
 for the beacon protocol of Ouroboros Praos~\cite{Praos} and Snow White~\cite{SnowWhite}.
-We end the current section by giving a definition of VRF.
-
-\newcommand{\Gen}{\mathsf{gen}}
-\newcommand{\Prove}{\mathsf{prove}}
-\newcommand{\Verify}{\mathsf{verify}}
-% \newcommand{\pk}{\mathsf{pk}}
-% \newcommand{\sk}{\mathsf{sk}}
-\begin{definition}[Verifiable Random Function (VRF)]\label{def:VRF}
-  A family $\mathcal{F}$ 
-  of functions $F : \{0,1\}^\ell \rightarrow \{0,\}^k$ 
-  is a family of VRFs if there exist algorithms 
-  $(\Gen, \Prove, \Verify)$ 
-  so that the following holds: 
-  $\Gen(1^k)$ outputs a pair of keys $(\pk, \sk)$; 
-  $\Prove_\sk(x)$ outputs a pair $(F_\sk(x), \pi_\sk(x))$ 
-  where 
-  $F_\sk \in \mathcal{F}$, $F_\sk(x)$ is the function value, and 
-  $\pi_\sk(x)$ is the proof of correctness; and 
-  $\Verify_\pk(x,y,\pi_\sk(x))$ efficiently verifies 
-  that $y = F_\sk(x)$ using the proof $\pi_\sk(x)$, 
-  outputting 1 if $y$ is valid and 0 otherwise. 
-  Additionally, we require the following properties:
-
-  \begin{enumerate}
-    \item \emph{Uniqueness:} 
-    No values $(\pk, x, y, y', \pi, \pi')$  can satisfy both 
-    $\Verify_\pk(x,y,\pi) = 1$ and $\Verify_\pk(x,y',\pi') = 1$ 
-    unless $y = y'$.
-
-    \item \emph{Provability:} 
-    If $(y, \pi) = \Prove_\sk(x)$ then $\Verify_\pk(x,y, \pi) = 1$.
-
-    \item \emph{Pseudorandomness:} 
-    To all probabilistic polynomial-time (PPT) algorithm 
-    which runs $\Poly(k)$ steps when its first input is $1^k$ 
-    and does not query the $\Prove$ oracle on $x$, 
-    the distribution of $F_\sk(x)$ appears uniform in $\{0,1\}^k$, 
-    except with a probability negligible in $k$.
-  \end{enumerate}
-
-\end{definition}
-
 
 
 

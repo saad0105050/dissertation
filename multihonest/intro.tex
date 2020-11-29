@@ -9,57 +9,86 @@ of these protocols are logically divided into two components: the
 first reasons about the properties of the leader election process, the
 second reasons about the combinatorial properties of the blockchains
 that can be produced by an \emph{idealized} leader schedule in the
-face of adaptive adversarial control of some participants. An
-attractive side effect of this structure is that the combinatorial
+face of adaptive adversarial control of some participants. 
+
+
+An
+attractive side effect of 
+the separation between the leader election process 
+and the blockchain dynamic 
+is that the combinatorial
 considerations can be treated independently of other aspects of the
 protocol. 
 % A recent article of Blum et al.~\cite{LinearConsistency}
 % gave an axiomatic treatment of this combinatorial portion of the
 % analysis which we extend in this paper.
-
 These common combinatorial arguments can be formulated with very
-little information about the leader election process.  Specifically,
-current analyses focus on three parameters:
-\begin{itemize}
-\item $p_\h$, the probability that a slot is \emph{uniquely honest}, having a single honest leader;
-\item $p_\H$, the probability that a slot is \emph{multiply honest}, having multiple, but honest,
-  leaders; and
-\item $p_\A$, the probability that a slot has at least one adversarial leader.
-\end{itemize}
-Our major contribution is a generic, rigorous guarantee of consistency
-under the most desirable assumption\footnote{ 
-  Consistency is unachievable in the case $p_\h + p_\H < p_\A$.
-  %leaves little room for consistency
-%since in this case  
-%the adversary can create a private protocol execution identically
-%distributed to that of the honest parties and by selectively disclosing it, it
-%can break consistency.
-  See \cite{GK18} for a detailed discussion of the honest majority
-  assumption. } $p_\h + p_\H > p_\A$ that achieves optimal consistency
-error $\exp(-\Theta(k))$ as a function of confirmation time $k$. Our
-analysis can be directly applied to existing protocols to improve
-their consistency guarantees.
+little information about the leader election process. 
 
-To contrast this with existing literature, the analysis of Ouroboros
-Praos~\cite{Praos} and Ouroboros Genesis~\cite{Genesis}
-%\footnote{The chain selection
-%  rule in Genesis is a combination of the usual longest-chain rule and
-%  a chain-density based rule.}
-require the threshold assumption $p_\h - p_\H > p_\A$ to achieve the
-optimal consistency error of $e^{-\Theta(k)}$. Note how multiply
-honest slots actually \emph{detract} from security, appearing
-negatively in the basic security threshold. The consistency analyses
-in Snow White~\cite{SnowWhite} and Sleepy Consensus~\cite{Sleepy}
-assume an improved threshold $p_\h > p_\A$; however, they only
-establish a consistency error bound of $e^{-\Theta(\sqrt{k})}$. Note
-here that multiply honest slots appear neutrally. All existing
-analyses break down if $p_\h < p_\A$, i.e., when the uniquely
-honest slots are less probable than the adversarial slots.
+% Below, we briefly outline the two 
 
-% {\color{red} XXXX I got to here.}
+% As a result, 
+% the security guarantees of PoS blockchains 
+% are stated in the context of the outcome of the distribution process. 
+% An example of such a statement is   
+% e.g., ``PoS protocol X will satisfy property Y with probability Z 
+% as long as on average, 
+% a slot is more likely to be associated with a single honest leader 
+% than with one or more adversarial leaders.''
 
-Multiply honest slots may arise by design, e.g., when each player
-checks privately whether he is a leader.  They may also occur
+
+
+An
+attractive side effect of 
+the separation between the leader election process 
+and the blockchain dynamic 
+is that the combinatorial
+considerations can be treated independently of other aspects of the
+protocol. 
+% A recent article of Blum et al.~\cite{LinearConsistency}
+% gave an axiomatic treatment of this combinatorial portion of the
+% analysis which we extend in this paper.
+These common combinatorial arguments can be formulated with very
+little information about the leader election process. 
+
+
+\Paragraph{Existing PoS security guarantees and assumptions.}
+The analysis of the Nakamoto-style PoS protocol Ouroboros~\cite{Ouroboros} 
+is in the synchronous model, against a static adversary. 
+The analyses in Sleepy Consensus~\cite{Sleepy}, SnowWhite~\cite{SnowWhite}, 
+Praos~\cite{Praos}, and Genesis~\cite{Genesis} are 
+in the semi-synchronous model, against an adaptive adversary. 
+There are two salient features of these analyses; 
+to appreciate these, recall that 
+a slot can be either uniquely honest, multihonest, or adversarial, 
+based on the outcome of the leader election in that slot.
+
+\begin{description}[font=\normalfont\itshape\space]
+  \item[Assumptions on leader election outcomes:] The analyses in Ouroboros and Praos assume that on average, 
+  a slot is more likely to be uniquely honest than the other two types. 
+  That is, $p_\h > p_\A + p_\H$. The analyses in Sleepy Consensus and Snow White assume that on average, 
+  a slot is more likely to be uniquely honest than adversarial. 
+  That is, $p_\h > p_\A$.
+
+  \item[Consistency guarantee:] Let $\EpsP$ be the probability of a $\kSlotCP$ violation.
+  Under the assumptions above, 
+  Ouroboros, Sleepy, and Snow White guarantee that $\EpsP \leq e^{-\Omega(\sqrt{k})}$.
+\end{description}
+
+It can be easily seen that 
+the PoS consistency error bounds 
+in these analyses 
+are an order-of-magnitude worse than the known PoW bounds of $e^{-\Omega(k)}$. 
+As we discussed before, 
+this would imply that for a fixed consistency error tolerance, 
+a transaction would take far longer ($k^2$ rounds) to settle in a PoS blockchain 
+than on a PoW blockchain with similar parameters (just $k$ rounds).
+
+A deeper concern lies with the treatment of multihonest slots.
+Multihonest slots do not arise in Ouroboros since it publicly elects a single leader for each slot. 
+However, they arise naturally when each player
+checks privately whether he is a leader (e.g., Praos, SnowWhtie, and Sleepy). 
+They may also occur
 naturally in the non-synchronous setting when the time between the
 broadcast of two blocks is exceeded by network delay---in this case
 the party issuing the later block may not be aware of the earlier
@@ -68,83 +97,118 @@ a de facto incidence of multiple honest leaders. The role of these
 slots is rather delicate: while it is good for the system to have many
 honest blocks, \emph{concurrent} blocks can help the adversary in
 creating two long, diverging blockchains that might jeopardize the
-consistency property. Our new analysis shows that this second effect
-can be mitigated, achieving consistency error bound of
-$e^{-\Theta(k)}$ under the (tight) assumption $p_\h + p_\H > p_\A$.
+consistency property. 
+
+Note that while Sleepy and SnowWhite 
+simply discards the multihonest probability $p_\H$ from their assumptions
+(i.e., treating a multihonest slot as a neutral event), 
+the analysis in Praos treats multihonest slots as if they are bad events
+(e.g., Praos need $p_\h - p_\H > p_\A$). 
+Finally, notice that all existing
+analyses break down if $p_\h < p_\A$, i.e., when the uniquely
+honest slots are less probable than the adversarial slots.
+
+Finally, the existing analyses only give asymptotic results; 
+there is no way to explicitly compute the error probabilities.
+These concerns leave a lot to be desired from 
+the analyses of Nakamoto-style PoS blockchains.
 
 
 
-\paragraph{Our results and contributions.} 
-As described above, we show for the first time that PoS blockchain
-protocols using the longest-chain rule can achieve a consistency error
+\Paragraph{Our goals.}
+Our goal is to establish a rigorous modeling and analysis 
+framework to overcome the above concerns. 
+In particular, 
+we want to achieve a consistency error $\exp(-\Theta(k))$, 
+matching that of PoW.\footnote{
+  The constants hidden under the asymptotic notation may differ between PoW and PoS, 
+  but this is acceptable since 
+  PoS, as a model, gives the adversary more leeway than does PoW.
+} 
+In addition, 
+we want to show that Nakamoto-style PoS, like PoW, 
+can achieve consistency
+under the most desirable assumption\footnote{ 
+  Consistency is unachievable in the case $p_\h + p_\H < p_\A$.
+  See \cite{GK18} for a detailed discussion of the honest majority
+  assumption. 
+} $p_\h + p_\H > p_\A$, even allowing $p_\h < p_\A$. 
+
+We also want to be able to go beyond asymptotic bounds 
+and actually compute the error probabilities.
+
+
+
+
+% % {\color{red} XXXX I got to here.}
+
+% Our new analysis shows that this second effect
+% can be mitigated, achieving consistency error bound of
+% $e^{-\Theta(k)}$ under the (tight) assumption $p_\h + p_\H > p_\A$.
+
+
+
+\section{Our results and contributions} 
+As described above, we show for the first time that Nakamoto-style PoS blockchain
+protocols can achieve a $k$-consistency error
 of $e^{-\Theta(k)}$ under the desirable condition
-$p_\h + p_\H > p_\A$.  This improves the security guarantee of all
-``longest chain rule''  PoS protocols such as Praos~\cite{Praos},
-Genesis~\cite{Genesis}, and Snow White~\cite{SnowWhite}
-(we remark that other PoS protocols such as Algorand~\cite{DBLP:journals/corr/Micali16} 
+$p_\h + p_\H > p_\A$. 
+We analyzed both the synchronous setting and the semi-synchronous setting.
+This improves the security guarantee of all existing 
+Nakamoto-style PoS protocols such as Ouroboros~\cite{Ouroboros}, Praos~\cite{Praos},
+Genesis~\cite{Genesis}, and Snow White~\cite{SnowWhite}.
+(We remark that other PoS protocols such as Algorand~\cite{Algorand} 
 operate in a different setting where explicit participation bounds are assumed
-and forks can be prevented).
-We discuss
-our results in more detail before turning to the model and proofs.
+and forks can be prevented). 
 
-% \begin{itemize}
-% \item
-Our analysis in the simple synchronous model achieves the same
-asymptotic error bound as in~\cite{LinearConsistencySODA}---the
-tightest result in the literature---under a much weaker assumption,
-namely $p_\h + p_\H > p_\A$.  Thus PoS protocols can in fact achieve
-consistency with $p_\h < p_\A$, a regime beyond reach of all previous analyses. 
-When uniquely honest slots are rare 
-(i.e., when $p_\h$ is very small), 
-our bound has the desired dependence on $p_\h$. 
-Moreover, when $p_\H = 0$ (i.e., all honest slots are in fact
-uniquely honest), we exactly recover the bound
-in~\cite{LinearConsistencySODA}. 
-We also give an algorithm to explicitly compute the probability 
+To put it in the perspective, 
+our analysis reduces the state-of-the-art estimate 
+of the $k$-settlement time for Nakamoto-style PoS 
+by an order of magnitude (from $k^2$ to $k$), 
+under a much weaker assumption.
+Our results show that Nakamoto-style PoS protocols can achieve
+consistency even when $p_\h < p_\A$; 
+this parameter regime was not treated by any existing analyses. 
+
+In the synchronous setting, 
+we give an algorithm (with C++ implementation) to explicitly compute the probability 
 that a given slot encounters a consistency violation 
 under the idealized leader election mechanism. 
 The time and space required by this algorithm is cubic 
 in the length of the protocol execution.
 
-Next, we consider a variant model where the honest players use a
+We also consider a variant model where the honest players use a
 consistent tie-breaking rule when selecting the longest chain.  (I.e.,
 when a fixed set of blockchains of equal length are presented to a
 collection of honest players, they all select the same chain.
 In previous models, the adversary had the right to break such ties by influencing
 network delivery.)
-Assuming $p_\h + p_\H > p_\A$, we prove that the consistency error
-bound in this model is identical to the $e^{-\Theta(k)}$ bound
-in~\cite{LinearConsistencySODA} \emph{even when $p_\h =
-  0$}. No existing analysis survives in this regime.
+Assuming $p_\h + p_\H > p_\A$, we achieve 
+$e^{-\Theta(k)}$ consistency error in this case as well. 
+Moreover, we can take $p_\h =0$; 
+no existing analysis can handle this parameter regime. 
+This can be especially helpful for leader election schemes
+where a uniquely honest slot almost never occurs. 
+Such leader elections are deployed in Filecoin~\cite{Filecoin}, for example.
 
-% Thus not only is our analysis a first in this parameter regime, but
-% our bound is also the tightest in any regime.
 
   % \item 
-\paragraph{$\Delta$-synchronous setting.}
-In the $\Delta$-synchronous
-communication setting, all messages are delivered with at most
-a $\Delta$ delay. Our results mentioned above can be transferred to
-this setting using the \emph{$\Delta$-synchronous to synchronous reduction
+Our results mentioned above can be transferred to
+the $\Delta$-synchronous setting using the standard 
+\emph{$\Delta$-synchronous to synchronous reduction
 approach} used in the Ouroboros Praos analysis~\cite{Praos}. Thus, we
 can achieve a consistency error probability of $e^{-\Theta(k)}$ in this
 setting as well. 
-This analysis is presented in 
-\Section~\ref{sec:async-multihonest}.
+
+
+
 
   % \item 
-\paragraph{A technical overview.}
+\section{A technical overview}
 We initially work in the synchronous communication model and extend
 the synchronous combinatorial framework
-of~\cite{LinearConsistency} to accommodate multiply honest
+of~\cite{LinearConsistency} to accommodate multihonest
 slots. 
-% Many of the important constructs and proofs from their
-% development break down
-% and some critical combinatorial notions 
-% % in their framework 
-% % of ``relative margin'' and ``balanced forks'' 
-% do not retain their direct significance in the multi-leader setting. 
-% It appears that we need new tools with the right expressive properties.
 
 First, our analysis focuses on a combinatorial event called a ``Catalan
 slot.''\footnote{The name is a nod to the \emph{Catalan number} in
@@ -156,7 +220,7 @@ strictly more honest slots---with any number of honest leaders---than
 adversarial ones. The analysis of~\cite{SnowWhite} and ~\cite{Sleepy}
 introduced this basic concept, though they counted only uniquely
 honest slots. In comparison with their analysis, then, our treatment
-has two important advantages: first of all, we let multiply honest
+has two important advantages: first of all, we let multihonest
 slots count in the analysis and, additionally, we achieve strikingly
 stronger error bounds: specifically, we achieve optimal settlement
 error of $\exp(-\theta(k))$ rather than $\exp(-\theta(\sqrt{k}))$.
@@ -167,7 +231,7 @@ blocks and presented to an honest observer at slot $c + 1$, the
 observer will never adopt this blockchain.  As a result, the chains
 adopted by this honest observer must contain \emph{some} block from
 slot $c$.  Note that this is true \emph{even if $c$ is
-  multiply honest}.  A critical observation is that \emph{a slot is
+  multihonest}.  A critical observation is that \emph{a slot is
   Catalan if and only if all competitive blockchains in future slots
   contain at least one block from this slot}.  Thus, if a Catalan slot
 $c$ is uniquely honest, all blockchains that are eligible to be
@@ -194,11 +258,11 @@ its prefix, a block from each of these slots.  In a setting where all
 honest players use a consistent longest-chain selection rule,
 % Theorem~\ref{thm:multiple-honest} further states
 we show that both slots have UVP as well.  Since Catalan slots can be
-multiply honest, PoS protocols can achieve a consistency error bound
+multihonest, PoS protocols can achieve a consistency error bound
 of $e^{-\Theta(k)}$ in this model even if $p_\h = 0$.
 
 In a separate line of reasoning, in \Section~\ref{sec:fork-framework}, 
-we generalize the fork-theoretic framework of~\citet{LinearConsistency} for the multi-leader setting. 
+we generalize the fork-theoretic framework of~\citet{LinearConsistency} for the multihonest setting. 
 Here, we characterize the UVP 
 in terms of the so-called ``relative margin,'' 
 a combinatorial property of a given slot. 
@@ -208,7 +272,7 @@ Next, we prove a recurrence relation for relative margin.
 Suppose each slot is 
 independently and identically chosen 
 (by the leader election mechanism) 
-to be either uniquely honest, multiply honest, or adversarial. 
+to be either uniquely honest, multihonest, or adversarial. 
 The recurrence relation mentioned above then 
 leads to an algorithm to explicitly compute 
 the probability that 

@@ -1,190 +1,227 @@
-We study the behavior of the elementary \emph{longest-chain rule}
-algorithm, carried out by a collection of participants:
-\begin{itemize}
-  \item In each round,
-each participant collects all valid blockchains from the network; if a
-participant is a leader in the round, he adds a block to the longest
-chain and broadcasts the result.
-\end{itemize}
-Here, ``valid'' indicates that any block appearing in the
-chain was indeed issued by a leader from the associated slot; in the
-PoS setting, this property is guaranteed with digital
-signatures.
-
-We begin by studying this algorithm in the simple, synchronous model
-posited by Blum et. al~\cite{LinearConsistency}. The model adopts a
-synchronous communication network in the presence of a \emph{rushing}
-adversary: in particular,
-\begin{enumerate}[label={\textbf{A\arabic*}}., ref={\textbf{A\arabic*}}, series=axiom, start = 0]
-  \item\label{axiom:message-delivery} 
-  Any message broadcast by an honest participant at the beginning of a
-  particular slot is received by the adversary first, who may decide
-  strategically and individually for each recipient in the network
-  whether to inject additional messages and in which order all messages
-  are to be delivered prior to the conclusion of the slot. 
-\end{enumerate}
-See the comments prior to Section~\ref{sec:model-settlement} for
-further discussion of this network assumption.  A variant of this
-adversarial message-ordering is presented in
-Section~\ref{sec:lcr-model}.  The $\Delta$-synchronous communication
-model is handled in \Section~\ref{sec:async-multihonest}.
-% the full version~\cite{MultiHonestFullVersion}.
 
 
-Given this, it is easy to describe the behavior of the longest-chain
-rule when carried out by a group of honest participants with the extra
-guarantee that exactly one is elected as leader in a slot: Assuming
-that the system is initialized with a common ``genesis block''
-corresponding to $\slot_0$, the players observe a common, linearly
-growing blockchain:
-\begin{center}
-  \begin{tikzpicture}[>=stealth', auto, semithick,
-    flat/.style={circle,draw=black,thick,text=black,font=\small}]
-    \node[flat]    at (0,0)  (base) {$0$};
-    \node[flat]    at (1,0)  (n1) {$1$};
-    \node[flat]    at (2,0)  (n2) {$2$};
-    \node[flat,white]    at (3,0)  (n3) {$\ \ \  $};
-    \node at (3,0) {$\ldots$};
-    \draw[thick,->] (base) to (n1);
-    \draw[thick,->] (n1) to (n2);
-    \draw[thick,->] (n2) to (n3);
-  \end{tikzpicture}
-\end{center}
-\noindent
-Here node $i$ represents the block broadcast by the leader of slot $i$
-and the arrows represent the direction of increasing time.
-%(Note that
-%the requirement of a single leader per slot is important in this
-%simple picture; it is possible for a network adversary to induce
-%divergent views between the players by taking advantage of slots where
-%more than a single honest participant is elected a leader.)
+In this \Section, 
+we first formalize the axioms for Nakamoto-style PoS blockchains. 
+Next, we encode the outcomes of the leader election process 
+using a so-called characteristic string $w \in \{\h, \H, \A\}^*$ 
+(see Definition~\ref{def:bivalent-char-string}). 
+We focus on a fixed characteristic string $w$ 
+and define an abstraction of the blockchain execution dynamic 
+as a rooted tree called a ``fork.'' 
+Next, for integers $s, k$ and a given fork $F$, 
+we define a consistency property for slot $s$, 
+called the ``$k$-settlement'' property.
+Next, we define a one-player game (for a fixed slot $s$)
+which captures the Nakamoto-style PoS dynamic.
+This game is played by the adversary $\Adversary$ 
+who wins if and only if he can produce a valid fork $F_\Adversary$ 
+for the characteristic string $w$ so that 
+$F_\Adversary$ violates the $k$-settlement property of $s$. 
 
-\paragraph{The blockchain axioms: Informal discussion.}
-The introduction of adversarial participants or multiple slot leaders
-complicates the family of possible blockchains that could emerge from
-this process. To explore this in the context of our protocols, we work
-with an abstract notion of a blockchain which
-% (as informally suggested above)
-ignores all internal structure. We consider a fixed assignment of
-leaders to time slots, and assume that the blockchain uses a proof
-mechanism to ensure that any block labeled with slot $\slot_t$ was
-indeed produced by a leader of slot $\slot_t$; this is guaranteed in
-practice by appropriate use of a secure digital signature scheme.
+The outcome distribution from the leader election process 
+induces a distribution $\Distribution$ on the characteristic string. 
+We define the ``settlement insecurity'' of the blockchain protocol 
+as the probability 
+that the adversary wins the above game 
+when $w$ is sampled from $\Distribution$.
+Our exposition culminates in our main theorem, 
+Theorem~\ref{thm:main-mh}, 
+where we claim that this bad probability is at most $e^{-\Omega(k)}$.
 
-Specifically, we treat a \emph{blockchain} as
-a sequence of abstract blocks, each labeled with a slot number, so
-that:
-\begin{enumerate}[label={\textbf{A\arabic*}}., ref={\textbf{A\arabic*}}, resume=axiom]
-  \item\label{axiom:root} 
-  The blockchain begins with a fixed ``genesis'' block, assigned to slot $\slot_0$.
-  
-  \item\label{axiom:labels} 
-  The (slot) labels of the blocks are in strictly increasing order.
-\end{enumerate}
-It is further convenient to introduce the structure of a directed
-graph on our presentation, where each block is treated as a vertex; in
-light of the first two axioms above, a blockchain is a path beginning
-with a special ``genesis'' vertex, labeled $0$, followed by vertices
-with strictly increasing labels that indicate which slot is associated
-with the block. %(See the example below.)
-\begin{center}
-  \begin{tikzpicture}[>=stealth', auto, semithick,
-    flat/.style={circle,draw=black,thick,text=black,font=\small}]
-    \node[flat]    at (0,0)  (base) {$0$};
-    \node[flat]    at (1,0)  (n1) {$2$};
-    \node[flat] at (2,0)  (n2) {$4$};
-    \node[flat] at (3,0)  (n3) {$5$};
-    \node[flat] at (4,0)  (n4) {$7$};
-    \node[flat] at (5,0)  (n5) {$9$};
-    \draw[thick,->] (base) to (n1);
-    \draw[thick,->] (n1) to (n2);
-    \draw[thick,->] (n2) to (n3);
-    \draw[thick,->] (n3) -- (n4);
-    \draw[thick,->] (n4) -- (n5);
-  \end{tikzpicture}
-\end{center}
-The protocols of interest call for honest players to add a
-\emph{single} block %(to a single previous chain in its local state)
-during any slot. In particular:
-% \begin{enumerate}[label={\textbf{A\arabic*}}., resume=axiom]
-% \item If a slot $\slot_t$ was assigned to a single honest player, 
-% then a single block is created---during the entire protocol---with the label $\slot_t$.
-% \end{enumerate}
-\begin{enumerate}[label={\textbf{A\arabic*}}., ref={\textbf{A\arabic*}}, resume=axiom]
-  \item\label{axiom:honest}
-   Let $k \geq 1$ be an integer. 
-  If a slot $\slot_t$ was assigned to $k$ honest players but no adversarial players, 
-  then $k$ blocks are created---during the entire protocol---each having the label $\slot_t$.
-\end{enumerate}
-Recall that blockchains are \emph{immutable} in the sense that any
-block in the chain commits to the entire previous history of the
-chain; this is achieved in practice by including with each block a
-collision-free hash of the previous block. These properties imply that
-% if a specific slot $\slot_t$ was assigned to a unique honest player,
-% then any chain that includes the unique block from $\slot_t$ 
-% if a specific slot $\slot_t$ was assigned to a unique honest player,
-any chain that includes a block issued by an honest player 
-must also include that block's associated prefix in its entirety.
+We also define an intuitive consistency property, 
+called the ``Unique Vertex Property'' (UVP), 
+which succinctly captures the eventual consensus requirement. 
+Looking ahead, our strategy for proving Theorem~\ref{thm:main-mh} 
+would be by showing that ``slots that have the UVP occur frequently in $w$.'' 
+This line of argument is completed in subsequent {\Section}s.
 
-As we analyze the dynamics of blockchain algorithms, it is convenient
-to maintain an entire family of blockchains at once. As a matter of
-bookkeeping, when two blockchains agree on a common prefix, we can
-glue together the associated paths to indicate this, as shown
-below.
-\begin{center}
-  \begin{tikzpicture}[>=stealth', auto, semithick,
-    flat/.style={circle,draw=black,thick,text=black,font=\small}]
-    \node[flat]    at (0,0)  (base) {$0$};
-    \node[flat]    at (1,0)  (n1) {$2$};
-    \node[flat] at (2,0)  (n2) {$4$};
-    \node[flat] at (3,0)  (n3) {$5$};
-    \node[flat] at (4,.5)  (n4a) {$7$};
-    \node[flat] at (5,.5)  (n5a) {$9$};
-    \node[flat] at (4,-.5)  (n4b) {$8$};
-    \node[flat] at (5,-.5)  (n5b) {$9$};
-    \draw[thick,->] (base) to (n1);
-    \draw[thick,->] (n1) to (n2);
-    \draw[thick,->] (n2) to (n3);
-    \draw[thick,->] (n3) to (n4a);
-    \draw[thick,->] (n4a) to (n5a);
-    \draw[thick,->] (n3) to (n4b);
-    \draw[thick,->] (n4b) to (n5b);
-  \end{tikzpicture}
+
+\section{Nakamoto-style PoS blockchain axioms}\label{sec:pos-axioms}
+
+  We begin by studying this algorithm in the simple, synchronous model. 
+  The model adopts a
+  synchronous communication network in the presence of a rushing
+  adversary: in particular,
+  \begin{enumerate}[label={\textbf{A\arabic*}}., ref={\textbf{A\arabic*}}, series=axiom, start = 0]
+    \item\label{axiom:message-delivery} 
+    Any message broadcast by an honest participant at the beginning of a
+    particular slot is received by the adversary first, who may decide
+    strategically and individually for each recipient in the network
+    whether to inject additional messages and in which order all messages
+    are to be delivered prior to the conclusion of the slot. 
+  \end{enumerate}
+  See the comments prior to Section~\ref{sec:model-settlement} for
+  further discussion of this network assumption.  A variant of this
+  adversarial message-ordering is presented in
+  Section~\ref{sec:lcr-model}.  The $\Delta$-synchronous communication
+  model is handled in \Section~\ref{sec:async-multihonest}.
+  % the full version~\cite{MultiHonestFullVersion}.
+
+
+  Given this, it is easy to describe the behavior of the longest-chain
+  rule when carried out by a group of honest participants with the extra
+  guarantee that exactly one is elected as leader in a slot: Assuming
+  that the system is initialized with a common ``genesis block''
+  corresponding to $\slot_0$, the players observe a common, linearly
+  growing blockchain:
+  \begin{center}
+    \begin{tikzpicture}[>=stealth', auto, semithick,
+      flat/.style={circle,draw=black,thick,text=black,font=\small}]
+      \node[flat]    at (0,0)  (base) {$0$};
+      \node[flat]    at (1,0)  (n1) {$1$};
+      \node[flat]    at (2,0)  (n2) {$2$};
+      \node[flat,white]    at (3,0)  (n3) {$\ \ \  $};
+      \node at (3,0) {$\ldots$};
+      \draw[thick,->] (base) to (n1);
+      \draw[thick,->] (n1) to (n2);
+      \draw[thick,->] (n2) to (n3);
+    \end{tikzpicture}
   \end{center}
-  When we glue together many chains to form such a diagram, we call it
-  a ``fork''---the precise definition appears below. Observe that
-  while these two blockchains agree through the vertex (block) labeled
-  5, they contain (distinct) vertices labeled 9; this reflects two
-  distinct blocks associated with slot 9 which, in light of the axiom
-  above, 
-  % must have been produced by an adversarial participant.
-  may be produced by either an adversarial participant assigned to slot 9 or 
-  two honest participants, both assigned to slot 9.
-  
-  Finally, as we assume that messages from honest players are
-  delivered before the next slot begins, we note a direct consequence of the longest
-  chain rule:
-\begin{enumerate}[label={\textbf{A\arabic*}}., ref={\textbf{A\arabic*}}, resume=axiom]
-  \item\label{axiom:honest-depth} 
-  If two honestly generated blocks $B_1$ and $B_2$ are labeled
-  with slots $\slot_1$ and $\slot_2$ for which $\slot_1 < \slot_2$,
-  then the length of the unique blockchain terminating at $B_1$ is
-  strictly less than the length of the unique blockchain terminating at $B_2$.
-\end{enumerate}
-Recall that the honest participant(s) assigned to slot
-$\slot_2$ will be aware of the blockchain terminating at $B_1$ that
-was broadcast by an honest player in slot $\slot_1$ as a result of
-synchronicity; according to the longest-chain rule, 
-$B_2$ must have been placed on a chain that was at least this long. In contrast, not
-all participants are necessarily aware of all blocks generated by
-dishonest players, and indeed dishonest players may often want to
-delay the delivery of an adversarial block to a participant or show
-one block to some participants and show a completely different block
-to others.
+  \noindent
+  Here node $i$ represents the block broadcast by the leader of slot $i$
+  and the arrows represent the direction of increasing time.
+  %(Note that
+  %the requirement of a single leader per slot is important in this
+  %simple picture; it is possible for a network adversary to induce
+  %divergent views between the players by taking advantage of slots where
+  %more than a single honest participant is elected a leader.)
 
-\paragraph{Characteristic strings, forks, and the formal axioms.}
-Note that with the axioms we have discussed above, whether or not a
-particular fork diagram (such as the one just above) corresponds to a valid
+  \paragraph{The blockchain axioms: Informal discussion.}
+  The introduction of adversarial participants or multiple slot leaders
+  complicates the family of possible blockchains that could emerge from
+  this process. To explore this in the context of our protocols, we work
+  with an abstract notion of a blockchain which
+  % (as informally suggested above)
+  ignores all internal structure. We consider a fixed assignment of
+  leaders to time slots, and assume that the blockchain uses a proof
+  mechanism to ensure that any block labeled with slot $\slot_t$ was
+  indeed produced by a leader of slot $\slot_t$; this is guaranteed in
+  practice by appropriate use of a secure digital signature scheme.
+
+  Specifically, we treat a \emph{blockchain} as
+  a sequence of abstract blocks, each labeled with a slot number, so
+  that:
+  \begin{enumerate}[label={\textbf{A\arabic*}}., ref={\textbf{A\arabic*}}, resume=axiom]
+    \item\label{axiom:root} 
+    The blockchain begins with a fixed ``genesis'' block, assigned to slot $\slot_0$.
+    
+    \item\label{axiom:labels} 
+    The (slot) labels of the blocks are in strictly increasing order.
+  \end{enumerate}
+  It is further convenient to introduce the structure of a directed
+  graph on our presentation, where each block is treated as a vertex; in
+  light of the first two axioms above, a blockchain is a path beginning
+  with a special ``genesis'' vertex, labeled $0$, followed by vertices
+  with strictly increasing labels that indicate which slot is associated
+  with the block. %(See the example below.)
+  \begin{center}
+    \begin{tikzpicture}[>=stealth', auto, semithick,
+      flat/.style={circle,draw=black,thick,text=black,font=\small}]
+      \node[flat]    at (0,0)  (base) {$0$};
+      \node[flat]    at (1,0)  (n1) {$2$};
+      \node[flat] at (2,0)  (n2) {$4$};
+      \node[flat] at (3,0)  (n3) {$5$};
+      \node[flat] at (4,0)  (n4) {$7$};
+      \node[flat] at (5,0)  (n5) {$9$};
+      \draw[thick,->] (base) to (n1);
+      \draw[thick,->] (n1) to (n2);
+      \draw[thick,->] (n2) to (n3);
+      \draw[thick,->] (n3) -- (n4);
+      \draw[thick,->] (n4) -- (n5);
+    \end{tikzpicture}
+  \end{center}
+  The protocols of interest call for honest players to add a
+  \emph{single} block %(to a single previous chain in its local state)
+  during any slot. In particular:
+  % \begin{enumerate}[label={\textbf{A\arabic*}}., resume=axiom]
+  % \item If a slot $\slot_t$ was assigned to a single honest player, 
+  % then a single block is created---during the entire protocol---with the label $\slot_t$.
+  % \end{enumerate}
+  \begin{enumerate}[label={\textbf{A\arabic*}}., ref={\textbf{A\arabic*}}, resume=axiom]
+    \item\label{axiom:honest}
+     Let $k \geq 1$ be an integer. 
+    If a slot $\slot_t$ was assigned to $k$ honest players but no adversarial players, 
+    then $k$ blocks are created---during the entire protocol---each having the label $\slot_t$.
+  \end{enumerate}
+  Recall that blockchains are \emph{immutable} in the sense that any
+  block in the chain commits to the entire previous history of the
+  chain; this is achieved in practice by including with each block a
+  collision-free hash of the previous block. These properties imply that
+  % if a specific slot $\slot_t$ was assigned to a unique honest player,
+  % then any chain that includes the unique block from $\slot_t$ 
+  % if a specific slot $\slot_t$ was assigned to a unique honest player,
+  any chain that includes a block issued by an honest player 
+  must also include that block's associated prefix in its entirety.
+
+  As we analyze the dynamics of blockchain algorithms, it is convenient
+  to maintain an entire family of blockchains at once. As a matter of
+  bookkeeping, when two blockchains agree on a common prefix, we can
+  glue together the associated paths to indicate this, as shown
+  in Figure~\ref{fig:glue-blockchains-into-fork}.
+
+  \begin{figure}[!htb]  
+    \begin{center}
+      \tikzsetnextfilename{glue-blockchains}
+      \begin{tikzpicture}[>=stealth', auto, semithick,
+        flat/.style={circle,draw=black,thick,text=black,font=\small}]
+        \node[flat]    at (0,0)  (base) {$0$};
+        \node[flat]    at (1,0)  (n1) {$2$};
+        \node[flat] at (2,0)  (n2) {$4$};
+        \node[flat] at (3,0)  (n3) {$5$};
+        \node[flat] at (4,.5)  (n4a) {$7$};
+        \node[flat] at (5,.5)  (n5a) {$9$};
+        \node[flat] at (4,-.5)  (n4b) {$8$};
+        \node[flat] at (5,-.5)  (n5b) {$9$};
+        \draw[thick,->] (base) to (n1);
+        \draw[thick,->] (n1) to (n2);
+        \draw[thick,->] (n2) to (n3);
+        \draw[thick,->] (n3) to (n4a);
+        \draw[thick,->] (n4a) to (n5a);
+        \draw[thick,->] (n3) to (n4b);
+        \draw[thick,->] (n4b) to (n5b);
+      \end{tikzpicture}
+      \end{center}
+      \caption{A fork obtained by gluing together two blockchains.}
+      \label{fig:glue-blockchains-into-fork}
+  \end{figure}
+    When we glue together many chains to form such a diagram, we call it
+    a ``fork''---the precise definition appears below. Observe that
+    while these two blockchains agree through the vertex (block) labeled
+    5, they contain (distinct) vertices labeled 9; this reflects two
+    distinct blocks associated with slot 9 which, in light of the axiom
+    above, 
+    % must have been produced by an adversarial participant.
+    may be produced by either an adversarial participant assigned to slot 9 or 
+    two honest participants, both assigned to slot 9.
+    
+    Finally, as we assume that messages from honest players are
+    delivered before the next slot begins, we note a direct consequence of the longest
+    chain rule:
+  \begin{enumerate}[label={\textbf{A\arabic*}}., ref={\textbf{A\arabic*}}, resume=axiom]
+    \item\label{axiom:honest-depth} 
+    If two honestly generated blocks $B_1$ and $B_2$ are labeled
+    with slots $\slot_1$ and $\slot_2$ for which $\slot_1 < \slot_2$,
+    then the length of the unique blockchain terminating at $B_1$ is
+    strictly less than the length of the unique blockchain terminating at $B_2$.
+  \end{enumerate}
+  Recall that the honest participant(s) assigned to slot
+  $\slot_2$ will be aware of the blockchain terminating at $B_1$ that
+  was broadcast by an honest player in slot $\slot_1$ as a result of
+  network synchrony; according to the longest-chain rule, 
+  $B_2$ must have been placed on a chain that was at least this long. In contrast, not
+  all participants are necessarily aware of all blocks generated by
+  dishonest players, and indeed dishonest players may often want to
+  delay the delivery of an adversarial block to a participant or show
+  one block to some participants and show a completely different block
+  to others.
+
+
+
+
+\section{Characteristic strings and forks}\label{sec:char-string-mh}
+Note that with the axioms we have discussed in Section~\ref{sec:pos-axioms}, 
+whether or not a
+particular fork diagram (such as the one in Figure~\ref{fig:glue-blockchains-into-fork}) corresponds to a valid
 execution of the protocol depends on how the slots have been awarded to the parties by the
 leader election mechanism. We introduce the notion of a ``characteristic'' string as a convenient
 means of representing information about slot leaders in a given execution.
@@ -193,7 +230,7 @@ means of representing information about slot leaders in a given execution.
 %   \[
 %     w_t =   \begin{cases}
 %     0 & \text{if $\slot_{t}$ was assigned to a single honest participant},\\
-% %    1 & \text{if $\slot_{t}$ was assigned to an adversarial participant},
+% %    1 & \text{if $\slot_{t}$ was assigned to an adversarial participant},{}
 %     1 & \text{otherwise.}
 %   \end{cases}
 % \]
@@ -386,7 +423,7 @@ consistently-labeled subgraph of $\hat{F}$.
     % % which achieves the reach and relative margin of the string $xy$. 
 
 
-\section[Slot Settlement and UVP]{Slot settlement and the Unique Vertex Property}\label{sec:model-settlement}
+\section[Slot Settlement and UVP]{Slot settlement and the Unique Vertex Property (UVP)}\label{sec:model-settlement}
   
   We are now ready to explore the power of an adversary in this
   setting who has corrupted a (perhaps evolving) coalition of the
@@ -560,7 +597,7 @@ consistently-labeled subgraph of $\hat{F}$.
 
   It is important to note that the game bestows the player $\Adversary$ 
   with the power to choose the number of honest vertices in 
-  a multiply honest slot. 
+  a multihonest slot. 
   Note that this setting makes the player strictly more powerful and, 
   importantly, implies that 
   the game is completely determined 

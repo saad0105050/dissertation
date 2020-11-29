@@ -145,7 +145,7 @@ for some slot $s$.
 
   Recall given a characteristic string $w \in \{\h, \H, \A\}^*$, 
   a uniquely honest slot contains the symbol $\h$, 
-  a multiply honest slot contains the symbol $\H$, 
+  a multihonest slot contains the symbol $\H$, 
   and an adversarial slot contains the symbol $\A$.
   We call a slot honest if it contains either an $\h$ or an $\H$; 
   otherwise, we call it an adversarial slot. 
@@ -190,7 +190,7 @@ for some slot $s$.
   %  $\beta = n+1$ if there is no such index.
 
     \paragraph{$\alpha$ must be a uniquely honest slot.}
-    We observe, first of all, that the slot $\alpha$ can neither be adversarial nor multiply honest:
+    We observe, first of all, that the slot $\alpha$ can neither be adversarial nor multihonest:
     otherwise it is easy to construct a fork
     $F^\prime \Fork w$ and a pair of tines in $F^\prime$ that violate~\eqref{eq:tines}. 
     Specifically, construct $F^\prime$ from $F$ by
@@ -329,7 +329,7 @@ for some slot $s$.
     if $\ell(t_1)$ is a uniquely honest slot. 
     Otherwise, let $t$ be a tine 
     with the maximum length among all tines 
-    labeled with the multiply honest slot $h = \ell(t_1) < \ell(t_2)$. 
+    labeled with the multihonest slot $h = \ell(t_1) < \ell(t_2)$. 
     We wish to show that $\length(t_1) = \length(t)$. 
     There are four contingencies to consider; 
     the first three of these lead to contradictions 
