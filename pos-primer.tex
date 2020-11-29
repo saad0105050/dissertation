@@ -1,5 +1,72 @@
 
 
+In this \Section, 
+we establish the vocabulary for properly discussing the present research.
+
+
+\Paragraph{Eventual consensus.}
+In the decentralized consensus protocol, 
+a group of participants exchange messages with each other 
+to agree about a ``common view'' 
+(e.g., about a linear ordering of events)
+without needing to trust anyone. 
+Recall the concept of \emph{eventual consistency} in database systems: 
+in such a database system, 
+the views of the nodes may become inconsistent after a new update is made to one node, 
+but the views become consistent once the change is propagated to all nodes. 
+A similar concept applies to some decentralized consensus applications as well: 
+at round $t$, 
+the nodes can only agree about the ordering of the events from rounds $1, \ldots, t-k$ 
+but may disagree about the events from rounds $t-k+1, \ldots, t$. 
+This consensus paradigm is called \emph{eventual consensus}.
+This can be contrasted with distributed systems that offer ``strong consistency'' 
+or ``instant confirmation:'' 
+here, the protocol progresses to the next round 
+only after all nodes have agreed about their view of the events.
+
+Example of blockchains in the eventual consensus setting 
+is Bitcoin~\cite{Nakamoto2008}, Ouroboros~\cite{Ouroboros}, Praos~\cite{Praos}, and Snow White~\cite{SnowWhite}. 
+In contrast, Algorand~\cite{Algorand} operates on a 
+Byzantine Agreement-based protocol where, 
+once the protocol progresses past a round, 
+everyone agrees about the events up to that round.
+
+The focus of this dissertation is on the eventual consensus model.
+One way to achieve this is via the longest-chain rule.
+
+
+\Paragraph{The longest-chain rule.}
+We study the behavior of the elementary \emph{longest-chain rule}
+algorithm, carried out by a collection of participants. 
+\begin{itemize}
+  \item In each round,
+  each participant collects all valid blockchains from the network; if a
+  participant is a leader in the round, he adds a block to the longest
+  chain and broadcasts the result.
+\end{itemize}
+See below for how leaders are elected.
+Here, ``valid'' indicates that any block appearing in the
+chain was indeed issued by a leader from the associated slot; in the
+PoS setting, this property is guaranteed with digital
+signatures.
+Any active participant who is not a leader at a given slot, 
+is called an ``observer'' at that slot.
+
+It is a remarkable fact that this simple chain-selection rule 
+can lead to eventual consensus in both PoW and PoS blockchains. 
+The rationale behind choosing the longest chain is that 
+it contains more ``effort by the participants'' than any other chains. 
+Since the longest-chain rule was pioneered by \citet{Nakamoto2008} in the PoW setting, 
+any PoS protocol implementing this rule is called the \emph{Nakamoto-style PoS}. 
+Note that there are other chain selection rules: in GHOST~\cite{Ghost},
+the ``heaviest subtree'' is prioritized instead of the longest; 
+in \cite{Tangle}, a new block builds upon multiple chains instead of a single longest chain.
+
+The focus of this dissertation is on Nakamoto-style PoS. 
+These protocols advance in discrete rounds, called ``slots.''
+
+
+
 \Paragraph{Slots and epochs.}
 The execution of the protocol is divided into discrete time periods called \emph{slots}. 
 In practice, slots have to long enough so that 
@@ -23,11 +90,11 @@ The first epoch is bootstrapped with a special block of information,
 called the ``genesis block'' which contains, e.g., a fresh random string to 
 initialize the computations in the first epoch.
 
+Next, let us focus on the participants in a Nakamoto-style PoS protocol.
 
 
-\Paragraph{Players and relative stakes.}
-Let
-$\Players$ be the set of participants 
+\Paragraph{Players and relative stakes in Nakamoto-style PoS.}
+Let $\Players$ be the set of participants 
 where each player $i \in \Players$ is associated with a positive real number 
 $\sigma_i \in [0,1]$, called his \emph{relative stake ratio}, or just \emph{stake} in short. 
 The stake ratios satisfy $\sum_{i \in \Players} \sigma_i = 1$ 
@@ -51,6 +118,9 @@ Such a condition stems from the nature of the security analysis of the protocol,
 in particular, if it uses a biased random walk then the condition $\alpha < 1/2$ denotes the bias of the walk.
 
 
+A critical part of the model is how long it takes for the players to exchange messages. 
+
+
 
 \Paragraph{Synchronous vs. semi-synchronous communication model.}
 In the \emph{synchronous communication setting}, 
@@ -67,14 +137,24 @@ handles the semi-synchronous setting directly,
 other analyses (e.g., \cite{Praos}) handle the easier synchronous setting first, 
 before lifting the results into the semi-synchronous setting 
 by incurring some slack in the security guarantee. 
-In both cases, a \emph{rushing adversary} is assumed: 
+
+
+\Paragraph{The adversary $\Adversary$; Static vs. adaptive adversaries}\label{sec:static-dynamic-adversary}
+We model the network behavior in terms of 
+a \emph{rushing adversary} $\Adversary$: 
 he can reorder the messages, but he must deliver the message before the maximum allowed delay. 
 Plus, he cannot modify or drop the messages.
 
+Besides message delivery, 
+$\Adversary$ is assumed to make the selection 
+on behalf of an honest observer 
+when, in the observer's view, there are multiple longest chains. 
+This is called \emph{longest-chain tie-breaking} or \emph{LCR tie-breaking}. 
+This is the primary way through which $\Adversary$ can hinder eventual consensus among honest players 
+in both Nakamoto-style PoS and PoW.
 
 
-
-\Paragraph{Static vs. adaptive adversaries.}\label{sec:static-dynamic-adversary}
+\Paragraph{Static vs. adaptive adversaries.}
 One can consider two types of adversaries in terms of 
 how fast they can corrupt an honest player. the so-called \emph{static adversary} 
 Suppose that an epoch is $R$ slots long. 
@@ -95,93 +175,19 @@ Informally speaking, they act as a hash function $F$ which, when evaluated at a 
   \item outputs a string $y = F(x)$ which is uniformly random with high probability, and
   \item supplies a proof $\pi$ certifying that $y = F(x)$.
 }
-A precise description is as follows.
-
-\newcommand{\Gen}{\mathsf{gen}}
-\newcommand{\Prove}{\mathsf{prove}}
-\newcommand{\Verify}{\mathsf{verify}}
-% \newcommand{\pk}{\mathsf{pk}}
-% \newcommand{\sk}{\mathsf{sk}}
-\begin{definition}[Verifiable Random Function (VRF)]\label{def:VRF}
-  A family $\mathcal{F}$ 
-  of functions $F : \{0,1\}^\ell \rightarrow \{0,\}^k$ 
-  is a family of VRFs if there exist algorithms 
-  $(\Gen, \Prove, \Verify)$ 
-  so that the following holds: 
-  $\Gen(1^k)$ outputs a pair of keys $(\pk, \sk)$; 
-  $\Prove_\sk(x)$ outputs a pair $(F_\sk(x), \pi_\sk(x))$ 
-  where 
-  $F_\sk \in \mathcal{F}$, $F_\sk(x)$ is the function value, and 
-  $\pi_\sk(x)$ is the proof of correctness; and 
-  $\Verify_\pk(x,y,\pi_\sk(x))$ efficiently verifies 
-  that $y = F_\sk(x)$ using the proof $\pi_\sk(x)$, 
-  outputting 1 if $y$ is valid and 0 otherwise. 
-  Additionally, we require the following properties:
-
-  \begin{enumerate}
-    \item \emph{Uniqueness:} 
-    No values $(\pk, x, y, y', \pi, \pi')$  can satisfy both 
-    $\Verify_\pk(x,y,\pi) = 1$ and $\Verify_\pk(x,y',\pi') = 1$ 
-    unless $y = y'$.
-
-    \item \emph{Provability:} 
-    If $(y, \pi) = \Prove_\sk(x)$ then $\Verify_\pk(x,y, \pi) = 1$.
-
-    \item \emph{Pseudorandomness:} 
-    To all probabilistic polynomial-time (PPT) algorithm 
-    which runs $\Poly(k)$ steps when its first input is $1^k$ 
-    and does not query the $\Prove$ oracle on $x$, 
-    the distribution of $F_\sk(x)$ appears uniform in $\{0,1\}^k$, 
-    except with a probability negligible in $k$.
-  \end{enumerate}
-
-\end{definition}
+For completeness, we include a definition of VRFs in
+Definition~\ref{def:VRF}.
 
 
 
 
-\section{Lottery-based leader election schemes}\label{sec:leader-election-public-private}
-Let $\alpha \in (0,1)$ and consider the players $\Players = \Players(\alpha)$
+\Paragraph{Leader election outcomes; the probabilities $p_\h, p_\H,$ and $p_\A$.}\label{sec:leader-election-probs}
+Leader election~\cite{RussellZuckerman} is an important problem in distributed computing.
 In every slot, 
-one or more participants are elected as a ``leader'' who can add block to a chain. 
-(The claim ``player $u$ won the leader election for slot $i$ at epoch $e$'' 
-can be proved using digital signatures and VRFs (Definition~\ref{def:VRF}.)
-Let $C_i$ be the set of leaders for slot $i$. 
-We consider two types of leader election schemes for an epoch: 
-% \begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=3em]
-\begin{description}
-    \item[\textbf{$\PublicLeaderElection(\alpha)$: Publicly elect a single leader per slot.}] \label{lottery:public}
-    At the onset of an epoch, 
-    all players use a common random string to 
-    publicly sample, 
-    independently for each round $i \in [\ell + n]$, 
-    a single player $\ell_i \in \Players$ and  
-    set $C_i = \{\ell_i\}$. 
-    For all players $u \in \Players$, 
-    the probability that $u = \ell_i$ is $\sigma_u$. 
-    Thus, the leader schedule for an epoch 
-    is public knowledge before an epoch commences. 
-
-    \item[\textbf{$\PrivateLeaderElection(\alpha)$: Privately elect zero or more leaders per slot.}] \label{lottery:private}
-    Independently for each round $i \in [\ell + n]$, 
-    player $u \in \Players$ 
-    privately and independently 
-    evaluates a Boolean random variable $D$
-    which has expectation $\sigma_u$; 
-    if $D = 1$, $u$ 
-    inserts himself into the set $C_i$ 
-    and announces this fact during slot $i$. 
-\end{description}
-\noindent
-Ouroboros uses a public leader election 
-at the outset of an epoch 
-and, therefore, it is secure only against a static adversary. 
-SnowWhtie and Praos (and Bitcoin as well) uses a private leader election 
-and therefore, must prove security against an adaptive adversary. 
-
-
-\Paragraph{The idealized leader election outcomes.}\label{sec:leader-election-probs}
-Based on the outcome of the leader election, 
+a number of participants are elected as \emph{leaders} who can add block to a chain. 
+The claim ``player $u$ won the leader election for slot $i$ at epoch $e$'' 
+can be proved using digital signatures and VRFs (Definition~\ref{def:VRF}).
+Based on the outcome of the leader election in a slot, 
 we can annotate each slot using three qualitative tags: 
 \begin{itemize}
 \item \emph{uniquely honest}, having a single honest leader;
@@ -264,27 +270,6 @@ Part~\ref{part:praos} and Part~\ref{part:xorgames}.
 
 
 
-\Paragraph{Nakamoto-style eventual consensus; the longest-chain rule.}
-We study the behavior of the elementary \emph{longest-chain rule}
-algorithm, carried out by a collection of participants. 
-\begin{itemize}
-  \item In each round,
-  each participant collects all valid blockchains from the network; if a
-  participant is a leader in the round, he adds a block to the longest
-  chain and broadcasts the result.
-\end{itemize}
-Here, ``valid'' indicates that any block appearing in the
-chain was indeed issued by a leader from the associated slot; in the
-PoS setting, this property is guaranteed with digital
-signatures.
-Any active participant who is not a leader at a given slot, 
-is called an ``observer'' at that slot.
-
-Note that the above rule can be applied to both PoW and PoS blockchains. 
-Since the longest-chain rule was pioneered by \citet{Nakamoto} in the PoW setting, 
-any PoS protocol implementing this rule is called the \emph{Nakamoto-style PoS}.
-It is a remarkable fact that this simple chain-selection rule 
-can lead to eventual consensus, 
 
 
 
@@ -317,4 +302,86 @@ These axioms are made formal in Section~\ref{sec:pos-axioms}.
 
 
 
+
+\Paragraph{A (more) precise definition of VRFs.}
+Below, we present a definition of VRFs that is good enough for our exposition. 
+For a more complete definition, see~\cite{VRF}.
+
+\newcommand{\Gen}{\mathsf{gen}}
+\newcommand{\Prove}{\mathsf{prove}}
+\newcommand{\Verify}{\mathsf{verify}}
+% \newcommand{\pk}{\mathsf{pk}}
+% \newcommand{\sk}{\mathsf{sk}}
+\begin{definition}[Verifiable Random Function (VRF)]\label{def:VRF}
+  A family $\mathcal{F}$ 
+  of functions $F : \{0,1\}^\ell \rightarrow \{0,\}^k$ 
+  is a family of VRFs if there exist algorithms 
+  $(\Gen, \Prove, \Verify)$ 
+  so that the following holds: 
+  $\Gen(1^k)$ outputs a pair of keys $(\pk, \sk)$; 
+  $\Prove_\sk(x)$ outputs a pair $(F_\sk(x), \pi_\sk(x))$ 
+  where 
+  $F_\sk \in \mathcal{F}$, $F_\sk(x)$ is the function value, and 
+  $\pi_\sk(x)$ is the proof of correctness; and 
+  $\Verify_\pk(x,y,\pi_\sk(x))$ efficiently verifies 
+  that $y = F_\sk(x)$ using the proof $\pi_\sk(x)$, 
+  outputting 1 if $y$ is valid and 0 otherwise. 
+  Additionally, we require the following properties:
+
+  \begin{enumerate}
+    \item \emph{Uniqueness:} 
+    No values $(\pk, x, y, y', \pi, \pi')$  can satisfy both 
+    $\Verify_\pk(x,y,\pi) = 1$ and $\Verify_\pk(x,y',\pi') = 1$ 
+    unless $y = y'$.
+
+    \item \emph{Provability:} 
+    If $(y, \pi) = \Prove_\sk(x)$ then $\Verify_\pk(x,y, \pi) = 1$.
+
+    \item \emph{Pseudorandomness:} 
+    To all probabilistic polynomial-time (PPT) algorithm 
+    which runs $\Poly(k)$ steps when its first input is $1^k$ 
+    and does not query the $\Prove$ oracle on $x$, 
+    the distribution of $F_\sk(x)$ appears uniform in $\{0,1\}^k$, 
+    except with a probability negligible in $k$.
+  \end{enumerate}
+
+\end{definition}
+
+
+
+
+\section{Lottery-based leader election schemes}\label{sec:leader-election-public-private}
+Let $\alpha \in (0,1)$ and consider the players $\Players = \Players(\alpha)$
+Let $C_i$ be the set of leaders for slot $i$. 
+We consider two types of leader election schemes for an epoch: 
+% \begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=3em]
+\begin{description}
+    \item[\textbf{$\PublicLeaderElection(\alpha)$: Publicly elect a single leader per slot.}] \label{lottery:public}
+    At the onset of an epoch, 
+    all players use a common random string to 
+    publicly sample, 
+    independently for each round $i \in [\ell + n]$, 
+    a single player $\ell_i \in \Players$ and  
+    set $C_i = \{\ell_i\}$. 
+    For all players $u \in \Players$, 
+    the probability that $u = \ell_i$ is $\sigma_u$. 
+    Thus, the leader schedule for an epoch 
+    is public knowledge before an epoch commences. 
+
+    \item[\textbf{$\PrivateLeaderElection(\alpha)$: Privately elect zero or more leaders per slot.}] \label{lottery:private}
+    Independently for each round $i \in [\ell + n]$, 
+    player $u \in \Players$ 
+    privately and independently 
+    evaluates a Boolean random variable $D$
+    which has expectation $\sigma_u$; 
+    if $D = 1$, $u$ 
+    inserts himself into the set $C_i$ 
+    and announces this fact during slot $i$. 
+\end{description}
+\noindent
+Ouroboros uses a public leader election 
+at the outset of an epoch 
+and, therefore, it is secure only against a static adversary. 
+SnowWhtie and Praos (and Bitcoin as well) uses a private leader election 
+and therefore, must prove security against an adaptive adversary. 
 
