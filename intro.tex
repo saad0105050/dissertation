@@ -94,7 +94,7 @@ Below, we introduce some important related concepts.
 
 
 
-\Paragraph{Immutable ledgers and the leader election lottery.}
+\Paragraph{Immutable ledgers.}
 The term \emph{blockchains} refers to a family of protocols and algorithms 
 in distributed computing 
 that can be used to implement an ``immutable ledger'' 
@@ -119,7 +119,7 @@ the record persistence happens over time:
 as time goes by and more and more records get written in the ledger, 
 the earlier records become less and less likely to be erased. 
 
-
+\Paragraph{The leader election lottery.}
 Since blockchain algorithms make it unnecessary 
 for the participants to trust one another, 
 it relies heavily on how one can prove any claims. 
@@ -133,16 +133,35 @@ whether he has this authority to write a record at any;
 if he wins, he becomes a \emph{leader} and he writes in the ledger. 
 
 
+Depending on whether a dishonest leader has been elected, 
+we can qualitatively describe a round as either honest or dishonest. 
+Thus, we can speak of ``honest rounds'' and ``dishonest rounds'' 
+where, in an honest round, the leaders adhere to the protocol but 
+in a dishonest round, the leaders may arbitrarily deviate from the protocol. 
+Furthermore, an honest round can be \emph{uniquely honest} if it has a single leader, 
+or \emph{multihonest} if it features multiple leaders.
+
+
 \Paragraph{Proof-of-Work vs. Proof-of-Stake lotteries.}
 In blockchains in the \emph{Proof-of-Work} (PoW) paradigm, 
-the lottery is computation-intensive and, 
-therefore, a large PoW network (such as Bitcoin) consumes a gargantuan amount of energy.
+the lottery is computation-intensive: 
+the winning probability is proportional to the computational power of the user. 
+It not surprising, therefore, that a large PoW network (such as Bitcoin) 
+consumes a gargantuan amount of energy.
+
 In contrast, the \emph{Proof-of-Stake} (PoS) is a paradigm where 
 the lottery does not incur the steep cost of heavy computation. 
+Instead, the winning probability is proportional to the \emph{relative stake} of the user; 
+in PoS, each user is assigned a number, called his ``stake,'' 
+which acts as proxy of how much he has invested in the system. 
+An important parameter in PoS security is the relative stake held by the dishonest players; 
+we denote this adversarial relative stake by $\alpha$.
+
 If PoS blockchains can provide the same (or similar) level of 
 functionality, security, performance, and scale as the PoW counterparts, 
 PoS could be a viable alternative to PoW blockchains 
 and may emerge as the right technology for an energy-efficient future.
+
 % But there is a difficulty: 
 % in the PoW model, 
 % a lottery winner can write at most one record 
@@ -169,7 +188,8 @@ and honest players may experience network errors.
 If two honest players disagree about a record that was 
 written more than $k$ rounds in the past;
 this is called a \emph{$k$-consistency violation}. 
-This $k$ is called the \emph{security parameter} of the protocol.
+This $k$ is called the \emph{settlement delay parameter} of the protocol
+and it acts as the security parameter as well.
 Since consistency is central to an eventual consensus protocol, 
 any improvements in regards to the consistency implies 
 improvements in many other areas of the protocol as well.
@@ -257,89 +277,84 @@ with the bounds in the PoW setting.
 
 
 \section{Research focus}\label{sec:intro-focus}
-This dissertation is focused on the consistency problem and the grinding problem in 
-eventual consensus PoS blockchains. 
+We focus on the following aspects of the consistency and grinding problems in 
+Nakamoto-style PoS. 
 
-\Paragraph{Consistency error bounds.}
-In the previous section, 
-we have pointed out how important a consistency bound is. 
-Consider the $\kCP$ property.
-The first ever PoS consistency bounds, 
-put forth by~\citet{Ouroboros} and~\citet{SnowWhite}, 
-had the form $e^{-\Omega(\sqrt{k})}$. \footnote{
-  $\Omega(g(k))$ is the class of functions $f(k)$ 
-  which, loosely speaking, 
-  ``stay above $g(k)$'' for large inputs $k$.
-  Similarly, $O(g(k))$ is the class of functions $f(k)$ 
-  which, loosely speaking, 
-  ``stay below $g(k)$'' for large inputs $k$.
-}
-However, the $\kCP$ error bound in the PoW setting is $e^{-\Omega(k)}$. 
-Specifically, fix a positive integer $T$ and let $\varepsilon = e^{-\Omega(T)}$ 
-be the desired settlement error. 
-Then, settlement delay in the PoW would be $O(T)$ while 
-the same in the PoS would be $O(T^2$. 
-This quadratic gap in the settlement delays 
-was deeply problematic since, 
-at that time, 
-the community did not know whether this gap 
-was an inherent drawback of the PoS paradigm 
+\Paragraph{Consistency error bounds in PoS vs. PoW.}
+% In the previous section, 
+% we have pointed out how important a consistency bound is. 
+% Consider the $\kCP$ property.
+% The first ever PoS consistency bounds, 
+% put forth by~\citet{Ouroboros} and~\citet{SnowWhite}, 
+% had the form $e^{-\Omega(\sqrt{k})}$. \footnote{
+%   $\Omega(g(k))$ is the class of functions $f(k)$ 
+%   which, loosely speaking, 
+%   ``stay above $g(k)$'' for large inputs $k$.
+%   Similarly, $O(g(k))$ is the class of functions $f(k)$ 
+%   which, loosely speaking, 
+%   ``stay below $g(k)$'' for large inputs $k$.
+% }
+% However, the $\kCP$ error bound in the PoW setting is $e^{-\Omega(k)}$. 
+Suppose that we are willing to tolerate a fixed amount of consistency error. 
+Suppose, in addition, that the corresponding settlement delay Nakamoto-style PoW is $k$.
+The state-of-the-art bounds for the Nakamoto-style PoS, however, 
+suggests that the settlement delay be $k^2$. 
+It was not sure whether this quadratic gap (i.e., $k^2$ vs. $k$)
+is due to an inherent drawback of the PoS paradigm, 
 or whether it was an artifact of the analysis. 
-Whatever it may be, 
-it was an urgent question to close this gap. 
-
-Furthermore, from a practitioner's point of view, 
-having only an asymptotic bound on the consistency error is a good start, 
-but it is not good enough; 
-we need to be able to exactly compute the consistency errors 
-(under various parameter regimes) 
-so that we can have the vantage point of setting 
-various system parameters. 
-It is also important to communicate these values 
-to the user community and investors 
-so that they can make informed decisions.
+Be what it may, 
+it was an urgent open question to close this gap. 
 
 
-\Paragraph{Slots with multiple honest leaders.}
-Recall that the leader election mechanism is a 
-critical component of any blockchain protocol. 
-In particular, 
-the security guarantees critically rely on the 
-statistical properties of the elected leaders 
-and, more precisely, 
-whether a slot is ``dishonest'' or ``honest'' 
-and, if honest, whether it has a single leader (\emph{uniquely honest}) 
-or multiple leaders (\emph{multihonest}).
-The existing analyses for PoS blockchains, 
-as it turns out, 
-put undue penalties on the event that a honest slot has multiple leaders. 
-That is, although intuition tells us that this should be a ``good event'' for the analysis, 
-in practice, it is treated as either an adversarial event~\cite{Ouroboros,Praos,Genesis} 
-or, at best, a neutral event~\cite{SnowWhite,Sleepy}. 
-Not only is this conservative modeling unintuitive, 
-but it also hamstrings the consistency error bounds 
-by effectively relinquishing honest stake. 
-As you can imagine, this conservative approach leads to weak consistency bounds 
-and, on top, it precludes a broad swath of leader election mechanisms 
-where a multihonest slot is a frequent outcome.
+\Paragraph{Leader election lottery.}
+The security guarantees critically rely on the 
+statistical properties of the leader election process. 
+The existing PoS security analyses put a penalty on multihonest slots although, intuitively, 
+these should be treated as good events for the analysis. 
+In reality, a multihonest slot is treated as a neutral event~\cite{SnowWhite,Sleepy} 
+or worse, as an adversarial event~\cite{Ouroboros,Praos,Genesis}. 
+Such a conservative modeling approach weakens the consistency error bounds 
+by discounting the contribution from the honest leaders. 
+
+Multihonest slots are a frequent outcome 
+in a broad swath of practical leader election schemes as well. 
+The above modeling approach precludes the PoS blockchains 
+from using this important class of leader election schemes. 
+In particular, under the existing analyses, 
+we cannot use a leader election scheme 
+where a uniquely honest slot is less likely than an adversarial slot.
 
 
-\Paragraph{Grinding in Praos and SnowWhite.}
-Recall that important PoS protocols, including deployed ones such as Praos, 
-are susceptible to a grinding attack. 
-Although this risk is mitigated in respective security analyses, 
-this is done in a push-under-the-rug way. 
-Specifically, both Praos and SnowWhite's consistency error bounds look like 
-$\gamma e^{-\Omega(k)}$ where 
-$\gamma$ is a stand-in for the maximum number of resets 
-made to the beacon value in any epoch
-(i.e., the grinding power). 
-Note that when $\gamma$ is large, 
-it can seriously weaken the consistency error bound. 
-As you can imagine, this will have serious repercussions in all parts of the protocol design. 
-However, there are no analysis of the grinding power in the literature. 
-Thus, although we know that the consistency error bound is intertwined with 
-the grinding power, we do not know how much.
+\Paragraph{Grinding problem in existing protocols.}
+Many PoS protocols, such as~\cite{Ouroboros,Etherium}, 
+avoid the grinding problem 
+by employing computation- and time-intensive 
+beacon protocols that may involve specialized hardware as well. 
+Some recent PoS protocols~\cite{Praos,SnowWhite}  
+have instead opted for simple beacon protocols, 
+conceding some grinding power to the adversary.
+These security guarantees assume that this grinding power be ``bounded'' 
+without putting forth an analysis of the grinding power.
+
+There are two problems with this approach.
+First, since there is no analysis of the grinding power in the literature, 
+we do not understand how it grows. 
+A large grinding power can seriously weaken the consistency error bound and 
+send repercussions in every part of the protocol design. 
+Second, 
+assuming a bound on the grinding power is similar, in spirit, to 
+assuming a bound on the hashing power of the adversary. 
+However, putting this PoW-style hashing-power assumption 
+in the middle of the PoS security guarantee 
+is deeply problematic.
+
+Finally, the literature does not contain an analysis of 
+any other simple beacon for Nakamoto-style PoS. 
+It is important to fill this gap 
+since a simple, more secure beacon 
+would readily improve the security guarantees of existing PoS protocols.
+
+
 
 
 % \Paragraph{Simple, secure beacons.} 
@@ -369,8 +384,6 @@ The observations above can be congealed into the following objectives:
     \item Derive tight asymptotic consistency bounds for PoS blockchains, 
     treating multihonest slots as good events.
 
-    \item Compute explicit settlement error probabilities.
-
     \setcounter{ConsistencyObjectives}{\value{enumi}}
   \end{enumerate}
 
@@ -378,12 +391,10 @@ The observations above can be congealed into the following objectives:
   \begin{enumerate}
     \setcounter{enumi}{\value{ConsistencyObjectives}}
 
-    \item Quantify the grinding power in Praos and SnowWhite. 
-    Specifically, characterize how $\gamma$ grows 
-    as a function of the consistency parameter $k$ and the adversarial stake $\alpha$
+    \item Quantify the grinding power in the beacon in Praos and SnowWhite 
+    as a function of the consistency parameter $k$ and the adversarial stake $\alpha$.
     
-    \item Propose and analyze new, simple, more secure beacons 
-    whose grinding power grows at a much slower rate than that in Praos.
+    \item Propose and analyze new, simple, secure beacons.
   \end{enumerate}
 \end{description}
 
