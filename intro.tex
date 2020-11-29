@@ -10,6 +10,9 @@ If all honest scribes attempt to write a given data into the ledger then, within
 it indeed gets written; this is called \emph{liveness}. 
 If something is ever written in the ledger, it will remain there (i.e., become ``settled'') with overwhelming probability; 
 this is \emph{persistence}. 
+In blockchains, this ledger is an ordered list of records; 
+this is why it is called a ``chain'' and a new record is called a ``block.''
+
 There are many important theoretical and practical applications of blockchains 
 in decentralized computing, including cryptocurrencies such as Bitcoin.
 Like any distributed computing paradigm, 
@@ -22,16 +25,17 @@ security (e.g., how likely is an error?).
 Since blockchain algorithms make it unnecessary 
 for the participants to trust one another, 
 it relies heavily on how one can prove any claims. 
-For example, if I attempt to write a record on the ledger, 
-I should supply a proof that I have the privilege to write. 
+For example, if a user attempt to write a record on the ledger, 
+he should supply a proof that he has the privilege to write. 
 These privileges are, by design, a rare commodity. 
-In fact, the participants continually perform a lottery to determine 
-who has this authority. 
+In fact, 
+at every round, 
+every participant performs a lottery to determine 
+whether he has this authority to write a record at any; 
+if he wins, he becomes a \emph{leader} and he writes in the ledger. 
 In blockchains in the \emph{Proof-of-Work} (PoW) paradigm, 
-the participants need to 
-perform heavy computation to participate in the lottery. 
-Thus, a PoW network, as a whole, consumes 
-a gargantuan amount of energy.
+the lottery is computation-intensive and, 
+therefore, a large PoW network (such as Bitcoin) consumes a gargantuan amount of energy.
 
 In contrast, the \emph{Proof-of-Stake} (PoS) is a paradigm where 
 the lottery does not incur the steep cost of heavy computation. 
@@ -53,16 +57,95 @@ In the \emph{eventual consensus} model,
 the record persistence happens over time: 
 as time goes by and more and more records get written in the ledger, 
 the earlier records become less and less likely to be erased. 
-This comes in contrast to the ``exact consensus'' model 
-where a record achieves persistence as soon as it is written. 
+% This comes in contrast to the ``exact consensus'' model 
+% where a record achieves persistence as soon as it is written. 
 
-In this dissertation, 
-we delve deep into the trade-off between the performance and the security of PoS blockchains 
-in the eventual consensus model. 
-We use ``PoS'' to mean the eventual consensus setting 
-unless otherwise specified.
-Examples of these protocols include Ouroboros, Praos, Genesis, SnowWhite, 
-and Sleepy Consensus.
+This dissertation focuses on \emph{Nakamoto-style PoS}; 
+these are eventual consensus PoS blockchains where the participants 
+always adopt a maximum-length blockchain from their local views. 
+Examples of Nakamoto-style PoS are Ouroboros~\cite{Ouroboros}, Praos~\cite{Praos}, 
+Genesis~\cite{Genesis}, SnowWhite~\cite{SnowWhite}, 
+and Sleepy Consensus~\cite{Sleepy}.
+However, the honest players face some obstacles toward reaching consensus: 
+dishonest players are \emph{Byzantine}, i.e., 
+they can arbitrarily deviate from the protocol, 
+often acting in concert, 
+showing multiple longest chains to the honest players;
+and honest players may experience network errors. 
+If two honest players disagree about a record that was 
+written more than $k$ rounds in the past;
+this is called a \emph{$k$-consistency violation}. 
+This $k$ is called the \emph{security parameter} of the protocol.
+Since consistency is central to an eventual consensus protocol, 
+any improvements in regards to the consistency implies 
+improvements in many other areas of the protocol as well.
+
+
+The lottery in the leader election implies that 
+whether a leader is honest (or dishonest) is a probabilistic event, 
+and the sequence of leaders during protocol execution 
+influences the probability of a $k$-consistency violation.
+The heart of a PoS security analysis is to argue that $k$-consistency violations are rare; 
+concretely, this means the bad probability should decrease as we increase $k$. 
+
+Conducting the leader election in an unbiased and verifiable way 
+requires that the players have access to a common random string. 
+However, as more and more elections are made, 
+this string becomes less and less random, possibly introducing bias in the election. 
+To mitigate this behavior, 
+the execution is punctuated into \emph{epochs} of length $O(k)$; 
+each epoch constitutes a predetermined number of rounds 
+and, during an epoch, 
+the players take part in a \emph{collective coin-flipping protocol} 
+to compute the random string for the next epoch; 
+this string is called the \emph{beacon output} for this epoch.
+However, adversarial leaders can control (to some extent) 
+which blockchain prefix becomes settled within an epoch and, 
+if the beacon output depends on this prefix,  
+they exert some control over the beacon output as well. 
+As this output is used in the leader elections in the next epoch, 
+a bias in the beacon output inflates the chance of a consistency violation. 
+This is the so-called \emph{grinding attack} on the blockchain; 
+the amount of inflation in the error probability is called the \emph{grinding power}.
+
+
+Although it seems that we should always take a large $k$ to 
+reduce the likelihood of a $k$-consistency error, but 
+we cannot do so unilaterally. 
+First, increasing $k$ implies that the records 
+would take longer to be declared ``settled'' 
+and hence, it may not always be practical.
+Second, increasing $k$ 
+increases the epoch length, 
+allocating more time for the coin-flipping protocol and 
+thereby increasing the strength of a grinding attack. 
+
+Therefore, 
+if we want to make the Nakamoto-style PoS blockchains to be 
+both secure and fast, 
+we need a tight bound on the $k$-consistency error probability
+as well as the grinding power. 
+Moreover, 
+for the Nakamoto-style PoS technology  
+to become a viable alternative to the PoW technology, 
+we want these security bounds to be comparable (at least asymptotically) 
+with the bounds in the PoW setting.
+
+
+% \Paragraph{The longest-chain rule.}
+% We study the behavior of the elementary \emph{longest-chain rule}
+% algorithm, carried out by a collection of participants. 
+% \begin{itemize}
+%   \item In each round,
+%   each participant collects all valid blockchains from the network; if a
+%   participant is a leader in the round, he adds a block to the longest
+%   chain and broadcasts the result.
+% \end{itemize}
+
+
+The aim of this dissertation 
+is to develop new understanding 
+into the security of Nakamoto-style PoS blockchains.
 
 
 % A prevalent algorithm for eventual consensus blockchains 
@@ -89,6 +172,7 @@ and Sleepy Consensus.
   \item Ouroboros MPC, Praos beacon
 }
 
+A central goal of the blockchain technology is to 
 
 
 
