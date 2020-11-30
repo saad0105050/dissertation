@@ -86,7 +86,7 @@ This line of argument is completed in subsequent {\Section}s.
   %divergent views between the players by taking advantage of slots where
   %more than a single honest participant is elected a leader.)
 
-  \paragraph{The blockchain axioms: Informal discussion.}
+  \Paragraph{The blockchain axioms: Informal discussion.}
   The introduction of adversarial participants or multiple slot leaders
   complicates the family of possible blockchains that could emerge from
   this process. To explore this in the context of our protocols, we work
@@ -157,9 +157,10 @@ This line of argument is completed in subsequent {\Section}s.
   to maintain an entire family of blockchains at once. As a matter of
   bookkeeping, when two blockchains agree on a common prefix, we can
   glue together the associated paths to indicate this, as shown
-  in Figure~\ref{fig:glue-blockchains-into-fork}.
+  % in Figure~\ref{fig:glue-blockchains-into-fork}.
+  below.
 
-  \begin{figure}[!htb]  
+  % \begin{figure}[!htb]  
     \begin{center}
       \tikzsetnextfilename{glue-blockchains}
       \begin{tikzpicture}[>=stealth', auto, semithick,
@@ -181,9 +182,9 @@ This line of argument is completed in subsequent {\Section}s.
         \draw[thick,->] (n4b) to (n5b);
       \end{tikzpicture}
       \end{center}
-      \caption{A fork obtained by gluing together two blockchains.}
-      \label{fig:glue-blockchains-into-fork}
-  \end{figure}
+  %     \caption{A fork obtained by gluing together two blockchains.}
+  %     \label{fig:glue-blockchains-into-fork}
+  % \end{figure}
     When we glue together many chains to form such a diagram, we call it
     a ``fork''---the precise definition appears below. Observe that
     while these two blockchains agree through the vertex (block) labeled
@@ -221,7 +222,10 @@ This line of argument is completed in subsequent {\Section}s.
 \section{Characteristic strings and forks}\label{sec:char-string-mh}
 Note that with the axioms we have discussed in Section~\ref{sec:pos-axioms}, 
 whether or not a
-particular fork diagram (such as the one in Figure~\ref{fig:glue-blockchains-into-fork}) corresponds to a valid
+particular fork diagram (such as the one 
+% in Figure~\ref{fig:glue-blockchains-into-fork})
+above) 
+corresponds to a valid
 execution of the protocol depends on how the slots have been awarded to the parties by the
 leader election mechanism. We introduce the notion of a ``characteristic'' string as a convenient
 means of representing information about slot leaders in a given execution.
@@ -364,7 +368,7 @@ consistently-labeled subgraph of $\hat{F}$.
   the tine $t$ terminates at vertex $v$. The length of a tine $t$ is
   denoted by $\length(t)$.
 
- \paragraph{Viable tines.}
+ \Paragraph{Viable tines.}
  The longest-chain rule dictates that honest players build on chains
  that are at least as long as all previously broadcast honest
  chains. It is convenient to distinguish such tines in the analysis:
@@ -626,7 +630,7 @@ consistently-labeled subgraph of $\hat{F}$.
     the probability that $\Adversary$ wins $G$.
   \end{definition}
 
-  \section{Main theorem for PoS consistency}
+  \section{Main theorem for PoS consistency in the synchronous setting}\label{sec:main-thm-multihonest}
   Note that in typical PoS settings the distribution $\Distribution$
   is determined by the combined stake held by the adversarial players,
   the leader election mechanism, and the dynamics of the protocol. The
@@ -725,7 +729,7 @@ consistently-labeled subgraph of $\hat{F}$.
   \Section~\ref{sec:exact-prob-multihonest}.
 
 
-  \paragraph{Analysis in the $\Delta$-synchronous setting.} The security
+  \Paragraph{Analysis in the $\Delta$-synchronous setting.} The security
    game above most naturally models a blockchain protocol over a
    synchronous network with immediate delivery (because each ``honest''
    play of the challenger always builds on a fork that contains the fork
@@ -737,7 +741,7 @@ consistently-labeled subgraph of $\hat{F}$.
    These details appear in \Section~\ref{sec:async-multihonest}.
 
 
-  \paragraph{Public leader schedules.} One attractive feature of this
+  \Paragraph{Public leader schedules.} One attractive feature of this
   model is that it gives the adversary full information about the future
   schedule of leaders. The analysis of some protocols indeed demand this
   (e.g., Ouroboros, Snow White). Other protocols---especially those
@@ -746,7 +750,7 @@ consistently-labeled subgraph of $\hat{F}$.
   course, as our analysis is in the more difficult ``full information''
   model, it applies to all of these systems.
 
-  \paragraph{Bootstrapping multi-phase algorithms; stake shift.} We remark that
+  \Paragraph{Bootstrapping multi-phase algorithms; stake shift.} We remark that
   several existing proof-of-stake blockchain protocols proceed in
   phases, each of which is obligated to generate the randomness (for
   leader election, say) for the next phase based on the current stake

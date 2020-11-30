@@ -45,7 +45,6 @@
 
 %\usepackage{<add your packages>}
 \usepackage[titletoc]{appendix}
-\usepackage{hyperref}
 \usepackage[center,small,sc]{caption,subcaption}
 \usepackage{array}
 \usepackage{subfiles}
@@ -64,6 +63,13 @@
 \usepackage{color}
 \usepackage{framed}
 \usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{% No ugly red box around the link
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
 \newcommand{\quotebox}[1]{\begin{center}%
     \vspace{1em}%
     \fcolorbox{white}{blue!15!gray!15}{%
@@ -77,6 +83,16 @@
     \end{center}%
     \vspace{1em}%
 }%
+\usepackage{epigraph}
+\newcommand{\Epigraph}[2]{
+    \epigraphhead[70]{\epigraph{#1}{\textit{#2}}}
+}
+% \newcommand{\EpigraphBig}[2]{
+%     \dropchapter{2in}
+%     \chapter{#}
+%     \epigraphhead{long epigraph}
+%     \undodrop
+% }
 
 
 \usepackage[numbers,sectionbib]{natbib}

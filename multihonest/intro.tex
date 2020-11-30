@@ -282,51 +282,65 @@ In contrast, the Catalan slot-centric characterization of the UVP
 gives us only an asymptotic bound on this probability. 
 It can be concluded that the fork-framework, after all, 
 is expressive enough to capture consistency violations 
-in the multi-leader setting.
+in the multihonest setting.
 %No existing
 %analysis can handle this parameter regime.
 
 
-\paragraph{Outline.}
-{\color{red} Need update}
+\section{Outline of the exposition}
+We specify our synchronous model in \Section~\ref{sec:model-multihonest} and 
+focus on a
+two specific consistency properties: ``$k$-settlement'' and the ``Unique Vertex Property.''
+Section~\ref{sec:main-thm-multihonest} 
+contains our main theorem; the proof is deferred to
+\Section~\ref{sec:bounds-main-proofs-multihonest}. 
 
-We specify our model in \Section~\ref{sec:model-multihonest} and focus on a
-specific consistency property called ``$k$-settlement.''  This section
-also contains our main theorems; the proofs are deferred to
-\Section~\ref{sec:bounds-main-proofs-multihonest}.  In
-Section~\ref{sec:definitions}, we describe amplifications
-% further necessary elements of
-to the fork framework of~\cite{LinearConsistency} in order to
-%so that we can
-explore the relationship between Catalan slots and the UVP. 
+In \Section~\ref{sec:catalan}, we define Catalan slots and 
+show, in Section~\ref{sec:catalan-equiv-uvp}, 
+that a uniquely honest Catalan slot is equivalent to the UVP. 
+
+In \Section~\ref{sec:fork-framework}, 
+we introduce the notion of relative margin and, 
+in Section~\ref{sec:margin-recurrence}, 
+prove a recurrence relation involving relative margin. 
+This recurrence will prove a pivotal role in the downstream analysis.
+In \Section~\ref{sec:opt-adversary}, we 
+present an optimal adversarial strategy against slot settlement. 
+The proof of the above recurrence and the optimality of the adversary 
+critically relies on 
+the characterization of the UVP using relative margin,  
+which we show in Section~\ref{sec:uvp-through-margin}. 
+
+
 In \Section~\ref{sec:bounds-main-proofs-multihonest},
-we present two bounds on the stochastic events of interest, e.g., the
-rarity of a Catalan slot; these bounds lead to short proofs of the
-main theorems.  The proofs of these bounds are presented next in
-Section~\ref{sec:estimates-multihonest} which contains all of our probabilistic
-arguments.  
-
-\Section~\ref{sec:recursion-multihonest} contains an alternative treatment 
-of the UVP via fork-theoretic notions of~\cite{LinearConsistency}. 
-Along the way, it describes an optimal adversary who simultaneously attacks the consistency of all slots. 
-It also describes an algorithm to compute explicit values 
-for the probability of consistency violations. 
-The proofs of two important theorems from this section 
-are presented subsequently in \Section~\ref{sec:margin-proof-multihonest}.
-
+we present an upper bound on the (bad) event that
+a uniquely honest Catalan slot does not appear within $k$ slots. 
+This bound leads to short proofs of the
+main theorem in \Section~\ref{sec:bounds-main-proofs-multihonest}. 
+The proof of this bound, 
+which uses a random walk argument, 
+is presented in
+Section~\ref{sec:estimates-multihonest}.
 
 Our treatment of the $\Delta$-synchronous setting is
-presented in \Section~\ref{sec:async-multihonest}.  In \Section~\ref{sec:cp-multihonest}, we
-treat the traditional Common Prefix (CP) violations using our bounds
-on the UVP.  
+presented in \Section~\ref{sec:async-multihonest}.  
+In \Section~\ref{sec:cp-multihonest}, we
+treat the traditional Common Prefix (CP) violations using our bound
+on the UVP. 
+The conciseness of this proof is in vivid contrast with 
+another proof (in this \Section as well) 
+that does not harness the UVP
+This demonstrates the expressive power of the Catalan slots (and the UVP) 
+in simplifying existing proofs.
 
-In \Section~\ref{sec:cp-multihonest}, 
-we characterize the Common Prefix Property (CP) violations. 
-We give a simple proof using the UVP as well as 
-an alternative (lengthy) proof which uses fork-theoretic constructs (such as ``balanced forks'') 
-but not the UVP or Catalan slots. 
-This is an example where Catalan slots (and the UVP) simplifies existing proofs.
-
+In \Section~\ref{sec:lcr-model}, 
+we present a consistency analysis 
+after assuming that the honest players use a consistent 
+longest-chain selection rule.
+Finally, in \Section~\ref{sec:martingale}, 
+we directly prove a tail bound on Catalan slots 
+for leader elections where 
+outcomes may depend on the past.
 
 
 %%% Local Variables:

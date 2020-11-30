@@ -69,7 +69,7 @@
 
 
 
-\paragraph{Generating functions and stochastic dominance.}
+\Paragraph{Generating functions and stochastic dominance.}
   As a rule, we denote the
   probability distribution associated with a random variable using
   uppercase script letters. 
@@ -124,7 +124,7 @@
 
 
 
-  \paragraph{The random walk $S$ and the first ascent/decent GFs.}
+  \Paragraph{The random walk $S$ and the first ascent/decent GFs.}
   Recall the process $W = W_1 W_2 \cdots = W(w_1 w_2 \cdots)$ 
   and the simple, negatively biased random walk $S = S(W)$ 
   from \Section~\ref{sec:rand-walks} and Figure~\ref{fig:walk}.
@@ -164,9 +164,9 @@
   % Write $w = xyz$ where $x = w_1 \cdots w_{s-1}$ and $y = w_s \cdots w_{s+k-1}$. 
 
 
-  % \paragraph{Case 1: $x$ is an empty string.} 
+  % \Paragraph{Case 1: $x$ is an empty string.} 
 
-  % \paragraph{Case: $x = \varepsilon$.} 
+  % \Paragraph{Case: $x = \varepsilon$.} 
   % \subsubsection*{If $x = \varepsilon$} 
   % First, let us consider the case when $x = \varepsilon$, i.e., $|x| = 0$. 
   In this case, we write $w = y, |y| = k$. 
@@ -194,7 +194,7 @@
   by using the analytic properties of $\gfChat(Z)$. 
 
 
-  % \paragraph{Generating function for the first uniquely honest Catalan slot.}
+  % \Paragraph{Generating function for the first uniquely honest Catalan slot.}
   Recall that a slot is Catalan in $w$ if and only if 
   it is both left-Catalan and right-Catalan. 
   % Thus we wish to devise the generating function $\gfC(Z)$ for 
@@ -305,7 +305,7 @@
   Since $\gfF(1) = p + q_\h p/q + q_\H = 1 - q_\h(1 - p/q) = 1 - q_\h \epsilon/q$, 
   we have $\gfChat(1) = 1$, i.e.,  
   $\gfChat(Z)$ is a probability generating function. 
-  % \paragraph{Condition for the convergence of $\gfC(Z)$.}
+  % \Paragraph{Condition for the convergence of $\gfC(Z)$.}
   It remains to establish a bound on the radius of convergence of
   $\gfChat$. 
   A sufficient condition for the convergence of
@@ -317,7 +317,7 @@
   % proving this inequality.
 
 
-  % \paragraph{Convergence of $\gfA(Z), \gfD(Z)$, and $\gfA(Z \gfD(Z))$.}
+  % \Paragraph{Convergence of $\gfA(Z), \gfD(Z)$, and $\gfA(Z \gfD(Z))$.}
   The generating functions $\gfD(z)$ and $\gfA(z)$ converge when
   the discriminant $1 - 4pqz^2$ is positive; equivalently
   $|z| < 1/\sqrt{1 - \epsilon^2}
@@ -354,7 +354,7 @@
   Note that the radius of convergence of $\gfA(Z \gfD(Z))$ 
   is smaller than that of $\gfA(Z)$ or $\gfD(Z)$.
 
-  % \paragraph{An upper bound on $\gfF(z)$.}
+  % \Paragraph{An upper bound on $\gfF(z)$.}
   We can check that when $\gfF(z)$ converges, 
   it satisfies $$\gfF(z) \leq \gfF(|z|)\,.$$ 
   The claim is trivial for $z = 0$. 
@@ -374,7 +374,7 @@
   However, $z/|z| = \pm 1$ for any non-zero real $z$.
   Therefore, it suffices for us to require that $F(z) \neq 1$ for $z > 0$. 
   
-  % \paragraph{$\gfF(z)$ is convex and increasing for $z \in [0, R_1]$.}
+  % \Paragraph{$\gfF(z)$ is convex and increasing for $z \in [0, R_1]$.}
   We can also check that 
   \begin{equation}\label{eq:Fz-convex-increasing}
     \text{$F(z)$ is convex and increasing for $z \in [0, R_1)$}
@@ -396,7 +396,7 @@
   $\gfF(z)$ must be increasing as well. 
 
 
-  % \paragraph{A linear lower bound $f(z) \leq \gfF(z), z \geq 1$.}
+  % \Paragraph{A linear lower bound $f(z) \leq \gfF(z), z \geq 1$.}
   Let $$\text{ $R_2$ be the solution to the equation $\gfF(z) = 1, z > 0$}\,. $$ 
   Then $\gfChat(z)$ would converge for $|z| < R \triangleq \min(R_1, R_2)$. 
   It remains to characterize $R_2$ in terms of $\epsilon$ and $q_\h$. 
@@ -436,7 +436,7 @@
   $R_2 = (1 - \theta) R_2^*$ 
   for a small positive constant $\theta \in (0, 1)$. 
 
-  % \paragraph{The special case $q_\h = q$.}
+  % \Paragraph{The special case $q_\h = q$.}
   In the special case $q_\H = 0$, 
   $\gfF(Z)$ simplifies as $\gfF(Z) = pZ \gfD(Z) + q  Z \gfA(Z \gfD(Z) )$. 
   Note that $\gfF(Z)$ converges when $\gfA(Z \gfD(Z) )$ does 
@@ -465,7 +465,7 @@
 
   The remainder of the exposition considers 
   the general case $0 < q_\h < q$. 
-  % \paragraph{Approximating the $z$ that satisfies $f(z) = 1$.}
+  % \Paragraph{Approximating the $z$ that satisfies $f(z) = 1$.}
   Let the solution to the equation $f(z) = 1$ be denoted by 
   $$
     R_2^* \triangleq 1 + \epsilon (q_\h/q)/\gfF'(1)
@@ -544,7 +544,7 @@
   % \approx \exp(\Theta(\epsilon^3))$ since $q \in (1/2, 1]$.
  
 
-  % \paragraph{Putting it together for the case $|x| = 0$.}
+  % \Paragraph{Putting it together for the case $|x| = 0$.}
   Recall that $R_1 = \exp\left(O(\epsilon^3 (1 + O(\epsilon)))\right)$. 
   It follows that $\gfChat(z)$ converges for 
   $|z|$ less than 
@@ -593,8 +593,8 @@
 
 
 \section{Walk with a non-empty prefix}
-  % \paragraph{Case 2: $x$ is non-empty.}
-  % \paragraph{Case: $|x| \geq 1$.}
+  % \Paragraph{Case 2: $x$ is non-empty.}
+  % \Paragraph{Case: $|x| \geq 1$.}
   % \subsubsection*{If $|x| \geq 1$}
   Next, let us consider the case when $x \neq \varepsilon$, i.e., $|x| \geq 1$. 
   Let $m = |x|$ and write $w = xyz$ where $|y| = k$. 

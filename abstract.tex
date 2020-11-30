@@ -4,19 +4,22 @@ In the past decade, blockchain technology has emerged as a foundation for a dive
 
  
 
-Currently, the most popular blockchain technology is the Proof-of-Work (PoW) paradigm, popularized by the cryptocurrency \emph{Bitcoin}. Alternative paradigms, such as Proof-of-Stake (PoS), aim to provide the same functionalities and security as PoW while requiring only a fraction of a PoW network's enormous energy cost. This, however, is non-trivial.
+Currently, the most popular blockchain technology is the Proof-of-Work (PoW) paradigm, popularized by the cryptocurrency Bitcoin. Alternative paradigms, such as Proof-of-Stake (PoS), aim to provide the same functionalities and security as PoW while requiring only a fraction of a PoW network's enormous energy cost. This, however, is non-trivial.
 
  
 
-In this dissertation, we study the security of PoS blockchains in the eventual consensus model under the so-called ``longest-chain rule.'' 
+In this dissertation, we study the security of PoS blockchains in the eventual consensus model under the so-called longest-chain rule; 
+these are also called ``Nakamoto-style PoS.''
 \begin{itemize}
-  \item First, we show that these blockchains have the same asymptotic security guarantee as those of the PoW blockchains (published at ACM SODA 2020). 
+  \item We show that the security guarantees 
+  for the consistency property of these blockchains are asymptotically similar 
+  to those of the Nakamoto-style PoW blockchains (published at ACM SODA 2020). 
 
-  \item Next, we present a security analysis under the simple honest-majority assumption; this is a sweeping improvement over all existing analyses -- including the one above -- as they need a stricter majority assumption (accepted at IEEE ICDCS 2020).
+  \item We present a security analysis under a simple honest-majority assumption; this is a sweeping improvement over all existing analyses as they needed a stricter honest-majority assumption (accepted at IEEE ICDCS 2020).
 
-  \item Finally, we analyze the security of the ``randomness beacon'' within two important PoS blockchain protocols: Ouroboros Praos and Snow White. Our results demarcate the parameter settings for which these protocols remain secure. We also analyze some new, simple, and more secure randomness beacons for PoS blockchains.
+  \item We analyze the security of the ``randomness beacon'' of two important protocols: Ouroboros Praos and SnowWhite. Our results demarcate the parameter settings for which these protocols remain secure. 
 
-
+  \item We also analyze some new, simple, and more secure randomness beacons for eventual consensus PoS.
 \end{itemize}
 
 Our results have already made an impact in the industry: \emph{Cardano} -- a leading PoS cryptocurrency -- is using our results and recommendations for designing their protocol.

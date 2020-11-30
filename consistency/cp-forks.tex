@@ -71,7 +71,7 @@ theorem below.
   The tines $t_1, t_2$ will play a special role in our proof; 
   let $F$ be a fork containing these tines. 
 
-  \paragraph{The prefix $x$, fork $F_x$, and vertex $u$.} 
+  \Paragraph{The prefix $x$, fork $F_x$, and vertex $u$.} 
   Let $u$ denote the last vertex on the tine
   $t_1 \cap t_2$, as shown in the diagram below, and let
   $\alpha \triangleq \ell(u) = \ell(t_1 \cap t_2)$. 
@@ -107,7 +107,7 @@ theorem below.
   %  $\beta \geq \ell(t_2) = \max(\ell(t_1), \ell(t_2))$, with the convention that
   %  $\beta = n+1$ if there is no such index.
 
-    \paragraph{$u$ must be an honest vertex.}
+    \Paragraph{$u$ must be an honest vertex.}
     We observe, first of all, that the vertex $u$ cannot be adversarial:
     otherwise it is easy to construct an alternative fork
     $F^\prime \Fork w$ and a pair of tines in $F^\prime$ that violate~\eqref{eq:tines}. 
@@ -144,7 +144,7 @@ theorem below.
       \end{tikzpicture}
     \end{center}
     
-    \paragraph{$F_x$ has a unique, longest (and honest) tine $t_u$.}
+    \Paragraph{$F_x$ has a unique, longest (and honest) tine $t_u$.}
     A similar argument implies that the fork
     $F_x$ has a unique vertex of depth $\depth(u)$: namely, $u$ itself. In
     the presence of another vertex $u^\prime$ (of $F_x$) with depth
@@ -179,7 +179,7 @@ theorem below.
     % $t_2 = t$ in the remainder of the argument.
     
 
-    \paragraph{Identifying $y$.}
+    \Paragraph{Identifying $y$.}
     Let $\beta$ denote the smallest honest index of $w$ for which
     $\beta \geq \ell(t_2)$, with the convention that if there is no such
     index we define $\beta = T + 1$. 
@@ -212,7 +212,7 @@ theorem below.
     tines satisfying the definition of a balanced fork.
 
     
-    \paragraph{Honest indices in $xy$ have low depths.}
+    \Paragraph{Honest indices in $xy$ have low depths.}
     The minimality assumption~\eqref{eq:minimality} implies that any honest
     index $h$ for which $h < \beta$ has depth no more than
     $\min(\length(t_1),\length(t_2))$: specifically,
@@ -230,7 +230,7 @@ theorem below.
     The remaining case, i.e., when $\ell(t_1) < h < \ell(t_2)$, can be ruled out 
     by the argument below.
 
-    \paragraph{There is no honest index between $\ell(t_1)$ and $\ell(t_2)$.}
+    \Paragraph{There is no honest index between $\ell(t_1)$ and $\ell(t_2)$.}
     We claim that 
     \begin{equation}\label{eq:no-honest-index}
         \text{There is no honest index $h$ satisfying $\ell(t_1) < h < \ell(t_2)$}
@@ -368,7 +368,7 @@ theorem below.
   %   $|t_h - \ell(t_1)| < |\ell(t_2) - \ell(t_1)|$, which
   %   contradicts~\eqref{eq:minimality}.
 
-  \paragraph{A fork $\pinch{u}{F}$ where all long tines go through $u$.}
+  \Paragraph{A fork $\pinch{u}{F}$ where all long tines go through $u$.}
     In light of the remarks above, we observe that the fork $F$ may be
     ``pinched'' at $u$ to yield an essentially identical fork
     $\pinch{u}{F} \vdash w$ with the exception that all tines of length
@@ -397,7 +397,7 @@ theorem below.
     note that the depths of vertices in $F$ and $\pinch{u}{F}$ are
     identical.
     
-    \paragraph{Constructing a shallow fork $F_y \Fork y$.}
+    \Paragraph{Constructing a shallow fork $F_y \Fork y$.}
     By excising the tree rooted at $u$ from this pinched fork
     $\pinch{u}{F}$, we may extract a fork for the string
     $w_{\alpha+1} \dots w_T$. Specifically, consider the induced
@@ -426,7 +426,7 @@ theorem below.
     \end{equation}
     It is immediate that $F_y \vdash y$. 
     
-    \paragraph{Two longest viable tines in $F_y$.}
+    \Paragraph{Two longest viable tines in $F_y$.}
     Consider the tines $\cut{u}{t_1}$ and $\cut{u}{t_2}$. As mentioned
     above, they share no edges in $\cut{u}{F}$ and hence the prefixes
     $\check{t_1}$ and $\check{t_2}$ (of $\cut{u}{t_1}$ and
@@ -470,7 +470,7 @@ theorem below.
         \,.
     \end{equation}
 
-    \paragraph{Constructing a flat fork $\tilde{F}_y \Fork y$.}    
+    \Paragraph{Constructing a flat fork $\tilde{F}_y \Fork y$.}    
     Let us identify the fork prefix $\tilde{F}_y \ForkPrefix F_y$ which 
     is either identical to $F_y$ or differs from $F_y$ 
     in only one of the tines $\check{t}_1, \check{t}_2$. 
@@ -510,7 +510,7 @@ theorem below.
     Thus the fork $\tilde{F}_y$ has at least two tines, $\Final{t}_1$ and $\Final{t}_2$, that achieve the maximum length of all tines in $\tilde{F}_y$; hence $\tilde{F}_y$ is balanced.
 
     
-    \paragraph{An $x$-balanced fork $\hat{F} \ForkPrefix F$.} 
+    \Paragraph{An $x$-balanced fork $\hat{F} \ForkPrefix F$.} 
     Let us identify the root of the fork $\tilde{F}_y$ with the vertex $u$ of $F_x$ and 
     let $\hat{F}$ be the resulting graph (after ``gluing'' the root of $\tilde{F}_y$ to $u$). 
     By~\eqref{eq:tu}, it is easy to see that the fork 

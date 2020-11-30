@@ -27,8 +27,11 @@
 \tableofcontents
 
 \listoffigures
-
+\begingroup
+\let\clearpage\relax% Disable newpage before list of tables
 \listoftables
+\endgroup
+
 
 \thispagestyle{plain}
 \mainmatter
@@ -42,10 +45,21 @@
 
 %%%---- Input content ----%%%
 
-\chapter{Introduction}
+\chapter{Introduction}\label{sec:intro-main}
+\Epigraph{
+  Sorry! I don't want any adventures, thank you. Not Today. Good morning! 
+  But please come to tea---any time you like! 
+  Why not tomorrow? Good bye!
+  }{J.R.R. Tolkien \\ The Hobbit, or There and Back Again}
 \input{intro}
 
 \chapter{Nakamoto-style PoS Blockchains: A Primer}\label{sec:pos-primer}
+\Epigraph{
+  Ho! Tom Bombadil, Tom Bombadillo!
+  By water, wood and hill, by the reed and willow,
+  By fire, sun and moon, harken now and hear us!
+  Come, Tom Bombadil, for our need is near us!
+  }{J.R.R. Tolkien \\ The Lord of the Rings, \\The Fellowship of the Ring, \\``Fog on the Barrow-downs''}
 \input{pos-primer}
 
 \renewcommand{\PartPrefix}{multihonest}

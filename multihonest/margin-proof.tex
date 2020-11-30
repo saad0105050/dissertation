@@ -93,7 +93,7 @@ As a warm-up, we start with the following claim.
   these extensions are not necessarily conservative. 
   Recall that $\reach_{F'}(t) \leq 0$ for any tine $t \in F', \ell(t) = |xy| + 1$.
 
-  \paragraph{Proving ~\eqref{eq:rho-upperbound}.} 
+  \Paragraph{Proving ~\eqref{eq:rho-upperbound}.} 
   Let $A$ be the set of all $F'$-tines with label $|xy| + 1$.
   Let $\sigma \in A$ be the first tine in the $\leq_\pi$ ordering so that $\reach(\sigma) = \max_{t \in A}\{\reach_{F'}(t)\}$.
   By Proposition~\ref{prop:reach-fork-ext-mh}, 
@@ -120,14 +120,14 @@ As a warm-up, we start with the following claim.
   Thus we have proved~\eqref{eq:rho-upperbound}.
 
 
-  \paragraph{Proving ~\eqref{eq:mu-upperbound}.} 
+  \Paragraph{Proving ~\eqref{eq:mu-upperbound}.} 
   If $\ell(t_\rho) = |xy| + 1$ then we are done: 
   by our preceding argument, $\reach_{F'}(t_\rho) \leq 0$. 
   On the other hand, 
   Note that $t_\rho \not \in F$ since, by Proposition~\ref{prop:reach-fork-ext-mh}, reach of any $F$ tine can only decrease
   $t_\rho$ must have been an extension of a maximum-reach $F$-tine.
 
-  \paragraph{Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.} 
+  \Paragraph{Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.} 
     We wish to show that $\mu_x(yb) \leq 0$.
     Suppose (toward a contradiction) that $\mu_x(yb) > 0$. 
     Then neither $t_\rho$ nor $t_x$ is a conservative extension because, as we proved in Claim ~\ref{claim:ex-mh}, conservative extensions have reach zero. This means that $t_\rho$ and $t_x$ existed in $F$, and their $F$-reach was strictly greater than their $F'$-reach (by Claim ~\ref{claim:nex-mh}). 
@@ -144,8 +144,8 @@ As a warm-up, we start with the following claim.
     $. 
     The last term is strictly positive by assumption and hence, a contradiction ensues.
 
-  % \paragraph{Case 2: $\rho(xy)=0$.}
-  \paragraph{Case 2: $\rho(xy)=0$.}
+  % \Paragraph{Case 2: $\rho(xy)=0$.}
+  \Paragraph{Case 2: $\rho(xy)=0$.}
     We wish to show that 
     \begin{enumerate*}[label=(\textit{\roman*})]
       \item $\mu_x(yb) \leq 0$ if $b = \H$ and $\mu_x(y) = 0$, and 
@@ -217,7 +217,7 @@ As a warm-up, we start with the following claim.
 
 
 
-  \paragraph{Case 3: $\rho(xy)>0$ and $\mu_x(y)\neq0$.}
+  \Paragraph{Case 3: $\rho(xy)>0$ and $\mu_x(y)\neq0$.}
     We wish to show that $\mu_x(yb) \leq \mu_x(y) - 1$ 
     or, equivalently, that $\mu_x(yb) < \mu_x(y)$. 
     % Note that by~\ref{eq:rho-recursive-mh}, 
@@ -291,7 +291,7 @@ As a warm-up, we start with the following claim.
 
 
 
-\paragraph{Proof of Theorem~\ref{thm:relative-margin}.}
+\Paragraph{Proof of Theorem~\ref{thm:relative-margin}.}
 Let $w \in \{\h, \H, \A\}^*$. 
 If $w = \varepsilon$ then, by Claim~\ref{claim:rho-mu-A}, 
 $\rho(\varepsilon) = 0$. 
@@ -313,7 +313,7 @@ Claim~\ref{claim:rho-mu-A},~\eqref{eq:mu-upperbound} and~\eqref{eq:mu-lowerbound
 \hfill\qed
 
 
-\paragraph{Proof of Theorem~\ref{thm:opt-adversary-canonical}.}
+\Paragraph{Proof of Theorem~\ref{thm:opt-adversary-canonical}.}
 The proof is by induction on $|w|$. 
 If $w$ is the empty string $\varepsilon$, 
 the only fork $F \Fork \varepsilon$ is the trivial fork 

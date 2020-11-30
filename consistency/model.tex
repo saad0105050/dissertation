@@ -88,7 +88,7 @@ simple picture; it is possible for a network adversary to induce
 divergent views between the players by taking advantage of slots where
 more than a single honest participant is elected a leader.)
 
-\paragraph{The blockchain axioms: Informal discussion.}
+\Paragraph{The blockchain axioms: Informal discussion.}
 The introduction of adversarial participants or multiple slot leaders
 complicates the family of possible blockchains that could emerge from
 this process. To explore this in the context of our protocols, we work
@@ -196,7 +196,7 @@ delay the delivery of an adversarial block to a participant or show
 one block to some participants and show a completely different block
 to others.
 
-\paragraph{Characteristic strings, forks, and the formal axioms.}
+\Paragraph{Characteristic strings, forks, and the formal axioms.}
 Note that with the axioms we have discussed above, whether or not a
 particular fork diagram (such as the one just above) corresponds to a valid
 execution of the protocol depends on how the slots have been awarded to the parties by the
@@ -329,7 +329,7 @@ consistently-labeled subgraph of $\hat{F}$.
   the tine $t$ terminates at vertex $v$. The length of a tine $t$ is
   denoted by $\length(t)$.
 
- \paragraph{Viable tines.}
+ \Paragraph{Viable tines.}
  The longest-chain rule dictates that honest players build on chains
  that are at least as long as all previously broadcast honest
  chains. It is convenient to distinguish such tines in the analysis:
@@ -386,7 +386,7 @@ consistently-labeled subgraph of $\hat{F}$.
   % (ii.) the pair $(t_1, t_2)$ witness a $\kSlotCP$ violation.
 \end{definition}
 
-\paragraph{Common prefix.} Settlement violations are a convenient and
+\Paragraph{Common prefix.} Settlement violations are a convenient and
 intuitive proxy for the notion of common prefix discussed in the
 introduction. Indeed, as we show in \Section~\ref{sec:cp-forks}, the
 two notions are equivalent, so we have the luxury of discussing
@@ -441,7 +441,7 @@ $\kSlotCP$ violation is sufficient to rule out both events.
 % an honest observer would be confused. 
 
 % <<<<<<< HEAD
-% % \paragraph{Our chain of arguments.} 
+% % \Paragraph{Our chain of arguments.} 
 % \subsection{Our chain of arguments}\label{sec:chain-arguments}
 % %Rather than analyze $\kSlotCP$ violation directly, 
 % %we focus on settlement violation (as 
@@ -619,7 +619,7 @@ $\Pr[w_i = 1 \mid w_1, \ldots, w_{i-1}] \leq (1 - \epsilon)/2$.
   this maximum taken over all adversaries $\Adversary$.
 \end{definition}
 
-\paragraph{Remarks.}
+\Paragraph{Remarks.}
 % A subset $\mathcal{V}_i$ associated with the slot $\slot_i$ represents the ``local, viable chains'' shown to an honest observer by the system; he updates his state by adopting a maximally-long chain from this subset where ties are broken by the adversary. It is likely that different observers will have a different view of the current state of the system. 
 % Next, observe that the adversary wins 
 % the $(\Distribution, T; s,k)$-settlement game if 
@@ -842,7 +842,7 @@ taken over all prefixes of $w$.
 \subsection{Comments on the model}
 \label{sec:model-comments}
 
-\paragraph{Analysis in the $\Delta$-synchronous setting.} The security
+\Paragraph{Analysis in the $\Delta$-synchronous setting.} The security
 game above most naturally models a blockchain protocol over a
 synchronous network with immediate delivery (because each ``honest''
 play of the challenger always builds on a fork that contains the fork
@@ -855,7 +855,7 @@ that permits analyses of forks (and the related statistics of
 interest, cf. Section~\ref{sec:definitions}) in the $\Delta$-synchronous
 setting by a direct appeal to the synchronous setting.
 
-\paragraph{Public leader schedules.} One attractive feature of this
+\Paragraph{Public leader schedules.} One attractive feature of this
 model is that it gives the adversary full information about the future
 schedule of leaders. The analysis of some protocols indeed demand this
 (e.g., Ouroboros, Snow White). Other protocols---especially those
@@ -864,7 +864,7 @@ Genesis)---in fact contrive to keep the leader schedule private. Of
 course, as our analysis is in the more difficult ``full information''
 model, it applies to all of these systems.
 
-\paragraph{Bootstrapping multi-phase algorithms; stake shift.} We remark that
+\Paragraph{Bootstrapping multi-phase algorithms; stake shift.} We remark that
 several existing proof-of-stake blockchain protocols proceed in
 phases, each of which is obligated to generate the randomness (for
 leader election, say) for the next phase based on the current stake

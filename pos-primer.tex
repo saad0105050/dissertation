@@ -154,7 +154,7 @@ This is the primary way through which $\Adversary$ can hinder eventual consensus
 in both Nakamoto-style PoS and PoW.
 
 
-\Paragraph{Static vs. adaptive adversaries.}
+% \Paragraph{Static vs. adaptive adversaries.}
 One can consider two types of adversaries in terms of 
 how fast they can corrupt an honest player. the so-called \emph{static adversary} 
 Suppose that an epoch is $R$ slots long. 
@@ -287,9 +287,10 @@ we adopt a set of axioms; see below for an informal description:
     are to be delivered prior to the conclusion of the slot. 
 
   \item[Genesis block.]
-  The blockchain begins with a fixed ``genesis'' block, assigned to slot $0$.
+  The blockchain begins with a fixed ``genesis'' block, assigned to slot $0$, 
+  containing enough information to bootstrap the execution.
   
-  \item[Block monotonicity] 
+  \item[Block label monotonicity.] 
   Each block is labeled by the index of the slot it was issued from. 
   In a blockchain, the (slot) labels of the blocks are in strictly increasing order.
 

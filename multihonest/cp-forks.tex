@@ -23,7 +23,7 @@ compared to relative margin and balanced forks.
 
 
 
-\paragraph{A $\kSlotCP$ violation implies a $k$-settlement violation.}
+\Paragraph{A $\kSlotCP$ violation implies a $k$-settlement violation.}
 Let $w$ be a characteristic string, written $w = xy$, 
 and let $F$ be a fork for $w$. 
 Recall that a slot $s = |x| + 1$ is not $k$-settled 
@@ -150,7 +150,7 @@ for some slot $s$.
   We call a slot honest if it contains either an $\h$ or an $\H$; 
   otherwise, we call it an adversarial slot. 
 
-  \paragraph{The prefix $x$, fork $F_x$, and vertex $u$.} 
+  \Paragraph{The prefix $x$, fork $F_x$, and vertex $u$.} 
   Let $u$ denote the last vertex on the tine
   $t_1 \cap t_2$, as shown in the diagram below, and let
   $\alpha \triangleq \ell(u) = \ell(t_1 \cap t_2)$. 
@@ -189,7 +189,7 @@ for some slot $s$.
   %  $\beta \geq \ell(t_2) = \max(\ell(t_1), \ell(t_2))$, with the convention that
   %  $\beta = n+1$ if there is no such index.
 
-    \paragraph{$\alpha$ must be a uniquely honest slot.}
+    \Paragraph{$\alpha$ must be a uniquely honest slot.}
     We observe, first of all, that the slot $\alpha$ can neither be adversarial nor multihonest:
     otherwise it is easy to construct a fork
     $F^\prime \Fork w$ and a pair of tines in $F^\prime$ that violate~\eqref{eq:tines}. 
@@ -226,7 +226,7 @@ for some slot $s$.
       \end{tikzpicture}
     \end{center}
     
-    \paragraph{$F_x$ has a unique, longest (and honest) tine $t_u$.}
+    \Paragraph{$F_x$ has a unique, longest (and honest) tine $t_u$.}
     A similar argument implies that the fork
     $F_x$ has a unique vertex of depth $\depth(u)$: namely, $u$ itself. In
     the presence of another vertex $u^\prime$ (of $F_x$) with depth
@@ -247,7 +247,7 @@ for some slot $s$.
     
 
 
-    \paragraph{Identifying $y$.}
+    \Paragraph{Identifying $y$.}
     Let $\beta$ denote the smallest honest index of $w$ for which 
     $\beta \geq \ell(t_2)$, with the convention that if there is no such
     index we define $\beta = T + 1$. 
@@ -292,7 +292,7 @@ for some slot $s$.
     % thus, $\tilde{F}_y$ will be balanced.
 
     
-    \paragraph{Honest indices in $xy$ have small depths.}
+    \Paragraph{Honest indices in $xy$ have small depths.}
     The minimality assumption~\eqref{eq:minimality} implies that any honest
     index $h$ for which $h < \beta$ has depth no more than
     $\min(\length(t_1),\length(t_2))$: specifically, we claim that 
@@ -311,7 +311,7 @@ for some slot $s$.
     then $\hdepth(h) \leq \length(t_1)$ since $t_1$ is viable as well. 
     
     Now consider the case $h = \ell(t_1)$. 
-    % \paragraph{If $\ell(t_1) < \ell(t_2)$, 
+    % \Paragraph{If $\ell(t_1) < \ell(t_2)$, 
     % then $t_1$ is maximally long among all tines with the same label.} 
     We claim that 
     \begin{equation}\label{eq:hdepth-t1}
@@ -380,7 +380,7 @@ for some slot $s$.
 
 
 
-    \paragraph{There is no honest index between $\ell(t_1)$ and $\ell(t_2)$.}
+    \Paragraph{There is no honest index between $\ell(t_1)$ and $\ell(t_2)$.}
     We claim that 
     \begin{equation}\label{eq:no-honest-index}
         \text{There is no honest index $h$ satisfying $\ell(t_1) < h < \ell(t_2)$}
@@ -421,7 +421,7 @@ for some slot $s$.
     
 
 
-  \paragraph{A fork $\pinch{u}{F}$ where all long tines go through $u$.}
+  \Paragraph{A fork $\pinch{u}{F}$ where all long tines go through $u$.}
     In light of the remarks above, we observe that the fork $F$ may be
     ``pinched'' at $u$ to yield an essentially identical fork
     $\pinch{u}{F} \vdash w$ with the exception that all tines of length
@@ -450,7 +450,7 @@ for some slot $s$.
     note that the depths of vertices in $F$ and $\pinch{u}{F}$ are
     identical.
     
-    \paragraph{Constructing a fork $F_y \Fork y$ containing two long tines.}
+    \Paragraph{Constructing a fork $F_y \Fork y$ containing two long tines.}
     By excising the tree rooted at $u$ from this pinched fork
     $\pinch{u}{F}$, we may extract a fork for the string
     $w_{\alpha+1} \dots w_T$. Specifically, consider the induced
@@ -532,7 +532,7 @@ for some slot $s$.
     % $\length(\check{t}_2)$, which equals $\length(\cut{u}{t_2}) - 1$, 
     % is at least $\hdepth(h^*)$, as desired. 
 
-    \paragraph{Constructing a balanced fork $\tilde{F}_y \Fork y$.}    
+    \Paragraph{Constructing a balanced fork $\tilde{F}_y \Fork y$.}    
     If $\length(\check{t}_1) = \length(\check{t}_2)$, set $\tilde{F}_y = F_y$ 
     and, due to~\eqref{eq:tines-Fy} and~\eqref{eq:two-long-tines}, 
     the fork $\tilde{F}_y \Fork y$ must be balanced. 
@@ -570,7 +570,7 @@ for some slot $s$.
     of these adversarial vertices.
 
     
-    \paragraph{An $x$-balanced fork $\hat{F} \ForkPrefix F$.} 
+    \Paragraph{An $x$-balanced fork $\hat{F} \ForkPrefix F$.} 
     Let us identify the root of the fork $\tilde{F}_y$ with the vertex $u$ of $F_x$ and 
     let $\hat{F}$ be the resulting graph (after ``gluing'' the root of $\tilde{F}_y$ to $u$). 
     By~\eqref{eq:tu}, it is easy to see that the fork 

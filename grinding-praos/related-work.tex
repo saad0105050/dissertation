@@ -12,7 +12,7 @@ before surveying a more general problem called collective coin-flipping.
 
 
 
-\paragraph{PVSS-based beacons.} 
+\Paragraph{PVSS-based beacons.} 
 Publicly verifiable secret sharing (PVSS) techniques have been
 successfully used to design unbiasable, multi-round coin-flipping
 protocols, such as Ouroboros~\cite{Ouroboros},
@@ -39,7 +39,7 @@ have opted for simple beacons.
 
 
 
-\paragraph{VRF-based eventual consensus Proof-of-Stake blockchains.}
+\Paragraph{VRF-based eventual consensus Proof-of-Stake blockchains.}
 Many proof-of-stake blockchain
 protocols, such as Ouroboros Praos~\cite{Praos}, 
 Genesis~\cite{Genesis}, and Snow White~\cite {SnowWhite}, 
@@ -61,7 +61,7 @@ Note that our analysis of this beacon
 is a first in the literature. 
 
 
-\paragraph{VDF-based beacons.} 
+\Paragraph{VDF-based beacons.} 
 Verifiable Delay Functions (VDF)
 \cite{vdf-boneh,vdf-wesolowski,vdf-pietrzak} may be used to construct
 unpredictable, multi-round coin-flipping protocols (for a sketch of
@@ -81,7 +81,7 @@ VDF will require a less cryptographic assumption (moderate hardness).
 We leave the combination of VDF techniques with our randomness
 generation algorithm as an interesting future research direction.
 
-\paragraph{Threshold signatures.}
+\Paragraph{Threshold signatures.}
 DFINITY~\cite{Dfinity} uses a one-round coin-flipping protocol based
 on non-interactive $(t,n)$-Threshold BLS signatures~\cite{BLS}. 
 In the setup phase, a random subset of $n$
@@ -115,7 +115,7 @@ for a single distributed key generation process between $n$ players.
 
 
 
-\paragraph{Byzantine Agreement-based beacons.} 
+\Paragraph{Byzantine Agreement-based beacons.} 
 In Algorand~\cite{Algorand}, the players are equipped with verifiable
 random functions (VRF, see Definition~\ref{def:VRF}) 
 and they participate in a Byzantine Agreement (BA)-based multi-round
@@ -136,13 +136,13 @@ the beacon output incurs only a small loss in min-entropy.
 
 
 
-\paragraph{Nakamoto-style PoW beacons.} 
+\Paragraph{Nakamoto-style PoW beacons.} 
 \citet{ZuckermanBeacon} establish a lower bound for a class of
 Nakamoto-style proof-of-work based beacons and discuss approaches for
 a game-theoretic analysis of beacon protocols.
 
 
-\paragraph{Collective coin-flipping as a Boolean function.} 
+\Paragraph{Collective coin-flipping as a Boolean function.} 
 The (single round) collective coin-flipping in the full information
 model is a classic problem introduced in the seminal work
 of~\citet{BL85}.  In this problem, $n$-players communicate over a

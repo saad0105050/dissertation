@@ -29,17 +29,17 @@
         xmin=0,xmax=1,ymin=0,ymax=2.5
         ]
         \addplot +[thick,blue] {(3 - \x)/2};
-        \addlegendentry{$M(\epsilon)$, Prop.~\ref{prop:praos-moments-simple}};
+        \addlegendentry{$M(\epsilon)$, Prop.~\pgfplotslegendfromname{prop:praos-moments-simple}};
 
         \addplot +[thick,domain=(1/3):1,red] {sqrt(2 * (1 - \x^2))};      
         % \addplot +[thick,dotted,domain=(1/1.414):1,red] {sqrt(2 * (1 - x^2))};
-        \addlegendentry{$M(\epsilon)$, Prop.~\ref{prop:praos-moments-simple-large-eps}};
+        \addlegendentry{$M(\epsilon)$, Prop.~\pgfplotslegendfromname{prop:praos-moments-simple-large-eps}};
 
         % \addplot +[thick,blue] { ((1-x)/2)^(2/3) * (1 + x)^(1/3) * 2^(entropy(x)) };
         % \addlegendentry{$\MeanRoot$, Prop.~\ref{coro:praos-moments-simple-large-eps}}
 
         \addplot +[ultra thick,black] { PraosGamma(\x) } ;  
-        \addlegendentry{$M(\epsilon)$, Claim~\ref{claim:t2star-exact}};
+        \addlegendentry{$M(\epsilon)$, Claim~\pgfplotslegendfromname{claim:t2star-exact}};
         %\addplot +[thick,black, dotted] { sqrt(2) * (1-x)/2+sqrt(1 - x^2)};  
         %\addplot +[thick,dotted,black] {(3/2)(1+x)^(1/3)(1-x)^(2/3)};  
       \end{axis}
@@ -73,11 +73,11 @@
         xmin=0,xmax=1,ymin=0,ymax=2.5
         ]
         \addplot +[thick,blue] {(5 - 3 * \x)/2};
-        \addlegendentry{$V(\epsilon)$, Prop.~\ref{prop:praos-moments-simple}};
+        \addlegendentry{$V(\epsilon)$, Prop.~\pgfplotslegendfromname{prop:praos-moments-simple}};
 
         \addplot +[thick,domain=(3/5):1,red] {2 * sqrt((1 - \x^2)) };      
         % \addplot +[thick,dotted,domain=(1/1.414):1,red] {sqrt(2 * (1 - x^2))};
-        \addlegendentry{$V(\epsilon)$, Prop.~\ref{prop:praos-moments-simple-large-eps}};
+        \addlegendentry{$V(\epsilon)$, Prop.~\pgfplotslegendfromname{prop:praos-moments-simple-large-eps}};
 
         % \addplot +[thick,blue] { ((1-x)/2)^(2/3) * (1 + x)^(1/3) * 2^(entropy(x)) };
         % \addlegendentry{$\MeanRoot$, Prop.~\ref{coro:praos-moments-simple-large-eps}}
@@ -87,7 +87,7 @@
         % \addplot +[ultra thick,domain=0.6:1,black] { 5/3 * PraosPhi(x) )};
         % % \addplot +[ultra thick,domain=0.6:1,black] { 2^(2/3 + psi(x) ) * phi(x) )};
         \addplot +[ultra thick,black] { PraosVbase(\x) } ;        
-        \addlegendentry{$V(\epsilon)$, Lem.~\ref{lemma:grinding-praos-second-moment}};
+        \addlegendentry{$V(\epsilon)$, Lem.~\pgfplotslegendfromname{lemma:grinding-praos-second-moment}};
       \end{axis}
     \end{tikzpicture}    
   \end{minipage}
@@ -102,7 +102,7 @@
     Moreover, when $\epsilon \geq 0.809$, $V(\epsilon)$ is at most $1$, 
     implying that the second moment of $g(n, \epsilon)$ is $\Poly(n)$ as well. 
     In general, we can derive the tail bounds in Theorems~\ref{thm:minentropy-loss-praos-single-epoch} 
-    and~\ref{thm:minentropy-loss-praos-muliti-epochs}.
+    and~\ref{thm:minentropy-loss-praos-multi-epochs}.
   }
   \label{fig:praos-gp-moments}
 \end{figure}

@@ -374,14 +374,14 @@ would readily improve the security guarantees of existing PoS protocols.
 
 
 
-\section{Research objectives}\label{sec:intro-objectives}
+\section{Objectives}\label{sec:intro-objectives}
 The observations above can be congealed into the following objectives:
 
 \newcounter{ConsistencyObjectives}
 \begin{description}[font=\normalfont\itshape\space]
   \item[Consistency Problem:]~
   \begin{enumerate}
-    \item Derive tight asymptotic consistency bounds for PoS blockchains, 
+    \item Derive tight asymptotic consistency bounds for Nakamoto-style PoS blockchains, 
     treating multihonest slots as good events.
 
     \setcounter{ConsistencyObjectives}{\value{enumi}}
@@ -402,108 +402,225 @@ The observations above can be congealed into the following objectives:
 
 
 
-\section{The value of this research}
-\InlineCases{
-  \item Fast settlements
-  \item Reduce wasted efforts
-  \item Explicit probabilities
-  \item Cardano
-  \item Quantify grinding in deployed protocols
-  \item Trade-off between consistency and grinding
-  \item New simple beacons
-}
+\section{Significance}
+% \InlineCases{
+%   \item Fast settlements
+%   \item Reduce wasted efforts
+%   \item Explicit probabilities
+%   \item Cardano
+%   \item Quantify grinding in deployed protocols
+%   \item Trade-off between consistency and grinding
+%   \item New simple beacons
+% }
 
 
-This research adds some compelling value to the extant scientific knowledge. 
+% This research adds some compelling value to the extant scientific knowledge. 
 
-For the first time in the literature, 
-this work shows that 
-PoS blockchains can achieve the same asymptotic dependence on $k$ 
-as in the PoW setting; namely, we improve the state-of-the-art bound 
-from $e^{-\Omega(\sqrt{k})}$ to $e^{-\Omega(k)}$~\cite{LinearConsistencySODA}. 
-As discussed before, this immediately implies that 
-PoS blockchains settle much faster than what we thought before. 
-Thus, deployed protocols can safely select stronger security parameters. 
-We also provide algorithms and software tools 
-for practitioners to explicitly compute consistency error probabilities. 
-A leading PoS cryptocurrency technology company, \emph{Cardano}~\cite{Cardano}, 
-is actively using the results and recommendation from this dissertation.
+The research in this dissertation is significant, in the following ways:
 
-In addition, our results in the ``simple honest stake majority'' setting~\cite{Multihonest}. 
-This readily improves the guarantees of several existing analyses, 
-namely Praos, Genesis, and SnowWhite. 
-These results allow for leader election schemes 
-for which a uniquely honest slot, on average, is less likely than 
-an adversarial slot. 
-No previous analysis can handle this parameter regime.
-We also introduce new combinatorial notions which 
-greatly simplifies consistency proofs.
-Moreover, this work establishes connections between 
-combinatorial notions and ideas from two 
-different schools of PoS analysis.
+\Paragraph{Theoretical contributions.}
+  Our research proves that, asymptotically speaking, the probability of a $k$-consistency error 
+  has the same dependence on $k$ in both Nakamoto-style PoS and PoW. 
+  This is a significant contribution: 
+  it proves that the PoS setting is not inherently weaker than the PoW. 
+  It also paves the way for a more widespread adoption of Nakamoto-style PoS.
 
-Shifting focus to PoS beacons, 
-our analysis of the Praos beacon is a first in the literature.
-Importantly, we characterize the growth of the grinding power 
-by studying its first two moments. 
-Our results show that when the adversarial stake ratio is below $9\%$, 
-this grinding power is, in fact, $\Poly(k, \alpha)$. 
-On the flip side, this means the quality of the beacon degrades fast 
-as the adversarial stake ratio increases beyond $9\%$. 
-
-Thus, we need more secure yet simple PoS beacons. 
-The current work delivers in this front by 
-analyzing two new beacons. 
-The first one works with a Praos-like private leader election; 
-it is secure for $\alpha \leq 0.41$. 
-The second one works with Ouroboros-like public leader election 
-and it is secure for as long as $\alpha \in (0, 1/2)$. 
+  Unlike existing analyses, 
+  our security guarantees hold as long as 
+  an honest slot is more likely than an adversarial slot on average. 
+  Not only does it readily improve the security guarantees of existing analyses, 
+  but it also opens the door for a wide class of leader election schemes to be used 
+  with the Nakamoto-style PoS.
 
 
-\Paragraph{Some insights and highlights from this dissertation.}
-\begin{enumerate}
-  \item Longest-chain PoS protocols have the same asymptotic 
-  consistency error bounds, namely $e^{-\Omega(k)}$. 
-  The constants hidden by the $\Omega$ notation differs, though: 
-  let $\epsilon \in (0,1)$ so that 
-  the adversarial stake is $\alpha = (1-\epsilon)/2$. 
-  Then longest-chain PoW incurs a $\kCP$ violation with probability $e^{-\Omega(\epsilon^2)k}$, 
-  whereas the error probability for longest-chain PoS is $e^{-\Omega(\epsilon^3)k}$.
+  Our research quantifies the grinding power in both SnowWhite and Praos 
+  and, thereby, pinpoints the parameter regime where the protocol can operate securely. 
+  This removes the problematic PoW-like assumption that the grinding power be ``bounded.''
 
-  \item There is a program to explicitly compute these probabilities.
+  Our research also presents new, simple beacons for eventual consensus PoS 
+  that are more secure than the beacons mentioned above. 
+  This gives protocol designers the much-needed flexibility 
+  between choosing a cumbersome (yet perfect) beacon 
+  vs. 
+  choosing a simple (yet only slightly imperfect) beacon 
+  with a well-understood grinding analysis.
 
-  \item Longest-chain PoS can operate securely as long as on average, an honest slot 
-  (i.e., the said slot is associated with only honest leaders) 
-  is more likely than an adversarial slot.
 
-  \item For longest-chain PoS blockchains, 
-  there is an optimal adversarial strategy 
-  which can produce an execution 
-  where all slots are \emph{maximally unsettled}, meaning that 
-  if it is possible to unsettle a slot -- any slot -- 
-  this adversary \emph{will} unsettle this slot. 
-  We prove our security against this adversary.
+\Paragraph{Practical implications.}
+  The cryptocurrency Cardano is built on top of the Nakamoto-style PoS protocol, Praos~\cite{Praos}.
+  As of \today, 
+  the market capitalization of Cardano is {\color{red} US\$ XX billion}. 
+  The protocol parameters in Praos is 
+  informed by the consistency bounds developed in this dissertation. 
+  In particular, its settlement parameter $k$ can be set 
+  (according to the results of this dissertation) 
+  so that the best compromise can achieved between 
+  reducing the settlement delay, 
+  reducing the consistency error, 
+  and reducing the risk due to the grinding power.
 
-  \item If we are willing to adopt a \emph{consistent} 
-  longest-chain tie-breaking rule (see Section~\ref{sec:lcr-model}), 
-  we can allow $\Pr[\text{uniquely honest slot}] = 0$ 
-  and still remain secure.
+  Our work also gives rise to an algorithm 
+  to efficiently compute actual consistency error probabilities. 
+  These probabilities can directly inform the practitioners---both protocol designers and the users---of 
+  the actual risk involved with the protocol parameters. 
+  A \texttt{C++} implementation of this algorithm can be found in 
+  \url{https://github.com/saad0105050/multihonest-code}.
 
-  \item The consistency guarantee for Praos is valid 
-  as long as the adversarial stake $\alpha < 0.0955$; 
-  in that regime, the grinding power is $\Poly(k)$ 
-  where $k$ comes from the $\kCP$ property of Praos. 
-  Beyond that, the grinding power of the adversary grows exponentially in $k$.
+  Our research on the grinding problem in Praos 
+  can inform the practitioners 
+  about the actual quality of the randomness beacon 
+  and the actual, inflated risk of a consistency error 
+  due to any loss in the randomness in the beacon.
 
-  \item There are simple beacon protocols 
-  whose grinding power grows at a much slower rate than that of Praos.
-\end{enumerate}
+% For the first time in the literature, 
+% this work shows that 
+% PoS blockchains can achieve the same asymptotic dependence on $k$ 
+% as in the PoW setting; namely, we improve the state-of-the-art bound 
+% from $e^{-\Omega(\sqrt{k})}$ to $e^{-\Omega(k)}$~\cite{LinearConsistencySODA}. 
+% As discussed before, this immediately implies that 
+% PoS blockchains settle much faster than what we thought before. 
+% Thus, deployed protocols can safely select stronger security parameters. 
+% We also provide algorithms and software tools 
+% for practitioners to explicitly compute consistency error probabilities. 
+% A leading PoS cryptocurrency technology company, \emph{Cardano}~\cite{Cardano}, 
+% is actively using the results and recommendation from this dissertation.
+
+% In addition, our results in the ``simple honest stake majority'' setting~\cite{Multihonest}. 
+% This readily improves the guarantees of several existing analyses, 
+% namely Praos, Genesis, and SnowWhite. 
+% These results allow for leader election schemes 
+% for which a uniquely honest slot, on average, is less likely than 
+% an adversarial slot. 
+% No previous analysis can handle this parameter regime.
+% We also introduce new combinatorial notions which 
+% greatly simplifies consistency proofs.
+% Moreover, this work establishes connections between 
+% combinatorial notions and ideas from two 
+% different schools of PoS analysis.
+
+% Shifting focus to PoS beacons, 
+% our analysis of the Praos beacon is a first in the literature.
+% Importantly, we characterize the growth of the grinding power 
+% by studying its first two moments. 
+% Our results show that when the adversarial stake ratio is below $9\%$, 
+% this grinding power is, in fact, $\Poly(k, \alpha)$. 
+% On the flip side, this means the quality of the beacon degrades fast 
+% as the adversarial stake ratio increases beyond $9\%$. 
+
+% Thus, we need more secure yet simple PoS beacons. 
+% The current work delivers in this front by 
+% analyzing two new beacons. 
+% The first one works with a Praos-like private leader election; 
+% it is secure for $\alpha \leq 0.41$. 
+% The second one works with Ouroboros-like public leader election 
+% and it is secure for as long as $\alpha \in (0, 1/2)$. 
+
+
+% \Paragraph{Some insights and highlights from this dissertation.}
+% \begin{enumerate}
+%   \item Longest-chain PoS protocols have the same asymptotic 
+%   consistency error bounds, namely $e^{-\Omega(k)}$. 
+%   The constants hidden by the $\Omega$ notation differs, though: 
+%   let $\epsilon \in (0,1)$ so that 
+%   the adversarial stake is $\alpha = (1-\epsilon)/2$. 
+%   Then longest-chain PoW incurs a $\kCP$ violation with probability $e^{-\Omega(\epsilon^2)k}$, 
+%   whereas the error probability for longest-chain PoS is $e^{-\Omega(\epsilon^3)k}$.
+
+%   \item There is a program to explicitly compute these probabilities.
+
+%   \item Longest-chain PoS can operate securely as long as on average, an honest slot 
+%   (i.e., the said slot is associated with only honest leaders) 
+%   is more likely than an adversarial slot.
+
+%   \item For longest-chain PoS blockchains, 
+%   there is an optimal adversarial strategy 
+%   which can produce an execution 
+%   where all slots are \emph{maximally unsettled}, meaning that 
+%   if it is possible to unsettle a slot -- any slot -- 
+%   this adversary \emph{will} unsettle this slot. 
+%   We prove our security against this adversary.
+
+%   \item If we are willing to adopt a \emph{consistent} 
+%   longest-chain tie-breaking rule (see Section~\ref{sec:lcr-model}), 
+%   we can allow $\Pr[\text{uniquely honest slot}] = 0$ 
+%   and still remain secure.
+
+%   \item The consistency guarantee for Praos is valid 
+%   as long as the adversarial stake $\alpha < 0.0955$; 
+%   in that regime, the grinding power is $\Poly(k)$ 
+%   where $k$ comes from the $\kCP$ property of Praos. 
+%   Beyond that, the grinding power of the adversary grows exponentially in $k$.
+
+%   \item There are simple beacon protocols 
+%   whose grinding power grows at a much slower rate than that of Praos.
+% \end{enumerate}
 
 
 
 
 \section{Outline of this dissertation}
-To do
+In \Section~\ref{sec:pos-primer}, 
+we collect some important concepts and background information about Nakamoto-style PoS algorithms. 
+The main content of this dissertation are spread over three parts. 
+Instead of an exhaustive list of the Chapters within these parts, 
+we mention the ones that are central to the presentation.
+
+\begin{description}[font=\normalfont\ ]
+  \item[In Part~\ref{part:multihonest},]
+    we analyze the consistency problem in Nakamoto-style PoS.
+    \Section~\ref{sec:intro-multihonest} introduces the problem in more detail, 
+    and \Section~\ref{sec:model-multihonest} formally lays down the model and 
+    states the main theorem (Theorem~\ref{thm:main-mh}) in the synchronous setting.
+    \Section~\ref{sec:async-multihonest} lifts these results in the semi-synchronous setting 
+    via a standard reduction introduced in~\cite{Praos}, 
+    but incurring some slack in the consistency guarantee. 
+  
+  \item[In Part~\ref{part:praos},]
+    we analyze the grinding problem in Ouroboros Praos~\cite{Praos} and SnowWhite~\cite{SnowWhite} 
+    in the synchronous communication setting.
+    \Section~\ref{sec:grinding-intro} introduces the problem in more detail, 
+    and \Section~\ref{sec:model-grinding} formally lays down the model and 
+    states the main theorem (Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}). 
+
+  \item[In Part~\ref{part:xorgames},]
+    we analyze some new, simple PoS beacons in eventual consensus PoS. 
+    \Section~\ref{sec:xorgames-intro} introduces the problem in more detail. 
+    \Section~\ref{sec:xorgames-model} formally lays down the model, 
+    specifies the new beacon in Definition~\ref{def:new-beacon} and 
+    states the main theorem (Theorem~\ref{thm:beacon-poisson-multi-epoch}) 
+    for private leader elections.
+    These beacons have superior output quality compared to the beacon in Praos or SnowWhite. 
+    In addition, (Theorem~\ref{thm:beacon-bernoulli-multi-epoch}) 
+    analyzes the beacon for public leader elections; 
+    this beacon gives an interesting alternative to the multi-party computation-based 
+    beacon in Ouroboros~\cite{Ouroboros}.
+\end{description}
+
+
+
+
+\section{Limitations and future research}
+Our analysis of the grinding problem in Praos (and SnowWhite) 
+is in the synchronous setting. 
+Since the security guarantees in Praos are in the semi-synchronous setting, 
+it would be fitting if we could either lift this analysis to the semi-synchronous setting 
+or, better yet, did it directly in the semi-synchronous setting. 
+One way to accomplish this would be to 
+count the number of adversarial blockchains in a semi-synchronous fork (Definition~\ref{def:delta-fork}). 
+Another way would be to apply a synchronous-to-semi-synchronous reduction (see \Section~\ref{sec:async-multihonest})
+to the synchronous grinding power.
+
+Our analysis in this dissertation assumes that the leader election outcomes obey 
+the ``simple honest majority'' rule, on average: 
+that is, an honest slot is more likely than an adversarial slot. 
+However, it is conceivable that the adversarial slots may become more likely, even if only for a limited time. 
+This may stem from, e.g., a temporary spike in the adversarial stake in the system 
+which gets dissipated over the long term. 
+The recent paper by~\citet{AdversarialSupremacy} deals with this scenario in both Nakamoto-style PoS and PoW. 
+However, like Praos, their model awards a multihonest slot to the adversary; 
+but the raison d'\^{e}tre of Part~\ref{part:multihonest} of this dissertation 
+is to alleviate this difficulty.
+It would be interesting future work to combine these ideas with those in~\cite{AdversarialSupremacy}.
 
 
 

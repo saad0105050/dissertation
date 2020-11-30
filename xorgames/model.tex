@@ -112,7 +112,7 @@ Then
   the output of after epoch $t$ is the initial value used in epoch $(t+1)$. 
   Specifically, 
   the beacon output for epoch $t \in [L]$ is 
-  \begin{align}\label{eq:beacon-iterated}
+  \begin{align}%\label{eq:beacon-iterated}
     \eta_t = \Pi_\Beacon(\eta_{t-1}) = \Pi_\Beacon^t(\eta_0)\,.
   \end{align}
 \end{definition}
@@ -129,7 +129,7 @@ Define
 \begin{align}
     d &= \lfloor (T - k) \log_2(1/\alpha)/\log_2(1/\EpsP)\rfloor \label{eq:d-multiepoch}\\
     f(\alpha) &= \log_2(1 + 3 \alpha + \alpha^2)/\log_2(1/\alpha) \label{eq:f-poisson} \\
-    n(\alpha) &= \log_2(1/\EpsP)/\log_2(1/\alpha) \label{eq:f-poisson} 
+    n(\alpha) &= \log_2(1/\EpsP)/\log_2(1/\alpha) \label{eq:n-poisson} 
   %   \\
   % \rho &= 
   %     \frac{k}{2 d} \log_2(1+3\alpha+\alpha^2) 

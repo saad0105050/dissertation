@@ -25,7 +25,7 @@ for selecting the winning nonce for each slot.
 
 
 
-\paragraph{Outline of this \Section.}
+\Paragraph{Outline of this \Section.}
 In what follows, we start with a formal definition of the XOR target game 
 and prove an upper bound on its grinding power 
 in terms of the sizes of the option sets (Theorem~\ref{thm:xor-game-lookahead}). 
@@ -117,7 +117,7 @@ highlight its correspondence with the eventual consensus beacon protocol $\Pi_\B
 % \newcommand{\Block}{\mathsf{block}}
 
 
-% \paragraph{Notation for the rest of the paper.}
+% \Paragraph{Notation for the rest of the paper.}
 % We use $\ZeroString$ to denote the all-zero string and 
 We use $\emptyset$ to denote an empty set and 
 $\varepsilon$ to denote both an empty list and an empty string. 
@@ -303,7 +303,7 @@ we are interested in XOR target games where the initial value $\eta_0$ is unifor
 \end{definition}
 
 
-\paragraph{Grinding power.}
+\Paragraph{Grinding power.}
 Let $G = G(\eta_0,T\,;\, \Sfull \,;\, \Pfull)$ be an explicit game. 
 The \emph{grinding set} of $\Adversary$ is defined as the random variable 
 \[
@@ -482,7 +482,7 @@ The theorem below obtains a tighter bound on $g(U)$.
     \end{align*}
     % Let $Q_i = \WithEmpty{P_i}$ if $P_i \neq \emptyset$ and $Q_i = \{r_i\}$ otherwise where 
     % $r_i$ is a uniformly random string in $\{0,1\}^\kappa$.     
-    % \paragraph{\emph{Good} initial strings.}
+    % \Paragraph{\emph{Good} initial strings.}
     Note that $\Lambda$ and $\lambda$ are completely determined by 
     the option sets and the target set 
     while $\mu$ depends on the random lookahead strings.
@@ -520,7 +520,7 @@ The theorem below obtains a tighter bound on $g(U)$.
     whether $\eta_0$ is good for $G$.
 
 
-    \paragraph{Case: $\eta_0 \in \Lambda(U)$.}
+    \Paragraph{Case: $\eta_0 \in \Lambda(U)$.}
     % First, let us condition on the event that $\eta_0 \in \Lambda(G)$. 
     In this case, 
     there must be some $s \in P_1$ such that 
@@ -566,7 +566,7 @@ The theorem below obtains a tighter bound on $g(U)$.
     % (ii.) the rule for lookahead string which states $x = \ZeroString$ if and only if $b_1 = 0$ 
     % (cf. Definition~\ref{def:xor-game-lookahead}).
 
-    \paragraph{Case: $\eta_0 \not \in \Lambda(U)$.}
+    \Paragraph{Case: $\eta_0 \not \in \Lambda(U)$.}
     % We are conditioning on the event that $\eta_0 \not \in \Lambda(G)$. 
     The player is now in a bad situation since 
     no choice $s \in P_1$ leads to a \emph{certain win}.

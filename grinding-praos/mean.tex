@@ -1,12 +1,17 @@
 % \newcommand{\DoverTwo}{\lfloor d/2 \rfloor}
 % \newcommand{\DoverThree}{d/3}
 
+Recall the expression for $B_{n,\epsilon}(k)$ from~\eqref{eq:suffix-prob-binomial}.
 In what follows, we establish asymptotically tight upper and lower bounds on 
 \begin{align}\label{eq:m_z}
-m(d,z) 
-&\defeq S(d,z) {d \choose z} \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \left(\frac{1-\epsilon}{2}\right)^{d} \, .
+  m(d,z) 
+  &\defeq B_{d,\epsilon}(d-z) S(d,z) 
+  % {d \choose z} 
+  % \left(\frac{1+\epsilon}{1-\epsilon}\right)^{z} \left(\frac{1-\epsilon}{2}\right)^{d} \, .
 \end{align}
-via Claims~\ref{claim:t1star-exact} and ~\ref{claim:t2star-exact}. These claims immediately lead to bounds on $\Exp[ g(W) ]$ via Proposition~\ref{prop:grinding-power-mean}.
+via Claims~\ref{claim:t1star-exact} and ~\ref{claim:t2star-exact}. 
+These claims immediately lead to bounds on $\Exp[ g(W) ]$ 
+via~\eqref{eq:grinding-power-moment-praos} by setting $\lambda = 1$.
 We also recall the following obvious bound from the sum of a geometric progression:
 \begin{align}\label{eq:geom-series-bound}
 \sum_{d=1}^n{r^d} 

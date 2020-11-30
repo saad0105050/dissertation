@@ -125,7 +125,7 @@ We say that the tine-pair $(t_\rho, t_x)$
 is a \emph{witness} to $\mu_x(F)$.
 
 
-% \paragraph{The strategy.}
+% \Paragraph{The strategy.}
 Let $x,y \in \{0,1\}^*$ and write $w = xy$. 
 Recursively build closed forks $F_0, F_1, \ldots, F_{|w|}$ 
 where $F_i \Fork w_1 \ldots w_i, i \geq 1$ and 
@@ -246,7 +246,7 @@ If there are multiple candidates for $s$ or $t_\rho$, break tie arbitrarily.
     We will break this part of the proof into several cases 
     based on the relative reach and margin of the fork. 
 
-    \paragraph{Case 1: $\rho(xy) > 0$ and $\mu_x(y)=0$.} 
+    \Paragraph{Case 1: $\rho(xy) > 0$ and $\mu_x(y)=0$.} 
     We wish to show that 
     $\rho(F') = \rho(xy0)$ and 
     $\mu_x(F') \geq 0$. 
@@ -268,7 +268,7 @@ If there are multiple candidates for $s$ or $t_\rho$, break tie arbitrarily.
     and, therefore, $\mu_x(F') \geq \reach_{F'}(\sigma) = 0$.
     
 
-    \paragraph{Case 2: $\rho(xy)=0$.}
+    \Paragraph{Case 2: $\rho(xy)=0$.}
     We wish to show that 
     $\rho(F') = \rho(xy0)$ and 
     $\mu_x(F') \geq \mu_x(y) - 1$. 
@@ -299,7 +299,7 @@ If there are multiple candidates for $s$ or $t_\rho$, break tie arbitrarily.
       Hence $\mu_x(F') \geq \reach_{F'}(t_x) = 
       \reach_F(t_x) - 1 = \mu_x(y) - 1$.
 
-    \paragraph{Case 3: $\rho(xy) > 0,\mu_x(y)\neq 0$.}
+    \Paragraph{Case 3: $\rho(xy) > 0,\mu_x(y)\neq 0$.}
     We wish to show that 
     $\rho(F') = \rho(xy0)$ and 
     $\mu_x(F') \geq \mu_x(y) - 1$.
@@ -324,7 +324,7 @@ If there are multiple candidates for $s$ or $t_\rho$, break tie arbitrarily.
 
 
 
-% \paragraph{Assumptions about $\Adversary_x$.} 
+% \Paragraph{Assumptions about $\Adversary_x$.} 
 % The strategy $\Adversary_x$ recursively produces a fork $F^\prime \Fork wb, b \in \{0, 1\}$. 
 % Let $F$ be the closed fork produced by $\Adversary_x$ for the string $w = xy$.
 % As we will show below, 
@@ -351,14 +351,14 @@ If there are multiple candidates for $s$ or $t_\rho$, break tie arbitrarily.
 
 
 
-% % \paragraph{Notation.}
+% % \Paragraph{Notation.}
 % % We again adopt the notation used in~\cite{KRDO17}, with a few additions:
 % % let $t_1 = t_\rho, t_2 = t_x$, and let 
 % % $\hat{t}$ be the longest tine of $F$.
 % % Finally, let $S$ represent the set of tines $t$ of $F$ such that reach$(t)=0$. 
 % % (We will sometimes refer to such tines as \emph{critical tines}.)
 
-% % \paragraph{Overview of the algorithm.}
+% % \Paragraph{Overview of the algorithm.}
 % % In order to maximize relative margin, the adversary uses 
 % % the following reasoning (formally described in Figure~\ref{fig:A}).
 % % During each slot, she learns whether the next slot is honest or dishonest, 
@@ -532,7 +532,7 @@ Consider the following proposition:
 
   % %\begin{description}
   % %\item[Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.] 
-  % \paragraph{Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.} 
+  % \Paragraph{Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.} 
   % Let $F$ be some fork for $xy$ such that $\rho(F)=\rho(xy)$ and $\mu_x(F)=\mu_x(y)$. $\mathcal{A}$ will build on some tine $t$ with $\reach(t)=0$, and break ties by choosing to extend the tine that branches from $t_1$ as early as possible. In fact, in this case we are guaranteed that any tine she chooses will diverge from $t_1$ prior to the beginning of $y$: because $\mu_x(y)=0$, we know that the tine $t_2$ associated with $\mu_x(y)$ is disjoint with $t_1$ over $y$ and is in the set of critical tines. Based on our description of $\mathcal{A}$, she will either build on $t_2$, or on another tine that diverges from $t_1$ even earlier, and is also disjoint with $t_1$ over $y$. This shows that any such extension guarantees $\mu_x(y0)$ is at least 0, as the extension and $t_1$ form a pair of tines disjoint over $y0$.
 
   % %%%ub on $\rho(xy)>0$ and $\mu_x(y)=0$
@@ -548,7 +548,7 @@ Consider the following proposition:
 
   % %%%lb on $\rho(xy)=0$
   % %\item[Case 2: $\rho(xy)=0$.]
-  % \paragraph{Case 2: $\rho(xy)=0$.}
+  % \Paragraph{Case 2: $\rho(xy)=0$.}
   %  We will analyze this case with the help of subcases based on the contents of $S$, the set of critical tines. If $S=\{t_1\}$, $\mathcal{A}$ will extend $t_1$. The resulting extension has reach 0, so $\rho(xy0)\geq0$. Additionally, $t_2$'s reach decreases by 1, and the extension and $t_2$ are still disjoint over $y$, so $\mu_x(y0)\geq\mu_x(y)-1$. If $S$ contains both $t_1$ and $t_2$, $\mathcal{A}$ extends $t_2$, because it is totally disjoint from $t_1$ over $y$ and has reach 0. The extension still has reach 0, so $\rho(xy0)\geq0$. Furthermore, the reach of $t_1$ decreases by 1, and the extension and $t_1$ are disjoint over $y$, so $\mu_x(y0)\geq\rho(xy)-1\geq\mu_x(y)-1$.
   % Lastly, if $S$ contains some critical tine $s$ distinct from $t_1$ but $S$ does not contain $t_2$, $\mathcal{A}$ will extend $s$. The resulting extension of $s$ has reach 0, so $\rho(xy0)\geq0$. Note that because $t_2$ is not in $S$, reach$(t_2)<0$. This implies that $s$ (and its extension) must share an edge with $t_1$ somewhere over $y$, as otherwise we would achieve $\mu_x(y)=0$. As a result, $t_2$ and the extension of $s$ must be disjoint over $y$, and they have reach $\mu_x(y)-1$ and 0 respectively, so they act as witnesses to prove that $\mu_x(y0)\geq\mu_x(y)-1$.
 
@@ -560,7 +560,7 @@ Consider the following proposition:
 
   % %%%lb for $\rho(xw)>0,\mu_x(w)\neq0$
   % %\item[Case 3: $\rho(xy)>0,\mu_x(y)\neq0$.]
-  % \paragraph{Case 3: $\rho(xy)>0,\mu_x(y)\neq0$.}
+  % \Paragraph{Case 3: $\rho(xy)>0,\mu_x(y)\neq0$.}
   % Suppose by induction that we have $F\vdash xy$ and tines $t_1$, $t_2$ such that $\rho(xy)=\rho(F)=\reach_{F}(t_1)$ and $\mu_x(y)=\mu_x(F)=\reach_{F}(t_2)$. $\mathcal{A}$ will minimally extend a tine $s$ with reach 0, if one exists, or $\hat{t}$. As a result of this extension, we know that $\reach_{F'}(t_i)=\reach_{F}(t_i)-1$. The witnesses $t_1$ and $t_2$ will still be disjoint over $y0$, so $\mu_x(y0)\geq\mu_x(y)-1$.
 
   % %%ub for $\rho(xw)>0,\mu_x(w)\neq0$
@@ -612,7 +612,7 @@ It remains to prove Proposition~\ref{prop:muxy0-upperbound}.
   Note that while $F'$ is an extension of $F$, 
   it is not necessarily a conservative extension.
 
-  \paragraph{Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.} 
+  \Paragraph{Case 1: $\rho(xy)>0$ and $\mu_x(y)=0$.} 
     We wish to show that $\mu_x(y0) \leq 0$.
     Suppose (toward a contradiction) that $\mu_x(y0) > 0$. 
     Then neither $t_\rho$ or $t_x$ is a conservative extension because, as we proved in Claim ~\ref{claim:ex}, conservative extensions have reach exactly 0. This means that $t_\rho$ and $t_x$ existed in $F$, and had strictly greater reach in $F$ than they do presently in $F'$ (by Claim ~\ref{claim:nex}). 
@@ -628,7 +628,7 @@ It remains to prove Proposition~\ref{prop:muxy0-upperbound}.
     = \mu_x(F') = \mu_x(y0) > 0
     $, a contradiction, as desired.
 
-  \paragraph{Case 2: $\rho(xy)=0$.}
+  \Paragraph{Case 2: $\rho(xy)=0$.}
     We wish to show that $\mu_x(y0) \leq \mu_x(y) - 1$
     or, equivalently, that $\mu_x(y0) < \mu_x(y)$. 
     First, we claim that $t_\rho$ must arise from an extension. 
@@ -666,7 +666,7 @@ It remains to prove Proposition~\ref{prop:muxy0-upperbound}.
     $\mu_x(y0) = \reach_{F'}(t_x) < \reach_F(t_x) \leq \mu_x(y)$. 
 
 
-  \paragraph{Case 3: $\rho(xy)>0,\mu_x(y)\neq0$.}
+  \Paragraph{Case 3: $\rho(xy)>0,\mu_x(y)\neq0$.}
     We wish to show that $\mu_x(y0) \leq \mu_x(y) - 1$ 
     or, equivalently, that $\mu_x(y0) < \mu_x(y)$. 
     Note that by~\ref{eq:rho-recursive}, 
