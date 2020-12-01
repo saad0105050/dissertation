@@ -507,7 +507,7 @@
             return -inf;
         };
     };
-    function PoissonBeaconMinEntropyLoss (\e, \k, \epsp) {
+    function PoissonBeaconMinEntropyLoss (\e, \k) {
         \epsp = PraosEpsP(\e, \k) ;
         if (\epsp <= 0) then {
             return -inf;
@@ -535,7 +535,7 @@
         };
         return sanitizedMinEntropyLoss(\common + \extra) ;
     };
-    function PoissonBeaconPrBadMultiEpoch (\e, \k, \L, \epsp) {
+    function PoissonBeaconPrBadMultiEpoch (\e, \k, \L) {
         \epsp = PraosEpsP(\e, \k) ;
         if (\epsp <= 0) then {
             return -inf;
@@ -548,7 +548,7 @@
         \prBad = 3 * \L * 2^\Rho * \epsp ;
         return sanitizedProbability(\prBad) ;
     };
-    function LnPoissonBeaconPrBadMultiEpoch (\e, \k, \L, \epsp) {
+    function LnPoissonBeaconPrBadMultiEpoch (\e, \k, \L) {
         \epsp = PraosEpsP(\e, \k) ;
         if (\epsp <= 0) then {
             return -inf;
@@ -561,10 +561,14 @@
         \lnPrBad = ln(3) + ln(\L) + \Rho * ln(2) + ln(\epsp);
         return sanitizedLnProbability(\lnPrBad) ;
     };
+    % function PoissonPraosPrBadRatio (\e, \k) {
+    %     \RhoPraos = PraosMinEntropyLossMultiEpoch(\e, \k);
+    %     \RhoPoisson = PoissonBeaconMinEntropyLoss(\e, \k);
+    % };
     %
     %
     % XOR target games: Bernoulli
-    function BernoulliBeaconMinEntropyLoss (\e, \k, \epsp) {
+    function BernoulliBeaconMinEntropyLoss (\e, \k) {
         \epsp = PraosEpsP(\e, \k) ;
         if (\epsp <= 0) then {
             return -inf;
