@@ -386,7 +386,9 @@
     };
     % Consistency error prob
     function PraosEpsP(\e, \k) {
-      return R(\e, \k) * exp( 1 - \e^3 * (1-\e) * \k / 2) ;
+      \dampFactor = 1 ;  
+      % \dampFactor = 1 - \e ;  
+      return R(\e, \k) * exp( 1 - \e^3 * (\dampFactor) * \k / 2) ;
     };
     function LnPraosEpsP(\e, \k) {
       return ln(R(\e, \k)) + 1 - \e^3 * (1-\e) * \k / 2 ;
@@ -448,27 +450,35 @@
     };
     % Praos min-entropy loss in a single epoch
     function PraosMinEntropyLossSingleEpoch (\e, \k) {
-    	% \g = sqrt( PraosV(\e, \k) / PraosEpsP(\e, \k) ) ;% Grinding power
-    	% return ln(\g)/ln(2) ;
-        if (LnPraosV(\e,\k) > LnPraosEpsP(\e,\k)) then {
-            \Tau = - LnPraosEpsP(\e, \k) / ln(2) ;
-        	return 0.5 * \Tau + 0.5 * LnPraosV(\e, \k) / ln(2) ;% Base-2 logarithm
-        }
-        else {
+        if (\e >= 0.809) then {
             return 0 ;
+        } else {
+        	% \g = sqrt( PraosV(\e, \k) / PraosEpsP(\e, \k) ) ;% Grinding power
+        	% return ln(\g)/ln(2) ;
+            if (LnPraosV(\e,\k) > LnPraosEpsP(\e,\k)) then {
+                \Tau = - LnPraosEpsP(\e, \k) / ln(2) ;
+            	return 0.5 * \Tau + 0.5 * LnPraosV(\e, \k) / ln(2) ;% Base-2 logarithm
+            }
+            else {
+                return 0 ;
+            };
         };
     };
     function PraosMinEntropyLossMultiEpoch (\e, \k) {
-        % Probability cannot be larget than 1
-        \lnepsp = LnPraosEpsP(\e, \k) ;
-        if (\lnepsp >= 0) then {
-            % bad 
-            return -inf;% Flag value: min-entropy loss cannot be negative
+        if (\e >= 0.809) then {
+            return 0 ;
         } else {
-            % Logarithm of the grinding power
-            % log2 sqrt( M/epsp ) where M = PraosV() is an upperbound on the second moment
-            \Rho = 0.5 * (LnPraosV(\e, \k) - \lnepsp) / ln(2) ;
-            return sanitizedMinEntropyLoss(\Rho) ;
+            % Probability cannot be larger than 1
+            \lnepsp = LnPraosEpsP(\e, \k) ;
+            if (\lnepsp >= 0) then {
+                % bad 
+                return -inf;% Flag value: min-entropy loss cannot be negative
+            } else {
+                % Logarithm of the grinding power
+                % log2 sqrt( M/epsp ) where M = PraosV() is an upperbound on the second moment
+                \Rho = 0.5 * (LnPraosV(\e, \k) - \lnepsp) / ln(2) ;
+                return sanitizedMinEntropyLoss(\Rho) ;
+            };
         };
     };
     function PraosPrBadMultiEpoch (\e, \k, \L) {

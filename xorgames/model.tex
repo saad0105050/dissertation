@@ -247,11 +247,11 @@ Define
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
         xlabel={$\epsilon$, honest bias},
-        title={$\rho^*$, upper bound on the min-entropy loss $\rho$}
+        title={Min-entropy loss}
         ]
-        \addplot +[ultra thick,red] { BernoulliBeaconMinEntropyLoss(\x, 900, PraosEpsP(\x, 900) ) };
+        \addplot +[ultra thick,black] { BernoulliBeaconMinEntropyLoss(\x, 900 ) };
         \addlegendentry{Bernoulli, $k = 900$};
-        \addplot +[ultra thick,black] { BernoulliBeaconMinEntropyLoss(\x, 900, PraosEpsP(\x, 1200) ) };
+        \addplot +[ultra thick,red] { BernoulliBeaconMinEntropyLoss(\x, 1200 ) };
         \addlegendentry{Bernoulli, $k = 1200$};
       \end{axis}
     \end{tikzpicture}%
