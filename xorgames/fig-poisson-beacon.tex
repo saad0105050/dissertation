@@ -5,14 +5,15 @@
     \begin{tikzpicture}[trim axis left,
       ]
       \begin{axis}[domain=0:1, 
-        xmin=0,xmax=1,%,%ymin=-100%,ymax=2.5
+        xmin=0,xmax=1,ymin=0,%,ymax=2.5
         restrict x to domain=0.18:0.99,
+        unbounded coords=jump, 
         samples=500,
         enlarge x limits=false,
         grid=both,
         no markers, 
         % legend pos=outer north east,
-        legend pos=outer north east,
+        legend pos=north east,
         legend cell align=left,
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
@@ -21,11 +22,36 @@
         ]
         \addplot +[ultra thick,red] { PraosMinEntropyLossMultiEpoch(\x, 900 ) };
         \addlegendentry{Praos, $k = 900$};
-        \addplot +[ultra thick,black] { PoissonBeaconMinEntropyLoss(\x, 900, PraosEpsP(\x, 900)) };
-        \addlegendentry{New, $k = 900$};
         \addplot +[ultra thick,blue] { PraosMinEntropyLossMultiEpoch(\x, 1200) };
         \addlegendentry{Praos, $k = 1200$};
-        \addplot +[ultra thick,orange,dashed] { PoissonBeaconMinEntropyLoss(\x, 1200, PraosEpsP(\x, 1200)) };
+        \addplot +[ultra thick,black] { PoissonBeaconMinEntropyLoss(\x, 900, PraosEpsP(\x, 900)) };
+        \addlegendentry{New, $k = 900$};
+        \addplot +[ultra thick,orange,mark=*] { PoissonBeaconMinEntropyLoss(\x, 1200, PraosEpsP(\x, 1200)) };
+        \addlegendentry{New, $k = 1200$};
+      \end{axis}
+    \end{tikzpicture}%
+    \begin{tikzpicture}[trim axis left,
+      ]
+      \begin{axis}[domain=0:1, 
+        xmin=0,xmax=1,ymin=0,%,ymax=2.5
+        restrict x to domain=0.18:0.99,
+        unbounded coords=jump, 
+        samples=500,
+        enlarge x limits=false,
+        grid=both,
+        no markers, 
+        % legend pos=outer north east,
+        legend pos=north weast,
+        legend cell align=left,
+        x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+        y label style={at={(axis description cs:-0.1,.5)},anchor=south},
+        y tick label style={anchor=east},
+        xlabel={$\epsilon$, honest bias}, 
+        title={$\rho^*$, upper bound on the min-entropy loss $\rho$}
+        ]
+        \addplot +[ultra thick,black] { PoissonBeaconMinEntropyLoss(\x, 900, PraosEpsP(\x, 900)) };
+        \addlegendentry{New, $k = 900$};
+        \addplot +[ultra thick,orange,mark=*] { PoissonBeaconMinEntropyLoss(\x, 1200, PraosEpsP(\x, 1200)) };
         \addlegendentry{New, $k = 1200$};
       \end{axis}
     \end{tikzpicture}%
@@ -38,9 +64,9 @@
     \begin{tikzpicture}[trim axis left,
       ]
       \begin{axis}[domain=0:1, 
-        xmin=0,xmax=1,%,ymin=0%,ymax=2.5
-        restrict x to domain=0.18:0.999,
-        restrict y to domain=-infty:0,
+        xmin=0,xmax=1,ymax=0,
+        restrict x to domain=0:1,
+        unbounded coords=jump, 
         samples=500,
         enlarge x limits=false,
         grid=both,
@@ -54,14 +80,14 @@
         xlabel={$\epsilon$, honest bias},
         title={$\log_2\, \Pr[ \rho > \rho^* ]$},
         ]
-        \addplot +[ultra thick,red] { -LnPraosPrBadMultiEpoch(\x, 900, 1 )/ln(2) } ;
+        \addplot +[ultra thick,red] { LnPraosPrBadMultiEpoch(\x, 900, 1 )/ln(2) } ;
         \addlegendentry{Praos, $k = 900$};
-        \addplot +[ultra thick,black,dashed] { -LnPoissonBeaconPrBadMultiEpoch(\x, 900, 1, PraosEpsP(\x, 900) )/ln(2) } ;
+        \addplot +[ultra thick,black,dashed] { LnPoissonBeaconPrBadMultiEpoch(\x, 900, 1, PraosEpsP(\x, 900) )/ln(2) } ;
         \addlegendentry{New, $k = 900$};
-        \addplot +[ultra thick,blue] { -LnPraosPrBadMultiEpoch(\x, 1200, 1 )/ln(2) } ;
-        \addlegendentry{Praos, $k = 1200$};
-        \addplot +[ultra thick,orange,dashed] { -LnPoissonBeaconPrBadMultiEpoch(\x, 1200, 1, PraosEpsP(\x, 1200) )/ln(2) } ;
-        \addlegendentry{New, $k = 1200$};
+        % \addplot +[ultra thick,blue] { LnPraosPrBadMultiEpoch(\x, 1200, 1 )/ln(2) } ;
+        % \addlegendentry{Praos, $k = 1200$};
+        % \addplot +[ultra thick,orange,dashed] { LnPoissonBeaconPrBadMultiEpoch(\x, 1200, 1, PraosEpsP(\x, 1200) )/ln(2) } ;
+        % \addlegendentry{New, $k = 1200$};
       \end{axis}
     \end{tikzpicture}
     \caption{Failure probability for the Poisson beacon}

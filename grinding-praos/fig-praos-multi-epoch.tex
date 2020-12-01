@@ -6,8 +6,9 @@
     \begin{tikzpicture}[trim axis left,
       ]
       \begin{axis}[domain=0:1, 
-        xmin=0,xmax=1,%,%ymin=-100%,ymax=2.5
-        restrict x to domain=0.02:0.98,
+        xmin=0,xmax=1,ymin=0,%,ymax=2.5
+        restrict x to domain=0:1,
+        unbounded coords=jump,  
         samples=500,
         enlarge x limits=false,
         grid=both,
@@ -22,9 +23,9 @@
         ]
         \addplot +[ultra thick,red] { PraosMinEntropyLossMultiEpoch(\x, 1200) };
         \addlegendentry{$k = 1200$};
-        \addplot +[ultra thick,black] { PraosMinEntropyLossMultiEpoch(\x, 900) };
+        \addplot +[ultra thick,black] { PraosMinEntropyLossMultiEpoch(\x, 900)  };
         \addlegendentry{$k = 900$};
-        \addplot +[ultra thick,blue] { PraosMinEntropyLossMultiEpoch(\x, 600) };
+        \addplot +[ultra thick,blue] { PraosMinEntropyLossMultiEpoch(\x, 600)  };
         \addlegendentry{$k = 600$};
       \end{axis}
     \end{tikzpicture}%
@@ -53,23 +54,25 @@
     \tikzsetnextfilename{prbad}
     \begin{tikzpicture}[trim axis left,
       ]
-      \begin{axis}[domain=0.6:1, 
-        restrict x to domain=0.6:0.999,
+      \begin{axis}[domain=0:1, 
+        % xmin=0.6,xmax=1,%
+        ymax=0,%,ymax=2.5
+        % restrict x to domain=0.6:0.999,
         % restrict y to domain=0:100,
+        unbounded coords=jump, 
         samples=500,
         enlarge x limits=false,
         grid=both,
         no markers,
         % legend pos=outer north east,
-        legend pos=north west,
+        legend pos=south west,
         legend cell align=left,
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
         xlabel={$\epsilon$, honest bias},
         title={$\log_2\,\big(\Pr[ \text{min-entropy loss } > \rho^* ]/L\big)$},
-        xmin=0.6,xmax=1%,ymin=0%,ymax=2.5
         ]
-        \addplot +[ultra thick,red] { LnPraosPrBadMultiEpoch(\x, 900, 1)/ln(2) } ;
+        \addplot +[ultra thick,red] { LnPraosPrBadMultiEpoch(\x, 900, 1)/ln(2) } ;  
         \addlegendentry{$k = 900$};
         % \addplot +[ultra thick,black] {  LnPraosPrBadMultiEpoch(\x, 900, 1)/ln(2)  };
         % \addlegendentry{$k = 900$};

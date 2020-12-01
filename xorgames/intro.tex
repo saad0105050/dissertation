@@ -70,7 +70,13 @@ to design such beacons.
     (Definition~\ref{def:new-beacon}) 
     with two salient features: simplicity and high quality. 
     The heart of our beacon algorithm has a one-line description: 
-    ``take the lexicographically smallest nonce at every slot and XOR them.'' 
+    \quotebox{\singlespacing
+        Take the lexicographically smallest nonce 
+        submitted by the nonce-leader(s) 
+        at every nonce-emitting slot, 
+        XOR them along with the initial value, 
+        and hash the result.
+    }
 
 
     In the private leader election setting (e.g., as in Praos and Snow White), 
@@ -133,9 +139,12 @@ to design such beacons.
     we are able to ``slow down the beacon'' by reducing the number of nonce emitting slots 
     and, thereby, reduce the (still) exponential dependence on $k$.
 
+
+
+    \Paragraph{Beacon abstraction via XOR target games.}
     In XOR target games (\Section~\ref{sec:xor-games}), 
     we deconstruct the eventual consensus blockchain dynamic 
-    to highlight the simply yet important phenomena: 
+    to highlight a simple yet important phenomena: 
     \begin{enumerate}
         \item The adversary can observe the honest nonce inputs up to $k$ slots in future 
         before announcing his nonce inputs from a given slot.
@@ -149,7 +158,63 @@ to design such beacons.
     \end{enumerate}
     In Theorem~\ref{thm:xor-game-lookahead}, 
     we prove an upper bound on the grinding power of an XOR target game 
-    by harness these observations.
+    by harnessing these observations. 
+
+    \Paragraph{Distribution of the sizes of the option sets.}
+    Note that the sizes of the option sets come from 
+    the leader election process $\LeaderElection$
+    and let $\Distribution = \Distribution(\alpha)$ be the distribution 
+    of these sizes, induced by $\LeaderElection$, 
+    where $\alpha$ is the adversarial stake ratio.
+    Therefore, the grinding power would be small if 
+    $\Distribution$ assigns large probabilities to small non-negative integers.
+    If $\LeaderElection = \PublicLeaderElection(\alpha)$ then $\Distribution$ is, in fact, 
+    a Bernoulli distribution. 
+    On the other hand, if $\LeaderElection = \PrivateLeaderElection(\alpha)$ then 
+    $\Distribution$ as a richer structure.
+
+    \Paragraph{Moment bounds on $\Distribution$.}
+    The distribution $\Distribution$ corresponds to the random variable 
+    ``number of adversarial winners whose nonces are lexicographically smaller 
+    than the lexicographically smallest nonce from the honest winners.'' 
+    Our wish is to show that 
+    $\Distribution$ has an exponentially decaying tail 
+    and, to that end, 
+    we need moment bounds on $\Distribution$. 
+    Instead of directly analyzing the random variable above, 
+    we make the observation that it is (clearly) 
+    stochastically dominated by 
+    the number of adversarial winners.
+    This latter distribution has the Poisson binomial distribution 
+    $\PoissonBinomial(\alpha)$ 
+    (Definition~\ref{def:poisson-binomial-distribution}).
+    
+    LeCam's theorem states that $\PoissonBinomial(\alpha)$ is 
+    statistically close (in the total variation distance) 
+    to the Poisson distribution $\Poisson(\alpha)$. 
+    If $\PoissonBinomial(\alpha) \DominatedBy \Poisson(\alpha)$ were true, 
+    we could have used Poisson moment bounds to 
+    derive a tail bound on $\Distribution$; 
+    but this premise is incorrect. 
+    Fortunately, however, 
+    the second moment of $\Poisson(\alpha)$ 
+    is larger than that of $\PoissonBinomial(\alpha)$.
+    The monotonicity of non-negative real moments 
+    of non-negative random variables
+    (a special case of H\:{o}lder's inequality) 
+    suggests that 
+    we can upper bound the $\lambda$-th moment of $\Distribution(\alpha)$, 
+    $\lambda \in (1,2]$, via the second moment of $\Poisson(\alpha)$. 
+    This moment bound holds for $\alpha \in (0, 0.41)$, 
+    resulting in Lemma~\ref{thm:xor-game-private-election} 
+    which implies our main theorem, 
+    Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}.
+
+
+    We remark that an exact (or stricter) analysis of 
+    the moments of $\Distribution$ 
+    would result in improved bounds on the grinding power. 
+    We leave this as a future work.
 
 
 

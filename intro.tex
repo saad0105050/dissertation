@@ -599,17 +599,12 @@ we mention the ones that are central to the presentation.
 
 
 
-\section{Limitations and future research}
-Our analysis of the grinding problem in Praos (and SnowWhite) 
-is in the synchronous setting. 
-Since the security guarantees in Praos are in the semi-synchronous setting, 
-it would be fitting if we could either lift this analysis to the semi-synchronous setting 
-or, better yet, did it directly in the semi-synchronous setting. 
-One way to accomplish this would be to 
-count the number of adversarial blockchains in a semi-synchronous fork (Definition~\ref{def:delta-fork}). 
-Another way would be to apply a synchronous-to-semi-synchronous reduction (see \Section~\ref{sec:async-multihonest})
-to the synchronous grinding power.
+\section{Limitations and mitigations}
+Below, we discuss some limitations in our analysis 
+and how one could mitigate them.
 
+
+\Paragraph{Simple honest majority and beyond.}
 Our analysis in this dissertation assumes that the leader election outcomes obey 
 the ``simple honest majority'' rule, on average: 
 that is, an honest slot is more likely than an adversarial slot. 
@@ -620,7 +615,35 @@ The recent paper by~\citet{AdversarialSupremacy} deals with this scenario in bot
 However, like Praos, their model awards a multihonest slot to the adversary; 
 but the raison d'\^{e}tre of Part~\ref{part:multihonest} of this dissertation 
 is to alleviate this difficulty.
-It would be interesting future work to combine these ideas with those in~\cite{AdversarialSupremacy}.
+It would be an interesting future work to combine these ideas with those in~\cite{AdversarialSupremacy}.
+
+\Paragraph{Synchronous grinding analysis.}
+Our analysis of the grinding problem in Praos (and SnowWhite) 
+is in the synchronous setting. 
+Since the security guarantees in Praos are in the semi-synchronous setting, 
+it would be fitting if we could either lift this analysis to the semi-synchronous setting 
+or, better yet, did it directly in the semi-synchronous setting. 
+One way to accomplish this would be to 
+count the number of adversarial blockchains in a semi-synchronous fork (Definition~\ref{def:delta-fork}). 
+Another way would be to apply a synchronous-to-semi-synchronous reduction (see \Section~\ref{sec:async-multihonest})
+to the synchronous grinding power.
+
+
+\Paragraph{Slack in estimating the grinding power in the new beacon.}
+Our analysis of the new beacon in Section~\ref{sec:poisson}, 
+in the private leader election 
+has some slack. 
+Instead of exactly analyzing 
+the distribution of the option sets 
+induced by the nonce leader election $\PrivateLeaderElection(\alpha)$, 
+we derived an upper bound by analyzing a distribution 
+that was easier to analyze. 
+Specifically, 
+instead of counting ``the number of nonces submitted by adversarial nonce-leaders, 
+that are lexicographically smaller than 
+the lexicographically smallest nonce submitted by the honest nonce-leaders,'' 
+we counted ``the number of adversarial nonce-leaders.'' 
+Thus, our bound could be tightened via an exact (or stricter) analysis.
 
 
 
