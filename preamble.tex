@@ -299,6 +299,9 @@
 \newcommand{\ParagraphEmph}[1]{\vspace{1em}\noindent\textbf{#1}\ }
 
 
+\newcommand{\UnfinishedWarning}[1]{ {\color{red} To do}\@latex@warning{Unfinished: {#1} } }
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Plotting/drawing-related functions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -378,10 +381,14 @@
     };
     % Epoch length
     function R(\e, \k) {
-      return floor(16 * \k  / (1 + \e)) ; 
+      % Corollay 3 Praos: R = 24k/(1+eps)
+      return floor(24 * \k  / (1 + \e)) ; 
     };
     % Number of nonce-generating slots
     function PraosN(\e, \k) {
+      % Nonces taken from the first 16k/(1+eps) slots;  
+      %     every honestly-held chain contains at leat one honest block 
+      %     from the latter half of these slots
       return floor(R(\e, \k) * 2 / 3) ; 
     };
     % Consistency error prob
