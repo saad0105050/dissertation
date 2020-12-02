@@ -146,16 +146,23 @@ as a \emph{characteristic string}:
 
 
 \begin{definition}[Characteristic string]\label{def:char-string-praos}
-  A \emph{characteristic string} $w \in \{\A, 1, 2, 3, \ldots \}^*$ 
+  A \emph{characteristic string} $w \in \{\A, 
+  % \perp, 
+  1, 2, 3, \ldots \}^*$ 
   corresponds to a particular execution of $\Blockchain$.
   For each slot $t = 1, 2, \ldots$, 
-  $w_t = \A$ if $t$ is assigned to an adversarial participant; and 
+  $w_t = \A$ if $t$ is assigned to an adversarial participant; 
+  % $w_t = \perp$ if $t$ is assigned to no participants; 
+  and 
   $w_t = k \in \{1,2,\ldots\}$ if $t$ is assigned to $k$ honest participants.
   By convention, $w_0 = 1$.
 \end{definition}
 
 Note that the above definition of characteristic strings 
-is a generalization of Definition~\ref{def:trivalent-char-string}
+is a generalization of characteristic strings 
+from Part~\ref{part:multihonest} 
+(Definition~\ref{def:trivalent-char-string} 
+and Definition~\ref{def:semisync-char-string}, especially)
 in that it counts the number of honest leaders. 
 
 
@@ -164,12 +171,15 @@ we write $x \Prefix w$ iff $x$ is a strict prefix of $w$.
 Similarly, 
 we write $x \PrefixEq w$ iff either $x = w$ or $x \Prefix w$. 
 The empty string $\varepsilon$ is a prefix to all strings. 
-If $w_t = \A$, we say that ``$\Slot_t$ is adversarial;'' 
-otherwise, we say that ``$\Slot_t$ is honest.'' 
-Define $\#_\A(w)$ as the number of occurrences of $\A$ in $w$. 
-Define $\#_\h(w) \triangleq |w| - \#_\A(w)$.
+% If $w_t = \perp$ then we say that ``slot $t$ is empty.'' 
+If $w_t = \A$, we say that ``slot $t$ is adversarial;'' 
+otherwise, we say that ``slot $t$ is honest.'' 
 A slot $t$ is called \emph{$k$-honest} if $w_t = k \in \NN$.
-A characteristic string $w$ is called $\Hheavy$ if 
+Define $\#_\A(w)$ as the number of occurrences of $\A$ in $w$. 
+Define $\#_\h(w) \triangleq |w| - \#_\A(w) 
+% - \#_\perp(w)
+$.
+A characteristic string $w$ is called $\Hheavy$ (or \emph{honest-heavy}) if 
 $\#_\h(w) > \#_\A(w)$; 
 otherwise, $w$ is called $\Aheavy$. 
 We use $w[i : j]$ to denote the substring $w_i w_{i+1}\ldots w_j$.
@@ -250,7 +260,7 @@ We formalize this notion in the definition below.
   \InlineCases{
     \item $i_0 = 0$ or 
     % $w_{i_0} = \h$, 
-    $i_0 \neq \A$, 
+    $w_{i_0} \neq \A$, 
     \item $w_{i_j} = \A$ for each $j > 0$, and
     \item $k \geq \#_\h(w[i_0 +1 : n])$.
   }
@@ -305,34 +315,61 @@ our (idealized) leader election mechanism
 induces 
 a distribution $\mathcal{L}_n(\alpha)$ 
 on length-$n$ characteristic strings $w = w_1 \ldots w_n$. 
-We define $\mathcal{L}_n(\alpha)$ as follows: 
-the symbols $w_i$s are independent 
-and 
-every slot is assigned to at least one slot leader. 
-In addition, for all $i$, $\Pr[w_i = \A] = \alpha$.
-Furthermore, $\Pr[w_i = j], j \in \NN$ is defined as follows: 
-Let $m \in \NN$ be the total number of honest participants. 
-Consider the independent Bernoulli random variables $X_i \in \{0, 1\}, i \in [m]$ 
-and a tuple $(\sigma_1, \ldots, \sigma_m) \in [0,1]^m$ 
-so that $\Pr[X_i = 1] = \sigma_i$ 
-and $\sum \sigma_i = 1 - \alpha$. 
-Let $H = H_m = \sum_{i =1}^m X_i$. 
-Then for $i \in [n]$, 
-$$
-  \Pr[w_i = j] = (1-\alpha)\cdot
-    \frac{\Pr[H = j \mid j \geq 1]}{1 - \Pr[H = 0]}
-    \,.
-$$
 
-When $n$ is understood from the context, 
-we just write $\mathcal{L}(\alpha)$ to denote this distribution. 
+\begin{definition}[$\mathcal{L}_n(\alpha)$]\label{def:dist-L-alpha-praos}
+  Let $\alpha \in (0,1/2)$ and $n \in \NN$. 
+  $\mathcal{L}_n(\alpha)$ is a distribution on characteristic strings 
+  $w = w_1 \ldots w_n$ so that
+  \begin{itemize}
+    \item The symbols $w_i$s are independent and 
+    either $w_i =\A$ or $w_i \in \{1,2,\ldots\}$. 
+    \item In addition, for all $i$, $\Pr[w_i = \A] = \alpha$.
+    \item Furthermore, $\Pr[w_i = j], j \in \NN$ is defined as follows: 
+    Let $m \in \NN$ be the total number of honest participants. 
+    Consider the independent Bernoulli random variables $X_i \in \{0, 1\}, i \in [m]$ 
+    and a tuple $(\sigma_1, \ldots, \sigma_m) \in [0,1]^m$ 
+    so that $\Pr[X_i = 1] = \sigma_i$ 
+    and $\sum \sigma_i = 1 - \alpha$. 
+    Let $H = H_m = \sum_{i =1}^m X_i$. 
+    Then for $i \in [n]$, 
+    $$
+      \Pr[w_i = j] = (1-\alpha)\cdot
+        \frac{\Pr[H = j \mid j \geq 1]}{1 - \Pr[H = 0]}
+        \,.
+    $$
+  \end{itemize}
+  When $n$ is understood from the context, 
+  we just write $\mathcal{L}(\alpha)$ to denote this distribution. 
+\end{definition}
+
+% Notice that the distribution $\mathcal{L}_n$ assigns zero probability 
+% on characteristic strings $w$ with an empty slot. 
+% Next, consider a distribution on the characteristic strings containing empty slots.
+
+% \begin{definition}[$\mathcal{L}^\perp_n(\alpha, a)$]\label{def:dist-L-star-alpha-praos}
+%   Let $\alpha \in (0,1/2)$ and $n \in \NN$. 
+%   $\mathcal{L}^*_n(\alpha)$ is a distribution on characteristic strings 
+%   $w = w_1 \ldots w_n$ so that
+%   \begin{itemize}
+%     \item The symbols $w_i$s are independent. 
+%     \item With probability $a$, $w_i \sim \mathcal{L}_1(\alpha)$;
+%     $w_i = \perp$ with probability $1 - a$.
+%   \end{itemize}
+% \end{definition}
+
+
 Furthermore, let $\epsilon \in (0,1)$ and set 
 the adversarial stake $\alpha = (1-\epsilon)/2$. 
 We define 
-\begin{equation}\label{eq:praos-gneps}
-  g(n,\epsilon) = g(W) \qquad \text{where} \quad W \sim \mathcal{L}_n((1-\epsilon)/2)
-\end{equation}
+\begin{align}
+  g(n,\epsilon) &= g(W) \qquad \text{where} \quad W \sim \mathcal{L}_n((1-\epsilon)/2) \label{eq:praos-gneps}
+\end{align}
 as \emph{the grinding power over $n$ slots with adversarial stake $(1-\epsilon)/2$.}
+% Similarly, define 
+% \begin{align}
+%   g_\perp(n,\epsilon, a) &= g(W) \qquad \text{where} \quad W \sim \mathcal{L}^\perp_n((1-\epsilon)/2, a)\label{eq:praos-gneps-perp}
+% \end{align}
+
 Our goal is to derive tail bounds on $g(n,\epsilon)$.
 
 
