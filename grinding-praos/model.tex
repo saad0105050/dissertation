@@ -75,68 +75,12 @@ we take the opportunity to define the public leader elections as well.
 
 
 
-\section{Praos beacon}\label{sec:praos-beacon-def}\label{sec:praos-model-grindingpower-minentropy}
-The Praos blockchain protocol $\Blockchain$ 
-proceeds in epochs $t = 1, 2, \ldots$. 
-An epoch is long enough 
-so that after it is complete, 
-the first $n$ slots become settled 
-(in the sense of $\kSlotCP$).
 
+\Paragraph{A beacon protocol}
+A beacon protocol takes a uniformly random initial string $\eta_0$ 
+and produces a series of strings $\eta_1, \eta_2, \ldots$; 
+these strings are called the outputs of the beacon.
 
-\begin{definition}[Praos beacon with parameter $\kappa, n \in \NN$]\label{def:praos-beacon}
-  Let $\eta_0 \in \{0,1\}^\kappa$ be a uniformly random string, known to all participants 
-  at the outset of the protocol.
-  After each epoch $t$, 
-  a \emph{beacon output} $\eta_t \in \{0,1\}^\kappa$ is computed, as follows: 
-  % which takes a ``seed'' $\eta_{e-1} \UniformIn \{0,1\}^\kappa$ 
-  % as input and outputs a string $\eta_e \in \{0,1\}^\kappa$, as follows:
-  \begin{enumerate}
-    \item $\eta_{t-1}$ is called the \emph{initial value} for epoch $t$.
-
-    \item Every new block added during slots $i \in [n]$ in an epoch contains 
-    a uniformly random Boolean string of length $\kappa$; 
-    it is called a \emph{nonce}.
-
-    \item Let $u$ be an honest observer at the onset of the next epoch. 
-    He computes the beacon output for this epoch, $\eta_t$, 
-    by XORing all nonces recorded in his blockchain 
-    along with $\eta_{t-1}$ 
-    and then applying to it a cryptographic hash function.
-  \end{enumerate}
-  Note that the consistency property of the blockchain 
-  would ensure that all honestly-held blockchains 
-  at the onset of epoch $e + 1$ 
-  will agree about the blocks issued from 
-  the first $n$ slots of epoch $e$.  
-\end{definition}
-
-% The length of each epoch is $R \geq n + k$. 
-
-% \begin{definition}[Praos beacon with dimension $\kappa$]\label{def:praos-beacon}~
-%   \begin{itemize}
-%     \item Before the protocol commences, 
-%     all participants are given a uniformly random string $\eta_0 \in \{0,\}^k$. 
-
-%     \item Before epoch $t = 1, 2, \ldots$ commences, 
-%     a string $\eta_{t-1}$ is given to all players; 
-%     this is called the \emph{initial value} for this epoch. 
-%     In fact, for $t \geq 2$, $\eta_{t-1}$ is the beacon output from the previous epoch; see below.
-
-%     \item Inside slot $i$ in epoch $t$, 
-%     when a slot leader $u$ issues a new block, 
-%     he also includes a \emph{nonce input} 
-%     $\VRF_{\PrivateKey(u)}(t \Vert i \Vert \eta_{t-1}) \in \{0,1\}^\kappa$. 
-%     Here, $\Vert$ denotes concatenation.
-    
-%     \item After the epoch is complete, 
-%     every honest participant computes the beacon output $\eta_t \in \{0,1\}^\kappa$ as follows: 
-%     he gathers all nonce inputs 
-%     from a specified prefix of his blockchain, 
-%     XORs them together, and then applies a cryptographic hash.
-%   \end{itemize}
-%   The strings $\eta_1, \eta_2, \ldots$ are called the beacon outputs.
-% \end{definition}
 
 The common, public random string $\eta_{t-1}$ 
 is used in various computations in epoch $t$, 
@@ -151,7 +95,7 @@ of $\eta_1, \eta_2, \ldots$ is critical factor underlying
 the security of the blockchain protocol; 
 we explore this next.
 
-\Paragraph{Beacon output quality.}
+% \Paragraph{Beacon output quality.}
 Let $n \in \NN$ and let $A$ be the set of $n$-bit Boolean strings.
 Suppose a random variable $X$ takes values from $A$
 and its probability distribution is $\mathcal{X}$. 
@@ -292,5 +236,68 @@ over the $L$ epochs.
 In \Section~\ref{sec:praos}, we characterize the grinding power 
 for the beacon protocol of Ouroboros Praos~\cite{Praos} and Snow White~\cite{SnowWhite}.
 
+
+\section{Praos beacon}\label{sec:praos-beacon-def}\label{sec:praos-model-grindingpower-minentropy}
+The Praos blockchain protocol $\Blockchain$ 
+proceeds in epochs $t = 1, 2, \ldots$. 
+An epoch is long enough 
+so that after it is complete, 
+the first $n$ slots become settled 
+(in the sense of $\kSlotCP$).
+
+
+\begin{definition}[Praos beacon with parameter $\kappa, n \in \NN$]\label{def:praos-beacon}
+  Let $\eta_0 \in \{0,1\}^\kappa$ be a uniformly random string, known to all participants 
+  at the outset of the protocol.
+  After each epoch $t$, 
+  a \emph{beacon output} $\eta_t \in \{0,1\}^\kappa$ is computed, as follows: 
+  % which takes a ``seed'' $\eta_{e-1} \UniformIn \{0,1\}^\kappa$ 
+  % as input and outputs a string $\eta_e \in \{0,1\}^\kappa$, as follows:
+  \begin{enumerate}
+    \item $\eta_{t-1}$ is called the \emph{initial value} for epoch $t$.
+
+    \item Every new block added during slots $i \in [n]$ in an epoch contains 
+    a uniformly random Boolean string of length $\kappa$; 
+    it is called a \emph{nonce}.
+
+    \item Let $u$ be an honest observer at the onset of the next epoch. 
+    He computes the beacon output for this epoch, $\eta_t$, 
+    by XORing all nonces recorded in his blockchain 
+    along with $\eta_{t-1}$ 
+    and then applying to it a cryptographic hash function.
+  \end{enumerate}
+  Note that the consistency property of the blockchain 
+  would ensure that all honestly-held blockchains 
+  at the onset of epoch $e + 1$ 
+  will agree about the blocks issued from 
+  the first $n$ slots of epoch $e$.  
+\end{definition}
+
+% The length of each epoch is $R \geq n + k$. 
+
+% \begin{definition}[Praos beacon with dimension $\kappa$]\label{def:praos-beacon}~
+%   \begin{itemize}
+%     \item Before the protocol commences, 
+%     all participants are given a uniformly random string $\eta_0 \in \{0,\}^k$. 
+
+%     \item Before epoch $t = 1, 2, \ldots$ commences, 
+%     a string $\eta_{t-1}$ is given to all players; 
+%     this is called the \emph{initial value} for this epoch. 
+%     In fact, for $t \geq 2$, $\eta_{t-1}$ is the beacon output from the previous epoch; see below.
+
+%     \item Inside slot $i$ in epoch $t$, 
+%     when a slot leader $u$ issues a new block, 
+%     he also includes a \emph{nonce input} 
+%     $\VRF_{\PrivateKey(u)}(t \Vert i \Vert \eta_{t-1}) \in \{0,1\}^\kappa$. 
+%     Here, $\Vert$ denotes concatenation.
+    
+%     \item After the epoch is complete, 
+%     every honest participant computes the beacon output $\eta_t \in \{0,1\}^\kappa$ as follows: 
+%     he gathers all nonce inputs 
+%     from a specified prefix of his blockchain, 
+%     XORs them together, and then applies a cryptographic hash.
+%   \end{itemize}
+%   The strings $\eta_1, \eta_2, \ldots$ are called the beacon outputs.
+% \end{definition}
 
 

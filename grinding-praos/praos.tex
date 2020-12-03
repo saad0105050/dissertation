@@ -13,12 +13,6 @@ It captures the outcomes of the private leader election process $\PrivateLeaderE
 in these slots. 
 Next, we use the definition of the Praos beacon protocol to 
 derive an expression for its grinding power on $w$.
-Next, for some $\epsilon \in (0,1)$, 
-we define a distribution $\mathcal{L}((1-\epsilon)/2)$ on the set of characteristic strings of length $n$; 
-this represents the outcome of $\PrivateLeaderElection((1-\epsilon)/2)$, i.e., 
-a private leader election with an adversarial stake-minority.
-We finish this \Section by stating our main theorem about the min-entropy loss in the Praos beacon. 
-The proof of this theorem is presented in \Section~\ref{sec:praos-second-moment}.
 
 
 
@@ -147,12 +141,12 @@ as a \emph{characteristic string}:
 
 \begin{definition}[Characteristic string]\label{def:char-string-praos}
   A \emph{characteristic string} $w \in \{\A, 
-  % \perp, 
+  \perp, 
   1, 2, 3, \ldots \}^*$ 
   corresponds to a particular execution of $\Blockchain$.
   For each slot $t = 1, 2, \ldots$, 
   $w_t = \A$ if $t$ is assigned to an adversarial participant; 
-  % $w_t = \perp$ if $t$ is assigned to no participants; 
+  $w_t = \perp$ if $t$ is assigned to no participants; 
   and 
   $w_t = k \in \{1,2,\ldots\}$ if $t$ is assigned to $k$ honest participants.
   By convention, $w_0 = 1$.
@@ -171,19 +165,22 @@ we write $x \Prefix w$ iff $x$ is a strict prefix of $w$.
 Similarly, 
 we write $x \PrefixEq w$ iff either $x = w$ or $x \Prefix w$. 
 The empty string $\varepsilon$ is a prefix to all strings. 
-% If $w_t = \perp$ then we say that ``slot $t$ is empty.'' 
+If $w_t = \perp$ then we say that ``slot $t$ is empty.'' 
 If $w_t = \A$, we say that ``slot $t$ is adversarial;'' 
 otherwise, we say that ``slot $t$ is honest.'' 
 A slot $t$ is called \emph{$k$-honest} if $w_t = k \in \NN$.
 Define $\#_\A(w)$ as the number of occurrences of $\A$ in $w$. 
 Define $\#_\h(w) \triangleq |w| - \#_\A(w) 
-% - \#_\perp(w)
+- \#_\perp(w)
 $.
 A characteristic string $w$ is called $\Hheavy$ (or \emph{honest-heavy}) if 
 $\#_\h(w) > \#_\A(w)$; 
 otherwise, $w$ is called $\Aheavy$. 
 We use $w[i : j]$ to denote the substring $w_i w_{i+1}\ldots w_j$.
 
+Let $w$ be a characteristic string.
+If we obtain a string $x$ by deleting all $\perp$ symbols in $w$, 
+then $x$ is called a \emph{non-empty restriction of $w$}.
 
 
 % As we discussed after Definition~\ref{def:coin-flipping-security}, 
@@ -208,7 +205,7 @@ We use $w[i : j]$ to denote the substring $w_i w_{i+1}\ldots w_j$.
 We briefly recall some fork-theoretic concepts
 developed in Section~\ref{sec:viable-blockchains-adv-extensions}. 
 Consider an abstract execution of $\Blockchain$ 
-corresponding to the characteristic string $w$ 
+corresponding to the characteristic string $w$
 where 
 all blockchains are arranged in a rooted tree; 
 this tree is called a \emph{fork}. 
@@ -230,6 +227,26 @@ must be at least as long as $\Chain$.
 If an honest observer (or leader) has to choose from multiple viable blockchains for adoption, 
 we assume that the tie is broken by the adversary. 
 
+Assume that the blockchain protocol 
+has the $\sECQ$ property (Definition~\ref{def:ECQ}) 
+and the $\kSlotCP$ property (Definition~\ref{def:cp-slot-mh} 
+with $s \geq k$. 
+Let $n = |w|$.
+It follows that 
+every blockchain held by an honest observer must contain 
+at least one honest block 
+issued from the most recent $s$ slots in $w$. 
+As $s \geq k$, 
+\begin{equation}
+  \text{the blockchains held by the honest players 
+    are consistent 
+    over the prefix $w_1 w_2 \ldots w_{n-s}$.
+  }
+  \label{eq:last-honest-block-praos}
+\end{equation}
+(Note that in fact, they could be consistent for some prefix of $w_{n-s+1} w_{n-s+2} \ldots w_n$.)
+This honest block commits to a single blockchain.
+
 Considering any fork $F$ and an honest blockchain $\Chain$ in $F$, 
 a \emph{viable adversarial extension of $\Chain$} 
 is an adversarial blockchain $\Chain' \in F$ 
@@ -240,34 +257,44 @@ Note that every adversarial extension
 viable at the onset of slot $n + 1$, 
 corresponds to a choice 
 for the output of the coin-flipping protocol. 
-Each of these extensions contains a last honest block as its prefix. 
-Thus we focus on upper bounding, 
+As we have argued before, 
+each of these extensions contains a last honest block as its prefix 
+and this block must come from the most recent $s$ slots.
+
+Thus, we focus on upper bounding, 
 over all forks for a given characteristic string, 
 the total number of viable adversarial extensions 
-of the honest blocks.
+of the honest blocks from the most recent $s$ slots.
 Note that a prerequisite to creating an adversarial extension 
 of an honest block with label $h$ is that 
 the suffix $w[h + 1 : n]$ must be $\Aheavy$.
 We formalize this notion in the definition below.
 
-\begin{definition}[Grinding Power]\label{def:option-sequence}
-  Let $w$ be a characteristic string of length $n$. 
+\begin{definition}[Grinding Power with parameter $s$]\label{def:option-sequence}
+  Let $w$ be a characteristic string of length $n$ 
+  and let $s, k \in [n], s \geq k$. 
+  Suppose that the blockchain satisfies $\kSlotCP$ and $\sECQ$ properties.
   We say that a sequence
   $
-    0 \leq i_0 < i_1 < \cdots < i_k \leq n
+    \max(n-s+1,0) \leq i_0 < i_1 < \cdots < i_k \leq n
   $
   is an \emph{option sequence} if
   \InlineCases{
     \item $i_0 = 0$ or 
-    % $w_{i_0} = \h$, 
-    $w_{i_0} \neq \A$, 
+    % $w_{i_0} \neq \A$, 
+    $w_{i_0} \not \in \{\A
+    , \perp
+    \}$, 
     \item $w_{i_j} = \A$ for each $j > 0$, and
     \item $k \geq \#_\h(w[i_0 +1 : n])$.
   }
-  We define the \emph{grinding power} of $w$, denoted $g(w)$, 
+  We define the \emph{grinding power of $w$ with parameter $s$}, denoted $g_s(w)$, 
   as the 
-  number of distinct option sequences for $w$.
+  number of distinct option sequences for $w$. 
+  When $s$ is understood from the context, 
+  we write $g(w)$ to denote the grinding power.
 \end{definition}
+\noindent
 
 
 % \Paragraph{Grinding power of a characteristic string.}
@@ -287,179 +314,37 @@ By summing over all honest slots,
 the total number of viable blockchains for $w = w_1 w_2 \cdots w_n$,
 i.e., the grinding power for $w$, is 
 \begin{equation}\label{eq:g_praos}
-    % g(w) 
-    % = \sum_{\substack{
-    %     x,y : w = xy, \\ 
-    %     |x| \geq 0, \text{and}\\ 
-    %     \text{slot $|x|$ is honest} }
-    %   } w_{|x|}\, S(y)
-    % \,.  
     g(w_1 w_2 \cdots w_n) 
-    = \sum_{ \text{$t \in [n] : w_t$ is honest} }
-      w_t\, S(w_{t+1} \cdots w_n)
+    = \sum_{ \text{$t \in [n] : t$ is an honest slot} }
+      w_t \cdot S(w_{t+1} \cdots w_n)
     \,.  
 \end{equation}
 
+In this exposition, 
+we first handle a distribution 
+on characteristic strings 
+which assigns zero probability on empty slots. 
 
-
-
-
-\section{The distribution \texorpdfstring{$\mathcal{L}(\alpha)$}{on characteristic strings}}
-Let $\alpha \in (0, 1/2)$ 
-and assume that the adversarial players control an $\alpha$ 
-fraction of the stake. 
-We consider a leader election mechanism 
-which mimics the Praos election except the empty slots. 
-Specifically, 
-our (idealized) leader election mechanism 
-induces 
-a distribution $\mathcal{L}_n(\alpha)$ 
-on length-$n$ characteristic strings $w = w_1 \ldots w_n$. 
-
-\begin{definition}[$\mathcal{L}_n(\alpha)$]\label{def:dist-L-alpha-praos}
-  Let $\alpha \in (0,1/2)$ and $n \in \NN$. 
-  $\mathcal{L}_n(\alpha)$ is a distribution on characteristic strings 
-  $w = w_1 \ldots w_n$ so that
-  \begin{itemize}
-    \item The symbols $w_i$s are independent and 
-    either $w_i =\A$ or $w_i \in \{1,2,\ldots\}$. 
-    \item In addition, for all $i$, $\Pr[w_i = \A] = \alpha$.
-    \item Furthermore, $\Pr[w_i = j], j \in \NN$ is defined as follows: 
-    Let $m \in \NN$ be the total number of honest participants. 
-    Consider the independent Bernoulli random variables $X_i \in \{0, 1\}, i \in [m]$ 
-    and a tuple $(\sigma_1, \ldots, \sigma_m) \in [0,1]^m$ 
-    so that $\Pr[X_i = 1] = \sigma_i$ 
-    and $\sum \sigma_i = 1 - \alpha$. 
-    Let $H = H_m = \sum_{i =1}^m X_i$. 
-    Then for $i \in [n]$, 
-    $$
-      \Pr[w_i = j] = (1-\alpha)\cdot
-        \frac{\Pr[H = j \mid j \geq 1]}{1 - \Pr[H = 0]}
-        \,.
-    $$
-  \end{itemize}
-  When $n$ is understood from the context, 
-  we just write $\mathcal{L}(\alpha)$ to denote this distribution. 
-\end{definition}
-
-% Notice that the distribution $\mathcal{L}_n$ assigns zero probability 
-% on characteristic strings $w$ with an empty slot. 
-% Next, consider a distribution on the characteristic strings containing empty slots.
-
-% \begin{definition}[$\mathcal{L}^\perp_n(\alpha, a)$]\label{def:dist-L-star-alpha-praos}
-%   Let $\alpha \in (0,1/2)$ and $n \in \NN$. 
-%   $\mathcal{L}^*_n(\alpha)$ is a distribution on characteristic strings 
-%   $w = w_1 \ldots w_n$ so that
-%   \begin{itemize}
-%     \item The symbols $w_i$s are independent. 
-%     \item With probability $a$, $w_i \sim \mathcal{L}_1(\alpha)$;
-%     $w_i = \perp$ with probability $1 - a$.
-%   \end{itemize}
-% \end{definition}
-
-
-Furthermore, let $\epsilon \in (0,1)$ and set 
-the adversarial stake $\alpha = (1-\epsilon)/2$. 
-We define 
-\begin{align}
-  g(n,\epsilon) &= g(W) \qquad \text{where} \quad W \sim \mathcal{L}_n((1-\epsilon)/2) \label{eq:praos-gneps}
-\end{align}
-as \emph{the grinding power over $n$ slots with adversarial stake $(1-\epsilon)/2$.}
-% Similarly, define 
-% \begin{align}
-%   g_\perp(n,\epsilon, a) &= g(W) \qquad \text{where} \quad W \sim \mathcal{L}^\perp_n((1-\epsilon)/2, a)\label{eq:praos-gneps-perp}
-% \end{align}
-
-Our goal is to derive tail bounds on $g(n,\epsilon)$.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\section{Main theorem: Praos beacon}
-Define 
-\begin{align}
-  \phi(\epsilon) &\triangleq \frac{3}{2} \left( (1-\epsilon^2) (1-\epsilon) \right)^{1/3}\label{eq:phi_eps} \\
-  V(\epsilon) &= \begin{cases}
-      \left( (5-3 \epsilon)/2 \right)^s & \text{if}\quad 0 < \epsilon \leq 1/3\,, \\
-      \left( 2^{2/3} \phi(\epsilon) \right)^s & \text{if}\quad 1/3 < \epsilon \leq 3/5\,, \\
-      \left( (5/3) \phi(\epsilon) \right)^s & \text{otherwise}\,. 
-    \end{cases} 
-  \,. \label{eq:V-eps-praos}
-\end{align}
+\begin{observation}\label{obs:empty-slot-praos}
+  The grinding power of $w$ stays the same 
+  if we add or delete any number of $\perp$ symbols 
+  anywhere in the original string.   
+\end{observation}
 \noindent
+We use this observation in Section~\ref{sec:praos-empty-slots} 
+to lift the aforementioned analysis for general characteristic strings.
 
 
-Let $\epsilon \in (0,1), \alpha = (1-\epsilon)/2, n \in \NN$. 
-We can prove that 
-conditioned on an $(\EpsP, k, s)$-secure execution of Praos in an epoch of length $n$ 
-and characteristic string $W \sim \mathcal{L}_n(\alpha)$, 
-$\Exp[g(n,\epsilon)^2] = O(s^2) V(\epsilon)$.
-In Figure~\ref{fig:praos-gp-moments}, 
-we have plotted various moment bounds on $g(n,\epsilon)$; 
-we will prove these bounds next in this exposition.
 
-\iftoggle{drawfigs}{
-  \input{grinding-praos/fig-praos-gp-moment-bounds}
-}
 
-We can derive tail bounds on $g(n,\epsilon)$ using the second moment bound.
 
-\begin{theorem}[Praos beacon]\label{thm:minentropy-loss-praos-multi-epochs}  
-  Let $\epsilon \in (0, 1)$ and $L,\kappa \in \NN$. 
-  Recall $\phi(\epsilon)$ from~\eqref{eq:phi_eps}.
-  Suppose Praos 
-  remains $(\EpsP, k, s)$-secure 
-  inside any epoch 
-  with a characteristic string $W \sim \mathcal{L}((1-\epsilon)/2)$. 
-  Let 
-  \begin{align}
-    \rho &= \begin{cases}
-      % Ignoring the additive factor \log_2(0.4 (1+2\epsilon) )/2
-      s/2 \cdot \log_2\left( (5-3 \epsilon)/2 \right) + \log_2(s)  & \text{if}\quad 0 < \epsilon \leq 1/3\,, \\
-      s/2 \cdot \log_2\left( 2^{2/3} \phi(\epsilon) \right) + \log_2(s) & \text{if}\quad 1/3 < \epsilon \leq 3/5\,, \\
-      s/2 \cdot \log_2\left( (5/3) \phi(\epsilon) \right) + \log_2(s) + 0.14 & \text{otherwise}\,. 
-    \end{cases}
-    \label{eq:rho-praos-multiepoch}
-  \end{align}
 
-  Let $\eta \in \{0,1\}^\kappa$ be the output of the beacon after $L$ epochs.
-  % and $L \in \NN$ so that $L \sqrt{m \EpsP} \leq 1$. 
-  Then $g(n,\epsilon) \leq 2^\rho$ except with probability at most $3 L s \EpsP^{1/2} V(\epsilon)^{1/2}$.
-  Equivalently,
-  $$
-    \Pr_{W \sim \mathcal{L}((1-\epsilon)/2)}[H_\infty(\eta) \geq \kappa - \rho] 
-      \leq 1 - 3 L s \EpsP^{1/2} V(\epsilon)^{1/2} \,.
-  $$
-  In particular, for $\epsilon > 0.809$, 
-  $\rho = \Poly(\log_2 s)$ and $g(n,\epsilon) = O(s)$ 
-  except with probability at most $3Ls \EpsP^{1/2}$.
-\end{theorem}
-\noindent
-The proof of Theorem~\ref{thm:minentropy-loss-praos-multi-epochs} 
-is presented in Section~\ref{sec:proof-praos-theorem}. 
 
-\begin{remark*}
-  When $\epsilon < 0.809$, 
-  the $O(s)$ term in the min-entropy loss $\rho$ 
-  is inevitable sine, at this region, 
-  $g(n,\epsilon) = e^{\Omega(s)}$.
-  The factor $1/2$ in the leading term in $\rho$ 
-  is the result of using the second-moment method 
-  to derive the tail bound.
-\end{remark*}
-\iftoggle{drawfigs}{
-  \input{grinding-praos/fig-praos-multi-epoch}
-}
+
+
+
+
+
 
 
 

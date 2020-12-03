@@ -95,8 +95,9 @@
     Moment upper bounds for the grinding power $g(n,\epsilon)$, defined in~\eqref{eq:praos-gneps}.
     Here, $\epsilon \in (0,1)$ is the honest bias, i.e., $\Pr[\text{a slot is adversarial}] = (1-\epsilon)/2$ 
     and $n$ is the number of nonce-generating slots. 
+    Suppose the blockchain satisfies $\sECQ$ property.
     Above, we have plotted two functions $M(\epsilon)$ (left) and $V(\epsilon)$ (right) so that 
-    $\Exp g(n,\epsilon) = \Poly(n) M(\epsilon)^n$ and $\Exp g(n,\epsilon)^2 = \Poly(n) V(\epsilon)^n$. 
+    $\Exp g(n,\epsilon) = \Poly(s) M(\epsilon)^s$ and $\Exp g(n,\epsilon)^2 = \Poly(s) V(\epsilon)^s$. 
     When $\epsilon \geq 0.6$, $M(\epsilon)$ is at most $1$, 
     implying that the grinding power is $\Poly(n)$ in expectation.
     Moreover, when $\epsilon \geq 0.809$, $V(\epsilon)$ is at most $1$, 
