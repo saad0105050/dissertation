@@ -3,61 +3,13 @@
 \section{Praos beacon}
 
 
-\Paragraph{Single epoch case for $W \sim \mathcal{L}_n(\alpha)$.}~
-
-\begin{theorem}[Praos beacon, single epoch, distribution $\mathcal{L}$]\label{thm:minentropy-loss-praos-single-epoch}  
-  Let $\epsilon \in (0,1)$. 
-  Suppose Praos 
-  remains $(\EpsP, k, s)$-secure 
-  inside any epoch 
-  whose characteristic string $W$ has the distribution $\mathcal{L}((1-\epsilon)/2)$. 
-  Let $\rho$ be the min-entropy loss in 
-  the beacon output, $\eta$, after an epoch. 
-  Recall $\phi(\epsilon)$ from~\eqref{eq:phi_eps} 
-  and $V(\epsilon)$ from~\eqref{eq:V-eps-praos}.
-  Let 
-  \begin{align}\label{eq:gamma-expression-praos}
-    \gamma = \left( 0.4 (1+2\epsilon) \right)^{1/2} s \cdot V(\epsilon)^{1/2} \EpsP^{-1/2}
-    \,.
-  \end{align}
-  Recall $g(n,\epsilon)$ defined in ~\eqref{eq:praos-gneps}.
-  Then $$
-    \Pr_{W}[g(n,\epsilon) > \gamma] \leq 2 \EpsP
-  $$ 
-  and, consequently, 
-  $$
-    \Pr_{W}[\rho > 0.5 \log_2 \gamma ] \leq 2 \EpsP\,.
-  $$
-  In particular, for $\epsilon > 0.809$, 
-  $g(n, \epsilon) = O(s)$ and $\rho = O(\log_2 s)$ 
-  except with probability $2 \EpsP$.
-\end{theorem}
-\noindent
-Note that if $\epsilon < 0.809$, 
-$\rho = \Omega(s)$ 
-except with probability $2 \EpsP$.
 
 
 \Paragraph{Single epoch case with empty slots.}
 \UnfinishedWarning{Empty slots}
 
 
-\iftoggle{drawfigs}{
-  \input{grinding-praos/fig-praos-single-epoch}
-}
 
-% \section{Proof of Theorem~\ref{thm:minentropy-loss-praos-single-epoch}}
-\begin{proof}  
-  Let $\alpha = (1-\epsilon)/2$ be the adversarial stake.
-  Suppose that $\Blockchain$ is $(\EpsP, k, s)$-secure in an epoch 
-  where first $n$ slots, 
-  which correspond to a characteristic string $W \sim \mathcal{L}_n(\alpha)$, 
-  contribute to the beacon output.
-  Using Lemma~\ref{lemma:grinding-praos-second-moment} and~\ref{lemma:praos-tail-gamma}, 
-  we can see that except with probability $2\EpsP$, $g(n,\epsilon)$ is at most $\sqrt{m/\EpsP}$ 
-  where $m$ is the right-hand-side of~\eqref{eq:grinding-praos-second-moment}.
-\end{proof}
-% \hfill\qed
 
 
 
@@ -75,100 +27,6 @@ except with probability $2 \EpsP$.
 % $\Exp[g(n,\epsilon)^2] = O(s^2) V(\epsilon)$.
 
 We can derive tail bounds on $g(n,\epsilon)$ using the second moment bound.
-
-\begin{theorem}[Praos beacon]\label{thm:minentropy-loss-praos-multi-epochs}  
-  Let $\epsilon \in (0, 1)$ and $L,\kappa \in \NN$. 
-  Recall $\phi(\epsilon)$ from~\eqref{eq:phi_eps}.
-  Suppose Praos 
-  remains $(\EpsP, k, s)$-secure 
-  inside any epoch 
-  with a characteristic string $W \sim \mathcal{L}((1-\epsilon)/2)$. 
-  Let 
-  \begin{align}
-    \rho &= \begin{cases}
-      % Ignoring the additive factor \log_2(0.4 (1+2\epsilon) )/2
-      s/2 \cdot \log_2\left( (5-3 \epsilon)/2 \right) + \log_2(s)  & \text{if}\quad 0 < \epsilon \leq 1/3\,, \\
-      s/2 \cdot \log_2\left( 2^{2/3} \phi(\epsilon) \right) + \log_2(s) & \text{if}\quad 1/3 < \epsilon \leq 3/5\,, \\
-      s/2 \cdot \log_2\left( (5/3) \phi(\epsilon) \right) + \log_2(s) + 0.14 & \text{otherwise}\,. 
-    \end{cases}
-    \label{eq:rho-praos-multiepoch}
-  \end{align}
-
-  Let $\eta \in \{0,1\}^\kappa$ be the output of the beacon after $L$ epochs.
-  % and $L \in \NN$ so that $L \sqrt{m \EpsP} \leq 1$. 
-  Then $g(n,\epsilon) \leq 2^\rho$ except with probability at most $3 L s \EpsP^{1/2} V(\epsilon)^{1/2}$.
-  Equivalently,
-  $$
-    \Pr_{W \sim \mathcal{L}((1-\epsilon)/2)}[H_\infty(\eta) \geq \kappa - \rho] 
-      \leq 1 - 3 L s \EpsP^{1/2} V(\epsilon)^{1/2} \,.
-  $$
-  In particular, for $\epsilon > 0.809$, 
-  $\rho = \Poly(\log_2 s)$ and $g(n,\epsilon) = O(s)$ 
-  except with probability at most $3Ls \EpsP^{1/2}$.
-\end{theorem}
-\noindent
-The proof of Theorem~\ref{thm:minentropy-loss-praos-multi-epochs} 
-is presented in Section~\ref{sec:proof-praos-theorem}. 
-
-\begin{remark*}
-  When $\epsilon < 0.809$, 
-  the $O(s)$ term in the min-entropy loss $\rho$ 
-  is inevitable sine, at this region, 
-  $g(n,\epsilon) = e^{\Omega(s)}$.
-  The factor $1/2$ in the leading term in $\rho$ 
-  is the result of using the second-moment method 
-  to derive the tail bound.
-\end{remark*}
-\iftoggle{drawfigs}{
-  \input{grinding-praos/fig-praos-multi-epoch}
-}
-
-
-
-\subsection{Proof of Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}}\label{sec:thm-praos-multiepoch}\label{sec:proof-praos-theorem}
-
-Let $W \sim \mathcal{L}_n(\alpha)$. 
-Let $E_p$ be the event that 
-$\Blockchain$ is not $(\EpsP, k, s)$-secure during 
-the first $n$ slots in an epoch. 
-Let $M$ be an upper bound on the second moment of $g$, 
-conditioned on $\overline{E}$. 
-Let $\gamma \geq (M/\EpsP)^{1/2}$. 
-Let $E_g$ be the event that $g(W)$ is more than $\gamma$.
-By Lemma~\ref{lemma:grinding-praos-second-moment}, 
-$\Pr[g(W) \geq \gamma] \leq 2 \EpsP$. 
-Note that the min-entropy loss in the beacon is at most 
-\begin{equation}\label{eq:log-gamma}
- \log_2(\gamma) 
- = 1/2 \cdot [\log_2(M) + \log_2(1/\EpsP)]
- = \log_2(\sqrt{M}) + \log_2(1/\sqrt{\EpsP})
- \,. 
-\end{equation}
-
-
-Condition on the event that neither $E_p$ nor $E_g$ 
-occurs during the first $L$ epochs. 
-This means, in any of the $L$ epochs, 
-the adversary can inflate the failure probability 
-by at most a factor of $\gamma$.
-The total bad probability after $L$ epochs is
-$$
-  p
-  \leq L (2 \EpsP + \gamma \EpsP)
-  = L (2 \EpsP + M^{1/2} \sqrt{\EpsP})
-  \,.
-$$
-
-Since $\epsilon > 0.809$, we refer to \eqref{eq:V-eps-praos} 
-and the statement of the theorem immediately follows.
-
-The only missing pieces are 
-the proofs of Claims~\ref{claim:multiple-honest-blocks},~\ref{claim:t1star-variance-exact}, 
-and~\ref{claim:t2star-variance-exact}; 
-These are given in \Section~\ref{sec:praos-claim-multiple-honest-blocks},~\ref{sec:praos-claim-t1star-variance-exact}, and~\ref{sec:praos-claim-t2star-variance-exact}, respectively. 
-
-\hfill\qed
-
 
 
 
