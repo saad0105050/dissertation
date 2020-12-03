@@ -184,55 +184,17 @@ There will be $T/d$ nonce-emitting slots in an epoch of $\Pi_\Beacon$.
 
 \section{Comparison with the beacon in Praos}
 
-\UnfinishedWarning{Parameter setting in Praos}
-
-Suppose that Praos is parameterized according to 
-Theorem~\ref{thm:minentropy-loss-praos-multi-epochs} 
-and~\cite[Theorem 9]{Praos}, as follows.
-An important difference from~\cite[Theorem 9]{Praos} is that 
-the current analysis is in the synchronous model; 
-we correct this discrepancy by selecting the message-delivery delay $\Delta = 1$ 
-and discarding the slots with no leaders; 
-this is in accordance with the distribution $\mathcal{L}$.
-
-Let the honest bias be $\epsilon \in (0,1)$.
-The adversarial stake is $\alpha = (1-\epsilon)/2$. 
-Remember that Praos allows empty slots but, 
-in our analysis, we consider only non-empty slots. 
-In \emph{Cardano}'s~\cite{Cardano} implementation of Praos, 
-an epoch is five-day long with slot length one second 
-and the active slot coefficient (i.e., average fraction of non-empty slots)  $1/20$. 
-This gives us, on average, $5*24*60*60/20 = 21,600$ non-empty slots per epoch.
-Let $k$ be the common prefix parameter.  
-According to~\cite[Corollary 3]{Praos}, 
-The length of an epoch should be $24 k/(1+\epsilon)$. 
-Since the worst-case $\epsilon$ is zero, 
-a conservative choice would be to take $24 k = 21,600$, yielding $k = 900$. 
-
-
-In an epoch in Praos, the first two-third of the slots 
-are relevant for the beacon protocol; 
-thus we set $T = 24k * 2/3 = 16 k$. 
-Praos guarantees liveness (equivalent to $\ECQ$) 
-with parameter $s = 8 k/(1+\epsilon)$. 
-Let $\Blockchain$ be the above incarnation of Praos 
-and let $\gamma$ be the maximum grinding power in an epoch.
-Then, by~\cite[Corollary 3]{Praos}, 
-$\Blockchain$ is $(\EpsP, k, s)$-secure over $L$ epochs where
-$\EpsP = \gamma R L e^{-\Omega(k) } = O(\gamma R L e^{- k/2 \cdot \epsilon^3 (1 - O(\epsilon))  } )$
-
-If we use the Praos protocol, parameterized 
-Theorem~\ref{thm:beacon-poisson-multi-epoch} 
-and Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}, 
-we can see some important differences. 
-Let us assume that Praos is parameterized with its ``typical'' setting 
-where, by typical, we mean the following.
+\UnfinishedWarning{New beacon discussion}
+% If we use the Praos protocol, parameterized 
+% Theorem~\ref{thm:beacon-poisson-multi-epoch} 
+% and Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}, 
+% we can see some important differences. 
 
 % First, the factor $k/(T-k)$ is a small constant since, typically, $$
 
 
-See Figure~\ref{fig:rho-poisson-beacon} for a comparison between 
-this beacon and Praos beacon.
+% See Figure~\ref{fig:rho-poisson-beacon} for a comparison between 
+% this beacon and Praos beacon.
 
 \iftoggle{drawfigs}{
 

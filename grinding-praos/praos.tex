@@ -22,8 +22,8 @@ where $W$ has this distribution.
 % where the characteristic string $W \sim \mathcal{L}_n((1-\epsilon)/2)$. 
 Then, we derive an upper bound on the second moment of $g(W)$;
 this leads to a  tail bound on $g(W)$.
-Next, we show how to lift these results 
-for characteristic strings with empty slots.
+% Next, we show how to lift these results 
+% for characteristic strings with empty slots.
 We finish this \Section by stating a theorem about the min-entropy loss in the Praos beacon. 
 \UnfinishedWarning{Bad writing}
 
@@ -199,12 +199,12 @@ as a \emph{characteristic string}:
 
 \begin{definition}[Characteristic string]\label{def:char-string-praos}
   A \emph{characteristic string} $w \in \{\A, 
-  \perp, 
+  % \perp, 
   1, 2, 3, \ldots \}^*$ 
   corresponds to a particular execution of $\Blockchain$.
   For each slot $t = 1, 2, \ldots$, 
   $w_t = \A$ if $t$ is assigned to an adversarial participant; 
-  $w_t = \perp$ if $t$ is assigned to no participants; 
+  % $w_t = \perp$ if $t$ is assigned to no participants; 
   and 
   $w_t = k \in \{1,2,\ldots\}$ if $t$ is assigned to $k$ honest participants.
   By convention, $w_0 = 1$.
@@ -223,22 +223,22 @@ we write $x \Prefix w$ iff $x$ is a strict prefix of $w$.
 Similarly, 
 we write $x \PrefixEq w$ iff either $x = w$ or $x \Prefix w$. 
 The empty string $\varepsilon$ is a prefix to all strings. 
-If $w_t = \perp$ then we say that ``slot $t$ is empty.'' 
+% If $w_t = \perp$ then we say that ``slot $t$ is empty.'' 
 If $w_t = \A$, we say that ``slot $t$ is adversarial;'' 
 otherwise, we say that ``slot $t$ is honest.'' 
 A slot $t$ is called \emph{$k$-honest} if $w_t = k \in \NN$.
 Define $\#_\A(w)$ as the number of occurrences of $\A$ in $w$. 
 Define $\#_\h(w) \triangleq |w| - \#_\A(w) 
-- \#_\perp(w)
+% - \#_\perp(w)
 $.
 A characteristic string $w$ is called $\Hheavy$ (or \emph{honest-heavy}) if 
 $\#_\h(w) > \#_\A(w)$; 
 otherwise, $w$ is called $\Aheavy$. 
 We use $w[i : j]$ to denote the substring $w_i w_{i+1}\ldots w_j$.
 
-Let $w$ be a characteristic string.
-If we obtain a string $x$ by deleting all $\perp$ symbols in $w$, 
-then $x$ is called a \emph{non-empty restriction of $w$}.
+% Let $w$ be a characteristic string.
+% If we obtain a string $x$ by deleting all $\perp$ symbols in $w$, 
+% then $x$ is called a \emph{non-empty restriction of $w$}.
 
 
 % As we discussed after Definition~\ref{def:coin-flipping-security}, 
@@ -341,9 +341,10 @@ We formalize this notion in the definition below.
   \InlineCases{
     \item $i_0 = 0$ or 
     % $w_{i_0} \neq \A$, 
-    $w_{i_0} \not \in \{\A
-    , \perp
-    \}$, 
+    $w_{i_0} 
+    \neq \A
+    % \not \in \{\A, \perp\}
+    $, 
     \item $w_{i_j} = \A$ for each $j > 0$, and
     \item $k \geq \#_\h(w[i_0 +1 : n])$.
   }
@@ -379,19 +380,10 @@ i.e., the grinding power for $w$, is
     \,.  
 \end{equation}
 
-In this exposition, 
-we first handle a distribution 
-on characteristic strings 
-which assigns zero probability on empty slots. 
-
-\begin{observation}\label{obs:empty-slot-praos}
-  The grinding power of $w$ stays the same 
-  if we add or delete any number of $\perp$ symbols 
-  anywhere in the original string.   
-\end{observation}
-\noindent
-We use this observation in Section~\ref{sec:praos-empty-slots} 
-to lift the aforementioned analysis for general characteristic strings.
+% In this exposition, 
+% we first handle a distribution 
+% on characteristic strings 
+% which assigns zero probability on empty slots. 
 
 
 

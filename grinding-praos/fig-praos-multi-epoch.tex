@@ -19,7 +19,7 @@
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         % y label style={at={(axis description cs:-0.1,.5)},anchor=south},
         xlabel={$\epsilon$, honest bias},
-        title={$\rho^*$, upper bound on the min-entropy loss $\rho$},
+        title={Base-2 logarithm of Grinding Power},
         ]
         \addplot +[ultra thick,red] {  PraosMinEntropyLossMultiEpoch(\x, 1200) };
         \addlegendentry{$k = 1200$};
@@ -29,34 +29,34 @@
         \addlegendentry{$k = 600$};
       \end{axis}
     \end{tikzpicture}%
-    \caption[Praos beacon]{
-        The upper bound $\rho^*$ on $\rho$, 
-        Praos beacon's min-entropy loss (in bits), 
-        as a function of the honest bias, $\epsilon$. 
-        Recall that $\rho$ is the logarithm of the grinding power.     
-        Praos' parameters are selected according to Theorem~\ref{thm:minentropy-loss-praos-multi-epochs} 
-        and~\citet[Theorem 9]{Praos}, as follows.
-        (Note that the current analysis is in the synchronous model.)
-        We take the common prefix parameter $k = 900$ since 
-        this is used by \emph{Cardano}, a deployed implementation of Praos. 
-        The adversarial stake is $(1-\epsilon)/2$ where $\epsilon \in (0,1)$ is the honest bias.
-        An epoch contains $R = 16 k/(1+\epsilon)$ slots and the first $2R/3$ slots are used for the beacon. 
-        We used the $\ECQ$ parameter $s = 8 k/(1+\epsilon)$; 
-        this value is the same as the liveness parameter of Praos. 
-        The probability of a consistency violation in an execution of $L$ epochs is 
-        $\EpsP = R L \exp(1-\epsilon^3 (1-\epsilon)k/2) $. 
-        Note that $\rho^* = O(\log_2 s)$ for $\epsilon > 0.809$.
-    }
-    \label{fig:rho-praos-beacon}
-\end{figure}
-\begin{figure}[!htb]
-    \centering
+    % \caption[Praos beacon]{
+    %     The upper bound $\rho^*$ on $\rho$, 
+    %     Praos beacon's min-entropy loss (in bits), 
+    %     as a function of the honest bias, $\epsilon$. 
+    %     % Recall that $\rho$ is the logarithm of the grinding power.     
+    %     % Praos' parameters are selected according to Theorem~\ref{thm:minentropy-loss-praos-multi-epochs} 
+    %     % and~\citet[Theorem 9]{Praos}, as follows.
+    %     % (Note that the current analysis is in the synchronous model.)
+    %     % We take the common prefix parameter $k = 900$ since 
+    %     % this is used by \emph{Cardano}, a deployed implementation of Praos. 
+    %     % The adversarial stake is $(1-\epsilon)/2$ where $\epsilon \in (0,1)$ is the honest bias.
+    %     % An epoch contains $R = 16 k/(1+\epsilon)$ slots and the first $2R/3$ slots are used for the beacon. 
+    %     % We used the $\ECQ$ parameter $s = 8 k/(1+\epsilon)$; 
+    %     % this value is the same as the liveness parameter of Praos. 
+    %     % The probability of a consistency violation in an execution of $L$ epochs is 
+    %     % $\EpsP = R L \exp(1-\epsilon^3 (1-\epsilon)k/2) $. 
+    %     % Note that $\rho^* = O(\log_2 s)$ for $\epsilon > 0.809$.
+    % }
+%     \label{fig:rho-praos-beacon}
+% \end{figure}
+% \begin{figure}[!htb]
+%     \centering
     \tikzsetnextfilename{prbad}
     \begin{tikzpicture}[trim axis left,
       ]
       \begin{axis}[domain=0:1, 
-        % xmin=0.6,xmax=1,%
-        ymax=0,%,ymax=2.5
+        xmin=0,xmax=1,%
+        % ymax=0,%,ymax=2.5
         % restrict x to domain=0.6:0.999,
         % restrict y to domain=0:100,
         unbounded coords=jump, 
@@ -64,29 +64,32 @@
         enlarge x limits=false,
         grid=both,
         no markers,
+        yticklabel pos=right,
+        % yticklabel style={xshift=2em},
         % legend pos=outer north east,
-        legend pos=south west,
+        legend pos=north west,
         legend cell align=left,
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
         xlabel={$\epsilon$, honest bias},
-        title={$\log_2\,\big(\Pr[ \text{min-entropy loss } > \rho^* ]/L\big)$},
+        title={Base-2 logarithm of $\Pr[\text{failure}]$},
         ]
-        \addplot +[ultra thick,red] { LnPraosPrBadMultiEpoch(\x, 900, 1)/ln(2) } ;  
+        \addplot +[ultra thick,red] { LnPraosPrBadMultiEpoch(\x, 1200, 1)/ln(2) } ;  
+        \addlegendentry{$k = 1200$};
+        \addplot +[ultra thick,black] {  LnPraosPrBadMultiEpoch(\x, 900, 1)/ln(2)  };
         \addlegendentry{$k = 900$};
-        % \addplot +[ultra thick,black] {  LnPraosPrBadMultiEpoch(\x, 900, 1)/ln(2)  };
-        % \addlegendentry{$k = 900$};
-        % \addplot +[ultra thick,blue] {  LnPraosPrBadMultiEpoch(\x, 900, 1)/ln(2) };
-        % \addlegendentry{$k = 900$};
+        \addplot +[ultra thick,blue] {  LnPraosPrBadMultiEpoch(\x, 600, 1)/ln(2) };
+        \addlegendentry{$k = 600$};
       \end{axis}
     \end{tikzpicture}
-    \caption[Praos beacon]{        
-        Consider an $L$-epoch execution of Praos 
-        using the same parameter setting as in Figure~\ref{fig:rho-praos-beacon}.
-        Let $\rho$ be the maximum, actual min-entropy loss in any of the $L$ epochs 
-        and let $\rho^*$ be the upper bound in~\eqref{eq:rho-praos-multiepoch}. 
-        Let $\mathrm{Bad}$ be the event that $\rho > \rho^*$. 
-        Above, we plot $\log_2(\Pr[\rho > \rho^*]/L)$.
+    \caption[Praos beacon security]{        
+        {\color{red} Describe}
+        % Consider an $L$-epoch execution of Praos 
+        % using the same parameter setting as in Figure~\ref{fig:rho-praos-beacon}.
+        % Let $\rho$ be the maximum, actual min-entropy loss in any of the $L$ epochs 
+        % and let $\rho^*$ be the upper bound in~\eqref{eq:rho-praos-multiepoch}. 
+        % Let $\mathrm{Bad}$ be the event that $\rho > \rho^*$. 
+        % Above, we plot $\log_2(\Pr[\rho > \rho^*]/L)$.
     }
     \label{fig:prbad-praos-beacon}
 \end{figure}

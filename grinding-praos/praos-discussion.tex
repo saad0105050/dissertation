@@ -1,0 +1,194 @@
+
+
+In this \Section, 
+we analyze our findings about the Praos beacon 
+using a close-to-the-real-world parameterization.
+
+
+\section{Praos protocol parameter selection}\label{sec:praos-params}
+Suppose that Praos is parameterized according to 
+Theorem~\ref{thm:minentropy-loss-praos-multi-epochs} 
+and~\cite[Theorem 9]{Praos}, as follows.
+An important difference from~\cite[Theorem 9]{Praos} is that 
+the current analysis is in the synchronous model 
+and that the current analysis does not treat empty slots, a prominent feature of Praos. 
+We correct this discrepancy by selecting the message-delivery delay $\Delta = 1$ 
+and discarding the slots with no leaders; 
+this is in accordance with the distribution $\mathcal{L}$. 
+The second discrepancy is not really a problem 
+as we can glean important information without using the exact distribution; 
+see below in the exposition.
+
+Let the honest bias be $\epsilon \in (0,1)$.
+The adversarial stake is $\alpha = (1-\epsilon)/2$. 
+Remember that Praos allows empty slots but, 
+in our analysis, we consider only non-empty slots. 
+In \emph{Cardano}'s~\cite{Cardano} implementation of Praos, 
+an epoch is five-day long with slot length one second 
+and the active slot coefficient (i.e., average fraction of non-empty slots)  $1/20$. 
+This gives us, on average, $5*24*60*60/20 = 21,600$ non-empty slots per epoch.
+Let $k$ be the common prefix parameter.  
+According to~\cite[Corollary 3]{Praos}, 
+The length of an epoch should be $24 k/(1+\epsilon)$. 
+Since the worst-case $\epsilon$ is zero, 
+a conservative choice would be to take $24 k = 21,600$, yielding $k = 900$. 
+
+
+In an epoch in Praos, the first two-third of the slots 
+are relevant for the beacon protocol; 
+thus we set $T = 24k * 2/3 = 16 k$. 
+Praos guarantees liveness (equivalent to $\sECQ$) 
+with parameter $s = 8 k/(1+\epsilon)$. 
+
+Let $\Blockchain$ be the above incarnation of Praos; 
+it satisfies $\kSlotCP$ and $\sECQ$ properties 
+except with probability 
+$\EpsP = L e^{-k \cdot (\epsilon^3 (1- O(\epsilon) )/2 )}$; 
+note that this asymptotic bound is tight for small $\epsilon$ only 
+and assumes that no grinding has taken place.
+
+Next, we use these parameters to study our results in the previous \Section. 
+
+
+
+
+
+
+
+\section{Moment bounds}\label{sec:praos-discussion-moment-bounds}
+Let $\epsilon \in (0,1)$ and set $\alpha = (1-\epsilon)/2$. 
+Recall the second moment bound.
+
+In Figure~\ref{fig:praos-gp-moments-exact}, 
+we have plotted various moment bounds on $g(W)$ 
+where $W \sim \DistL(\alpha)$. 
+
+\UnfinishedWarning{Moment figure discussion}
+
+  \begin{figure}[!htb]
+    \centering
+    \tikzsetnextfilename{gp-first-two-moments-tight}
+    \begin{tikzpicture}[trim axis left,
+      ]
+      \begin{axis}[domain=0:1,
+        samples=500,
+        enlarge x limits=false,
+        grid=both,
+        no markers,
+        % there is one default value for the `legend pos' that is outside the axis
+        % legend pos=outer north east,
+        legend pos=north east,
+        % (so the legend looks a bit better)
+        legend cell align=left,
+        x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+        y label style={at={(axis description cs:-0.1,.5)},anchor=south},
+        xlabel={$\epsilon$, honest bias},
+        title={Base of the exponents in GP moment bounds}
+        xmin=0,xmax=1,ymin=0,ymax=2.5
+        ]
+        \addplot +[ultra thick,black] { PraosMeanBase(\x) } ;  
+        \addlegendentry{Base, 1st moment};
+
+        \addplot +[ultra thick,red] { PraosVbase(\x) } ;        
+        \addlegendentry{Base, 2nd moment};
+
+        \addplot +[thick,gray] { 1 } ;        
+      \end{axis}
+    \end{tikzpicture}%    
+    \caption[GP moment bounds for Praos]{
+      Moment upper bounds for the grinding power $g(W)$ 
+      where $W \sim \DistL((1-\epsilon)/2)$.
+      Above, we have plotted two functions $M_s(\epsilon)$ (left) and $V_s(\epsilon)$ (right) which satisfy 
+      $\Exp g(W) = \Poly(s) M_s(\epsilon)^s$ and $\Exp g(W)^2 = \Poly(s) V_s(\epsilon)^s$. 
+      When $\epsilon \geq 0.6$, $M_s(\epsilon)$ is at most $1$, 
+      implying that the grinding power is $O(1)$ in expectation.
+      Moreover, when $\epsilon \geq 0.809$, $V_s(\epsilon)$ is at most $1$, 
+      implying that the second moment of $g(W)$ is $O(1)$ in this region. 
+    }
+    \label{fig:praos-gp-moments-exact}
+  \end{figure}
+
+
+\section{Praos beacon quality and grinding power}
+Consider Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}. 
+When $\epsilon > 0.809$, 
+the beacon does not incur any min-entropy loss. 
+However, when $\epsilon < 0.809$, 
+the grinding power $\gamma$ grows exponentially as a function of $s$. 
+But that is not all: 
+the failure probability in Theorem~\ref{thm:minentropy-loss-praos-multi-epochs} 
+becomes meaningless for $\epsilon < 0.8$. 
+This happens because the grinding power grows quickly 
+as the honest bias $\epsilon$ decreases.
+
+\iftoggle{drawfigs}{
+\input{grinding-praos/fig-praos-multi-epoch}
+}
+
+
+  % \begin{figure}[!htb]
+  %   \centering
+  %   \tikzsetnextfilename{praos-beacon-prbad}
+  %   \begin{tikzpicture}[trim axis left,
+  %     ]
+  %     \begin{axis}[domain=0:1,
+  %       xmin=0.6,xmax=1,%,ymin=0,ymax=2
+  %       restrict x to domain=0.6:1,
+  %       samples=500,
+  %       enlarge x limits=false,
+  %       grid=both,
+  %       no markers,
+  %       unbounded coords=jump,  
+  %       % there is one default value for the `legend pos' that is outside the axis
+  %       % legend pos=outer north east,
+  %       legend pos=north east,
+  %       % (so the legend looks a bit better)
+  %       legend cell align=left,
+  %       x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+  %       y label style={at={(axis description cs:-0.1,.5)},anchor=south},
+  %       xlabel={$\epsilon$, honest bias},
+  %       title={Logarithm of failure probability in Praos},
+  %       ]
+  %       \addplot +[ultra thick,red] { LnPraosPrBadMultiEpoch(\x, 900, 1)/ln(2) } ;        
+  %       % \addplot +[ultra thick,red] { sqrt(PraosV(\x, 900)) * sqrt(PraosEpsP(\x, 900) ) } ;        
+  %       % \addlegendentry{$k=900$};
+  %       % % \addplot +[ultra thick,black] { PraosPrBadMultiEpoch(\x, 1200, 1) } ;        
+  %       % % \addlegendentry{$k=1200$};
+  %       \addplot +[thick,gray] { 1 } ;        
+  %     \end{axis}
+  %   \end{tikzpicture}%    
+  %   \caption[Praos beacon failure probability]{
+  %     Plot of the failure probability in 
+  %     Theorem~\ref{thm:minentropy-loss-praos-multi-epochs} using $L = 1$.
+  %     When $\epsilon \leq 0.8$, the failure probability becomes meaningless. 
+  %   }
+  %   \label{fig:praos-beacon-prbad}
+  % \end{figure}
+
+
+
+Here is a back-of-the-envelope calculation to see why. 
+We need only consider the dominant term in the failure probability, 
+namely $\sqrt{V_s(\epsilon) \EpsP}$ where $V_s$ is defined in~\eqref{eq:V-eps-praos}. 
+For $\epsilon \geq 0.6$, it is at least $(5/3)^{s/2} \EpsP^{1/2}$. 
+Even if we use the PoW lower bound $\EpsP \geq e^{-\epsilon^2 k}$,\cite{PoWLowerBound} 
+and $s \geq 4 k$ (as described in Section~\ref{sec:praos-params}),
+the $k$th root of the above quantity 
+is at least $(5/3)^2 e^{-\epsilon^2}$; 
+but this is at least one for $\epsilon \in (0,1)$.
+
+Note that we used a special distribution on characteristic strings: 
+one that does not produce empty slots. 
+Even if we consider empty slots, i.e., 
+use the real leader election distribution in Praos, 
+the situation does not improve much. 
+Since a slot is non-empty with a small constant probability, 
+we will essentially dilute $s$ by a constant factor; 
+the quantity $\sqrt{V_s(\epsilon) \EpsP}$ will still become meaningless 
+when $\epsilon$ is slightly below $0.8$.
+
+The verdict is: the grinding power in Praos is under check for $\epsilon > 0.809$, 
+but it renders the security bounds meaningless when $\epsilon$ drops below $0.8$. 
+(Note that the actual region of insecurity depends on $k$.)
+
+

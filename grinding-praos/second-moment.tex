@@ -4,7 +4,7 @@
 
 
 
-\section{Characteristic strings with no empty slots}\label{sec:Lalpha-praos}
+\section{\texorpdfstring{The distribution $\DistL$}{A distribution} on characteristic strings}\label{sec:Lalpha-praos}
 
 Let $\alpha \in (0, 1/2)$ 
 and assume that the adversarial players control an $\alpha$ 
@@ -22,7 +22,8 @@ on length-$n$ characteristic strings $w = w_1 \ldots w_n$.
   $\mathcal{L}_n(\alpha)$ is a distribution on characteristic strings 
   $w = w_1 \ldots w_n$ so that 
   the symbols $w_i$s are independent and identically distributed as follows: 
-  $\Pr[w_i = \A] = \alpha$ and $\Pr[w_i = \perp] = 0$.
+  $\Pr[w_i = \A] = \alpha$ and 
+  % $\Pr[w_i = \perp] = 0$.
   $\Pr[w_i = j], j \in \NN$ is defined as follows: 
   Let $m \in \NN$ be the total number of honest participants. 
   Consider the independent Bernoulli random variables $X_i \in \{0, 1\}, i \in [m]$ 
@@ -126,8 +127,10 @@ and that the symbols in $W$ are independent.
 The third equality follows from rearranging the sums. 
 The last equality follows from~\eqref{eq:suffix-prob-binomial} 
 and~\eqref{eq:S_d_z}. 
-We remark that the $s$ in~\eqref{eq:grinding-power-moment-praos} 
-is actually the number of non-empty slots in the last $s$ slots. 
+We remark that in a real execution of Praos, 
+the $s$ in~\eqref{eq:grinding-power-moment-praos} 
+will be replaced by 
+the number of non-empty slots in the last $s$ slots. 
 
 
 Let $s \in \RR_+$ and $\epsilon \in (0,1)$. 
@@ -269,7 +272,8 @@ The three claims above give the following upper bound on $\Exp g(W)^2$.
   Conditioned on the event $E$, 
   every viable blockchain at the end of slot $n$ 
   must contain at least one honestly-generated block from the last $s$ 
-  non-empty slots.
+  % non-empty 
+  slots.
   Thus, 
   in ~\eqref{eq:grinding-power-moment-praos}, 
   it suffices to consider the suffixes of $W$ of length at most $s$. 
@@ -294,11 +298,7 @@ The three claims above give the following upper bound on $\Exp g(W)^2$.
 \end{proof}
 
 In Figure~\ref{fig:praos-gp-moments}, 
-we have plotted various moment bounds on $g(n,\epsilon)$.
-
-\iftoggle{drawfigs}{
-  \input{grinding-praos/fig-praos-gp-moment-bounds}
-}
+we have plotted various moment bounds on $g(W)$.
 
 
 
@@ -306,8 +306,7 @@ we have plotted various moment bounds on $g(n,\epsilon)$.
 \begin{lemma}[Tail bound on $g$ for $W \sim \DistL$]\label{lemma:praos-tail-gamma}
   Let $\epsilon, \EpsP \in (0, 1)$ and $n, k, s \in \NN$. 
   Let $W \sim \DistL_n((1-\epsilon)/2$.
-  Let $E$ be the event that 
-  $\Blockchain$ remains $(\EpsP, k, s)$-secure during 
+  Consider an execution of a $(\EpsP, k, s)$-secure blockchain protocol within
   the $n$ slots represented by $W$. 
   Let 
   $$
@@ -324,12 +323,12 @@ we have plotted various moment bounds on $g(n,\epsilon)$.
       % \,.
   $.
 \end{lemma}
-The subscript $s$ above indicates that 
-each of the last $s$ slots are non-empty. 
-Recall that the $s$ in~\eqref{eq:grinding-power-moment-praos} 
-is actually the number of non-empty slots in the last $s$ slots. 
-Later on, we will study distribution where this number is different from $s$, 
-i.e., there can be empty slots.
+% The subscript $s$ above indicates that 
+% each of the last $s$ slots are non-empty. 
+% Recall that the $s$ in~\eqref{eq:grinding-power-moment-praos} 
+% is actually the number of non-empty slots in the last $s$ slots. 
+% Later on, we will study distribution where this number is different from $s$, 
+% i.e., there can be empty slots.
 \begin{proof}
   Let us write $\gamma = \gamma_s$.
   Since $g(W)$ is non-negative, observe that 
@@ -352,7 +351,10 @@ i.e., there can be empty slots.
 \end{proof}
 
 
-\Paragraph{Single epoch beacon under $\mathcal{L}$.}~
+\section{Grinding power and beacon quality}
+\UnfinishedWarning{Describe}
+
+% \Paragraph{Single epoch beacon under $\mathcal{L}$.}~
 
 \begin{theorem}[Praos beacon, single epoch, distribution $\mathcal{L}$]\label{thm:minentropy-loss-praos-single-epoch}  
   Let $\epsilon \in (0,1)$. 
@@ -381,11 +383,10 @@ i.e., there can be empty slots.
 \begin{remark*}
 Note that the subscript $s$ in $\gamma_s$ 
 arises because the grinding window -- i.e., the last $s$ slots 
-in an epoch that contribute in computing the beacon output --  contains 
-no empty slots, i.e., all $s$ slots are non-empty with probability 1, 
-as a result of sampling $W \sim \DistL_n(\alpha)$. 
-Later, we will use this observation to transfer these results 
-to a distribution which produces empty slots.
+in an epoch that contribute in computing the beacon output --  does not contain 
+any empty slots. 
+% Later, we will use this observation to transfer these results 
+% to a distribution which produces empty slots.
 
 For $\epsilon > 0.809$, 
 $g(W) = O(s)$ and $\rho = O(\log_2 s)$, 
@@ -413,7 +414,7 @@ except with probability $2 \EpsP$.
 
 % \hfill\qed
 
-\Paragraph{Iterated beacon under $\mathcal{L}$.}~
+% \Paragraph{Iterated beacon under $\mathcal{L}$.}~
 
 \begin{theorem}[Praos beacon]\label{thm:minentropy-loss-praos-multi-epochs}  
   Let $\epsilon \in (0, 1)$ and $L,\kappa \in \NN$. 
@@ -439,7 +440,7 @@ except with probability $2 \EpsP$.
   Equivalently,
   $$
     \Pr_{W \sim \mathcal{L}((1-\epsilon)/2)}[H_\infty(\eta) \geq \kappa - \rho] 
-      \leq 1 - 3 L s \EpsP^{1/2} V(\epsilon)^{1/2} \,.
+      \leq 1 - 3 L s \EpsP^{1/2} V_s(\epsilon)^{1/2} \,.
   $$
   In particular, for $\epsilon > 0.809$, 
   $\rho = \Poly(\log_2 s)$ and $g(W) = O(s)$ 
@@ -461,7 +462,7 @@ except with probability $2 \EpsP$.
 
 \begin{proof}
   % Let $W \sim \mathcal{L}_n(\alpha)$. 
-  Let $E_p$ be the event that 
+  Let $E$ be the event that 
   $\Blockchain$ is not $(\EpsP, k, s)$-secure during 
   the first $n$ slots in an epoch. 
   Let $m$ be an upper bound on the second moment of $g$, 
@@ -507,62 +508,84 @@ except with probability $2 \EpsP$.
 
 
 
-\section{Lifting the analysis to handle empty slots}\label{sec:praos-empty-slots}
 
 
-  \begin{definition}[$\mathcal{M}_n(\alpha, f)$]\label{def:dist-M-alpha-f-praos}
-    Let $\alpha \in (0,1/2), f \in (0,1)$, and $n \in \NN$. 
-    $\DistM_n(\alpha, f)$ is a distribution on characteristic strings 
-    $w = w_1 \ldots w_n$ so that 
-    the symbols $w_i$s are independent and identically distributed, as follows: 
-    with probability $1-f$, $w_i = \perp$ 
-    and, with probability $f$, 
-    $w_i$ is distributed as $\DistL_1(\alpha)$ (Definition~\ref{def:dist-L-alpha-praos}).
-    When $n$ is understood from the context, 
-    we write $\DistM(\alpha, f)$. 
-  \end{definition}
-  \noindent
-  It follows that under $\DistM(\alpha, f)$ and for all $i$,
-    $\Pr[w_i = \A] = f \alpha$ and $\Pr[w_i = \perp] = 1-f$, and 
-    $$
-      \Pr[w_i = j] = f (1-\alpha)\Pr[H = j]/Pr[H \geq 0]
-        \qquad \text{for}\quad j = 1,2,3,\ldots
-    $$
-  If a symbol $w_i \sim \DistM_1(\alpha,f)$ then it means as follows: 
 
-  Let $\alpha \in (0,1/2)$ and $f \in (0,1)$. 
-  Focus on the execution of an $(\EpsP, k, s)$-secure blockchain execution over a single epoch.
-  Let $W$ be the corresponding characteristic string with distribution $\DistM_n(\alpha, f)$.
-  Condition on the event $T_{s,r}$ that at least $r$ out of the last $s$ slots in $W$ are non-empty. 
-  Consider the conditional grinding power for a single epoch, $g_r = g(W | T_{s,r})$Theorem~\ref{thm:minentropy-loss-praos-single-epoch} and the remark thereafter 
-  imply that $g_r$ satisfies  
-  $$
-    P_r \defeq \Pr[ g_r \geq \gamma_r \mid r] \leq 2 \EpsP
-  $$
-  where $\gamma_r$ is from ~\eqref{eq:gamma-s-praos}. 
-  Notice that both $g_r$ and $\gamma_r$ are monotone increasing in $r$.
-  It is also easy to see that $r \sim \Binomial(s, f)$.
+% \section{Lifting the analysis to handle empty slots}\label{sec:praos-empty-slots}
 
-  Let $\delta \in \RR_+$ whose value will be chosen later.
-  Let $R = (1+\delta) Sf$;  
-  standard Chernoff bound~\cite{ChernoffBound} states that $\Pr[r \geq R] \leq e^{-\delta^2 Sf/3}$. 
-  Let us write $g = g(W)$. 
-  Repeating our footsteps in Lemma~\ref{lemma:praos-tail-gamma}, we write
-  \begin{align*}
-    \Pr[g(W) > \gamma_R] 
-    % &= \sum_{i \geq R} \Pr[T_{s,i}] \cdot \Pr[g(W) > \gamma_s | T_{s,i}] 
-    %   + \sum_{i < R} \Pr[T_{s,i}] \cdot \Pr[g(W) > \gamma_i | T_{s,i}] \\
-    &\leq \Pr[r \geq R] \cdot \Pr[g_s > \gamma_s | T_{s,s}] + \Pr[r < R] \cdot \Pr[g_r > \gamma_R | T_{s,R}] \\
-    &\leq e^{-\delta^2 Sf/3} P_s + P_R
-    \,.
-  \end{align*}
 
-  The above probability will be at most $2 P_R$ if $e^{-\delta^2 Sf/3} P_s \leq P_R$. 
-  Since $P_r = $
-  \begin{align*}
-        & e^{-\delta^2 Sf/3} P_s \leq P_R \\ 
-    \Or & e
-  \end{align*}
+%   \begin{definition}[$\mathcal{M}_n(\alpha, f)$]\label{def:dist-M-alpha-f-praos}
+%     Let $\alpha \in (0,1/2), f \in (0,1)$, and $n \in \NN$. 
+%     $\DistM_n(\alpha, f)$ is a distribution on characteristic strings 
+%     $w = w_1 \ldots w_n$ so that 
+%     the symbols $w_i$s are independent and identically distributed, as follows: 
+%     with probability $1-f$, $w_i = \perp$ 
+%     and, with probability $f$, 
+%     $w_i$ is distributed as $\DistL_1(\alpha)$ (Definition~\ref{def:dist-L-alpha-praos}).
+%     When $n$ is understood from the context, 
+%     we write $\DistM(\alpha, f)$. 
+%   \end{definition}
+%   \noindent
+%   It follows that under $\DistM(\alpha, f)$ and for all $i$,
+%     $\Pr[w_i = \A] = f \alpha$ and $\Pr[w_i = \perp] = 1-f$, and 
+%     $$
+%       \Pr[w_i = j] = f (1-\alpha)\Pr[H = j]/Pr[H \geq 0]
+%         \qquad \text{for}\quad j = 1,2,3,\ldots
+%     $$
+%   If a symbol $w_i \sim \DistM_1(\alpha,f)$ then it means as follows: 
+
+%   Let $\alpha \in (0,1/2)$ and $f \in (0,1)$. 
+%   Focus on the execution of an $(\EpsP, k, s)$-secure blockchain execution over a single epoch.
+%   Let $W$ be the corresponding characteristic string with distribution $\DistM_n(\alpha, f)$.
+%   Condition on the event $T_{s,r}$ that at least $r$ out of the last $s$ slots in $W$ are non-empty. 
+%   It is easy to see that $r \sim \Binomial(s, f)$.
+%   Consider the conditional grinding power for a single epoch, $g_r = g(W | T_{s,r})$.
+%   % Theorem~\ref{thm:minentropy-loss-praos-single-epoch} and the remark thereafter 
+%   % imply that $g_r$ satisfies  
+%   Define, in accordance with Lemma\ref{lemma:praos-tail-gamma}, 
+%   \begin{align*}
+%     m_r    &= 0.4 (1 + 2\epsilon) r^2 V_r(\epsilon)\,, \\
+%     \gamma_r  &= \sqrt{m_r/\EpsP}\,.\qquad\text{and}\\
+%     P_r       &\defeq \Pr[ g_r \geq \gamma_r \mid T_{s,r}]\,.
+%   \end{align*}
+
+%   Now, let us focus on the grinding power in a single epoch.
+  
+%   \newcommand{\EpsR}{\varepsilon_R}
+
+%   Let $\delta \in \RR_+$ whose value will be chosen later.
+%   Let $R = (1+\delta) Sf$
+%   Let us write $g = g(W)$. 
+%   Total failure probability for this epoch is $\EpsR + P_R$, where 
+%   \begin{itemize}
+%     \item $\EpsR \defeq  \Pr[r \geq R] \leq e^{-\delta^2 Sf/3}$ by a standard Chernoff bound.
+%     \item $P_R\defeq \Pr[ g_R \geq \gamma_R \mid T_{s,R}]$, the probability that 
+%     either $g_R > \gamma_R$ 
+%     or the blockchains was not $(\EpsP, k, s)$-secure in this epoch.
+%   \end{itemize}
+%   By Lemma\ref{lemma:praos-tail-gamma}, $P_R \leq 2 \EpsP$.
+
+
+%   % Repeating our footsteps in Lemma~\ref{lemma:praos-tail-gamma}, we write
+%   % \begin{align*}
+%   %   \Pr[g(W) > \gamma_R] 
+%   %   % &= \sum_{i \geq R} \Pr[T_{s,i}] \cdot \Pr[g(W) > \gamma_s | T_{s,i}] 
+%   %   %   + \sum_{i < R} \Pr[T_{s,i}] \cdot \Pr[g(W) > \gamma_i | T_{s,i}] \\
+%   %   &\leq \Pr[r \geq R] \cdot \Pr[g_s > \gamma_s | T_{s,s}] + \Pr[r < R] \cdot \Pr[g_r > \gamma_R | T_{s,R}] \\
+%   %   &\leq \Pr[r \geq R] \cdot P_s + \Pr[r < R] \cdot P_R
+%   %   &= 2 \EpsP
+%   % \end{align*}
+%   % since both $P_s$ and $P_R$ are at most $2 \EpsP$.
+
+%   Now let us consider the iterated beacon over $L$ epochs. 
+%   As we showed in the proof of Theorem~\ref{thm:minentropy-loss-praos-single-epoch}, 
+%   the failure probability will be at most $L \cdot (2 \EpsP + e^{-\delta^2 Sf/3} + \gamma_R \EpsP)$. 
+%   As we can control $R$ by selecting an appropriate $\delta$, 
+%   we should be able to control the preceding quantity as well.
+
+%   Now, $\gamma_R \EpsP = \sqrt{m_R \EpsP} \leq 1.1 R V_R(\epsilon)^{1/2} \EpsP^{1/2}$
+
+ 
 
 
 

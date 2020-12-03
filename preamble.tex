@@ -301,7 +301,9 @@
 \newcommand{\ParagraphEmph}[1]{\vspace{1em}\noindent\textbf{#1}\ }
 
 
-\newcommand{\UnfinishedWarning}[1]{ {\color{red} To do}\typeout{Unfinished: {#1} } }
+\newcommand{\UnfinishedWarning}[1]{ {\color{red} To do: {#1}}
+% \errmessage{Unfinished: {#1} } 
+}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -356,11 +358,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % No empty lines inside \tikzmath
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% declare function={
+%   entropy(\x) = - \x * ln(\x)/ln(2) - (1 - \x) * ln(1 - \x) / ln(2) ; 
+%   gamma(\x) = (1 - \x) / 2 + sqrt( 1 - \x^2 ) ; 
+%   phi(\x) = (3/2) * (1 + \x)^(1/3) * ( 1 - \x )^(2/3) ; 
+%   psi(\x) = ( 1 - ln( (1+\x)/(1-\x) ) / ln(2) )^2 * ln(2) / 63; 
+%   }
 \tikzmath{%
     function entropy(\prob){
       return (- \prob * ln(\prob) - (1 - \prob) * ln(1 - \prob) ) / ln(2);
     };
     % Function gamma() from praos analysis <-- not to confuse with grinding power gamma
+    function PraosMeanBase (\e) {
+      return  (1 - \e) / 2 + sqrt( 1 - \e^2 ) ;
+    };
     function PraosGamma (\e) {
       return  (1 - \e) / 2 + sqrt( 1 - \e^2 ) ;
     };
