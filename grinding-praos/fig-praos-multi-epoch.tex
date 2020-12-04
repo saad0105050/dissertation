@@ -19,17 +19,17 @@
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         % y label style={at={(axis description cs:-0.1,.5)},anchor=south},
         xlabel={$\epsilon$, honest bias},
-        title={Base-2 logarithm of Grinding Power},
+        title={Base-2 logarithm of Grinding Power}, 
         ]
         \addplot +[ultra thick,red] {  PraosMinEntropyLossMultiEpoch(\x, 1200) };
         \addlegendentry{$k = 1200$};
         \addplot +[ultra thick,black] { PraosMinEntropyLossMultiEpoch(\x, 900)  };
-        \addlegendentry{$k = 900$};
+        \addlegendentry{$k = 900$}; 
         \addplot +[ultra thick,blue] { PraosMinEntropyLossMultiEpoch(\x, 600)  };
-        \addlegendentry{$k = 600$};
+        \addlegendentry{$k = 600$}; 
       \end{axis}
     \end{tikzpicture}%
-    % \caption[Praos beacon]{
+    % \caption[Praos beacon]{ 
     %     The upper bound $\rho^*$ on $\rho$, 
     %     Praos beacon's min-entropy loss (in bits), 
     %     as a function of the honest bias, $\epsilon$. 
@@ -54,8 +54,8 @@
     \tikzsetnextfilename{prbad}
     \begin{tikzpicture}[trim axis left,
       ]
-      \begin{axis}[domain=0:1, 
-        xmin=0,xmax=1,%
+      \begin{axis}[domain=0.6:1, 
+        xmin=0.6,xmax=1,%
         % ymax=0,%,ymax=2.5
         % restrict x to domain=0.6:0.999,
         % restrict y to domain=0:100,
@@ -67,19 +67,27 @@
         yticklabel pos=right,
         % yticklabel style={xshift=2em},
         % legend pos=outer north east,
-        legend pos=north west,
-        legend cell align=left,
+        legend pos=south west,
+        legend cell align=left, 
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
         xlabel={$\epsilon$, honest bias},
-        title={Base-2 logarithm of $\Pr[\text{failure}]$},
+        title={Base-2 logarithm of $\Pr[\text{failure}]$}, 
         ]
         \addplot +[ultra thick,red] { LnPraosPrBadMultiEpoch(\x, 1200, 1)/ln(2) } ;  
         \addlegendentry{$k = 1200$};
         \addplot +[ultra thick,black] {  LnPraosPrBadMultiEpoch(\x, 900, 1)/ln(2)  };
         \addlegendentry{$k = 900$};
         \addplot +[ultra thick,blue] {  LnPraosPrBadMultiEpoch(\x, 600, 1)/ln(2) };
-        \addlegendentry{$k = 600$};
+        \addlegendentry{$k = 600$}; 
+        % \addplot +[ultra thick,blue] { ln(PraosEpsP(\x, 900))/ln(2)  };  
+        % \addlegendentry{$k = 900$ ln(PraosEpsP)};
+        % \addplot +[ultra thick,green] { LnPraosEpsP(\x, 900)/ln(2)  }; 
+        % \addlegendentry{$k = 900$ LnPraosEpsP};
+        % \addplot table [x=eps, y=k900, col sep=space] {Log2PraosEpsPoints.csv};
+        % \addlegendentry{$k = 900$ Table};
+        % \addplot +[ultra thick,red] { LogTwoEpsPKnineActual(\x)  };   
+        % \addlegendentry{$k = 900$ Actual}; 
       \end{axis}
     \end{tikzpicture}
     \caption[Praos beacon security]{        

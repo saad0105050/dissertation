@@ -355,6 +355,70 @@
 \makeatother
 
 
+\usepackage{filecontents}
+\begin{filecontents*}{PraosEpsPoints.csv}
+eps k900    k1200
+0.01    3.18E-06    5.49E-08
+0.05    3.47E-08    1.34E-10
+0.1 3.90E-11    1.58E-14
+0.15    1.13E-14    3.04E-19
+0.2 7.49E-19    8.22E-25
+0.25    9.99E-24    2.62E-31
+0.3 2.28E-29    7.91E-39
+0.35    7.29E-36    1.74E-47
+0.4 2.55E-43    2.00E-57
+0.45    7.14E-52    7.94E-69
+0.5 1.08E-61    6.40E-82
+0.55    5.16E-73    5.19E-97
+0.6 3.90E-86    1.66E-114
+0.65    1.75E-101   5.75E-135
+0.7 1.15E-119   3.28E-159
+0.75    1.30E-141   1.80E-188
+0.8 7.82E-169   9.13E-225
+0.85    4.67E-204   9.87E-272
+0.9 4.56E-253   0
+0.95    0   0
+0.99    0   0
+\end{filecontents*}
+\begin{filecontents*}{Log2PraosEpsPoints.csv}
+eps k900    k1200
+0.01    -1.83E+01   -2.41E+01
+0.05    -2.48E+01   -3.28E+01
+0.1 -3.46E+01   -4.58E+01
+0.15    -4.63E+01   -6.15E+01
+0.2 -6.02E+01   -8.00E+01
+0.25    -7.64E+01   -1.02E+02
+0.3 -9.51E+01   -1.27E+02
+0.35    -1.17E+02   -1.55E+02
+0.4 -1.41E+02   -1.88E+02
+0.45    -1.70E+02   -2.26E+02
+0.5 -2.03E+02   -2.70E+02
+0.55    -2.40E+02   -3.20E+02
+0.6 -2.84E+02   -3.78E+02
+0.65    -3.35E+02   -4.46E+02
+0.7 -3.95E+02   -5.26E+02
+0.75    -4.68E+02   -6.24E+02
+0.8 -5.58E+02   -7.44E+02
+0.85    -6.75E+02   -9.00E+02
+0.9 -8.38E+02   -inf
+0.95    -inf   -inf
+0.99    -inf   -inf
+\end{filecontents*}
+
+% \def\EpsPKnineActual{{3.18E-06,3.47E-08,3.90E-11,1.13E-14,7.49E-19,9.99E-24,2.28E-29,7.29E-36,2.55E-43,7.14E-52,1.08E-61,5.16E-73,3.90E-86,1.75E-101,1.15E-119,1.30E-141,7.82E-169,4.67E-204,4.56E-253,0,0}}
+% \def\LogTwoEpsPKnineActual{{-1.83E+01,-2.48E+01,-3.46E+01,-4.63E+01,-6.02E+01,-7.64E+01,-9.51E+01,-1.17E+02,-1.41E+02,-1.70E+02,-2.03E+02,-2.40E+02,-2.84E+02,-3.35E+02,-3.95E+02,-4.68E+02,-5.58E+02,-6.75E+02,-8.38E+02,-inf,-inf}}
+
+
+% \newcommand\equalitytest[2]
+% {%
+%     \ifdim#1pt=#2pt
+%         Equal.\\
+%     \else%
+%         Not equal.\\
+%     \fi%
+% }
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % No empty lines inside \tikzmath
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -364,6 +428,85 @@
 %   phi(\x) = (3/2) * (1 + \x)^(1/3) * ( 1 - \x )^(2/3) ; 
 %   psi(\x) = ( 1 - ln( (1+\x)/(1-\x) ) / ln(2) )^2 * ln(2) / 63; 
 %   }
+
+
+    % function LogTwoEpsPKnineActual(\e) {
+    %     % if (\e == 0.01) then { return -1.83E+01 ; } ;
+    %     % if (\e == 0.05) then { return -2.48E+01 ; } ;
+    %     % if (\e == 0.10) then { return -3.46E+01 ; } ;
+    %     % if (\e == 0.15) then { return -4.63E+01 ; } ;
+    %     % if (\e == 0.20) then { return -6.02E+01 ; } ;
+    %     % if (\e == 0.25) then { return -7.64E+01 ; } ;
+    %     % if (\e == 0.30) then { return -9.51E+01 ; } ;
+    %     % if (\e == 0.35) then { return -1.17E+02 ; } ;
+    %     % if (\e == 0.40) then { return -1.41E+02 ; } ;
+    %     % if (\e == 0.45) then { return -1.70E+02 ; } ;
+    %     % if (\e == 0.50) then { return -2.03E+02 ; } ;
+    %     if (\e == 0.50) then { return -2.03E+02 ; } ;
+    %     % if (\e == 0.55) then { return -2.40E+02 ; } ;
+    %     % if (\e == 0.60) then { return -2.84E+02 ; } ;
+    %     % if (\e == 0.65) then { return -3.35E+02 ; } ;
+    %     % if (\e == 0.70) then { return -3.95E+02 ; } ;
+    %     % if (\e == 0.75) then { return -4.68E+02 ; } ;
+    %     % if (\e == 0.80) then { return -5.58E+02 ; } ;
+    %     % if (\e == 0.85) then { return -6.75E+02 ; } ;
+    %     % if (\e == 0.90) then { return -8.38E+02 ; } ;
+    %     % if (\e == 0.95) then { return -inf ; } ;
+    %     % if (\e == 0.99) then { return -inf ; } ;
+    %     %
+    %     %
+    %     % \ifdim\e pt=0.5 pt
+    %     %     return -2.03E+02  ;
+    %     % \fi
+    %     % if (\e == 0.01) then { return -1.83E+01 ; } ;
+    %     % if (\ifdim\eIndex pt=0.05 pt) then { return -2.48E+01 ; } ;
+    %     % if (\ifdim\eIndex pt=0.1 pt) then { return -3.46E+01 ; } ;
+    %     % if (\eIndex == 3.0) then { return -4.63E+01 ; } ;
+    %     % if (\eIndex == 4.0) then { return -6.02E+01 ; } ;
+    %     % if (\eIndex == 5.0) then { return -7.64E+01 ; } ;
+    %     % if (\eIndex == 6.0) then { return -9.51E+01 ; } ;
+    %     % if (\eIndex == 7.0) then { return -1.17E+02 ; } ;
+    %     % if (\eIndex == 8.0) then { return -1.41E+02 ; } ;
+    %     % if (\eIndex == 9.0) then { return -1.70E+02 ; } ;
+    %     % if (\eIndex == 10.0) then { return -2.03E+02 ; } ;
+    %     % if (\eIndex == 11) then { return -2.40E+02 ; } ;
+    %     % if (\eIndex == 12) then { return -2.84E+02 ; } ;
+    %     % if (\eIndex == 13) then { return -3.35E+02 ; } ;
+    %     % if (\eIndex == 14) then { return -3.95E+02 ; } ;
+    %     % if (\eIndex == 15) then { return -4.68E+02 ; } ;
+    %     % if (\eIndex == 16) then { return -5.58E+02 ; } ;
+    %     % if (\eIndex == 17) then { return -6.75E+02 ; } ;
+    %     % if (\eIndex == 18) then { return -8.38E+02 ; } ;
+    %     % if (\eIndex == 19) then { return -inf ; } ;
+    %     % if (\eIndex == 20) then { return -inf ; } ;
+    %     return -500 ;
+    % };
+
+    % If k = 900 or 1200, uses explicit bounds; otherwise, uses asymptotic bounds
+    %function LnPraosEpsP(\e, \k) {
+      % if (\k == 900) then {
+      %   % -43.5925-0.105337(1+0.00297951 eps) eps^3
+      %   \aa = -43.5925 ;
+      %   \bb = -0.105337 ;
+      %   \cc = 0.00297951 ;
+      %   \lnbasetwo = \aa + \bb * (1 + \cc * \e) * \e^3 ;
+      %   return \lnbasetwo * ln(2) ;
+      % } else {
+      %   if (\k == 1200) then {
+      %       % -36.4649-0.259867(1-0.0265006 eps) eps^3
+      %       \aa = -36.4649 ;
+      %       \bb = -0.259867 ;
+      %       \cc = -0.0265006 ;
+      %       \lnbasetwo = \aa + \bb * (1 + \cc * \e) * \e^3 ;
+      %       return \lnbasetwo * ln(2) ;
+      %   } else {
+      %     \dampFactor = 1 - (5/4) * \e + (9/4) * \e^2 ;  
+      %     return ln(R(\e, \k)) + 1 - \e^3 * (\dampfactor) * \k / 2 ;
+      %   };
+      % };      
+    %};
+
+
 \tikzmath{%
     function entropy(\prob){
       return (- \prob * ln(\prob) - (1 - \prob) * ln(1 - \prob) ) / ln(2);
@@ -406,12 +549,13 @@
     };
     % Consistency error prob
     function PraosEpsP(\e, \k) {
-      \dampFactor = 1 ;  
-      % \dampFactor = 1 - \e ;  
+      % \dampFactor = 1 ;  
+      \dampFactor = 1 - (5/4) * \e + (9/4) * \e^2 ;  
       return R(\e, \k) * exp( 1 - \e^3 * (\dampFactor) * \k / 2) ;
     };
     function LnPraosEpsP(\e, \k) {
-      return ln(R(\e, \k)) + 1 - \e^3 * (1-\e) * \k / 2 ;
+      \dampFactor = 1 - (5/4) * \e + (9/4) * \e^2 ;  
+      return ln(R(\e, \k)) + 1 - \e^3 * (\dampFactor) * \k / 2 ;
     };
     % ECQ parameter
     function PraosECQs(\e, \k) {
@@ -484,13 +628,29 @@
             };
         };
     };
+    % function PraosMinEntropyLossMultiEpoch (\e, \k) {
+    %     if (\e >= 0.809) then {
+    %         return 0 ;
+    %     } else {
+    %         Probability cannot be larger than 1
+    %         \lnepsp = LnPraosEpsP(\e, \k) ;
+    %         if (\lnepsp > 0) then {
+    %             % bad 
+    %             return -inf;% Flag value: min-entropy loss cannot be negative
+    %         } else {
+    %             % Logarithm of the grinding power
+    %             % log2 sqrt( M/epsp ) where M = PraosV() is an upperbound on the second moment
+    %             \Rho = 0.5 * (LnPraosV(\e, \k) - \lnepsp) / ln(2) ;
+    %             return sanitizedMinEntropyLoss(\Rho) ;
+    %         };
+    %     };
+    % };
     function PraosMinEntropyLossMultiEpoch (\e, \k) {
         if (\e >= 0.809) then {
             return 0 ;
         } else {
-            % Probability cannot be larger than 1
             \lnepsp = LnPraosEpsP(\e, \k) ;
-            if (\lnepsp >= 0) then {
+            if (\lnepsp > 0) then {
                 % bad 
                 return -inf;% Flag value: min-entropy loss cannot be negative
             } else {
@@ -503,38 +663,32 @@
     };
     function PraosPrBadMultiEpoch (\e, \k, \L) {
         % Probability cannot be larget than 1
-        \epsp = PraosEpsP(\e, \k) ;
-        if (\epsp <= 0) then {
-            return -inf;
+        \lnepsp = LnPraosEpsP(\e, \k) ;
+        if (\lnepsp > 0) then {
+            return inf;
         } else {
-            if (\epsp > 1) then {
-                return inf;
+            % Now 0 < EpsP <= 1
+            \Rho = PraosMinEntropyLossMultiEpoch(\e, \k) ;
+            if (\Rho >= 0) then {
+                \prBad = 3 * \L * 2^\Rho * exp(\lnepsp) ;
+                return sanitizedProbability(\prBad) ;
+            } else {
+                return -inf;
             };
-        }; 
-        % Now 0 < EpsP <= 1
-        \Rho = PraosMinEntropyLossMultiEpoch(\e, \k) ;
-        if (\Rho >= 0) then {
-            \prBad = 3 * \L * 2^\Rho * \epsp ;
-            return sanitizedProbability(\prBad) ;
-        } else {
-            return -inf;
         };
     };
     function LnPraosPrBadMultiEpoch (\e, \k, \L) {
-        \epsp = PraosEpsP(\e, \k) ;
-        if (\epsp <= 0) then {
-            return -inf;
+        \lnepsp = LnPraosEpsP(\e, \k) ;
+        if (\lnepsp > 0) then {
+            return inf;
         } else {
-            if (\epsp > 1) then {
-                return inf;
+            \Rho = PraosMinEntropyLossMultiEpoch(\e, \k) ;
+            if (\Rho >= 0) then {
+                \lnPrBad = ln(3) + ln(\L) + \Rho * ln(2) + \lnepsp);
+                return sanitizedLnProbability(\lnPrBad) ;
+            } else {
+                return -inf;
             };
-        }; 
-        \Rho = PraosMinEntropyLossMultiEpoch(\e, \k) ;
-        if (\Rho >= 0) then {
-            \lnPrBad = ln(3) + ln(\L) + \Rho * ln(2) + ln(\epsp);
-            return sanitizedLnProbability(\lnPrBad) ;
-        } else {
-            return -inf;
         };
     };
     function PoissonBeaconMinEntropyLoss (\e, \k) {
