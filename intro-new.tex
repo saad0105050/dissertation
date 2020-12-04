@@ -1,0 +1,115 @@
+
+
+
+
+
+Consensus means agreement.
+
+In distributed computing, 
+consensus algorithms provide strategies 
+so that different people (or computers) 
+may come to agreement. 
+These algorithms are often called \emph{protocols} as they 
+tell the participants which specific actions they should take 
+e.g., when to send a certain message to others, etc. 
+Sometimes, the participants cannot trust each other; 
+this is the \emph{decentralized consensus problem}. 
+The consensus has to be reached against threats and issues such as 
+network delays, network failure, crashing computers, and even 
+dishonest (or malicious) participants. 
+Often, we use the term \emph{adversary} to broadly refer to these threats. 
+A \emph{Byzantine adversary} can deviate arbitrarily from the protocol. 
+
+
+The decentralized consensus problem in the Byzantine threat model 
+is called the \emph{Byzantine Fault Tolerance} (or BFT in short). 
+This problem has been studied extensively over the past few decades, 
+starting from the ground-breaking paper~\citet{BFT}. 
+The consensus problem can have a rich structure and varying difficulty 
+depending on the model e.g. network delays or Byzantine adversaries. 
+
+Like many protocols, consensus protocols 
+progress in \emph{rounds} 
+(i.e., a logical time segment) 
+and, at each round, the participants execute relevant instructions of the protocol. 
+The protocol guarantees that after a number of rounds, 
+a consensus would be reached. 
+
+Consensus can mean different things. 
+Typically, we expect \emph{instant settlement} 
+i.e., that once a consensus is reached, 
+it is final. 
+However, if we allow the consensus to happen gradually, 
+things suddenly become more interesting.
+In \emph{eventual consensus}, 
+we ask for an \emph{iterated} consensus protocol 
+where the consensus solidifies as the rounds passes. 
+Suppose that we want to reach consensus about a series of events. 
+The participants may disagree about what transpired in recent rounds, 
+but the protocol guarantees that they would all agree about 
+what happened, say, one hundred rounds ago. 
+This is called the \emph{consistency property} of the protocol. 
+Note that in this setting, 
+the current round cannot be considered ``settled'' 
+before a number of round passes by; 
+this delay is called the \emph{settlement delay}. 
+It is essential that the protocol gives us a guarantee 
+about the settlement delay;
+otherwise, we wouldn't know if (or when) we have reached consensus.
+
+But why should we even consider the eventual consensus model in the first place? 
+The answer is simplicity: 
+While consensus algorithms in the instant settlement model 
+are typically complex, 
+they can be surprisingly simple in the eventual consensus model. 
+The famous \emph{longest-chain rule}, put forth in the 
+celebrated work of~\citet{Nakamoto2008}, states that:
+\begin{enumerate}
+  \item Each participant maintains a list of events; 
+  this list is called a \emph{chain}.
+
+  \item At the beginning of every round, 
+  each participant adopts a longest chain in his view.
+
+  \item A participant can test whether he is eligible to add a new record to his chain. 
+  If he is, he adds this record (called a \emph{block}) on top of his chain 
+  and shows the new chain to everyone.
+\end{enumerate}
+\noindent
+It is remarkable that this simple rule actually allows eventual consensus. 
+% A guarantee on the settlement delay can be derived by analyzing this algorithm.
+
+A participant who is eligible to add a new record is called a \emph{leader}. 
+The word is a reference to the \emph{leader election problem}. 
+Leader election is a consensus problem itself: 
+in this problem, the participants 
+reach agreement about who among them would get 
+the special designation of their ``leader.''
+Note how the longest-chain rule does not say anything about 
+how to elect a leader: 
+we can plug in, to the main protocol, 
+different leader election mechanisms as we choose. 
+This flexibility gives a rich structure to the problem 
+which we can exploit to achieve eventual consensus 
+in different settings.
+
+
+
+
+
+\pagebreak
+
+
+
+
+
+
+
+
+
+
+
+\iftoggle{drawfigs}{%
+  \input{multihonest/fig-prbad-multihonest}
+}
+
