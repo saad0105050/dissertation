@@ -29,8 +29,7 @@ The consensus problem can have a rich structure and varying difficulty
 depending on the model e.g. network delays or Byzantine adversaries. 
 
 Like many protocols, consensus protocols 
-progress in \emph{rounds} 
-(i.e., a logical time segment) 
+progress in logical time segments called \emph{rounds} 
 and, at each round, the participants execute relevant instructions of the protocol. 
 The protocol guarantees that after a number of rounds, 
 a consensus would be reached. 
@@ -44,7 +43,8 @@ things suddenly become more interesting.
 In \emph{eventual consensus}, 
 we ask for an \emph{iterated} consensus protocol 
 where the consensus solidifies as the rounds passes. 
-Suppose that we want to reach consensus about a series of events. 
+Suppose that we want to reach consensus about a series of events 
+(called a \emph{ledger}). 
 The participants may disagree about what transpired in recent rounds, 
 but the protocol guarantees that they would all agree about 
 what happened, say, one hundred rounds ago. 
@@ -52,7 +52,7 @@ This is called the \emph{consistency property} of the protocol.
 Note that in this setting, 
 the current round cannot be considered ``settled'' 
 before a number of round passes by; 
-this delay is called the \emph{settlement delay}. 
+this ``wait time, '' or delay, is called the \emph{settlement delay}. 
 It is essential that the protocol gives us a guarantee 
 about the settlement delay;
 otherwise, we wouldn't know if (or when) we have reached consensus.
@@ -75,23 +75,123 @@ celebrated work of~\citet{Nakamoto2008}, states that:
   If he is, he adds this record (called a \emph{block}) on top of his chain 
   and shows the new chain to everyone.
 \end{enumerate}
-\noindent
-It is remarkable that this simple rule actually allows eventual consensus. 
-% A guarantee on the settlement delay can be derived by analyzing this algorithm.
+
+It is a remarkable fact that this simple rule leads to the eventual consensus. 
+The notion of chains and blocks above has led to the term ``blockchain'' 
+which has come to define a class of consensus algorithms 
+in both eventual consensus model as well as in the traditional, 
+instant confirmation model~\cite{BlockchainAlgorithms}. 
+% We also use the term ``blockchain'' to implicitly refer to the 
+% ledger maintained by the participants.
 
 A participant who is eligible to add a new record is called a \emph{leader}. 
-The word is a reference to the \emph{leader election problem}. 
-Leader election is a consensus problem itself: 
-in this problem, the participants 
-reach agreement about who among them would get 
-the special designation of their ``leader.''
-Note how the longest-chain rule does not say anything about 
-how to elect a leader: 
-we can plug in, to the main protocol, 
-different leader election mechanisms as we choose. 
-This flexibility gives a rich structure to the problem 
-which we can exploit to achieve eventual consensus 
-in different settings.
+The word ``leader'' is a reference to the \emph{leader election problem}, 
+a consensus problem where the participants want to 
+reach agreement about who, among them, would get 
+the special designation of being a leader.
+Note how the longest-chain rule allows us to plug in 
+different leader election mechanisms. 
+This flexibility gives a rich structure to the algorithm.
+
+The leader election process is designed to be random. 
+If most of the participants are honest, 
+a randomly picked participant is more likely to be honest as well. 
+In the long term, the accumulated effect of these good events 
+should lead to good outcomes, i.e., reaching consensus. 
+However, having this randomness built into the system means 
+that the consensus is a random event as well; 
+therefore, the consistency is achieved only with a high probability. 
+A \emph{consistency error bound} 
+% associated with a settlement delay parameter
+estimates the probability 
+(of the unlikely event) that we did not reach consensus 
+even after waiting for a stipulated amount of rounds. 
+We desire that the consistency error should decrease exponentially 
+in the settlement delay parameter. 
+If it indeed happens, 
+we say that the protocol has achieved the \emph{linear consistency}.
+
+Bitcoin---the poster boy of the longest-chain rule---achieves 
+linear consistency; it does so by employing a clever leader election mechanism 
+called the \emph{Proof-of-Work lottery} (PoW). 
+The proof part is easy: we know how to prove claims using 
+digital signatures and zero-knowledge proofs~\cite {DigitalSignatures,ZK}. 
+The ``work'' part addresses the rarity of leadership. 
+Specifically, 
+the probability of being elected a leader is kept small by design 
+so that we do not have a deluge of competing chains. 
+In PoW, participants have to solve a computationally difficult 
+cryptographic puzzle~\cite{PoW} 
+to be a leader. 
+The difficulty of the puzzle ensures that at any given round, 
+it is unlikely to have many lottery winners. 
+However, since being elected a leader has its rewards (e.g., commissions and fees), 
+rational participants invest in computational power 
+and keep solving their puzzles. 
+As result, a PoW network consumes a lot of energy: 
+Bitcoin's energy consumption is 
+on par with a medium-sized country~\cite{BitcoinEnergy}.
+
+One way to avoid such a waste of energy 
+is to rely on a proof mechanism which provides 
+a useful service, such as Proof-of-Storage~\cite{ProofOfStorage}. 
+Yet another alternative is to bypass the necessity of a physical resource 
+(such as computational power or storage space)
+altogether and instead, perform the lottery based on an abstract resource. 
+An abstract resource could be, for example, 
+a participant's \emph{stake} in the system, 
+a numeric quantity which can be inferred 
+from the settled part of the blockchain; 
+thus the \emph{Proof-of-Stake} (PoS) paradigm is born.
+
+A difficulty in the PoS analysis 
+comes from its adversarial model. 
+Under the longest-chain rule (for both PoS and PoW), 
+if an honest participant 
+is presented with multiple longest chains, 
+he has no way to differentiate between these chains. 
+In this scenario, the model gives the adversary the power to 
+select an arbitrary longest chain; 
+this is called the \emph{longest-chain tie-breaking}. 
+Since the PoS model puts no inherent cost 
+(e.g., spending money to buy computational resource) 
+for a leader to produce new blocks, 
+adversarial leaders may 
+freely produce new blocks. 
+Furthermore, they may strategically 
+extend existing chains 
+so that they can 
+present two longest chains to an honest observer. 
+Keep in mind that only one of these chains 
+is going to belong in the consensus. 
+Conceivably, these two chains may diverge 
+long ago -- even before the boundary set by the settlement parameter -- and 
+contain conflicting records regarding a round, 
+in violation of the consistency property.  
+It follows that in PoS, 
+the adversary is given more power to 
+break (or delay) the consensus, 
+compared to PoW. 
+
+
+A more subtle difficulty with PoS is that 
+we have to maintain the stake information on the ledger itself. 
+Since the leader election is based on stakes indicated by the 
+consistent part of the blockchain, 
+the integrity of the leader election mechanism in the PoS setting 
+is tightly intertwined 
+with its consistency property. 
+We did not have this issue in PoW: 
+the model did not require the participants to prove 
+how much computational resource they own.
+Thus, proving the security of a PoS system is 
+trickier than that of a PoW system.
+
+
+
+In a \emph{double spending attack}, 
+
+
 
 
 
