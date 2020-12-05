@@ -1,6 +1,8 @@
 % \blindtext
 
-In the past decade, blockchain technology has emerged as a foundation for a diverse range of distributed applications, notably cryptocurrencies and decentralized ledger. These protocols allow the users -- across the globe and not needing to trust one another -- exchange messages and eventually reach an agreement. 
+In the past decade, blockchain technology has emerged as a foundation for a diverse range of distributed applications, notably cryptocurrencies and decentralized ledgers. 
+These protocols allow the users---across the globe and not 
+needing to trust one another---exchange messages and eventually reach an agreement. 
 
  
 
@@ -9,20 +11,22 @@ Currently, the most popular blockchain technology is the Proof-of-Work (PoW) par
  
 
 In this dissertation, we study the security of PoS blockchains in the eventual consensus model under the so-called longest-chain rule; 
-these are also called ``Nakamoto-style PoS.''
+these are also called the ``Nakamoto-style PoS.''
 \begin{itemize}
   \item We show that the security guarantees 
   for the consistency property of these blockchains are asymptotically similar 
-  to those of the Nakamoto-style PoW blockchains (published at ACM SODA 2020). 
+  to those of the Nakamoto-style PoW blockchains (ACM SODA 2020). 
 
-  \item We present a security analysis under a simple honest-majority assumption; this is a sweeping improvement over all existing analyses as they needed a stricter honest-majority assumption (accepted at IEEE ICDCS 2020).
+  \item We present a security analysis under a simple honest-majority assumption; this is a sweeping improvement over all existing analyses as they needed a stricter honest-majority assumption (IEEE ICDCS 2020).
 
-  \item We analyze the security of the ``randomness beacon'' of two important protocols: Ouroboros Praos and SnowWhite. Our results demarcate the parameter settings for which these protocols remain secure. 
+  \item We analyze the security of the simple `hash the chain'' randomness beacon 
+  in PoS; two important protocols, Ouroboros Praos and SnowWhite, use this beacon. 
+  Our results demarcate the parameter settings for which these protocols remain secure. 
 
-  \item We also analyze some new, simple, and more secure randomness beacons for eventual consensus PoS.
+  \item We also present and analyze new, more secure randomness beacons for eventual consensus.
 \end{itemize}
 
-Our results have already made an impact in the industry: \emph{Cardano} -- a leading PoS cryptocurrency -- is using our results and recommendations for designing their protocol.
+Our results have already made an impact in the industry: \emph{Cardano}---a leading PoS cryptocurrency--is using our results and recommendations for designing their protocol.
 
 % \begin{flushleft}
 % \textbf{Thesis Supervisor:} \majoradvisor \\
