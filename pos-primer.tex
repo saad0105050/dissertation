@@ -1,6 +1,6 @@
 
 
-In this \Section, 
+In this chapter, 
 we establish the vocabulary for properly discussing the present research.
 
 
@@ -97,10 +97,11 @@ we establish the vocabulary for properly discussing the present research.
 Let $\Players$ be the set of participants 
 where each player $i \in \Players$ is associated with a positive real number 
 $\sigma_i \in [0,1]$, called his \emph{relative stake ratio}, or just \emph{stake} in short. 
-The stake ratios satisfy $\sum_{i \in \Players} \sigma_i = 1$ 
-and, for this analysis, remains constant over the course of the execution of the protocol. 
+The stake ratios satisfy $\sum_{i \in \Players} \sigma_i = 1$. 
+The dynamic of the protocol determines 
+the stakes and how they can shift over time.
 (As is common in the literature (e.g., in \cite{Ouroboros,Praos,SnowWhite}), 
-we can handle a change in stake separately from this analysis and then hook these two together.)
+we can handle a change in stake separately from the consistency analysis and later, hook these two together.)
 
 Let $\HonestPlayers, \DishonestPlayers \subseteq \Players$ 
 denote the set of honest and dishonest players, respectively;
@@ -184,7 +185,7 @@ Definition~\ref{def:VRF}.
 \Paragraph{Leader election outcomes; the probabilities $p_\h, p_\H,$ and $p_\A$.}\label{sec:leader-election-probs}
 Leader election~\cite{RSZ} is an important problem in distributed computing.
 In every slot, 
-a number of participants are elected as \emph{leaders} who can add block to a chain. 
+a number of participants are elected as \emph{leaders} who can add a block to a chain. 
 The claim ``player $u$ won the leader election for slot $i$ at epoch $e$'' 
 can be proved using digital signatures and VRFs (Definition~\ref{def:VRF}).
 Based on the outcome of the leader election in a slot, 
@@ -238,7 +239,7 @@ must satisfy a set of key properties. Informally speaking, these are as follows:
   \item[Chain Quality Property (CQ) with parameter $s$:]
   Consider a blockchain held by an honest observer. 
   Any segment of this chain 
-  corresponding to a time window of length $s$ slots or more, 
+  corresponding to a time window of length $s$ slots or more 
   must contain at least one honest block.
   This property is called $\sECQ$ 
   and we define it rigorously in Definition~\ref{def:cp-slot-mh}. 
@@ -274,30 +275,30 @@ Part~\ref{part:praos} and Part~\ref{part:xorgames}.
 
 
 
-\Paragraph{Nakamoto-style PoS blockchain axioms in the synchronous setting.}
-To model the dynamic of a Nakamoto-style PoS blockchain, 
-we adopt a set of axioms; see below for an informal description:
+% \Paragraph{Nakamoto-style PoS blockchain axioms in the synchronous setting.}
+% To model the dynamic of a Nakamoto-style PoS blockchain, 
+% we adopt a set of axioms; see below for an informal description:
 
-\begin{description}[font=\normalfont\itshape\space]
-  \item[Message delivery.] 
-    Any message broadcast by an honest participant at the beginning of a
-    particular slot is received by the adversary first, who may decide
-    strategically and individually for each recipient in the network
-    whether to inject additional messages and in which order all messages
-    are to be delivered prior to the conclusion of the slot. 
+% \begin{description}[font=\normalfont\itshape\space]
+%   \item[Message delivery.] 
+%     Any message broadcast by an honest participant at the beginning of a
+%     particular slot is received by the adversary first, who may decide
+%     strategically and individually for each recipient in the network
+%     whether to inject additional messages and in which order all messages
+%     are to be delivered prior to the conclusion of the slot. 
 
-  \item[Genesis block.]
-  The blockchain begins with a fixed ``genesis'' block, assigned to slot $0$, 
-  containing enough information to bootstrap the execution.
+%   \item[Genesis block.]
+%   The blockchain begins with a fixed ``genesis'' block, assigned to slot $0$, 
+%   containing enough information to bootstrap the execution.
   
-  \item[Block label monotonicity.] 
-  Each block is labeled by the index of the slot it was issued from. 
-  In a blockchain, the (slot) labels of the blocks are in strictly increasing order.
+%   \item[Block label monotonicity.] 
+%   Each block is labeled by the index of the slot it was issued from. 
+%   In a blockchain, the (slot) labels of the blocks are in strictly increasing order.
 
-  \item[Honest blocks.] 
-  An honest leader in a slot creates a single block.
-\end{description}
-These axioms are made formal in Section~\ref{sec:pos-axioms}.
+%   \item[Honest blocks.] 
+%   An honest leader in a slot creates a single block.
+% \end{description}
+% These axioms are made formal in Section~\ref{sec:pos-axioms}.
 
 
 

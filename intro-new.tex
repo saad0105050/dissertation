@@ -8,7 +8,7 @@ Consensus means agreement.
 In distributed computing, 
 consensus algorithms provide strategies 
 so that different people (or computers) 
-may come to agreement. 
+may come to agreement~\cite{BFT,PBFT,Paxos,Nakamoto2008,HoneyBadger,Zyzzyva,Streamlet,Algorand,Ouroboros,SnowWhite,Hotstuff}. 
 These algorithms are often called \emph{protocols} as they 
 specify for the participants 
 the actions they should take, 
@@ -19,55 +19,58 @@ The consensus has to be reached against threats and issues such as
 network delays, network failure, crashing computers, and even 
 dishonest (or malicious) participants. 
 Often, we use the term \emph{adversary} to broadly refer to these threats. 
-A \emph{Byzantine adversary} can deviate arbitrarily from the protocol. 
+A \emph{Byzantine adversary} can deviate arbitrarily from the protocol~\cite{BFT}. 
 
 
 The decentralized consensus problem in the Byzantine threat model 
 is called the \emph{Byzantine Fault Tolerance} (or BFT in short). 
 This problem has been studied extensively over the past few decades, 
-starting from the ground-breaking paper~\citet{BFT}. 
-See~\citet{GK} and ~\citet{ConsensusBlockchains} for two recent surveys.
+starting from the ground-breaking paper by~\citet{BFT}. 
+See~\citet{GK18} and ~\citet{ConsensusBlockchain} for two recent surveys.
 The consensus problem can have a rich structure and varying difficulty 
 depending on the model e.g. network delays or Byzantine adversaries. 
-(In this exposition, 
-we use the word ``slot'' interchangeably with the word ``round.'')
+We have a rich trove of interesting results in this vein, such as~\cite{DworkLynch,FLP}; 
+but we do not dwell here.
 
 Like many protocols, consensus protocols 
 progress in logical time segments called \emph{rounds} 
 and, at each round, the participants execute relevant instructions of the protocol. 
 The protocol guarantees that after a number of rounds, 
 a consensus would be reached. 
+(In this exposition, 
+we use the word ``slot'' interchangeably with the word ``round.'')
 
 Consensus can mean different things. 
-Typically, we expect \emph{instant settlement}, 
+Typically, we expect \emph{instant settlement}~\cite{BFT,Paxos,PBFT}, 
 i.e., that once a consensus is reached, 
 it is final. 
 However, if we allow the consensus to happen gradually, 
 things suddenly become more interesting.
 In \emph{eventual consensus}, 
 we ask for an \emph{iterated} consensus protocol 
-where the consensus solidifies as the rounds passes. 
+where the consensus solidifies as the rounds pass~\cite{Nakamoto2008,Ouroboros,SnowWhite,GK18}. 
 Suppose that we want to reach consensus about a series of events 
-(called a \emph{ledger}). 
+(called a \emph{ledger}~\cite{GKL,GK18}). 
 The participants may disagree about what transpired in recent rounds, 
 but the protocol guarantees that they would all agree about 
 what happened, say, one hundred rounds ago. 
 This is called the \emph{consistency property} of the protocol. 
 Note that in this setting, 
 the current round cannot be considered ``settled'' 
-before a number of round passes by; 
+before a number of rounds pass by; 
 this ``wait time, '' or delay, is called the \emph{settlement delay}. 
 It is essential that the protocol gives us a guarantee 
 about the settlement delay;
-otherwise, we wouldn't know if (or when) we have reached consensus.
+otherwise, we wouldn't know if (or when) we have reached a consensus.
 
 But why should we even consider the eventual consensus model in the first place? 
-The answer is simplicity: 
+The answer is, simplicity: 
 While consensus algorithms in the instant settlement model 
 are typically complex, 
 they can be surprisingly simple in the eventual consensus model. 
-The famous \emph{longest-chain rule}, put forth in the 
-celebrated work of~\citet{Nakamoto2008}, states that:
+See~\cite{GK18} for a rich discussion on these differences. 
+Consider, for example, the now-famous \emph{longest-chain rule}. It was put forth in the 
+celebrated work of~\citet{Nakamoto2008}, as follows:
 \begin{enumerate}
   \item Each participant maintains a list of events; 
   this list is called a \emph{chain}.
@@ -81,10 +84,10 @@ celebrated work of~\citet{Nakamoto2008}, states that:
 \end{enumerate}
 
 An eventual consensus protocol that uses the longest-chain rule is dubbed a \emph{Nakamoto-style} protocol.
-It is a remarkable fact that this simple rule leads to the eventual consensus. 
+It is a remarkable fact that this simple rule leads to the eventual consensus~\cite{GKL,PSS}. 
 The notion of chains and blocks above has led to the term ``blockchain'' 
 which has come to define a class of consensus algorithms 
-in both eventual consensus model as well as in the traditional 
+in both the eventual consensus model as well as in the traditional 
 instant confirmation model~\cite{ConsensusBlockchain,GK18}. 
 Note that there are other chain selection rules for eventual consensus: 
 for example, in GHOST~\cite{Ghost},
@@ -96,8 +99,8 @@ the ``heaviest subtree'' is prioritized instead of the longest chain.
 A participant who is eligible to add a new record is called a \emph{leader}. 
 The word ``leader'' is a reference to the \emph{leader election problem}, 
 a consensus problem where the participants want to 
-reach agreement about who, among them, would get 
-the special designation of being a leader.
+reach an agreement about who, among them, would get 
+the special designation of being a leader~\cite{RSZ,FeigeLeaderElection,BoppanaLeaderElection}.
 Note how the longest-chain rule allows us to plug in 
 different leader election mechanisms. 
 This flexibility gives a rich structure to the algorithm.
@@ -119,26 +122,28 @@ under the stipulated settlement delay.
 We desire that the consistency error should decrease exponentially 
 in the settlement delay parameter. 
 If it indeed happens, 
-we say that the protocol has achieved the \emph{linear consistency}.
+we say that the protocol has achieved \emph{linear consistency}.
 
 Bitcoin---the poster boy of the longest-chain rule---achieves 
-linear consistency; it does so by employing a clever leader election mechanism 
+linear consistency~\cite{Nakamoto2008,GKL,PSS}; it does so by employing a clever leader election mechanism 
 called the \emph{Proof-of-Work lottery} (PoW). 
 The proof part is easy: we know how to prove claims using 
-digital signatures and zero-knowledge proofs~\cite{GoldreichFoC}. 
-The ``work'' part addresses the rarity of leadership. 
+digital signatures and zero-knowledge proofs. (Please 
+refer to the book by ~\citet{GoldreichFoC} 
+for a rich discussion about the theory.) 
+he ``work'' part addresses the rarity of leadership. 
 Specifically, 
 the probability of being elected a leader is kept small by design 
 so that we do not have a deluge of competing chains. 
 In PoW, participants have to solve a computationally difficult 
-cryptographic puzzle~\cite{Nakamoto2008,GKL,GKL17,Ghost} 
+cryptographic puzzle~\cite{Nakamoto2008,GKL,Ghost} 
 to be a leader. 
 The difficulty of the puzzle ensures that at any given round, 
-it is unlikely to have many lottery winners. 
+we are unlikely to have many lottery winners. 
 However, since being elected a leader has its rewards (e.g., commissions and fees), 
 rational participants invest in computational power 
 and keep solving their puzzles. 
-As result, a PoW network consumes a lot of energy: 
+As a result, a PoW network consumes a lot of energy: 
 Bitcoin's energy consumption is 
 on par with a medium-sized country~\cite{BitcoinEnergy}.
 
@@ -149,10 +154,11 @@ Yet another alternative is to bypass the necessity of a physical resource
 (such as computational power or storage space)
 altogether and instead, perform the lottery based on an abstract resource. 
 An abstract resource could be, for example, 
-a participant's \emph{stake} in the system, 
+a participant's \emph{stake} in the system: 
 a numeric quantity which can be inferred 
-from the settled part of the blockchain; 
-thus the \emph{Proof-of-Stake} (PoS) paradigm is born.
+from the settled part of the blockchain. 
+Thus was born the \emph{Proof-of-Stake} (PoS) paradigm~\cite{Ouroboros,Sleepy,SnowWhite,Praos} 
+whose ideas could be traced as far back as 1997~\cite{hashcash}.
 
 A difficulty in the PoS analysis 
 comes from its adversarial model. 
@@ -164,7 +170,7 @@ In this scenario, the model gives the adversary the power to
 select an arbitrary longest chain; 
 this is called the \emph{longest-chain tie-breaking}. 
 Since the PoS model puts no inherent cost 
-(e.g., spending money to buy computational resource) 
+(e.g., spending money to buy computational resources) 
 for a leader to produce new blocks, 
 adversarial leaders may 
 freely produce new blocks. 
@@ -176,10 +182,10 @@ Keep in mind that only one of these chains
 is going to belong in the consensus. 
 Conceivably, these two chains may diverge 
 long ago -- even before the boundary set by the settlement parameter -- and 
-contain conflicting records issued from a round $s$; 
+contain conflicting records issued from a round (say $s$); 
 this particular consistency violation is called a \emph{settlement violation for round $s$}.  
 It follows that in PoS, 
-the adversary is given more power to 
+the adversary is given more latitude to 
 cause a settlement violation (or delay the consensus) 
 compared to PoW. 
 
@@ -193,14 +199,13 @@ is tightly intertwined
 with its consistency property. 
 We did not have this issue in PoW: 
 the model did not require the participants to prove 
-how much computational resource they own.
-% Thus, proving the security of a PoS system is 
-% trickier than that of a PoW system.
+how much computational resource they own. 
 
-There is yet another way for the adversary to boost his attack on the consistency. 
+It turns out that this apparently simple (and necessary) feature can be used by the adversary
+to boost his attack on the consistency. 
 In this attack, called \emph{the grinding attack}, 
-the adversary introduces bias in the leader election process. 
-The feasibility of this attack depends on the randomness beacon of the protocol. 
+the adversary introduces a bias in the leader election process  
+by influencing the \emph{randomness beacon} of the protocol. 
 Specifically, when the protocol execution starts, 
 the first block---a special block called the genesis block---contains 
 a public random string which is used in the leader election. 
@@ -214,42 +219,55 @@ Periodically, the participants combine these nonce inputs in a specified manner
 and compute a new, public random string. 
 This sub-protocol is called the \emph{randomness beacon} protocol 
 and these periods are called \emph{epochs}. 
-An epoch is long enough so that the settled part of the blockchains contain enough nonce inputs. 
-We do not need to worry about the randomness in the nonce inputs: 
+An epoch is long enough so that the settled part of the blockchains contains enough nonce inputs. 
+
+This process of collectively agreeing about a random string by combining nonce inputs is similar to the classic \emph{collective coin-flipping problem}~\cite{blum-coin-flipping,BL85}. However, 
+unlike the classic setting, 
+we do not need to worry about the randomness in the nonce inputs: 
 these are produced by cryptographically secure Verifiable Random Functions (VRFs)~\cite{VRFMicali,VRFDodis} 
-that are tied to the identity of the participants (implemented via a public key infrastructure). 
-The method of combining the nonces, however, is critical. 
+that are tied to the identity of the participants (via a public key infrastructure) and are guaranteed to be uniformly random (at least in the computational sense). 
+The method of combining the nonces, however, is critical and herein lies the rich structure of the problem. 
 
 The eventual consensus allows the adversary 
 the full knowledge of the unsettled part of the ledger. 
-If the adversary can strategically vary his nonce inputs 
+Suppose the adversarial leaders can strategically vary the nonce inputs 
 (i.e., whether to submit a nonce input or not)
-\emph{after} knowing the potential beacon output, 
+\emph{after} knowing (i.e., predicting or precomputing) the potential beacon output for the current epoch before the epoch has finished. 
+Since the epoch has not finished yet 
+and the adversary controls a number of future leaders in this epoch, 
 he can effectively choose the beacon output from a number of possible candidate values. 
 Each of these candidate values will lead to a different sequence of leaders 
-(and a different execution) 
 in the next epoch. 
-If any one of those execution leads to a consistency violation, the adversary wins. 
-Therefore, the probability of a consistency violation 
-is multiplied by the number of candidate beacon values 
+
+Recall that 
+the adversary's goal is to cause a consistency violation. 
+If any one of those executions leads to a consistency violation, the adversary wins. 
+Therefore, by foreseeing the beacon output for the current nonce and acting upon this knowledge, 
+he has effectively amplified the probability of a consistency violation 
+by a multiplicative factor. 
+The value of this factor is equal the number of candidate beacon values 
 that the adversary can choose from. 
-This number is called his \emph{grinding power}.
+In this exposition, we call this number his \emph{grinding power}.
 
 In some blockchain protocols, 
 the beacon output is immune to the dynamic of the eventual consensus. 
-This is achieved by opting for a separate, heavy-duty cryptographic multi-party computation (MPC) protocol 
-to ensure that the adversary cannot precompute the beacon output.
-% such as Publicly Verifiable Secret Sharing (PVSS)~\cite{Ouroboros}, 
-% Threshold signatures~\cite{DFINITY}, etc. 
+This is achieved by opting for a separate, heavy-duty cryptographic multi-party computation (MPC) protocol. 
+For example, Ouroboros~\cite{Ouroboros} uses 
+a Publicly Verifiable Secret Sharing (PVSS)-based scheme, 
+where as DFINITY~\cite{DFINITY} uses a Threshold signature-based scheme. 
+Although these protocols are cumbersome and have their critics, 
+they ensure that the adversary cannot precompute the beacon output. 
+
+
+A simple beacon protocol is appealing in many situations as well. 
 Consider a simple alternative beacon protocol 
-where, before the onset of an epoch, 
-every participant computes the beacon output by simply 
-concatenating all nonces on the settled part of his blockchain and hash the result. 
-We call this the \emph{hash-the-blockchain beacon}.
-Since these MPC protocols are cumbersome, 
-several blockchain protocols instead opt for simple mechanisms such as these. 
-As discussed above, this yields the adversary the opportunity to 
-launch a grinding attack.
+where before the onset of an epoch, 
+every participant computes the beacon output of the previous epoch by simply 
+concatenating all nonces on the settled part of his blockchain and then hashing the result. 
+We call this the \emph{hash-the-blockchain beacon}. 
+In fact, many blockchain protocols 
+instead opt for this simple mechanism~\cite{Praos,SnowWhite,Genesis}. 
+In exchange, the protocol designers accept the possibility of a grinding attack. 
 
 
 
@@ -257,29 +275,31 @@ launch a grinding attack.
 In this dissertation, 
 we focus on the consistency property and the grinding attack in Nakamoto-style PoS blockchains.
 
+\Paragraph{Consistency error bound.}
 As we mentioned before, Nakamoto-style PoW (such as Bitcoin) 
-is known to achieve linear consistency. 
-What is means is, if we wait $k$ rounds before declaring the current round ``settled,'' 
+is known to achieve linear consistency~\cite{GKL,PSS,Nakamoto2008}. 
+What that means is, if we wait $k$ rounds before declaring the current round as ``settled,'' 
 the risk of a settlement violation drops exponentially in $k$. 
-However, existing analyses of the Nakamoto-style PoS has a much weaker guarantee. 
+However, existing analyses of the Nakamoto-style PoS has a much weaker guarantee: 
 Specifically, they can prove that in the same situation as above, 
-the settlement error probability drops exponentially in $\sqrt{k}$. 
+the settlement error probability drops exponentially in $\sqrt{k}$~\cite{Ouroboros,SnowWhite,Sleepy}. 
 Although we know that a PoS adversary has more leeway than a PoW adversary, 
-it is not certain whether it should necessarily translate into such 
+it is not obvious whether this advantage should necessarily translate into such 
 an order-of-magnitude difference in the consistency bounds. 
-Moreover, this weak consistency error bound would lead to large security parameters in PoS protocol. 
+Moreover, this weak bound would lead to large security parameters in PoS protocols. 
 Transactions recorded on a Nakamoto-style PoS ledger, therefore, 
 would take longer to be considered settled, 
-sending a cascaded slow-down on the entire system built on top of these ledgers.
-Settling this open question, therefore, is urgent and practical.
+sending a cascading slow-down on the entire system built on top of these ledgers.
+Closing this quadratic gap in the settlement parameter, therefore, is an urgent and practical concern.
 
 
+\Paragraph{Modeling the leader election outcomes.}
 The security guarantees of any consensus protocol 
 critically rely on the structure 
 of the outcomes of its leader election process. 
 Depending on whether a dishonest leader has been elected in a round, 
 we can speak of ``honest rounds'' and ``dishonest rounds.'' 
-In an honest round, the leaders adhere to the protocol whereas 
+Recall that in an honest round, the leaders adhere to the protocol whereas, 
 in a dishonest round, the leaders may arbitrarily deviate from the protocol. 
 Furthermore, an honest round can be \emph{uniquely honest} if it has a single leader, 
 or \emph{multihonest} if it features multiple leaders. 
@@ -293,8 +313,9 @@ and as such, they should be treated as good events for the analysis.
 However, when a round contains multiple blocks---no matter they are adversarial or honest---the adversary can, 
 in principle, use these blocks to build two competing longest chains. 
 
-Instead of performing a delicate modeling, 
-existing analyses treat multihonest slots as either a neutral event~\cite{SnowWhite,Sleepy} 
+Instead of performing a delicate modeling 
+to capture the complex nature of multihonest slots, 
+existing analyses treat these slots as either a neutral event~\cite{SnowWhite,Sleepy} 
 or worse, as an adversarial event~\cite{Ouroboros,Praos,Genesis}. 
 Such a conservative modeling approach weakens the consistency error bounds 
 by discounting the contribution from the honest leaders. 
@@ -307,12 +328,12 @@ where a uniquely honest slot is less likely than an adversarial slot.
 
 
 
+\Paragraph{The grinding problem.}
 An important class of Nakamoto-style PoS protocols use the hash-the-blockchain beacon~\cite{SnowWhite,Sleepy,Praos,Genesis}.
 Of these, Praos~\cite{Praos} has been deployed in practice 
 as the foundation of the cryptocurrency Cardano~\cite{Cardano}. 
-But there is a problem: 
-although the analysis of Praos recognizes the grinding power, 
-its security guarantee is valid as long as it is ``bounded'' 
+Although these analyses recognize the grinding problem, 
+their security guarantees are valid as long as the grinding power is ``bounded'' 
 in terms of the number of adversarial participants and 
 the total number of hashing queries they can make. 
 This is problematic in several ways.
@@ -325,10 +346,10 @@ refused to recognize the computing power as a resource.
 Second, 
 the said bound does not depend on the stake of the adversarial players 
 and, in particular, 
-the literature is yet to characterize the grinding power grows as a function 
+the literature is yet to characterize how the grinding power grows as a function 
 of the security parameter and the adversarial stake. 
 This is a glaring issue since 
-a large grinding power can seriously weaken the consistency error bound and 
+a large grinding power can, in principle, seriously weaken the consistency error bound and 
 send repercussions in every aspect of the protocol design. 
 
 
@@ -363,7 +384,7 @@ The observations above can be congealed into the following research objectives:
     stake held by dishonest players.
     
     \item Use the dynamic of Nakamoto-style eventual consensus to design 
-    beacons that does not rely on MPC but still has superior resistance 
+    beacons that do not rely on MPC but still have superior resistance 
     against a grinding attack.     
 
     \item In both cases, 
@@ -381,7 +402,7 @@ We contend that the research in this dissertation is important, in the following
   Our research proves that, asymptotically speaking, the consistency error 
   in the Nakamoto-style PoS has the same dependence on the security parameter 
   (i.e., settlement delay) 
-  as in the Nakamoto-style PoW. 
+  as in the Nakamoto-style PoW~\cite{LinearConsistencySODA,Multihonest}. 
   This is an important finding: 
   it proves that although the PoS setting 
   admits stronger adversarial behavior, 
@@ -409,14 +430,14 @@ We contend that the research in this dissertation is important, in the following
   \input{multihonest/fig-prbad-multihonest}
 }
 
-  A leading PoS cryptocurrency technology company, \emph{Cardano}~\cite{Cardano}, 
-  is actively using the results and recommendation from this dissertation.
-  In doing so, it paves the way for a widespread practical adoption of these protocols.
+  % A leading PoS cryptocurrency technology company, \emph{Cardano}~\cite{Cardano}, 
+  % is actively using the results and recommendation from this dissertation.
+  % In doing so, it paves the way for a widespread practical adoption of these protocols.
 
 
   Unlike existing analyses, 
   our security guarantees hold as long as on average,
-  an honest slot is more likely than an adversarial slot. 
+  an honest slot is more likely than an adversarial slot~\cite{MultiHonestFullVersion}. 
   Not only does it improve the security guarantees of several existing analyses, 
   but it also opens the door for a wide range of leader election schemes to be used 
   with the Nakamoto-style PoS.
@@ -429,11 +450,12 @@ We contend that the research in this dissertation is important, in the following
   where the protocol can operate securely. 
   (This is when the adversarial stake ratio remains below $9.55\%$.)
   In doing so, 
-  we remove the problematic PoW-like assumption that the grinding power be bounded 
+  we remove the problematic PoW-like assumption that the grinding power is bounded 
   in terms of the adversarial hashing power. 
   We also highlight how a grinding attack can cripple the overall security 
   by amplifying the consistency error. 
-  Praos (and SnowWhite) cease to be secure 
+  Praos (and SnowWhite) 
+  runs the risk of severe grinding attacks 
   soon after the adversarial stake increases beyond the limit mentioned above. 
   This dynamic is depicted in Figure~\ref{fig:prbad-praos-beacon}.
 
@@ -455,11 +477,10 @@ We contend that the research in this dissertation is important, in the following
   recording the input nonces outside the blockchain 
   (in a separate ledger)
   and by controlling the number of slots 
-  that contribute in the computation of the beacon output.
+  that contribute to the computation of the beacon output.
   Note that sometimes, 
-  the protocol designers are willing to tolerate some 
-  a limited grinding attack 
-  in exchange of a simple-to-implement beacon 
+  the protocol designers are willing to tolerate a limited grinding attack 
+  in exchange for a simple-to-implement beacon 
   with a well-understood grinding analysis. 
   Our new beacons fill this void. 
   See Figure~\ref{fig:poisson-beacon}.
@@ -471,7 +492,7 @@ We contend that the research in this dissertation is important, in the following
   The cryptocurrency Cardano is built on top of the Nakamoto-style PoS protocol, Praos~\cite{Praos}.
   As of \today, 
   the market capitalization of Cardano is US\$ 3.5 billion~\cite{CardanoMarketcap}. 
-  The protocol parameters in Praos is 
+  The protocol parameters in Praos are 
   informed by the consistency bounds developed in this dissertation. 
   In particular, its settlement parameter can be set 
   so that the best compromise can be achieved between 
@@ -489,7 +510,7 @@ We contend that the research in this dissertation is important, in the following
 \section{Outline of this dissertation}
 In \Section~\ref{sec:pos-primer}, 
 we collect some important concepts and background information about Nakamoto-style PoS algorithms. 
-The main content of this dissertation are spread over three parts. 
+The main contents of this dissertation are spread over three parts. 
 Instead of an exhaustive list of the Chapters within these parts, 
 we mention the ones that are central to the presentation.
 
@@ -512,13 +533,12 @@ we mention the ones that are central to the presentation.
 
   \item[In Part~\ref{part:xorgames},]
     we analyze a new beacon for eventual consensus blockchains. 
-    \Section~\ref{sec:xorgames-intro} introduces the problem in more detail. 
-    \Section~\ref{sec:xorgames-model} formally lays down the model, 
-    specifies the new beacon in Definition~\ref{def:new-beacon} and 
-    states the main theorem (Theorem~\ref{thm:beacon-poisson-multi-epoch}) 
-    for private leader elections.
-    These beacons have superior output quality compared to the beacon in Praos or SnowWhite. 
-    In addition, (Theorem~\ref{thm:beacon-bernoulli-multi-epoch}) 
+    \Section~\ref{sec:xorgames-intro} introduces the problem in more detail, 
+    specifies the new beacon in Definition~\ref{def:new-beacon} which can be used with both a public and a private leader election.
+    In Theorem~\ref{thm:beacon-poisson-multi-epoch},  we prove the security of this beacon 
+    for private leader elections. 
+    It turns out that we can achieve superior output quality compared to the beacon in Praos or SnowWhite. 
+    In addition, Theorem~\ref{thm:beacon-bernoulli-multi-epoch} 
     analyzes the beacon for public leader elections; 
     this beacon gives an interesting alternative to the multi-party computation-based 
     beacon in Ouroboros~\cite{Ouroboros}.

@@ -4,7 +4,7 @@ In this section,
 we present a rigorous abstraction of the 
 single-epoch eventual consensus beacon protocol $\Pi_\Beacon$ in Definition~\ref{def:new-beacon}. 
 This abstraction is called an ``XOR target game,'' 
-a single-player multi-round game where the player $\Adversary$ (i.e., the adversary) 
+a single-player multi-round game where player $\Adversary$ (i.e., the adversary) 
 has to make a selection at each round from a given set of random strings, 
 called an ``option set.''
 The output of the game, $\eta$, is the exclusive-OR of these selections; 
@@ -25,7 +25,7 @@ for selecting the winning nonce for each slot.
 
 
 
-\Paragraph{Outline of this \Section.}
+\Paragraph{Outline of this chapter.}
 In what follows, we start with a formal definition of the XOR target game 
 and prove an upper bound on its grinding power 
 in terms of the sizes of the option sets (Theorem~\ref{thm:xor-game-lookahead}). 
@@ -44,7 +44,7 @@ for distributions induced by specific leader elections.
 
 \section{An informal view of XOR target games}
 Below, we provide a bird's eye view of the XOR target game 
-highlight its correspondence with the eventual consensus beacon protocol $\Pi_\Beacon$. 
+highlights its correspondence with the eventual consensus beacon protocol $\Pi_\Beacon$. 
 \begin{enumerate}    
 
 

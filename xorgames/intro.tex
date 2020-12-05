@@ -21,7 +21,11 @@ In addition, as Praos is deployed in the real-world cryptocurrency Cardano~\cite
 designing such a secure beacon is a pressing issue.
 
 Our goal in Part~\ref{part:xorgames} of this dissertation is 
-to design such beacons.
+to design beacons that assume 
+only the eventual consensus mechanism. 
+In particular, they will be agnostic about whether the underlying consensus (or leader election) mechanism is based on PoW or PoS. 
+As long as we can plug in an appropriate leader election distribution to our beacon, 
+we can get it off the ground.
 
 
 
@@ -30,7 +34,7 @@ to design such beacons.
 
 
 \section{Drawbacks of existing eventual consensus PoS beacons}  
-    Below, we glean the insights into why the beacon protocol in Praos 
+    Below, we glean our insights into why the beacon protocol in Praos 
     is prone to a high grinding power. 
     In Praos, 
     nonce inputs are contained within the blocks in the blockchain 
@@ -87,7 +91,7 @@ to design such beacons.
     Praos' consistency error bound 
     starts to degrade when the adversarial stake goes above $40\%$.) 
     As an immediate application, it would improve the grinding tolerance in Praos; 
-    see Figure~\ref{fig:poisson-beacon} for a comparison.
+    see Figure~\ref{fig:poisson-beacon} for comparison.
 
 
     We also design a PoS beacon in the public leader election setting (Theorem~\ref{thm:beacon-bernoulli-multi-epoch})
@@ -146,7 +150,7 @@ to design such beacons.
     we deconstruct the eventual consensus blockchain dynamic 
     to highlight a simple yet important phenomena: 
     \begin{enumerate}
-        \item The adversary can observe the honest nonce inputs up to $k$ slots in future 
+        \item The adversary can observe the honest nonce inputs up to $k$ slots in the future 
         before announcing his nonce inputs from a given slot.
         Here, $k$ is given by the blockchain protocols consistency property.
 
@@ -171,7 +175,7 @@ to design such beacons.
     If $\LeaderElection = \PublicLeaderElection(\alpha)$ then $\Distribution$ is, in fact, 
     a Bernoulli distribution. 
     On the other hand, if $\LeaderElection = \PrivateLeaderElection(\alpha)$ then 
-    $\Distribution$ as a richer structure.
+    $\Distribution$ has a richer structure.
 
     \Paragraph{Moment bounds on $\Distribution$.}
     The distribution $\Distribution$ corresponds to the random variable 
@@ -214,7 +218,7 @@ to design such beacons.
     We remark that an exact (or stricter) analysis of 
     the moments of $\Distribution$ 
     would result in improved bounds on the grinding power. 
-    We leave this as a future work.
+    We leave this as future work.
 
 
 
@@ -240,7 +244,7 @@ to design such beacons.
         This also means that honest inputs (contained within respective blocks) 
         cannot be suppressed or bypassed.
 
-        In contrast, our analysis is tailored toward the the eventual consensus setting.
+        In contrast, our analysis is tailored toward the eventual consensus setting.
         The model allows a player at the current round to 
         submit his input after observing a number of future inputs 
         (called a \emph{lookahead}). 
@@ -250,22 +254,153 @@ to design such beacons.
 
 
 
-\section{Outline of the exposition}
-In \Section~\ref{sec:xorgames-model}, 
-we define the new beacon (Definition~\ref{def:new-beacon}) and present our main theorems, 
-Theorem~\ref{thm:beacon-poisson-multi-epoch} 
-and~\ref{thm:beacon-bernoulli-multi-epoch}. 
-Then, \Section~\ref{sec:xor-games}, we develop an abstraction of this beacon 
+
+
+Next, we describe a ``nonce channel'' which guarantees that 
+every honest nonce inputs will contribute to the beacon output, 
+i.e., they cannot be bypassed. 
+
+
+\section{Nonce leaders and the nonce channel}
+Recall the private and public lottery-based leader election schemes 
+from Section~\ref{sec:static-dynamic-adversary}. 
+Consider a beacon protocol of dimension $\kappa$, 
+i.e., one where the initial values and the outputs are $\kappa$-bit Boolean strings. 
+Inside an epoch, 
+the participants $\Players$ take part in the \emph{nonce leader election}. 
+If a player is elected a nonce leader, 
+he emits a uniformly random string from $\{0,1\}^\kappa$  
+in the \emph{nonce channel}. 
+
+\begin{definition}[Nonce channel with parameter $k \in \NN$]\label{def:nonce-channel}
+  Messages announced in the nonce channel is a tuple $m = (u, x, i, j)$ 
+  which reads ``player $u$ is submitting nonce $x$ for slot $i$, 
+  and the announcement is made at slot $j$.''
+  A nonce message, received at slot $t$, becomes \emph{invalid} 
+  if $j > i + k$.
+  The nonce channel is a public, immutable ledger: 
+  once a valid nonce is announced in this channel, 
+  it remains there forever. 
+\end{definition}
+\noindent
+The basic property that we seek from the nonce channel is that 
+honest nonces are never lost. 
+
+
+Notice that the nonce channel can be implemented 
+on top of a blockchain protocol $\Blockchain$ 
+and mechanisms such as ``input endorsers'' in Ouroboros~\cite{Ouroboros} 
+or ``fruits'' in Fruitchain or SnowWhite~\cite{Fruitchains,SnowWhite}.
+Here is an example: 
+Suppose $\Blockchain$ has the $\sECQ$ property and $\kSlotCP$ property. 
+(The validity parameter $k$ in the nonce channel of $\Pi_\Beacon$ 
+must match the consistency parameter $k$ in $\Blockchain$.)
+Then
+\begin{itemize}
+  \item A nonce leader in $\Pi_\Beacon$ asks to record his nonce message on $\Blockchain$.
+  This announcement is seen (and remembered) by all honest observers in $\Pi_\Beacon$.
+  
+  \item Suppose an honest observer finds that a valid nonce message he had previously received, 
+  does not appear in the ledger implemented by $\Blockchain$. 
+  Then he re-announces this message with a proof of this re-announcement.
+
+  \item Eventually, by the persistence guarantee of $\Blockchain$, 
+  this message gets recorded in the ledger.
+\end{itemize}
+\noindent
+
+
+
+
+\newcommand{\PublicElectionDistribution}{\hat{\mathcal{L}}}
+\newcommand{\PrivateElectionDistribution}{\mathcal{L}}
+
+
+
+
+
+
+\section{The new beacon}
+
+Next, we formally describe our beacon protocol $\Pi_\Beacon$. 
+Since the leader election process 
+is decoupled from the beacon output calculation, 
+it can leverage the lottery schemes from Section~\ref{sec:leader-election-public-private}
+and deal with both an adaptive adversary 
+and a static adversary. 
+The first setting is relevant to Praos and SnowWhite (private leader election) ~\cite{Praos,SnowWhite} 
+and the second setting 
+is relevant to Ouroboros classic (public leader election) ~\cite{Ouroboros}. 
+
+
+
+
+\begin{definition}[$(T, k, s, d, \LeaderElection,\EpsP)$-Beacon]\label{def:new-beacon}
+  Let $T, k, s,d \in \NN$ and $\EpsP \in (0,1)$ 
+  so that $k$ divides $T$.
+  Let $\LeaderElection$ be a given leader election mechanism 
+  (see Section~\ref{sec:leader-election-public-private}).
+  Let $\Blockchain$ be an $(\EpsP, k, s)$-secure blockchain protocol 
+  with epoch length at least $T + s + k$. 
+  Consider the following simple beacon protocol on $\{0,1\}^\kappa$ 
+  that takes place inside every epoch of $\Blockchain$. 
+  $\Pi_\Beacon$ operates inside an epoch of $\Blockchain$ 
+  and it computes a function 
+  $\Pi_\Beacon : \{0,1\}^\kappa \rightarrow \{0,1\}^\kappa$. 
+  Given an initial value $x$ before an epoch, 
+  it outputs $\Pi_\Beacon(x)$ 
+  after the epoch, as follows:
+  \begin{itemize}
+    \item The first $T$ slots of the epoch participate in $\Pi_\Beacon$. 
+    Of these, only one in every $d$ slots is a \emph{nonce-emitting slot}. 
+
+    \item In a nonce-emitting slot, one or more players are elected as a \emph{nonce leader} 
+    according to the leader election mechanism $\LeaderElection$.
+    A nonce leader announces a uniformly random $\kappa$-bit Boolean string, 
+    called a \emph{nonce},  
+    in the nonce channel (which has parameter $k$). 
+
+    \item 
+    Let $S$ be the set of all nonce-emitting slots in epoch $t$.
+    After th epoch is finished, the output $\eta$ is calculated as follows:
+    Let $C_i$ be the set of valid nonces recorded from slot $i$ in this epoch. 
+    Let $y_i$ be the lexicographically smallest item in $C_i$.
+    Finally, we set $\Pi_\Beacon(x) = x \oplus_{i \in S} y_s$.
+  \end{itemize}
+  Let $\eta_0$ be a uniformly random string in $\{0,1\}^\kappa$. 
+  When the beacon is executed for $L$ epochs, 
+  the output is a sequential composition of 
+  $L$ independent instances of $\Pi_\Beacon$; 
+  the output of after epoch $t$ is the initial value used in epoch $(t+1)$. 
+  Specifically, 
+  the beacon output for epoch $t \in [L]$ is 
+  \begin{align}%\label{eq:beacon-iterated}
+    \eta_t = \Pi_\Beacon(\eta_{t-1}) = \Pi_\Beacon^t(\eta_0)\,.
+  \end{align}
+\end{definition}
+
+
+
+
+
+
+
+
+
+
+
+\section{Outline of the remaining exposition}
+In \Section~\ref{sec:xor-games}, we develop an abstraction of this beacon 
 via a single-player multi-round game, called the XOR target game, 
 and derive moment bounds of its grinding power. 
-We decouple it from the leader election mechanism by taking,
-as a given parameter, 
-a certain distribution induced by different leader election mechanisms 
-(see Section~\ref{sec:leader-election-public-private}). 
-This decoupling allows us to separately analyze those leader election schemes 
-and, thus, develop fine-grained 
-tail bounds for the grinding power. 
-The proofs of the main theorems are given in \Section~\ref{sec:main-thm-proofs}.
+We can plug in the distributions induced by different leader election mechanisms 
+and develop fine-grained 
+tail bounds for the grinding power 
+in each scenario. 
+Guarantees about the iterated beacon 
+(Theorems~\ref{thm:beacon-poisson-multi-epoch} 
+and~\ref{thm:beacon-bernoulli-multi-epoch}) 
+appear in \Section~\ref{sec:main-thm-proofs}.
 
 
 

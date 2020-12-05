@@ -1,6 +1,6 @@
 
 
-In this \Section, 
+In this chapter, 
 we first formalize the axioms for Nakamoto-style PoS blockchains. 
 Next, we encode the outcomes of the leader election process 
 using a so-called characteristic string $w \in \{\h, \H, \A\}^*$ 
@@ -305,7 +305,7 @@ the execution of a blockchain protocol. This definition formalizes the blockchai
 
 If $F$ is a fork for the characteristic string $w$, we write
 $F\vdash w$.  The conditions~\ref{fork:root-mh}--\ref{fork:honest-depth-mh}
-are analogues of the axioms~\ref{axiom:root}--\ref{axiom:honest-depth}
+are analogs of the axioms~\ref{axiom:root}--\ref{axiom:honest-depth}
 above. The formal reflection of axiom~\ref{axiom:honest} by
 condition~\ref{fork:multiply-honest} deserves further comment: We have
 chosen a definition of characteristic string that does not indicate
@@ -436,7 +436,7 @@ consistently-labeled subgraph of $\hat{F}$.
   blockchains. In particular, we consider the possibility that, at
   some time $t$, the adversary conspires to produce two maximum-length blockchains 
   that diverge prior to a previous slot $s \leq t$; in
-  this case honest players adopting the longest-chain rule may clearly
+  this case, honest players adopting the longest-chain rule may clearly
   disagree about the history of the blockchain after slot $s$. We call
   such a circumstance a \emph{settlement violation}.
 

@@ -12,7 +12,7 @@ still holds in our model
 and, importantly, 
 how the existing proof needs to be modified. 
 
-Thus the the goal of this section is to prove 
+Thus the goal of this section is to prove 
 Theorem~\ref{thm:divergence-settlement} below which 
 would yield an alternative proof of Theorem~\ref{thm:main-mh-CP} 
 without using the Catalan slots.
@@ -50,7 +50,7 @@ i.e., $F$ is $x$-balanced (see Definition~\ref{def:balanced-fork}).
 By definition, a $\kSlotCP$ violation 
 implies the existence of a fork with a slot divergence at least $k + 1$. 
 Theorem~\ref{thm:divergence-settlement} below 
-shows that a if a fork has a slot divergence at least $k+1$ then 
+shows that if a fork has a slot divergence at least $k+1$ then 
 there is a balanced fork for a prefix of the same characteristic string so that 
 two maximum-length tine diverge prior to last $k$ slots. 
 Therefore, a $\kSlotCP$ violation implies an $(s,k)$-settlement violation 
@@ -510,7 +510,7 @@ for some slot $s$.
     Let $i \in \{1,2\}$.
     If $\ell(t_i) < \beta$ then $\check{t}_i = \cut{u}{t_i}$ and,
     by~\eqref{eq:honest-depth}, $\length(\check{t}_i) = \length(\cut{u}{t_i}) \geq \hdepth(h^*)$. 
-    Othereise, we have $\ell(t_i) = \beta$ which means 
+    Otherwise, we have $\ell(t_i) = \beta$ which means 
     $\ell(t_i)$ is an honest slot. 
     Thus $\cut{u}{t_i}$ must be an honest tine, 
     building directly on top of the viable tine $\check{t}_i$. 

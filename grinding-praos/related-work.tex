@@ -3,8 +3,8 @@
 
 Below, we survey the coin-flipping and beacon literature in more detail. 
 In general, a beacon protocol works as follows: 
-A group of $n$ players participate in the beacon protocol 
-and each submit a $\kappa$-bit random string (called an \emph{input} or a \emph{nonce}). 
+A group of $n$ players participates in the beacon protocol 
+and each submits a $\kappa$-bit random string (called an \emph{input} or a \emph{nonce}). 
 The output of the beacon is computed by applying 
 a $\kappa$-dimensional Boolean function to these inputs. 
 In our brief survey below, we first focus on schemes that use cryptography, 
@@ -69,7 +69,7 @@ such a possible construction see~\cite{vdf-ethereum}). Using VDFs in
 this context is orthogonal to our techniques: a VDF can delay the
 revelation of the beacon outcome to temper the opportunities the
 adversary has to grind the beacon output. In general, tuning the
-hardness parameter of the VDF to a high level aids this security
+hardness parameter of the VDF to a high-level aids this security
 objective but naturally interferes with the availability (or liveness)
 of the beacon.
 % (in the sense of the immediate availability of the
@@ -82,7 +82,7 @@ We leave the combination of VDF techniques with our randomness
 generation algorithm as an interesting future research direction.
 
 \Paragraph{Threshold signatures.}
-DFINITY~\cite{Dfinity} uses a one-round coin-flipping protocol based
+DFINITY~\cite{DFINITY} uses a one-round coin-flipping protocol based
 on non-interactive $(t,n)$-Threshold BLS signatures~\cite{BLS}. 
 In the setup phase, a random subset of $n$
 players---a ``group''---is selected from a universe of $N$

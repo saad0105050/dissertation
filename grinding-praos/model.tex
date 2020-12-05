@@ -1,6 +1,6 @@
 
 
-In this \Section, 
+In this chapter, 
 we recall the eventual consensus PoS blockchains under the longest-chain rule 
 (see \Section~\ref{sec:model-multihonest}). 
 % We repeat the necessary components here for the sake of self-containment. 
@@ -56,7 +56,7 @@ we take the opportunity to define the public leader elections as well.
         Consider slots $t_1, t_2, t$ satisfying $t_1 + s \leq t_2 \leq t$. 
         Let $\Chain$ be the blockchain held by an honest party at slot $t$. 
         Then $\Chain[t_1:t_2]$ contains at least one 
-        honestly gneerated block.
+        honestly generated block.
     \end{definition}
     We use the shorthand $\sECQ$ for referring to the $\ECQ$ property defined above. 
     Although the analysis of Praos does not contain a proof of this property, 
@@ -77,7 +77,7 @@ we take the opportunity to define the public leader elections as well.
 
 \Paragraph{A (more) precise definition of VRFs.}
 Below, we present a definition of VRFs that is good enough for our exposition. 
-For a more complete definition, see~\cite{VRF}.
+For a more complete definition, see~\cite{VRFMicali,VRFDodis}.
 
 \newcommand{\Gen}{\mathsf{gen}}
 \newcommand{\Prove}{\mathsf{prove}}
@@ -173,7 +173,7 @@ Specifically, $\eta_{t-1}$ is used by all participants in epoch $t$
 to randomly select a player-specific VRF (see below) 
 and use it to elect leaders from among themselves.
 Therefore, the ``randomness''
-of $\eta_1, \eta_2, \ldots$ is critical factor underlying 
+of $\eta_1, \eta_2, \ldots$ is a critical factor underlying 
 the security of the blockchain protocol; 
 we explore this next.
 
@@ -234,7 +234,7 @@ for the beacon output $\eta$
 is the number of choices $\Adversary$ has for $\eta$. 
 The grinding power of $\Adversary$ over 
 the lifetime of the beacon protocol
-is the maximum over all beacon outputs.
+is the maximum across all beacon outputs.
 \end{definition}
 
 Consider a simple one-round game played by the adversary $\Adversary$. 
