@@ -10,7 +10,8 @@ consensus algorithms provide strategies
 so that different people (or computers) 
 may come to agreement. 
 These algorithms are often called \emph{protocols} as they 
-tell the participants which specific actions they should take 
+specify for the participants 
+the actions they should take, 
 e.g., when to send a certain message to others, etc. 
 Sometimes, the participants cannot trust each other; 
 this is the \emph{decentralized consensus problem}. 
@@ -25,6 +26,7 @@ The decentralized consensus problem in the Byzantine threat model
 is called the \emph{Byzantine Fault Tolerance} (or BFT in short). 
 This problem has been studied extensively over the past few decades, 
 starting from the ground-breaking paper~\citet{BFT}. 
+See~\citet{GK} and ~\citet{ConsensusBlockchains} for two recent surveys.
 The consensus problem can have a rich structure and varying difficulty 
 depending on the model e.g. network delays or Byzantine adversaries. 
 (In this exposition, 
@@ -37,7 +39,7 @@ The protocol guarantees that after a number of rounds,
 a consensus would be reached. 
 
 Consensus can mean different things. 
-Typically, we expect \emph{instant settlement} 
+Typically, we expect \emph{instant settlement}, 
 i.e., that once a consensus is reached, 
 it is final. 
 However, if we allow the consensus to happen gradually, 
@@ -83,7 +85,7 @@ It is a remarkable fact that this simple rule leads to the eventual consensus.
 The notion of chains and blocks above has led to the term ``blockchain'' 
 which has come to define a class of consensus algorithms 
 in both eventual consensus model as well as in the traditional 
-instant confirmation model~\cite{BlockchainAlgorithms}. 
+instant confirmation model~\cite{ConsensusBlockchain,GK18}. 
 Note that there are other chain selection rules for eventual consensus: 
 for example, in GHOST~\cite{Ghost},
 the ``heaviest subtree'' is prioritized instead of the longest chain. 
@@ -123,13 +125,13 @@ Bitcoin---the poster boy of the longest-chain rule---achieves
 linear consistency; it does so by employing a clever leader election mechanism 
 called the \emph{Proof-of-Work lottery} (PoW). 
 The proof part is easy: we know how to prove claims using 
-digital signatures and zero-knowledge proofs~\cite {DigitalSignatures,ZK}. 
+digital signatures and zero-knowledge proofs~\cite{GoldreichFoC}. 
 The ``work'' part addresses the rarity of leadership. 
 Specifically, 
 the probability of being elected a leader is kept small by design 
 so that we do not have a deluge of competing chains. 
 In PoW, participants have to solve a computationally difficult 
-cryptographic puzzle~\cite{PoW} 
+cryptographic puzzle~\cite{Nakamoto2008,GKL,GKL17,Ghost} 
 to be a leader. 
 The difficulty of the puzzle ensures that at any given round, 
 it is unlikely to have many lottery winners. 
@@ -142,7 +144,7 @@ on par with a medium-sized country~\cite{BitcoinEnergy}.
 
 One way to avoid such a waste of energy 
 is to rely on a proof mechanism which provides 
-a useful service, such as Proof-of-Storage~\cite{ProofOfStorage}. 
+a useful service, such as Proof-of-Storage~\cite{ProofOfSpace,Spacemint}. 
 Yet another alternative is to bypass the necessity of a physical resource 
 (such as computational power or storage space)
 altogether and instead, perform the lottery based on an abstract resource. 
@@ -214,7 +216,7 @@ This sub-protocol is called the \emph{randomness beacon} protocol
 and these periods are called \emph{epochs}. 
 An epoch is long enough so that the settled part of the blockchains contain enough nonce inputs. 
 We do not need to worry about the randomness in the nonce inputs: 
-these are produced by cryptographically secure Verifiable Random Functions (VRFs)~\cite{VRF} 
+these are produced by cryptographically secure Verifiable Random Functions (VRFs)~\cite{VRFMicali,VRFDodis} 
 that are tied to the identity of the participants (implemented via a public key infrastructure). 
 The method of combining the nonces, however, is critical. 
 
@@ -449,6 +451,11 @@ We contend that the research in this dissertation is important, in the following
   and have superior bias-resistance 
   i.e., the grinding power, as a function of the security parameter and the adversarial stake, 
   grows much slowly compared to Praos. 
+  We achieve this by 
+  recording the input nonces outside the blockchain 
+  (in a separate ledger)
+  and by controlling the number of slots 
+  that contribute in the computation of the beacon output.
   Note that sometimes, 
   the protocol designers are willing to tolerate some 
   a limited grinding attack 
@@ -463,7 +470,7 @@ We contend that the research in this dissertation is important, in the following
 
   The cryptocurrency Cardano is built on top of the Nakamoto-style PoS protocol, Praos~\cite{Praos}.
   As of \today, 
-  the market capitalization of Cardano is {\color{red} US\$ XX billion}. 
+  the market capitalization of Cardano is US\$ 3.5 billion~\cite{CardanoMarketcap}. 
   The protocol parameters in Praos is 
   informed by the consistency bounds developed in this dissertation. 
   In particular, its settlement parameter can be set 

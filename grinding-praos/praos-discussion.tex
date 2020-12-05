@@ -128,7 +128,7 @@ Some simple yet slightly weaker moment estimates can be found in \Section~\ref{s
 
 \section{Praos beacon quality and grinding power}
 Consider Theorem~\ref{thm:minentropy-loss-praos-multi-epochs} 
-and Figure~\ref{fig:praos-beacon-prbad}.
+and Figure~\ref{fig:prbad-praos-beacon}.
 When $\epsilon > 0.809$, 
 the beacon does not incur any min-entropy loss. 
 However, when $\epsilon < 0.809$, 
@@ -190,7 +190,8 @@ Here is a back-of-the-envelope calculation to see why.
 We need only consider the dominant term in the failure probability, 
 namely $\sqrt{V_s(\epsilon) \EpsP}$ where $V_s$ is defined in~\eqref{eq:V-eps-praos}. 
 For $\epsilon \geq 0.6$, it is at least $(5/3)^{s/2} \EpsP^{1/2}$. 
-Even if we use the PoW lower bound $\EpsP \geq e^{-\epsilon^2 k}$,\cite{PoWLowerBound} 
+Even if we use the PoW lower bound $\EpsP \geq e^{-\epsilon^2 k}$ 
+(which can be inferred from the analysis in\cite{Nakamoto2008}) 
 and $s \geq 4 k$ (as described in Section~\ref{sec:praos-params}),
 the $k$th root of the above quantity 
 is at least $(5/3)^2 e^{-\epsilon^2}$; 
