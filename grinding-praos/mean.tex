@@ -1,7 +1,6 @@
 % \newcommand{\DoverTwo}{\lfloor d/2 \rfloor}
 % \newcommand{\DoverThree}{d/3}
 
-\UnfinishedWarning{Theorem statement}
 
 Recall the expression for $B_{n,\epsilon}(k)$ from~\eqref{eq:suffix-prob-binomial}.
 In what follows, we establish asymptotically tight upper and lower bounds on 
@@ -13,7 +12,24 @@ In what follows, we establish asymptotically tight upper and lower bounds on
 \end{align}
 via Claims~\ref{claim:t1star-exact} and ~\ref{claim:t2star-exact}. 
 These claims immediately lead to bounds on $\Exp[ g(W) ]$ 
-via~\eqref{eq:grinding-power-moment-praos} by setting $\lambda = 1$.
+via~\eqref{eq:grinding-power-moment-praos} by setting $\lambda = 1$; 
+it is not hard to verify, by retracing the proof of Claim~\ref{claim:multiple-honest-blocks}, 
+that $A(\epsilon,1) = O(1)$.
+Define
+\begin{equation}\label{eq:praos-func-zeta}
+  \zeta(\epsilon) = (1-\epsilon)/2 + \sqrt{1-\epsilon^2}
+  \,.
+\end{equation}
+
+\begin{proposition}\label{prop:praos-gp-mean}
+  Let $n \in \NN$ and $\epsilon \in (0,1)$. 
+  Let $W \sim \DistL_n((1-\epsilon)/2)$. 
+  Suppose that an execution of Praos satisfies $\sECQ$ property throughout 
+  the sequence of slots represented by $W$.
+  Then $\Exp g(W) = O(s^2 \zeta(\epsilon)^s )$.
+\end{proposition}
+
+
 We also recall the following obvious bound from the sum of a geometric progression:
 \begin{align}\label{eq:geom-series-bound}
 \sum_{d=1}^n{r^d} 
@@ -112,12 +128,6 @@ m( \lfloor \DoverThree \rfloor )
 
 
 
-
-Define
-\begin{equation}\label{eq:praos-func-gamma}
-  \gamma(\epsilon) = (1-\epsilon)/2 + \sqrt{1-\epsilon^2}
-  \,.
-\end{equation}
 
 
 \begin{claim}[Bounds on $m(d,z)$ with large $z$]\label{claim:t2star-exact}

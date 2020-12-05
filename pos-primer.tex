@@ -4,93 +4,93 @@ In this \Section,
 we establish the vocabulary for properly discussing the present research.
 
 
-\Paragraph{Eventual consensus.}
-In the decentralized consensus protocol, 
-a group of participants exchange messages with each other 
-to agree about a ``common view'' 
-(e.g., about a linear ordering of events)
-without needing to trust anyone. 
-Recall the concept of \emph{eventual consistency} in database systems: 
-in such a database system, 
-the views of the nodes may become inconsistent after a new update is made to one node, 
-but the views become consistent once the change is propagated to all nodes. 
-A similar concept applies to some decentralized consensus applications as well: 
-at round $t$, 
-the nodes can only agree about the ordering of the events from rounds $1, \ldots, t-k$ 
-but may disagree about the events from rounds $t-k+1, \ldots, t$. 
-This consensus paradigm is called \emph{eventual consensus}.
-This can be contrasted with distributed systems that offer ``strong consistency'' 
-or ``instant confirmation:'' 
-here, the protocol progresses to the next round 
-only after all nodes have agreed about their view of the events.
+% \Paragraph{Eventual consensus.}
+% In the decentralized consensus protocol, 
+% a group of participants exchange messages with each other 
+% to agree about a ``common view'' 
+% (e.g., about a linear ordering of events)
+% without needing to trust anyone. 
+% Recall the concept of \emph{eventual consistency} in database systems: 
+% in such a database system, 
+% the views of the nodes may become inconsistent after a new update is made to one node, 
+% but the views become consistent once the change is propagated to all nodes. 
+% A similar concept applies to some decentralized consensus applications as well: 
+% at round $t$, 
+% the nodes can only agree about the ordering of the events from rounds $1, \ldots, t-k$ 
+% but may disagree about the events from rounds $t-k+1, \ldots, t$. 
+% This consensus paradigm is called \emph{eventual consensus}.
+% This can be contrasted with distributed systems that offer ``strong consistency'' 
+% or ``instant confirmation:'' 
+% here, the protocol progresses to the next round 
+% only after all nodes have agreed about their view of the events.
 
-Example of blockchains in the eventual consensus setting 
-is Bitcoin~\cite{Nakamoto2008}, Ouroboros~\cite{Ouroboros}, Praos~\cite{Praos}, and Snow White~\cite{SnowWhite}. 
-In contrast, Algorand~\cite{Algorand} operates on a 
-Byzantine Agreement-based protocol where, 
-once the protocol progresses past a round, 
-everyone agrees about the events up to that round.
+% Example of blockchains in the eventual consensus setting 
+% is Bitcoin~\cite{Nakamoto2008}, Ouroboros~\cite{Ouroboros}, Praos~\cite{Praos}, and Snow White~\cite{SnowWhite}. 
+% In contrast, Algorand~\cite{Algorand} operates on a 
+% Byzantine Agreement-based protocol where, 
+% once the protocol progresses past a round, 
+% everyone agrees about the events up to that round.
 
-The focus of this dissertation is on the eventual consensus model.
-One way to achieve this is via the longest-chain rule.
-
-
-\Paragraph{The longest-chain rule.}
-We study the behavior of the elementary \emph{longest-chain rule}
-algorithm, carried out by a collection of participants. 
-\begin{itemize}
-  \item In each round,
-  each participant collects all valid blockchains from the network; if a
-  participant is a leader in the round, he adds a block to the longest
-  chain and broadcasts the result.
-\end{itemize}
-See below for how leaders are elected.
-Here, ``valid'' indicates that any block appearing in the
-chain was indeed issued by a leader from the associated slot; in the
-PoS setting, this property is guaranteed with digital
-signatures.
-Any active participant who is not a leader at a given slot, 
-is called an ``observer'' at that slot.
-
-It is a remarkable fact that this simple chain-selection rule 
-can lead to eventual consensus in both PoW and PoS blockchains. 
-The rationale behind choosing the longest chain is that 
-it contains more ``effort by the participants'' than any other chains. 
-Since the longest-chain rule was pioneered by \citet{Nakamoto2008} in the PoW setting, 
-any PoS protocol implementing this rule is called the \emph{Nakamoto-style PoS}. 
-Note that there are other chain selection rules: in GHOST~\cite{Ghost},
-the ``heaviest subtree'' is prioritized instead of the longest; 
-in \cite{Tangle}, a new block builds upon multiple chains instead of a single longest chain.
-
-The focus of this dissertation is on Nakamoto-style PoS. 
-These protocols advance in discrete rounds, called ``slots.''
+% The focus of this dissertation is on the eventual consensus model.
+% One way to achieve this is via the longest-chain rule.
 
 
+% \Paragraph{The longest-chain rule.}
+% We study the behavior of the elementary \emph{longest-chain rule}
+% algorithm, carried out by a collection of participants. 
+% \begin{itemize}
+%   \item In each round,
+%   each participant collects all valid blockchains from the network; if a
+%   participant is a leader in the round, he adds a block to the longest
+%   chain and broadcasts the result.
+% \end{itemize}
+% See below for how leaders are elected.
+% Here, ``valid'' indicates that any block appearing in the
+% chain was indeed issued by a leader from the associated slot; in the
+% PoS setting, this property is guaranteed with digital
+% signatures.
+% Any active participant who is not a leader at a given slot, 
+% is called an ``observer'' at that slot.
 
-\Paragraph{Slots and epochs.}
-The execution of the protocol is divided into discrete time periods called \emph{slots}. 
-In practice, slots have to long enough so that 
-messages are actually delivered (via, e.g., gossip) 
-but they have to be short enough so that 
-not too many blocks are issued from the same slot.
-In there are multiple blocks in the same slot, 
-at most one of these blocks will appear in the settled blockchain 
-and, importantly, 
-the multiplicity of these blocks can be utilized by the adversary 
-in constructing two competing longest blockchains in the future.
+% It is a remarkable fact that this simple chain-selection rule 
+% can lead to eventual consensus in both PoW and PoS blockchains. 
+% The rationale behind choosing the longest chain is that 
+% it contains more ``effort by the participants'' than any other chains. 
+% Since the longest-chain rule was pioneered by \citet{Nakamoto2008} in the PoW setting, 
+% any PoS protocol implementing this rule is called the \emph{Nakamoto-style PoS}. 
+% Note that there are other chain selection rules: in GHOST~\cite{Ghost},
+% the ``heaviest subtree'' is prioritized instead of the longest; 
+% in \cite{Tangle}, a new block builds upon multiple chains instead of a single longest chain.
 
-A predefined number of slots are grouped into an \emph{epoch}. 
-Some information, such as the stake ratio or the computational power, 
-is assumed to remain constant in an epoch. 
-Moreover, some computations taking place in an epoch 
-share some common information, such a common random string. 
-These common information are collectively recomputed 
-at the onset of every epoch. 
-The first epoch is bootstrapped with a special block of information, 
-called the ``genesis block'' which contains, e.g., a fresh random string to 
-initialize the computations in the first epoch.
+% The focus of this dissertation is on Nakamoto-style PoS. 
+% These protocols advance in discrete rounds, called ``slots.''
 
-Next, let us focus on the participants in a Nakamoto-style PoS protocol.
+
+
+% \Paragraph{Slots and epochs.}
+% The execution of the protocol is divided into discrete time periods called \emph{slots}. 
+% In practice, slots have to long enough so that 
+% messages are actually delivered (via, e.g., gossip) 
+% but they have to be short enough so that 
+% not too many blocks are issued from the same slot.
+% In there are multiple blocks in the same slot, 
+% at most one of these blocks will appear in the settled blockchain 
+% and, importantly, 
+% the multiplicity of these blocks can be utilized by the adversary 
+% in constructing two competing longest blockchains in the future.
+
+% A predefined number of slots are grouped into an \emph{epoch}. 
+% Some information, such as the stake ratio or the computational power, 
+% is assumed to remain constant in an epoch. 
+% Moreover, some computations taking place in an epoch 
+% share some common information, such a common random string. 
+% These common information are collectively recomputed 
+% at the onset of every epoch. 
+% The first epoch is bootstrapped with a special block of information, 
+% called the ``genesis block'' which contains, e.g., a fresh random string to 
+% initialize the computations in the first epoch.
+
+% Next, let us focus on the participants in a Nakamoto-style PoS protocol.
 
 
 \Paragraph{Players and relative stakes in Nakamoto-style PoS.}
@@ -304,85 +304,7 @@ These axioms are made formal in Section~\ref{sec:pos-axioms}.
 
 
 
-\Paragraph{A (more) precise definition of VRFs.}
-Below, we present a definition of VRFs that is good enough for our exposition. 
-For a more complete definition, see~\cite{VRF}.
-
-\newcommand{\Gen}{\mathsf{gen}}
-\newcommand{\Prove}{\mathsf{prove}}
-\newcommand{\Verify}{\mathsf{verify}}
-% \newcommand{\pk}{\mathsf{pk}}
-% \newcommand{\sk}{\mathsf{sk}}
-\begin{definition}[Verifiable Random Function (VRF)]\label{def:VRF}
-  A family $\mathcal{F}$ 
-  of functions $F : \{0,1\}^\ell \rightarrow \{0,\}^k$ 
-  is a family of VRFs if there exist algorithms 
-  $(\Gen, \Prove, \Verify)$ 
-  so that the following holds: 
-  $\Gen(1^k)$ outputs a pair of keys $(\pk, \sk)$; 
-  $\Prove_\sk(x)$ outputs a pair $(F_\sk(x), \pi_\sk(x))$ 
-  where 
-  $F_\sk \in \mathcal{F}$, $F_\sk(x)$ is the function value, and 
-  $\pi_\sk(x)$ is the proof of correctness; and 
-  $\Verify_\pk(x,y,\pi_\sk(x))$ efficiently verifies 
-  that $y = F_\sk(x)$ using the proof $\pi_\sk(x)$, 
-  outputting 1 if $y$ is valid and 0 otherwise. 
-  Additionally, we require the following properties:
-
-  \begin{enumerate}
-    \item \emph{Uniqueness:} 
-    No values $(\pk, x, y, y', \pi, \pi')$  can satisfy both 
-    $\Verify_\pk(x,y,\pi) = 1$ and $\Verify_\pk(x,y',\pi') = 1$ 
-    unless $y = y'$.
-
-    \item \emph{Provability:} 
-    If $(y, \pi) = \Prove_\sk(x)$ then $\Verify_\pk(x,y, \pi) = 1$.
-
-    \item \emph{Pseudorandomness:} 
-    To all probabilistic polynomial-time (PPT) algorithm 
-    which runs $\Poly(k)$ steps when its first input is $1^k$ 
-    and does not query the $\Prove$ oracle on $x$, 
-    the distribution of $F_\sk(x)$ appears uniform in $\{0,1\}^k$, 
-    except with a probability negligible in $k$.
-  \end{enumerate}
-
-\end{definition}
 
 
 
-
-\section{Lottery-based leader election schemes}\label{sec:leader-election-public-private}
-Let $\alpha \in (0,1)$ and consider the players $\Players = \Players(\alpha)$
-Let $C_i$ be the set of leaders for slot $i$. 
-We consider two types of leader election schemes for an epoch: 
-% \begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=3em]
-\begin{description}
-    \item[\textbf{$\PublicLeaderElection(\alpha)$: Publicly elect a single leader per slot.}] \label{lottery:public}
-    At the onset of an epoch, 
-    all players use a common random string to 
-    publicly sample, 
-    independently for each round $i \in [\ell + n]$, 
-    a single player $\ell_i \in \Players$ and  
-    set $C_i = \{\ell_i\}$. 
-    For all players $u \in \Players$, 
-    the probability that $u = \ell_i$ is $\sigma_u$. 
-    Thus, the leader schedule for an epoch 
-    is public knowledge before an epoch commences. 
-
-    \item[\textbf{$\PrivateLeaderElection(\alpha)$: Privately elect zero or more leaders per slot.}] \label{lottery:private}
-    Independently for each round $i \in [\ell + n]$, 
-    player $u \in \Players$ 
-    privately and independently 
-    evaluates a Boolean random variable $D$
-    which has expectation $\sigma_u$; 
-    if $D = 1$, $u$ 
-    inserts himself into the set $C_i$ 
-    and announces this fact during slot $i$. 
-\end{description}
-\noindent
-Ouroboros uses a public leader election 
-at the outset of an epoch 
-and, therefore, it is secure only against a static adversary. 
-SnowWhtie and Praos (and Bitcoin as well) uses a private leader election 
-and therefore, must prove security against an adaptive adversary. 
 

@@ -1,6 +1,6 @@
 \begin{figure}[!htb]
     \centering
-    \tikzsetnextfilename{prbad}
+    \tikzsetnextfilename{multihonest-prbad}
     \begin{tikzpicture}[trim axis left,
       ]
       \begin{axis}[domain=0:1, 
@@ -15,20 +15,20 @@
         no markers,
         % yticklabel pos=right,
         % yticklabel style={xshift=2em},
-        legend pos=outer north east,
+        legend pos=south west,
         % legend pos=south west,
         legend cell align=left, 
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
-        xlabel={$\Pr[\text{honest slot}] - \Pr[\text{dishonest slot}]$},
+        xlabel={$\epsilon$, Honest bias},
         % xlabel={Honest stake ratio minus Adversarial stake ratio},
         %
-        title={Base-2 logarithm of $\Pr[\text{consistency failure}]$}, 
+        title={Base-2 logarithm of $\Pr[\text{failure}]$}, 
         ]
         \addplot +[ultra thick,red] {  LnPraosEpsPRootKbound(\x, 900)/ln(2)  };
-        \addlegendentry{Asymptotic bound (existing)};
+        \addlegendentry{Asymp. bound (existing)};
         \addplot +[ultra thick,black] {  LnPraosEpsP(\x, 900)/ln(2)  };
-        \addlegendentry{Asymptotic bound (new)};
+        \addlegendentry{Asymp. bound (new)};
         % \addplot +[ultra thick,red] { LnPraosEpsP(\x, 1200)/ln(2) } ;  
         % \addlegendentry{$k = 1200$, asymptotic bound};
         % \addplot +[ultra thick,blue] {  LnPraosEpsP(\x, 600)/ln(2) };
@@ -42,9 +42,17 @@
         % \addlegendentry{$k = 900$ Actual}; 
       \end{axis}
     \end{tikzpicture}
-    \caption[Consistency error bounds]{        
-        {\color{red} To do: Describe}
-        Security param $k = 900$
+    \caption[Consistency error bounds]{  
+        Estimates of the consistency violation probability $\EpsP$ using       
+        security parameter $k = 900$. 
+        The x-axis corresponds to the honest bias $\epsilon \in (0,1)$.  
+        Leader elections in slots are i.i.d. 
+        with $\Pr[\text{slot honest}]=(1+\epsilon)/2$ and 
+        $\Pr[\text{slot dishonest}]=(1-\epsilon)/2$.
+        We plotted the existing $e^{-\Omega(\sqrt{k})}$ asymptotic bound~\cite{Ouroboros,SnowWhite,Sleepy} (red) and the new $e^{-\Omega(k)}$ bound proved in this dissertation (Theorem~\ref{thm:main-mh}).
+        The blue curve corresponds to the explicit probabilities computed using 
+        the Markov chain simulation algorithm described in \Section~\ref{sec:exact-prob-multihonest}. 
+        The asymptotic bounds are more accurate for small $\epsilon$.
     }
     \label{fig:prbad-multihonest}
 \end{figure}

@@ -2,11 +2,11 @@
 
 \begin{figure}[!htb]
     \centering
-    \tikzsetnextfilename{rho}
+    \tikzsetnextfilename{praos-rho}
     \begin{tikzpicture}[trim axis left,
       ]
       \begin{axis}[domain=0:1, 
-        xmin=0,xmax=1,ymin=0,%,ymax=2.5
+        xmin=0,xmax=1,ymin=-100,%,ymax=2.5
         restrict x to domain=0:1,
         unbounded coords=jump,  
         samples=500,
@@ -51,11 +51,11 @@
 % \end{figure}
 % \begin{figure}[!htb]
 %     \centering
-    \tikzsetnextfilename{prbad}
+    \tikzsetnextfilename{praos-prbad}%
     \begin{tikzpicture}[trim axis left,
       ]
-      \begin{axis}[domain=0.6:1, 
-        xmin=0.6,xmax=1,%
+      \begin{axis}[domain=0:1, 
+        xmin=0,xmax=1,%
         % ymax=0,%,ymax=2.5
         % restrict x to domain=0.6:0.999,
         % restrict y to domain=0:100,
@@ -80,6 +80,7 @@
         \addlegendentry{$k = 900$};
         \addplot +[ultra thick,blue] {  LnPraosPrBadMultiEpoch(\x, 600, 1)/ln(2) };
         \addlegendentry{$k = 600$}; 
+        \addplot +[gray] {  0 };
         % \addplot +[ultra thick,blue] { ln(PraosEpsP(\x, 900))/ln(2)  };  
         % \addlegendentry{$k = 900$ ln(PraosEpsP)};
         % \addplot +[ultra thick,green] { LnPraosEpsP(\x, 900)/ln(2)  }; 
@@ -91,13 +92,23 @@
       \end{axis}
     \end{tikzpicture}
     \caption[Praos beacon security]{        
-        {\color{red} Describe}
-        % Consider an $L$-epoch execution of Praos 
-        % using the same parameter setting as in Figure~\ref{fig:rho-praos-beacon}.
-        % Let $\rho$ be the maximum, actual min-entropy loss in any of the $L$ epochs 
-        % and let $\rho^*$ be the upper bound in~\eqref{eq:rho-praos-multiepoch}. 
-        % Let $\mathrm{Bad}$ be the event that $\rho > \rho^*$. 
-        % Above, we plot $\log_2(\Pr[\rho > \rho^*]/L)$.
+        \textbf{Left.} The min-entropy loss $\rho$ in the Praos beacon; 
+        corresponding grinding power is $2^\rho$.
+        The three curves correspond to different security parameters $k$. 
+        The x-axis corresponds to the honest bias $\epsilon \in (0,1)$.  
+        Leader elections in slots are i.i.d. 
+        with $\Pr[\text{slot honest}]=(1+\epsilon)/2$ and 
+        $\Pr[\text{slot dishonest}]=(1-\epsilon)/2$. 
+        There is no loss in the min-entropy if $\epsilon > 0.809$ 
+        (equivalently, adversarial stake ratio at most $0.0955$) 
+        However, as soon as $\epsilon$ dips below $0.8$, 
+        the grinding power grows exponentially in $1-\epsilon$.
+        Although a larger $k$ helps keep the consistency error probability down, 
+        the grinding power grows exponentially in $k$ when $\epsilon < 0.809$.
+        \textbf{Right.} The original consistency error bound $\EpsP$ 
+        is amplified into $2^\rho \EpsP$ by a grinding attack. 
+        In fact, as soon as $\epsilon < 0.8$, the grinding power becomes so large that 
+        the error estimate becomes one. 
     }
     \label{fig:prbad-praos-beacon}
 \end{figure}

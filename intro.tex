@@ -374,29 +374,30 @@ would readily improve the security guarantees of existing PoS protocols.
 
 
 
-\section{Objectives}\label{sec:intro-objectives}
-The observations above can be congealed into the following objectives:
+% \section{Objectives}\label{sec:intro-objectives}
+% The observations above can be congealed into the following objectives:
 
-\newcounter{ConsistencyObjectives}
-\begin{description}[font=\normalfont\itshape\space]
-  \item[Consistency Problem:]~
-  \begin{enumerate}
-    \item Derive tight asymptotic consistency bounds for Nakamoto-style PoS blockchains, 
-    treating multihonest slots as good events.
+% \newcounter{ConsistencyObjectives}
+% \begin{description}[font=\normalfont\itshape\space]
+%   \item[Consistency Problem:]~
+%   \begin{enumerate}
+%     \item Derive tight asymptotic consistency bounds for Nakamoto-style PoS blockchains, 
+%     treating multihonest slots as good events.
 
-    \setcounter{ConsistencyObjectives}{\value{enumi}}
-  \end{enumerate}
+%     \setcounter{ConsistencyObjectives}{\value{enumi}}
+%   \end{enumerate}
 
-  \item[Grinding Problem:]~
-  \begin{enumerate}
-    \setcounter{enumi}{\value{ConsistencyObjectives}}
+%   \item[Grinding Problem:]~
+%   \begin{enumerate}
+%     \setcounter{enumi}{\value{ConsistencyObjectives}}
 
-    \item Quantify the grinding power in the beacon in Praos and SnowWhite 
-    as a function of the consistency parameter $k$ and the adversarial stake $\alpha$.
+%     \item Quantify the grinding power in the beacon in Praos and SnowWhite 
+%     as a function of the protocol's security parameter and the 
+%     stake held by dishonest players.
     
-    \item Propose and analyze new, simple, secure beacons.
-  \end{enumerate}
-\end{description}
+%     \item Propose and analyze new, simple, secure beacons.
+%   \end{enumerate}
+% \end{description}
 
 
 
@@ -433,6 +434,8 @@ The research in this dissertation is significant, in the following ways:
   with the Nakamoto-style PoS.
 
 
+  We observe that ``min-entropy'' is the right notion 
+  to capture the beacon output quality. 
   Our research quantifies the grinding power in both SnowWhite and Praos 
   and, thereby, pinpoints the parameter regime where the protocol can operate securely. 
   This removes the problematic PoW-like assumption that the grinding power be ``bounded.''
@@ -554,100 +557,5 @@ The research in this dissertation is significant, in the following ways:
 %   \item There are simple beacon protocols 
 %   whose grinding power grows at a much slower rate than that of Praos.
 % \end{enumerate}
-
-
-
-
-\section{Outline of this dissertation}
-In \Section~\ref{sec:pos-primer}, 
-we collect some important concepts and background information about Nakamoto-style PoS algorithms. 
-The main content of this dissertation are spread over three parts. 
-Instead of an exhaustive list of the Chapters within these parts, 
-we mention the ones that are central to the presentation.
-
-\begin{description}[font=\normalfont\ ]
-  \item[In Part~\ref{part:multihonest},]
-    we analyze the consistency problem in Nakamoto-style PoS.
-    \Section~\ref{sec:intro-multihonest} introduces the problem in more detail, 
-    and \Section~\ref{sec:model-multihonest} formally lays down the model and 
-    states the main theorem (Theorem~\ref{thm:main-mh}) in the synchronous setting.
-    \Section~\ref{sec:async-multihonest} lifts these results in the semi-synchronous setting 
-    via a standard reduction introduced in~\cite{Praos}, 
-    but incurring some slack in the consistency guarantee. 
-  
-  \item[In Part~\ref{part:praos},]
-    we analyze the grinding problem in Ouroboros Praos~\cite{Praos} and SnowWhite~\cite{SnowWhite} 
-    in the synchronous communication setting.
-    \Section~\ref{sec:grinding-intro} introduces the problem in more detail, 
-    and \Section~\ref{sec:model-grinding} formally lays down the model and 
-    states the main theorem (Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}). 
-
-  \item[In Part~\ref{part:xorgames},]
-    we analyze some new, simple PoS beacons in eventual consensus PoS. 
-    \Section~\ref{sec:xorgames-intro} introduces the problem in more detail. 
-    \Section~\ref{sec:xorgames-model} formally lays down the model, 
-    specifies the new beacon in Definition~\ref{def:new-beacon} and 
-    states the main theorem (Theorem~\ref{thm:beacon-poisson-multi-epoch}) 
-    for private leader elections.
-    These beacons have superior output quality compared to the beacon in Praos or SnowWhite. 
-    In addition, (Theorem~\ref{thm:beacon-bernoulli-multi-epoch}) 
-    analyzes the beacon for public leader elections; 
-    this beacon gives an interesting alternative to the multi-party computation-based 
-    beacon in Ouroboros~\cite{Ouroboros}.
-\end{description}
-
-
-
-
-\section{Limitations and mitigations}
-Below, we discuss some limitations in our analysis 
-and how one could mitigate them.
-
-
-\Paragraph{Simple honest majority and beyond.}
-Our analysis in this dissertation assumes that the leader election outcomes obey 
-the ``simple honest majority'' rule, on average: 
-that is, an honest slot is more likely than an adversarial slot. 
-However, it is conceivable that the adversarial slots may become more likely, even if only for a limited time. 
-This may stem from, e.g., a temporary spike in the adversarial stake in the system 
-which gets dissipated over the long term. 
-The recent paper by~\citet{AdversarialSupremacy} deals with this scenario in both Nakamoto-style PoS and PoW. 
-However, like Praos, their model awards a multihonest slot to the adversary; 
-but the raison d'\^{e}tre of Part~\ref{part:multihonest} of this dissertation 
-is to alleviate this difficulty.
-It would be an interesting future work to combine these ideas with those in~\cite{AdversarialSupremacy}.
-
-\Paragraph{Synchronous grinding analysis.}
-Our analysis of the grinding problem in Praos (and SnowWhite) 
-is in the synchronous setting. 
-Since the security guarantees in Praos are in the semi-synchronous setting, 
-it would be fitting if we could either lift this analysis to the semi-synchronous setting 
-or, better yet, did it directly in the semi-synchronous setting. 
-One way to accomplish this would be to 
-count the number of adversarial blockchains in a semi-synchronous fork (Definition~\ref{def:delta-fork}). 
-Another way would be to apply a synchronous-to-semi-synchronous reduction (see \Section~\ref{sec:async-multihonest})
-to the synchronous grinding power.
-
-
-\Paragraph{Slack in estimating the grinding power in the new beacon.}
-Our analysis of the new beacon in Section~\ref{sec:poisson}, 
-in the private leader election 
-has some slack. 
-Instead of exactly analyzing 
-the distribution of the option sets 
-induced by the nonce leader election $\PrivateLeaderElection(\alpha)$, 
-we derived an upper bound by analyzing a distribution 
-that was easier to analyze. 
-Specifically, 
-instead of counting ``the number of nonces submitted by adversarial nonce-leaders, 
-that are lexicographically smaller than 
-the lexicographically smallest nonce submitted by the honest nonce-leaders,'' 
-we counted ``the number of adversarial nonce-leaders.'' 
-Thus, our bound could be tightened via an exact (or stricter) analysis.
-
-
-
-
-
 
 

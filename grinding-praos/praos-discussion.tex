@@ -56,14 +56,28 @@ Next, we use these parameters to study our results in the previous \Section.
 
 
 \section{Moment bounds}\label{sec:praos-discussion-moment-bounds}
-Let $\epsilon \in (0,1)$ and set $\alpha = (1-\epsilon)/2$. 
-Recall the second moment bound.
+Let $\epsilon, \EpsP \in (0,1)$, $s, k \in \NN, s \geq k$, and set $\alpha = (1-\epsilon)/2$. 
+Recall the second moment bound. 
+Consider an $(\EpsP, k, s)$-secure execution of Praos.
 
 In Figure~\ref{fig:praos-gp-moments-exact}, 
 we have plotted various moment bounds on $g(W)$ 
 where $W \sim \DistL(\alpha)$. 
+The fact that $V_s(\epsilon) < 1$ for $\epsilon > 0.809$ 
+has a profound effect on the grinding power in Praos. 
+In particular, this means, for $\epsilon > 0.809$, 
+the grinding power is $O(1)$. 
+However, for $\epsilon < 0.809$, 
+grinding grows exponentially in $s$ 
+and the dominant component of the failure probability, 
+$\sqrt{V_s(\epsilon) \EpsP}$ grows fast 
+(as a function of $1-\epsilon$) 
+and renders the failure probability ineffective. 
+This was the main motivation for pursuing more secure beacons 
+in Part~\ref{part:xorgames} of this dissertation.
 
-\UnfinishedWarning{Moment figure discussion}
+Some simple yet slightly weaker moment estimates can be found in \Section~\ref{sec:praos-higher-moments}.
+
 
   \begin{figure}[!htb]
     \centering
@@ -98,9 +112,12 @@ where $W \sim \DistL(\alpha)$.
     \caption[GP moment bounds for Praos]{
       Moment upper bounds for the grinding power $g(W)$ 
       where $W \sim \DistL((1-\epsilon)/2)$.
-      Above, we have plotted two functions $M_s(\epsilon)$ (left) and $V_s(\epsilon)$ (right) which satisfy 
-      $\Exp g(W) = \Poly(s) M_s(\epsilon)^s$ and $\Exp g(W)^2 = \Poly(s) V_s(\epsilon)^s$. 
-      When $\epsilon \geq 0.6$, $M_s(\epsilon)$ is at most $1$, 
+      Above, we have plotted the functions $\zeta(\epsilon)$ 
+      from~\eqref{eq:praos-func-zeta}
+      and $V_s(\epsilon)$ from~\eqref{eq:V-eps-praos}. 
+      These functions satisfy 
+      $\Exp g(W) = \Poly(s) \zeta(\epsilon)^s$ and $\Exp g(W)^2 = \Poly(s) V_s(\epsilon)^s$. 
+      When $\epsilon \geq 0.6$, $\zeta(\epsilon)$ is at most $1$, 
       implying that the grinding power is $O(1)$ in expectation.
       Moreover, when $\epsilon \geq 0.809$, $V_s(\epsilon)$ is at most $1$, 
       implying that the second moment of $g(W)$ is $O(1)$ in this region. 
@@ -110,7 +127,8 @@ where $W \sim \DistL(\alpha)$.
 
 
 \section{Praos beacon quality and grinding power}
-Consider Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}. 
+Consider Theorem~\ref{thm:minentropy-loss-praos-multi-epochs} 
+and Figure~\ref{fig:praos-beacon-prbad}.
 When $\epsilon > 0.809$, 
 the beacon does not incur any min-entropy loss. 
 However, when $\epsilon < 0.809$, 
@@ -121,9 +139,10 @@ becomes meaningless for $\epsilon < 0.8$.
 This happens because the grinding power grows quickly 
 as the honest bias $\epsilon$ decreases.
 
-\iftoggle{drawfigs}{
-\input{grinding-praos/fig-praos-multi-epoch}
-}
+% \iftoggle{drawfigs}{
+% \input{grinding-praos/fig-praos-multi-epoch}
+% }
+% \UnfinishedWarning{To do: restate figure}
 
 
   % \begin{figure}[!htb]
@@ -181,7 +200,7 @@ Note that we used a special distribution on characteristic strings:
 one that does not produce empty slots. 
 Even if we consider empty slots, i.e., 
 use the real leader election distribution in Praos, 
-the situation does not improve much. 
+the situation would not improve much. 
 Since a slot is non-empty with a small constant probability, 
 we will essentially dilute $s$ by a constant factor; 
 the quantity $\sqrt{V_s(\epsilon) \EpsP}$ will still become meaningless 

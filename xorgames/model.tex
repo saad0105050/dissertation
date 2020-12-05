@@ -179,12 +179,30 @@ There will be $T/d$ nonce-emitting slots in an epoch of $\Pi_\Beacon$.
   $$
   % Here, the probability is taken according to $\PrivateLeaderElection(\alpha)$.
 \end{theorem}
+The proof is given in \Section~\ref{sec:main-thm-proofs}. 
+It relies on the structure of the Poisson game (Definition~\ref{def:xor-game-poisson}) 
+which mimics a private leader election in the eventual consensus model.
 
 
+% The dominant component in $\rho$ is proportional to $\log_2(1/\EpsP)$. 
+% Note that the consistency error probability $\EpsP$ 
+% becomes larger as the adversarial stake ratio $\alpha$ increases. 
+Recall that $\EpsP \approx e^{-k \Omega((1 - 2\alpha)^3))}$ 
+using our consistency bound from Theorem~\ref{thm:main-mh}.
+As $\alpha$ increases, 
+the number of nonce-emitting slots in an epoch, $n(\alpha)$, 
+is actually a decreasing function of $\alpha$ 
+since, as a function of $\alpha$, 
+$\log_2(1/\EpsP)$ decreases much faster than $\log_2(1/\alpha)$. 
+As a result, the grinding power is also a decreasing function of $\alpha$. 
+This comes in a start contrast with the grinding power in Praos 
+(Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}) 
+where the number of nonce-emitting slots cannot be controlled in Praos. 
 
-\section{Comparison with the beacon in Praos}
 
-\UnfinishedWarning{New beacon discussion}
+% \section{Comparison with the beacon in Praos}
+
+% \UnfinishedWarning{New beacon discussion; restate}
 % If we use the Praos protocol, parameterized 
 % Theorem~\ref{thm:beacon-poisson-multi-epoch} 
 % and Theorem~\ref{thm:minentropy-loss-praos-multi-epochs}, 
@@ -196,16 +214,17 @@ There will be $T/d$ nonce-emitting slots in an epoch of $\Pi_\Beacon$.
 % See Figure~\ref{fig:rho-poisson-beacon} for a comparison between 
 % this beacon and Praos beacon.
 
-\iftoggle{drawfigs}{
+% \iftoggle{drawfigs}{
 
-\input{xorgames/fig-poisson-beacon}  
+% \input{xorgames/fig-poisson-beacon}  
 
-}
+% }
 
 
 
 
 \section{Guarantees against a static adversary}
+
 
 Let $\alpha \in (0, 1/2), \EpsP \in (0, 1)$ and $T, k, s, d \in \NN$.
 Suppose the above parameters satisfy 
@@ -221,7 +240,7 @@ Define
 \end{align}
 
 \begin{theorem}[Static adversary, multiple epochs]\label{thm:beacon-bernoulli-multi-epoch}
-  Let $\alpha \in (0, 0.41)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
+  Let $\alpha \in (0, 1/2)$ and suppose it satisfies \eqref{eq:alphatothen-epsp}.
   Let $f(\alpha)$ and $\rho$ be as in \eqref{eq:f-bernoulli} and \eqref{eq:rho-bernoulli}.
   Let $\Pi_\Beacon$ be a $(T,k,s,d,\PublicLeaderElection(\alpha), \EpsP)$-beacon.
   Let $\eta$ be the beacon output after $L$ epochs. 
@@ -235,6 +254,13 @@ Define
     \,.
   \end{equation}
 \end{theorem}
+The proof is given in \Section~\ref{sec:main-thm-proofs}. 
+It relies on the structure of the Bernoulli game (Definition~\ref{def:Bernoulli-game}) 
+which mimics a public leader election in the eventual consensus model. 
+Figure~\ref{fig:rho-bernoulli-beacon} depicts the min-entropy loss in this beacon. 
+Note that this beacon, like its sibling in the private election setting, 
+yields only a small loss in the min-entropy as long as $\alpha$ is not too large 
+(equivalently, $\epsilon$ is not too small.)
 
 
 % \iftoggle{drawfigs}{
@@ -268,7 +294,7 @@ Define
         \addlegendentry{Bernoulli, $k = 1200$};
       \end{axis}
     \end{tikzpicture}%
-    \caption{Min-entropy loss in Bernoulli beacon}
+    \caption{Min-entropy loss in the Bernoulli beacon (Theorem~\ref{thm:beacon-bernoulli-multi-epoch})}
     \label{fig:rho-bernoulli-beacon}
 \end{figure}
 

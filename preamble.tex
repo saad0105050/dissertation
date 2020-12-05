@@ -732,7 +732,7 @@ eps k900    k1200
                 return inf;
             };
         }; 
-        \Rho = PraosMinEntropyLossMultiEpoch(\e, \k) ;
+        \Rho = PoissonBeaconMinEntropyLoss(\e, \k) ;
         \prBad = 3 * \L * 2^\Rho * \epsp ;
         return sanitizedProbability(\prBad) ;
     };
@@ -745,7 +745,7 @@ eps k900    k1200
                 return +inf;
             };
         }; 
-        \Rho = PraosMinEntropyLossMultiEpoch(\e, \k) ;
+        \Rho = PoissonBeaconMinEntropyLoss(\e, \k) ;
         \lnPrBad = ln(3) + ln(\L) + \Rho * ln(2) + ln(\epsp);
         return sanitizedLnProbability(\lnPrBad) ;
     };

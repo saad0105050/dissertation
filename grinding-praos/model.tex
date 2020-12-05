@@ -66,7 +66,7 @@ we take the opportunity to define the public leader elections as well.
 
     \begin{definition}[$(\EpsP, k,s)$-security]\label{def:blockchain-security}
         Let $\EpsP \in \RR$ and $k, s \in \NN$. 
-        A PoS blockchain protocol is $(\EpsP, k, s)$-secure if 
+        An eventual consensus blockchain protocol is $(\EpsP, k, s)$-secure if 
         it satisfies $\kSlotCP$ and $\sECQ$ property 
         except with probability at most $\EpsP$.
     \end{definition}
@@ -75,8 +75,90 @@ we take the opportunity to define the public leader elections as well.
 
 
 
+\Paragraph{A (more) precise definition of VRFs.}
+Below, we present a definition of VRFs that is good enough for our exposition. 
+For a more complete definition, see~\cite{VRF}.
 
-\Paragraph{A beacon protocol}
+\newcommand{\Gen}{\mathsf{gen}}
+\newcommand{\Prove}{\mathsf{prove}}
+\newcommand{\Verify}{\mathsf{verify}}
+% \newcommand{\pk}{\mathsf{pk}}
+% \newcommand{\sk}{\mathsf{sk}}
+\begin{definition}[Verifiable Random Function (VRF)]\label{def:VRF}
+  A family $\mathcal{F}$ 
+  of functions $F : \{0,1\}^\ell \rightarrow \{0,\}^k$ 
+  is a family of VRFs if there exist algorithms 
+  $(\Gen, \Prove, \Verify)$ 
+  so that the following holds: 
+  $\Gen(1^k)$ outputs a pair of keys $(\pk, \sk)$; 
+  $\Prove_\sk(x)$ outputs a pair $(F_\sk(x), \pi_\sk(x))$ 
+  where 
+  $F_\sk \in \mathcal{F}$, $F_\sk(x)$ is the function value, and 
+  $\pi_\sk(x)$ is the proof of correctness; and 
+  $\Verify_\pk(x,y,\pi_\sk(x))$ efficiently verifies 
+  that $y = F_\sk(x)$ using the proof $\pi_\sk(x)$, 
+  outputting 1 if $y$ is valid and 0 otherwise. 
+  Additionally, we require the following properties:
+
+  \begin{enumerate}
+    \item \emph{Uniqueness:} 
+    No values $(\pk, x, y, y', \pi, \pi')$  can satisfy both 
+    $\Verify_\pk(x,y,\pi) = 1$ and $\Verify_\pk(x,y',\pi') = 1$ 
+    unless $y = y'$.
+
+    \item \emph{Provability:} 
+    If $(y, \pi) = \Prove_\sk(x)$ then $\Verify_\pk(x,y, \pi) = 1$.
+
+    \item \emph{Pseudorandomness:} 
+    To all probabilistic polynomial-time (PPT) algorithm 
+    which runs $\Poly(k)$ steps when its first input is $1^k$ 
+    and does not query the $\Prove$ oracle on $x$, 
+    the distribution of $F_\sk(x)$ appears uniform in $\{0,1\}^k$, 
+    except with a probability negligible in $k$.
+  \end{enumerate}
+
+\end{definition}
+
+
+\section{Lottery-based leader election schemes}\label{sec:leader-election-public-private}
+Let $\alpha \in (0,1)$ and consider the players $\Players = \Players(\alpha)$
+Let $C_i$ be the set of leaders for slot $i$. 
+We consider two types of leader election schemes for an epoch: 
+% \begin{enumerate}[label=\textbf{Scheme \Alph*:},ref=\Alph*,leftmargin=3em]
+\begin{description}
+    \item[\textbf{$\PublicLeaderElection(\alpha)$: Publicly elect a single leader per slot.}] \label{lottery:public}
+    At the onset of an epoch, 
+    all players use a common random string to 
+    publicly sample, 
+    independently for each round $i \in [\ell + n]$, 
+    a single player $\ell_i \in \Players$ and  
+    set $C_i = \{\ell_i\}$. 
+    For all players $u \in \Players$, 
+    the probability that $u = \ell_i$ is $\sigma_u$. 
+    Thus, the leader schedule for an epoch 
+    is public knowledge before an epoch commences. 
+
+    \item[\textbf{$\PrivateLeaderElection(\alpha)$: Privately elect zero or more leaders per slot.}] \label{lottery:private}
+    Independently for each round $i \in [\ell + n]$, 
+    player $u \in \Players$ 
+    privately and independently 
+    evaluates a Boolean random variable $D$
+    which has expectation $\sigma_u$; 
+    if $D = 1$, $u$ 
+    inserts himself into the set $C_i$ 
+    and announces this fact during slot $i$. 
+\end{description}
+\noindent
+Ouroboros uses a public leader election 
+at the outset of an epoch 
+and, therefore, it is secure only against a static adversary. 
+SnowWhtie and Praos (and Bitcoin as well) uses a private leader election 
+and therefore, must prove security against an adaptive adversary. 
+
+
+
+
+\section{Randomness beacons and the loss in min-entropy}
 A beacon protocol takes a uniformly random initial string $\eta_0$ 
 and produces a series of strings $\eta_1, \eta_2, \ldots$; 
 these strings are called the outputs of the beacon.
@@ -137,7 +219,7 @@ Specifically, \emph{the min-entropy loss in $X$}
 is defined as the difference between $H_\infty(X)$ and $H_\infty(U) = \log_2(|A|)$.
 
 
-\Paragraph{Grinding power and beacon security}
+\Paragraph{Grinding power and beacon security.}
 Let $n \in \NN$ and $A \subseteq \{0,1\}^n$.
 Let $\eta_0$ be uniformly random in $\{0,1\}^n$ 
 and it is used as the initial value for the beacon protocol. 

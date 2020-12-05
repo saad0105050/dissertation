@@ -17,7 +17,7 @@
         x label style={at={(axis description cs:0.5,-0.1)},anchor=north}, 
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},        
         xlabel={$\epsilon$, honest bias},
-        title={Min-entropy loss}
+        title={Base-2 logarithm of Grinding Power}, 
         ]
         \addplot +[ultra thick,orange] { PraosMinEntropyLossMultiEpoch(\x, 900 ) }; 
         \addlegendentry{Praos, $k = 900$};
@@ -26,7 +26,7 @@
         \addplot +[ultra thick,black,domain=0.18:1] { PoissonBeaconMinEntropyLoss(\x, 900) };
         \addlegendentry{New, $k = 900$};
         \addplot +[ultra thick,red,domain=0.18:1] { PoissonBeaconMinEntropyLoss(\x, 1200) };
-        \addlegendentry{New, $k = 1200$};
+        \addlegendentry{New, $k = 1200$}; 
       \end{axis}
     \end{tikzpicture}%
     % \tikzsetnextfilename{rho-poisson}
@@ -57,18 +57,22 @@
     %     \addlegendentry{New, $k = 1200$};
     %   \end{axis}
     % \end{tikzpicture}%
-    \caption{Min-entropy loss in the Praos beacon and the new beacon}
-    \label{fig:rho-poisson-beacon}
-\end{figure}
-
-
-
-\begin{figure}[!htb]
-  \centering
-    \tikzsetnextfilename{prbad-poisson}
+    %
+    %
+    %
+    %
+%     \caption{Min-entropy loss in the new beacon}
+%     \label{fig:rho-poisson-beacon}
+% \end{figure}
+%
+%
+%
+% \begin{figure}[!htb]
+%   \centering
+    \tikzsetnextfilename{prbad-poisson}%
     \begin{tikzpicture}[trim axis left,
         declare function={
-            fsmall(\x,\k) = ln(3)/ln(2) +  PoissonBeaconMinEntropyLoss(\x, \k) -    PraosMinEntropyLossMultiEpoch(\x, \k );
+            fsmall(\x,\k) = ln(3)/ln(2) +  PoissonBeaconMinEntropyLoss(\x, \k) ; %- PraosMinEntropyLossMultiEpoch(\x, \k );
             fbig(\x,\k) = ln(3)/ln(2) +  PoissonBeaconMinEntropyLoss(\x, \k);
         }
       ]
@@ -81,18 +85,18 @@
         grid=both,
         no markers,
         % legend pos=outer north east,
-        legend pos=north west,
+        legend pos=south west,
         legend cell align=left,
-        x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+        x label style={at={(axis description cs:0.5,-0.1)},anchor=north}, 
         y label style={at={(axis description cs:-0.1,.5)},anchor=south},
-        % yticklabel pos=right,
+        yticklabel pos=right,
         xlabel={$\epsilon$, honest bias},
-        title={$\log_2 \dfrac{\Pr[\mathrm{Bad}_{\mathrm{New} }]}{\Pr[\mathrm{Bad}_{\mathrm{Praos} }]}$}
+        title={Base-2 logarithm of $\Pr[\text{failure}]$}, 
         ]
-        \addplot +[ultra thick,black,domain=0.18:1] { fsmall(\x, 900)  } ;
+        \addplot +[ultra thick,black,domain=0.18:1] { LnPoissonBeaconPrBadMultiEpoch(\x, 900,1)/ln(2)  } ;
         \addlegendentry{$k = 900$};
-        \addplot +[ultra thick,red,domain=0.18:1] { fsmall(\x, 1200)  } ;
-        \addlegendentry{$k = 1200$};
+        \addplot +[ultra thick,red,domain=0.18:1] { LnPoissonBeaconPrBadMultiEpoch(\x, 1200,1)/ln(2)  } ;
+        \addlegendentry{$k = 1200$}; 
         % \addplot +[ultra thick,black,domain=0.18:0.809] { fsmall(\x, 1200) }  ; 
         % \addplot +[ultra thick,black,domain=0.809:1] { fbig(\x, 1200) }  ; 
         % \addlegendentry{$k = 1200$}; 
@@ -130,7 +134,35 @@
     %     % \addlegendentry{$k = 1200$}; 
     %   \end{axis}
     % \end{tikzpicture}
-    \caption{Failure probability for the Poisson beacon}
-    \label{fig:prbad-poisson-beacon-large-eps}
+    \caption[New beacon security]{        
+        \textbf{Left.} The min-entropy loss $\rho$ in new beacon, 
+        compared to the Praos beacon; 
+        corresponding grinding power is $2^\rho$.
+        The three curves correspond to different security parameters $k$. 
+        The x-axis corresponds to the honest bias $\epsilon \in (0,1)$.  
+        Leader elections in slots are i.i.d. 
+        with $\Pr[\text{slot honest}]=(1+\epsilon)/2$ and 
+        $\Pr[\text{slot dishonest}]=(1-\epsilon)/2$. 
+        Remarkably, that the grinding power in the new beacon in fact 
+        \emph{decreases} as the adversarial stake ratio increases. 
+        This happens because we can tune the number of nonce-emitting slots 
+        according to the adversarial stake; 
+        this cannot be done with Praos beacon.
+        The loss in the min-entropy in the new beacon is orders-of-magnitude 
+        smaller than the loss in the Praos beacon. 
+        Praos, however, has better beacon quality when $\epsilon > 0.809$ 
+        (equivalently, adversarial stake ratio at most $0.0955$). 
+        The guarantee of the new beacon holds as long as $\epsilon > 0.18$. 
+        Although a larger $k$ increases the grinding power, 
+        the effect is much less pronounced compared to Praos 
+        and, in fact, becomes more subdued as the adversarial stake increases. 
+        \textbf{Right.} In the new beacon, the blockchain protocol's 
+        consistency error bound $\EpsP$ 
+        is amplified into $2^\rho \EpsP$ by a grinding attack. 
+        In fact, as soon as $\epsilon < 0.8$, the grinding power becomes so large that 
+        the error estimate becomes one. 
+        Unlike Praos, the total error remains meaningful above the vicinity of $\epsilon \geq 0.4$.
+    }
+    \label{fig:poisson-beacon}
 \end{figure}
 
