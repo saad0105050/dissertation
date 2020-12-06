@@ -45,7 +45,7 @@
 
 %\usepackage{<add your packages>}
 \usepackage[titletoc]{appendix}
-\usepackage[center,small,sc]{caption,subcaption}
+% \usepackage[center,small,sc]{caption,subcaption}
 \usepackage{array}
 \usepackage{subfiles}
 \usepackage{accents}
@@ -72,6 +72,19 @@
 }
 
 
+% \usepackage{pgfornament}
+\newcommand{\AckBreak}{
+    % \hfill\hspace{0.2cm} 
+    % \floweroneleft\floweroneright 
+    % \pgfornament{94}
+    % \vspace{-1em}
+    \begin{center}
+    $
+    \ast\quad\ast\quad\ast
+    $
+    \end{center}
+    % \hspace{0.2cm} \hfill    
+}
 
 \newcommand{\quotebox}[1]{\begin{center}%
     \vspace{1em}%
@@ -316,16 +329,19 @@
 \toggletrue{drawfigs}
 % \togglefalse{drawfigs}
 
+
 \usepackage{tikz}
 \usetikzlibrary{automata,arrows,positioning,calc,math}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.14}
+
 
 \usetikzlibrary{external}
 \tikzexternalize
 
 \newcommand{\PartPrefix}{dissertation}
 
-\usepackage{pgfplots}
-\pgfplotsset{compat=1.14}
 
 % https://tex.stackexchange.com/questions/349766/pgfplots-on-tikzmath-function-with-conditionals-returns-an-error
 \makeatletter
